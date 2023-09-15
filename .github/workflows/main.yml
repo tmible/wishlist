@@ -17,9 +17,12 @@ jobs:
         TARGET: ${{ secrets.REMOTE_TARGET }}
         EXCLUDE: "/assets/, README.md, .gitignore"
         SCRIPT_AFTER: |
+          echo ps aux | grep [n]ode
           kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
+          echo ps aux | grep [n]ode
+          echo pwd
           cd ${{ secrets.REMOTE_TARGET }}
-          pwd
-          ls -al
+          echo pwd
+          echo ls -al
           pnpm install
           pnpm run start
