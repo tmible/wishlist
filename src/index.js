@@ -1,4 +1,3 @@
-import { Worker } from 'worker_threads';
 import 'dotenv/config';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
@@ -17,8 +16,6 @@ const db = await open({
   filename: process.env.WISHLIST_DB_FILE_PATH,
   driver: sqlite3.Database,
 });
-
-new Worker('./src/background.js');
 
 console.log('creating bot');
 
