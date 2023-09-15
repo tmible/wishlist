@@ -16,7 +16,13 @@ jobs:
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
         EXCLUDE: "/assets/, README.md, .gitignore"
-        SCRIPT_AFTER: |
+    - name: restart
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
           kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
           cd ${{ secrets.REMOTE_TARGET }}
           $(which pnpm) install
