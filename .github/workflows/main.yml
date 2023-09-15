@@ -25,5 +25,9 @@ jobs:
         script: |
           kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
           cd ${{ secrets.REMOTE_TARGET }}
-          $(which pnpm) install
-          $(which pnpm) run start
+          whoami
+          pwd
+          ls -al
+          which pnpm
+          pnpm install
+          pnpm start &
