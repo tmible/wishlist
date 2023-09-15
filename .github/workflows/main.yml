@@ -36,4 +36,4 @@ jobs:
           esac
           # pnpm end
           pnpm install
-          pnpm start &
+          pnpm run restart:bg

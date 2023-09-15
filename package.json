@@ -4,6 +4,9 @@
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
+    "start:bg": "forever start ./src/index.js",
+    "restart:bg": "forever restart ./src/index.js",
+    "stop:bg": "forever stop ./src/index.js",
     "initDB": "node ./src/initDB.js"
   },
   "repository": {
@@ -13,7 +16,6 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^16.3.1",
-    "express": "^4.18.2",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "telegraf": "^4.13.1"
