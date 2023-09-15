@@ -1,0 +1,23 @@
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: deploy
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        TARGET: ${{ secrets.REMOTE_TARGET }}
+        EXCLUDE: "/assets/, README.md, .gitignore"
+        SCRIPT_AFTER: |
+          kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
+          cd ${{ secrets.REMOTE_TARGET }}
+          pnpm install
+          pnpm run start
