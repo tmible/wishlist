@@ -25,7 +25,6 @@ jobs:
         script: |
           kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
           cd ${{ secrets.REMOTE_TARGET }}
-          export PNPM_HOME="/root/.local/share/pnpm"
-          export PATH="$PNPM_HOME:$PATH"
+          source ~/.bashrc
           pnpm install
           pnpm start &
