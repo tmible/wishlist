@@ -19,5 +19,7 @@ jobs:
         SCRIPT_AFTER: |
           kill -9 $(ps aux | grep [n]ode | awk '{print $2}')
           cd ${{ secrets.REMOTE_TARGET }}
+          pwd
+          ls -al
           pnpm install
           pnpm run start
