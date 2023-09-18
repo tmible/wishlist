@@ -29,14 +29,12 @@ bot.start(async (ctx) => {
 
   if (ctx.update.message.chat.type === 'group') {
     return ctx.reply('Всем привет, всем здравствуйте!');
-  } else {
-    await ctx.sendMessage('Привет!');
-    if (ctx.update.message.chat.id === 455852268) {
-      return;
-    }
   }
-
-  sendList(ctx, 'message', db);
+  await ctx.sendMessage('Привет!');
+  if (ctx.update.message.chat.id === 455852268) {
+    return;
+  }
+  return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
 });
 
 bot.help((ctx) => ctx.replyWithMarkdownV2(
