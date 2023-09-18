@@ -4,9 +4,13 @@ import {
   ListItemStateToEmojiMap,
 } from '../constants.js';
 
+const numberToEmoji = (number) => {
+  return String.fromCodePoint(0x0030 + number, 0x20E3);
+};
+
 export const sendList = async (ctx, updatePropertyKey, db) => {
   const messages = (await db.all(`
-    SELECT id, name, description, state, participants
+    SELECT id, priority, name, description, state, participants
     FROM list LEFT JOIN (
       SELECT listItemId, GROUP_CONCAT(username) as participants
       FROM participants
@@ -14,19 +18,21 @@ export const sendList = async (ctx, updatePropertyKey, db) => {
     ) as participants ON list.id = participants.listItemId
   `))
   .map((item) => ({ ...item, participants: item.participants?.split(',') ?? [] }))
+  .sort((a, b) => a.priority - b.priority)
   .map((item) => [
 
-    ListItemStateToEmojiMap.get(item.state) + ' ***' + item.name + '***\n' + item.description +
-      (item.participants.length > 0 ?
-        item.state === ListItemState.BOOKED ?
-          `\n\nзабронировал @\\${item.participants[0].split('').join('\\')}` :
-          `\n\nучастники: ${
-            item.participants.map(
-              (participant) => `@\\${participant.split('').join('\\')}`,
-            ).join(', ')
-          }` :
-        ''
-      ),
+    ListItemStateToEmojiMap.get(item.state) + ' ' + numberToEmoji(item.priority) +
+    ' ***' + item.name + '***\n' + item.description +
+    (item.participants.length > 0 ?
+      item.state === ListItemState.BOOKED ?
+        `\n\nзабронировал @\\${item.participants[0].split('').join('\\')}` :
+        `\n\nучастники: ${
+          item.participants.map(
+            (participant) => `@\\${participant.split('').join('\\')}`,
+          ).join(', ')
+        }` :
+      ''
+    ),
 
     Markup.inlineKeyboard([
       ...(
