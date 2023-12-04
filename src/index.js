@@ -9,6 +9,7 @@ import {
   DefaultCommandSet,
   GroupCommandSet,
   TmibleCommandSet,
+  TmibleId,
 } from './constants.js';
 import { sendList, configureWishlistModule } from './modules/wishlist.js';
 
@@ -25,13 +26,13 @@ bot.use(session());
 bot.start(async (ctx) => {
   ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }},);
   ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
-  ctx.telegram.setMyCommands(TmibleCommandSet, { scope: { type: 'chat', chat_id: 455852268 }});
+  ctx.telegram.setMyCommands(TmibleCommandSet, { scope: { type: 'chat', chat_id: TmibleId }});
 
   if (ctx.update.message.chat.type === 'group') {
     return ctx.reply('Всем привет, всем здравствуйте!');
   }
   await ctx.sendMessage('Привет!');
-  if (ctx.update.message.chat.id === 455852268) {
+  if (ctx.update.message.chat.id === TmibleId) {
     return;
   }
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');

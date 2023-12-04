@@ -79,3 +79,5 @@ export const TmibleCommandSet = [{
   command: 'cancel_answer',
   description: 'отменить отправку ответа',
 }];
+
+export const TmibleId = 455852268;

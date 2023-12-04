@@ -1,10 +1,11 @@
 import { Markup } from 'telegraf';
+import { TmibleId } from '../constants.js';
 
 export const configureAnonymousMessagesModule = (bot) => {
   console.log('configuring anonymous messages module');
 
   bot.command('message', (ctx) => {
-    if (ctx.update.message.chat.id === 455852268) {
+    if (ctx.update.message.chat.id === TmibleId) {
       return;
     }
 
@@ -15,7 +16,7 @@ export const configureAnonymousMessagesModule = (bot) => {
   });
 
   bot.command('cancel_message', (ctx) => {
-    if (ctx.update.message.chat.id === 455852268) {
+    if (ctx.update.message.chat.id === TmibleId) {
       return;
     }
 
@@ -33,7 +34,7 @@ export const configureAnonymousMessagesModule = (bot) => {
   });
 
   bot.command('cancel_answer', (ctx) => {
-    if (ctx.update.message.chat.id !== 455852268) {
+    if (ctx.update.message.chat.id !== TmibleId) {
       return;
     }
 
@@ -66,7 +67,7 @@ export const configureAnonymousMessagesModule = (bot) => {
 
     if (ctx.session?.sendMessageAnonymously) {
       await ctx.telegram.sendCopy(
-        455852268,
+        TmibleId,
         ctx.update.message,
         Markup.inlineKeyboard([
           Markup.button.callback(

@@ -2,6 +2,7 @@ import { Markup } from 'telegraf';
 import {
   ListItemState,
   ListItemStateToEmojiMap,
+  TmibleId,
 } from '../constants.js';
 
 const numberToEmoji = (number) => {
@@ -72,7 +73,7 @@ export const configureWishlistModule = (bot, db) => {
   bot.command('list', (ctx) => {
     if (
       ctx.update.message.chat.type === 'group' ||
-      ctx.update.message.chat.id === 455852268
+      ctx.update.message.chat.id === TmibleId
     ) {
       return;
     }
