@@ -12,6 +12,7 @@ import {
   TmibleId,
 } from './constants.js';
 import { sendList, configureWishlistModule } from './modules/wishlist.js';
+import { configureEditingModule } from './modules/editing.js';
 
 const db = await open({
   filename: process.env.WISHLIST_DB_FILE_PATH,
@@ -44,6 +45,7 @@ bot.help((ctx) => ctx.replyWithMarkdownV2(
 
 configureWishlistModule(bot, db);
 configureAnonymousMessagesModule(bot);
+configureEditingModule(bot, db);
 
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);

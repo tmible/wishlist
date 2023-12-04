@@ -47,7 +47,7 @@ export const configureAnonymousMessagesModule = (bot) => {
     return ctx.reply('Отправка ответа отменена');
   });
 
-  bot.on('message', async (ctx) => {
+  bot.on('message', async (ctx, next) => {
     if (ctx.session?.answerChatId && ctx.session?.answerToMessageId) {
       await ctx.telegram.sendMessage(
         ctx.session.answerChatId,
@@ -80,5 +80,7 @@ export const configureAnonymousMessagesModule = (bot) => {
       delete ctx.session.sendMessageAnonymously;
       return ctx.reply('Сообщение отправлено!');
     }
+
+    next();
   });
 };

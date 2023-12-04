@@ -4,10 +4,7 @@ import {
   ListItemStateToEmojiMap,
   TmibleId,
 } from '../constants.js';
-
-const numberToEmoji = (number) => {
-  return String.fromCodePoint(0x0030 + number, 0x20E3);
-};
+import { numberToEmoji } from '../utils.js';
 
 export const sendList = async (ctx, updatePropertyKey, db) => {
   const messages = (await db.all(`
@@ -23,7 +20,7 @@ export const sendList = async (ctx, updatePropertyKey, db) => {
   .map((item) => [
 
     ListItemStateToEmojiMap.get(item.state) + ' ' + numberToEmoji(item.priority) +
-    ' ***' + item.name + '***\n' + item.description +
+    ' *' + item.name + '*\n' + item.description +
     (item.participants.length > 0 ?
       item.state === ListItemState.BOOKED ?
         `\n\nзабронировал @\\${item.participants[0].split('').join('\\')}` :
