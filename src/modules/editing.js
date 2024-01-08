@@ -1,5 +1,10 @@
 import { Markup } from 'telegraf';
-import { TmibleId } from '../constants.js';
+import {
+  MarkdownV2SpecialCharacters,
+  MessageEntityType,
+  MessageEntityTypeToMarkdownV2,
+  TmibleId,
+} from '../constants.js';
 import { numberToEmoji } from '../utils.js';
 
 const updateTemplateFunction = (ctx, sessionKeys, reply) => {
@@ -154,10 +159,7 @@ export const configureEditingModule = (bot, db) => {
       'Приоритет — целое число больше 0\n' +
       'Название — произвольный текст без переносов строк\n' +
       'Описание — произвольный текст с переносами строк\n\n' +
-      'Учтите, что для форматирования используется язык разметки markdown, ' +
-      'поэтому все спецсимволы, если они используются в прямом значении, ' +
-      'необходимо предворять обратным слэшем\\. ' +
-      'Подробнее [тут](https://gist.github.com/Jekins/2bf2d0638163f1294637)'
+      'Форматирование текста будет сохранено'
     );
   });
 
@@ -228,9 +230,71 @@ export const configureEditingModule = (bot, db) => {
         return ctx.reply('Ошибка в описании подарка. Не могу добавить');
       }
 
+      const entitiesStarts = new Map(ctx.update.message.entities.map(
+        ({ offset }, i) => [ offset, i ]),
+      );
+      const entitiesEnds = new Map(ctx.update.message.entities.map(
+        ({ offset, length }, i) => [ offset + length, i ]),
+      );
+
+      let description = '';
+      const descriptionOffset = match[1].length + match[2].length + 2;
+      let isQuoteBlock = false;
+
+      for (let i = 0; i <= match[3].length; ++i) {
+        if (entitiesEnds.has(descriptionOffset + i)) {
+          const entity = ctx.update.message.entities[entitiesEnds.get(descriptionOffset + i)];
+          const markdown = MessageEntityTypeToMarkdownV2.get(entity.type);
+          if (entity.type === MessageEntityType.PRE) {
+            description += markdown[2];
+          } else {
+            description += markdown[1];
+            switch (entity.type) {
+              case MessageEntityType.TEXT_LINK:
+                description += entity.url + markdown[2];
+                break;
+              case MessageEntityType.TEXT_MENTION:
+                description += entity.user.id + markdown[2];
+                break;
+              case MessageEntityType.CUSTOM_EMOJI:
+                description += entity.custom_emoji_id + markdown[2];
+                break;
+              default:
+                break;
+            }
+          }
+          isQuoteBlock = false;
+        }
+
+        if (i === match[3].length) {
+          break;
+        }
+
+        if (entitiesStarts.has(descriptionOffset + i)) {
+          const entity = ctx.update.message.entities[entitiesStarts.get(descriptionOffset + i)];
+          description += MessageEntityTypeToMarkdownV2.get(entity.type)[0];
+          if (entity.type === MessageEntityType.PRE) {
+            description +=
+              (entity.language ?? '') + MessageEntityTypeToMarkdownV2.get(entity.type)[1];
+          }
+          isQuoteBlock = entity.type === MessageEntityType.BLOCKQUOTE;
+        }
+
+        if (isQuoteBlock && i > 0 && match[3][i - 1] === '\n') {
+          description += '>';
+        }
+
+        if (MarkdownV2SpecialCharacters.has(match[3][i])) {
+          description += `\\${match[3][i]}`;
+        } else {
+          description += match[3][i];
+        }
+
+      }
+
       await db.run(
         'INSERT INTO list (priority, name, description, state) VALUES (?, ?, ?, 0)',
-        match.slice(1),
+        [ ...match.slice(1, 3), description ],
       );
 
       await ctx.reply('Добавлено!');
