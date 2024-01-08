@@ -52,6 +52,70 @@ const cancelUpdateTemplateFunction = (ctx, sessionKeys, reply) => {
   return ctx.reply(reply);
 };
 
+const parseFormattedMessage = (message, raw, offset) => {
+  const entitiesStarts = new Map(message.entities.map(
+    ({ offset }, i) => [ offset, i ]),
+  );
+  const entitiesEnds = new Map(message.entities.map(
+    ({ offset, length }, i) => [ offset + length, i ]),
+  );
+
+  let parsed = '';
+  let isQuoteBlock = false;
+
+  for (let i = 0; i <= raw.length; ++i) {
+    if (entitiesEnds.has(offset + i)) {
+      const entity = message.entities[entitiesEnds.get(offset + i)];
+      const markdown = MessageEntityTypeToMarkdownV2.get(entity.type);
+      if (entity.type === MessageEntityType.PRE) {
+        parsed += markdown[2];
+      } else {
+        parsed += markdown[1];
+        switch (entity.type) {
+          case MessageEntityType.TEXT_LINK:
+            parsed += entity.url + markdown[2];
+            break;
+          case MessageEntityType.TEXT_MENTION:
+            parsed += entity.user.id + markdown[2];
+            break;
+          case MessageEntityType.CUSTOM_EMOJI:
+            parsed += entity.custom_emoji_id + markdown[2];
+            break;
+          default:
+            break;
+        }
+      }
+      isQuoteBlock = false;
+    }
+
+    if (i === raw.length) {
+      break;
+    }
+
+    if (entitiesStarts.has(offset + i)) {
+      const entity = message.entities[entitiesStarts.get(offset + i)];
+      parsed += MessageEntityTypeToMarkdownV2.get(entity.type)[0];
+      if (entity.type === MessageEntityType.PRE) {
+        parsed += (entity.language ?? '') + MessageEntityTypeToMarkdownV2.get(entity.type)[1];
+      }
+      isQuoteBlock = entity.type === MessageEntityType.BLOCKQUOTE;
+    }
+
+    if (isQuoteBlock && i > 0 && raw[i - 1] === '\n') {
+      parsed += '>';
+    }
+
+    if (MarkdownV2SpecialCharacters.has(raw[i])) {
+      parsed += `\\${raw[i]}`;
+    } else {
+      parsed += raw[i];
+    }
+
+  }
+
+  return parsed;
+};
+
 const sendList = async (ctx, db) => {
   const messages = (await db.all('SELECT id, priority, name, description FROM list'))
   .sort((a, b) => a.id - b.id)
@@ -122,7 +186,7 @@ export const configureEditingModule = (bot, db) => {
     return updateTemplateFunction(
       ctx,
       [ 'updateDescription', 'updateDescriptionId' ],
-      'Отправьте мне новое описание (произвольный текст с переносами строк)\n' +
+      'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)\n' +
       'Если передумаете, используйте команду /cancel_update_description',
     );
   });
@@ -158,8 +222,7 @@ export const configureEditingModule = (bot, db) => {
       'Если передумаете, используйте команду /cancel\\_add\n\n' +
       'Приоритет — целое число больше 0\n' +
       'Название — произвольный текст без переносов строк\n' +
-      'Описание — произвольный текст с переносами строк\n\n' +
-      'Форматирование текста будет сохранено'
+      'Описание — произвольный текст с переносами строк и форматированием'
     );
   });
 
@@ -212,15 +275,25 @@ export const configureEditingModule = (bot, db) => {
       'Название обновлено!',
     );
 
-    updateValueTemplateFunction(
-      ctx,
-      db,
-      [ 'updateDescription', 'updateDescriptionId' ],
-      /^[\s\S]+$/,
-      'Ошибка в описании. Не могу обновить',
-      'UPDATE list SET description = ? WHERE id = ?',
-      'Описание обновлено!',
-    );
+    if (ctx.session?.updateDescription && ctx.session?.updateDescriptionId) {
+      const match = /^[\s\S]+$/.exec(ctx.update.message.text);
+      const itemId = ctx.session.updateDescriptionId;
+
+      delete ctx.session.updateDescription;
+      delete ctx.session.updateDescriptionId;
+
+      if (!match) {
+        return ctx.reply('Ошибка в описании. Не могу обновить');
+      }
+
+      const description = parseFormattedMessage(ctx.update.message, match[0], 0);
+
+      await db.run('UPDATE list SET description = ? WHERE id = ?', [ description, itemId ]);
+
+      await ctx.reply('Описание обновлено!');
+      sendList(ctx, db);
+      return;
+    }
 
     if (ctx.session?.addItemToWishlist) {
       const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.update.message.text);
@@ -230,67 +303,11 @@ export const configureEditingModule = (bot, db) => {
         return ctx.reply('Ошибка в описании подарка. Не могу добавить');
       }
 
-      const entitiesStarts = new Map(ctx.update.message.entities.map(
-        ({ offset }, i) => [ offset, i ]),
+      const description = parseFormattedMessage(
+        ctx.update.message,
+        match[3],
+        match[1].length + match[2].length + 2,
       );
-      const entitiesEnds = new Map(ctx.update.message.entities.map(
-        ({ offset, length }, i) => [ offset + length, i ]),
-      );
-
-      let description = '';
-      const descriptionOffset = match[1].length + match[2].length + 2;
-      let isQuoteBlock = false;
-
-      for (let i = 0; i <= match[3].length; ++i) {
-        if (entitiesEnds.has(descriptionOffset + i)) {
-          const entity = ctx.update.message.entities[entitiesEnds.get(descriptionOffset + i)];
-          const markdown = MessageEntityTypeToMarkdownV2.get(entity.type);
-          if (entity.type === MessageEntityType.PRE) {
-            description += markdown[2];
-          } else {
-            description += markdown[1];
-            switch (entity.type) {
-              case MessageEntityType.TEXT_LINK:
-                description += entity.url + markdown[2];
-                break;
-              case MessageEntityType.TEXT_MENTION:
-                description += entity.user.id + markdown[2];
-                break;
-              case MessageEntityType.CUSTOM_EMOJI:
-                description += entity.custom_emoji_id + markdown[2];
-                break;
-              default:
-                break;
-            }
-          }
-          isQuoteBlock = false;
-        }
-
-        if (i === match[3].length) {
-          break;
-        }
-
-        if (entitiesStarts.has(descriptionOffset + i)) {
-          const entity = ctx.update.message.entities[entitiesStarts.get(descriptionOffset + i)];
-          description += MessageEntityTypeToMarkdownV2.get(entity.type)[0];
-          if (entity.type === MessageEntityType.PRE) {
-            description +=
-              (entity.language ?? '') + MessageEntityTypeToMarkdownV2.get(entity.type)[1];
-          }
-          isQuoteBlock = entity.type === MessageEntityType.BLOCKQUOTE;
-        }
-
-        if (isQuoteBlock && i > 0 && match[3][i - 1] === '\n') {
-          description += '>';
-        }
-
-        if (MarkdownV2SpecialCharacters.has(match[3][i])) {
-          description += `\\${match[3][i]}`;
-        } else {
-          description += match[3][i];
-        }
-
-      }
 
       await db.run(
         'INSERT INTO list (priority, name, description, state) VALUES (?, ?, ?, 0)',
