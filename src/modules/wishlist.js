@@ -8,14 +8,44 @@ import { numberToEmoji } from '../utils.js';
 
 export const sendList = async (ctx, updatePropertyKey, db) => {
   const messages = (await db.all(`
-    SELECT id, priority, name, description, description_entities, state, participants
-    FROM list LEFT JOIN (
-      SELECT listItemId, GROUP_CONCAT(username) as participants
+    SELECT id, priority, name, description, state, participants, type, offset, length, additional
+    FROM list
+    LEFT JOIN (
+      SELECT list_item_id, GROUP_CONCAT(username) as participants
       FROM participants
-      GROUP BY listItemId
-    ) as participants ON list.id = participants.listItemId
+      GROUP BY list_item_id
+    ) as participants ON list.id = participants.list_item_id
+    LEFT JOIN (
+      SELECT list_item_id, type, offset, length, additional FROM description_entities
+    ) as description_entities ON list.id = description_entities.list_item_id
   `))
-  .map((item) => ({ ...item, participants: item.participants?.split(',') ?? [] }))
+  .reduce((accum, current) => {
+    const found = accum.find(({ id }) => id === current.id);
+    if (found) {
+      found.descriptionEntities.push({
+        type: current.type,
+        offset: current.offset,
+        length: current.length,
+        ...(JSON.parse(current.additional) ?? {}),
+      });
+    } else {
+      const {
+        id, priority, name, description, state,
+        participants, type, offset, length, additional,
+      } = current;
+      accum.push({
+        id, priority, name, description, state,
+        participants: participants?.split(',') ?? [],
+        descriptionEntities: [],
+      });
+      if (!!type) {
+        accum.at(-1).descriptionEntities.push(
+          { type, offset, length, ...(JSON.parse(additional) ?? {}) },
+        );
+      }
+    }
+    return accum;
+  }, [])
   .sort((a, b) => a.priority - b.priority)
   .map((item) => {
     const stateBlock = ListItemStateToEmojiMap.get(item.state);
@@ -33,10 +63,10 @@ export const sendList = async (ctx, updatePropertyKey, db) => {
       new Format.FmtString(
         `${stateBlock} ${priorityBlock} ${item.name}\n${item.description}${participantsBlock}`,
         [
-          ...(JSON.parse(item.description_entities)?.map((entity) => ({
+          ...item.descriptionEntities.map((entity) => ({
             ...entity,
             offset: entity.offset + descriptionOffset,
-          })) ?? []),
+          })),
           { offset: nameOffset, length: item.name.length, type: 'bold' },
         ],
       ),
@@ -133,7 +163,7 @@ export const configureWishlistModule = (bot, db) => {
     const id = ctx.match[1];
     await Promise.all([
       db.run(
-        'DELETE FROM participants WHERE listItemId = ? AND username = ?',
+        'DELETE FROM participants WHERE list_item_id = ? AND username = ?',
         [ id, ctx.update.callback_query.from.username ],
       ),
       db.run(`
@@ -142,10 +172,10 @@ export const configureWishlistModule = (bot, db) => {
           FROM
             (SELECT id FROM list WHERE id = ?1) as list
             LEFT JOIN (
-              SELECT listItemId, GROUP_CONCAT(username) as participants
+              SELECT list_item_id, GROUP_CONCAT(username) as participants
               FROM participants
-              GROUP BY listItemId
-            ) as participants ON list.id = participants.listItemId
+              GROUP BY list_item_id
+            ) as participants ON list.id = participants.list_item_id
         )
         UPDATE list
         SET state = CASE WHEN EXISTS (

@@ -47,10 +47,62 @@ const cancelUpdateTemplateFunction = (ctx, sessionKeys, reply) => {
   return ctx.reply(reply);
 };
 
+const saveDescriptionEntities = async (db, itemId, entities, descriptionOffset) => {
+  const stmt = await db.prepare('INSERT INTO description_entities VALUES (?, ?, ?, ?, ?)');
+  for (const entity of entities ?? []) {
+    if (entity.offset < descriptionOffset) {
+      continue;
+    }
+    const additionalProperties = Object.entries(entity).filter(([ key ]) =>
+      ![ 'type', 'offset', 'length' ].includes(key)
+    );
+    await stmt.run(
+      itemId,
+      entity.type,
+      entity.offset - descriptionOffset,
+      entity.length,
+      JSON.stringify(
+        additionalProperties.length > 0 ? Object.fromEntries(additionalProperties) : null,
+      ),
+    );
+  }
+};
+
 const sendList = async (ctx, db) => {
-  const messages = (await db.all(
-    'SELECT id, priority, name, description, description_entities FROM list'
-  ))
+  const messages = (await db.all(`
+    SELECT id, priority, name, description, type, offset, length, additional
+    FROM list
+    LEFT JOIN (
+      SELECT list_item_id, type, offset, length, additional FROM description_entities
+    ) as description_entities ON list.id = description_entities.list_item_id
+  `))
+  .reduce((accum, current) => {
+    const found = accum.find(({ id }) => id === current.id);
+    if (found) {
+      found.descriptionEntities.push({
+        type: current.type,
+        offset: current.offset,
+        length: current.length,
+        ...(JSON.parse(current.additional) ?? {}),
+      });
+    } else {
+      const {
+        id, priority, name, description, state,
+        participants, type, offset, length, additional,
+      } = current;
+      accum.push({
+        id, priority, name, description, state,
+        participants: participants?.split(',') ?? [],
+        descriptionEntities: [],
+      });
+      if (!!type) {
+        accum.at(-1).descriptionEntities.push(
+          { type, offset, length, ...(JSON.parse(additional) ?? {}) },
+        );
+      }
+    }
+    return accum;
+  }, [])
   .sort((a, b) => a.id - b.id)
   .map((item) => {
     const idLine = `id: ${item.id}`;
@@ -63,10 +115,10 @@ const sendList = async (ctx, db) => {
       new Format.FmtString(
         `${idLine}\n${priorityAndNameLine}\n${item.description}`,
         [
-          ...(JSON.parse(item.description_entities)?.map((entity) => ({
+          ...item.descriptionEntities.map((entity) => ({
             ...entity,
             offset: entity.offset + descriptionOffset,
-          })) ?? []),
+          })),
           { offset: 0, length: idLine.length, type: 'italic' },
           { offset: nameOffset, length: item.name.length, type: 'bold' },
         ],
@@ -153,7 +205,12 @@ export const configureEditingModule = (bot, db) => {
       return;
     }
 
-    await db.run('DELETE FROM list WHERE id = ?', [ ctx.match[1] ]);
+    await Promise.all([
+      db.run('DELETE FROM description_entities WHERE list_item_id = ?', ctx.match[1]),
+      db.run('DELETE FROM participants WHERE list_item_id = ?', ctx.match[1]),
+    ]);
+    await db.run('DELETE FROM list WHERE id = ?', ctx.match[1]);
+
     await ctx.reply('Удалено!');
     sendList(ctx, db);
   });
@@ -235,10 +292,9 @@ export const configureEditingModule = (bot, db) => {
         return ctx.reply('Ошибка в описании. Не могу обновить');
       }
 
-      await db.run(
-        'UPDATE list SET description = ?, description_entities = ? WHERE id = ?',
-        [ match[0], JSON.stringify(ctx.update.message.entities), itemId ],
-      );
+      await db.run('UPDATE list SET description = ? WHERE id = ?', [ match[0], itemId ]);
+      await db.run('DELETE FROM description_entities WHERE list_item_id = ?', itemId);
+      await saveDescriptionEntities(db, itemId, ctx.update.message.entities, 0);
 
       await ctx.reply('Описание обновлено!');
       sendList(ctx, db);
@@ -255,16 +311,12 @@ export const configureEditingModule = (bot, db) => {
 
       const descriptionOffset = match[1].length + match[2].length + 2;
 
-      await db.run(
-        'INSERT INTO list (priority, name, description, description_entities, state) VALUES (?, ?, ?, ?, 0)',
-        [
-          ...match.slice(1),
-          JSON.stringify(ctx.update.message.entities
-            .filter(({ offset }) => offset >= descriptionOffset)
-            .map((entity) => ({ ...entity, offset: entity.offset - descriptionOffset }))
-          ),
-        ],
+      const { lastID } = await db.run(
+        'INSERT INTO list (priority, name, description, state) VALUES (?, ?, ?, 0)',
+        match.slice(1),
       );
+
+      await saveDescriptionEntities(db, lastID, ctx.update.message.entities, descriptionOffset);
 
       await ctx.reply('Добавлено!');
       sendList(ctx, db);
@@ -279,8 +331,12 @@ export const configureEditingModule = (bot, db) => {
         return ctx.reply('Не могу найти ни одного id');
       }
 
-      await db.run('DELETE FROM participants');
-      await db.run(`DELETE FROM list WHERE id IN (${ids})`);
+      const idsPlaceholders = new Array(ids.length).fill('?').join(', ');
+      await Promise.all([
+        db.run(`DELETE FROM description_entities WHERE list_item_id IN (${idsPlaceholders})`, ids),
+        db.run(`DELETE FROM participants WHERE list_item_id IN (${idsPlaceholders})`, ids),
+      ]);
+      await db.run(`DELETE FROM list WHERE id IN (${idsPlaceholders})`, ids);
 
       await ctx.reply('Список очищен!');
       sendList(ctx, db);
