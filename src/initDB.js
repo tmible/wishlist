@@ -12,6 +12,7 @@ await db.run(`CREATE TABLE list (
   priority INTEGER NOT NULL,
   name TEXT NOT NULL,
   description TEXT DEFAULT "" NOT NULL,
+  description_entities TEXT,
   state INTEGER CHECK (state IN (0, 1, 2)) NOT NULL
 )`);
 await db.run(`CREATE TABLE participants (

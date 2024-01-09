@@ -1,4 +1,4 @@
-import { Markup } from 'telegraf';
+import { Format, Markup } from 'telegraf';
 import {
   ListItemState,
   ListItemStateToEmojiMap,
@@ -8,7 +8,7 @@ import { numberToEmoji } from '../utils.js';
 
 export const sendList = async (ctx, updatePropertyKey, db) => {
   const messages = (await db.all(`
-    SELECT id, priority, name, description, state, participants
+    SELECT id, priority, name, description, description_entities, state, participants
     FROM list LEFT JOIN (
       SELECT listItemId, GROUP_CONCAT(username) as participants
       FROM participants
@@ -17,50 +17,60 @@ export const sendList = async (ctx, updatePropertyKey, db) => {
   `))
   .map((item) => ({ ...item, participants: item.participants?.split(',') ?? [] }))
   .sort((a, b) => a.priority - b.priority)
-  .map((item) => [
+  .map((item) => {
+    const stateBlock = ListItemStateToEmojiMap.get(item.state);
+    const priorityBlock = numberToEmoji(item.priority);
+    const nameOffset = `${stateBlock} ${priorityBlock} `.length;
+    const descriptionOffset = `${stateBlock} ${priorityBlock} ${item.name}\n`.length;
+    const participantsBlock =
+      item.participants.length > 0 ?
+        item.state === ListItemState.BOOKED ?
+          `\n\nзабронировал @${item.participants[0]}` :
+          `\n\nучастники: @${item.participants.join(', @')}` :
+        '';
 
-    ListItemStateToEmojiMap.get(item.state) + ' ' + numberToEmoji(item.priority) +
-    ' *' + item.name + '*\n' + item.description +
-    (item.participants.length > 0 ?
-      item.state === ListItemState.BOOKED ?
-        `\n\nзабронировал @\\${item.participants[0].split('').join('\\')}` :
-        `\n\nучастники: ${
-          item.participants.map(
-            (participant) => `@\\${participant.split('').join('\\')}`,
-          ).join(', ')
-        }` :
-      ''
-    ),
+    return [
+      new Format.FmtString(
+        `${stateBlock} ${priorityBlock} ${item.name}\n${item.description}${participantsBlock}`,
+        [
+          ...(JSON.parse(item.description_entities)?.map((entity) => ({
+            ...entity,
+            offset: entity.offset + descriptionOffset,
+          })) ?? []),
+          { offset: nameOffset, length: item.name.length, type: 'bold' },
+        ],
+      ),
 
-    Markup.inlineKeyboard([
-      ...(
-        item.state === ListItemState.FREE ?
-          [ Markup.button.callback('Забронировать', `book ${item.id}`) ] :
-          []
-      ),
-      ...(
-        item.state === ListItemState.FREE ||
-        (
-          item.state === ListItemState.COOPERATIVE &&
-          !item.participants.includes(ctx.update[updatePropertyKey].from.username)
-        ) ?
-          [ Markup.button.callback('Поучаствовать', `cooperate ${item.id}`) ] :
-          []
-      ),
-      ...(
-        (
-          item.state === ListItemState.COOPERATIVE ||
-          item.state === ListItemState.BOOKED
-        ) && item.participants.includes(ctx.update[updatePropertyKey].from.username) ?
-          [ Markup.button.callback('Отказаться', `retire ${item.id}`) ] :
-          []
-      ),
-    ]),
-  ]);
+      Markup.inlineKeyboard([
+        ...(
+          item.state === ListItemState.FREE ?
+            [ Markup.button.callback('Забронировать', `book ${item.id}`) ] :
+            []
+        ),
+        ...(
+          item.state === ListItemState.FREE ||
+          (
+            item.state === ListItemState.COOPERATIVE &&
+            !item.participants.includes(ctx.update[updatePropertyKey].from.username)
+          ) ?
+            [ Markup.button.callback('Поучаствовать', `cooperate ${item.id}`) ] :
+            []
+        ),
+        ...(
+          (
+            item.state === ListItemState.COOPERATIVE ||
+            item.state === ListItemState.BOOKED
+          ) && item.participants.includes(ctx.update[updatePropertyKey].from.username) ?
+            [ Markup.button.callback('Отказаться', `retire ${item.id}`) ] :
+            []
+        ),
+      ]),
+    ];
+  });
 
   await ctx.sendMessage('Актуальный список:');
   for (const message of messages) {
-    await ctx.replyWithMarkdownV2(...message);
+    await ctx.reply(...message);
   }
 };
 
