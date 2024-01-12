@@ -1,9 +1,7 @@
 import { Format, Markup } from 'telegraf';
-import {
-  ListItemState,
-  ListItemStateToEmojiMap,
-  TmibleId,
-} from '../constants.js';
+import { ListItemState } from '../constants/list-item-state.const.js';
+import { ListItemStateToEmojiMap } from '../constants/list-item-state-to-emoji-map.const.js';
+import { TmibleId } from '../constants/tmible-id.const.js';
 import { numberToEmoji } from '../utils.js';
 
 export const sendList = async (ctx, updatePropertyKey, db) => {

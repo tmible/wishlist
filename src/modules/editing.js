@@ -1,5 +1,5 @@
 import { Format, Markup } from 'telegraf';
-import { TmibleId } from '../constants.js';
+import { TmibleId } from '../constants/tmible-id.const.js';
 import { numberToEmoji } from '../utils.js';
 
 const updateTemplateFunction = (ctx, sessionKeys, reply) => {

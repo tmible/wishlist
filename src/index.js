@@ -2,17 +2,15 @@ import 'dotenv/config';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
 import { session, Telegraf } from 'telegraf';
+import { DefaultCommandSet } from './constants/default-command-set.const.js';
+import { DefaultHelpMessage } from './constants/default-help-message.const.js';
+import { GroupCommandSet } from './constants/group-command-set.const.js';
+import { GroupHelpMessage } from './constants/group-help-message.const.js';
+import { TmibleCommandSet } from './constants/tmible-command-set.const.js';
+import { TmibleId } from './constants/tmible-id.const.js';
 import { configureAnonymousMessagesModule } from './modules/anonymous-messages.js';
-import {
-  DefaultHelpMessage,
-  GroupHelpMessage,
-  DefaultCommandSet,
-  GroupCommandSet,
-  TmibleCommandSet,
-  TmibleId,
-} from './constants.js';
-import { sendList, configureWishlistModule } from './modules/wishlist.js';
 import { configureEditingModule } from './modules/editing.js';
+import { configureWishlistModule } from './modules/wishlist.js';
 
 const db = await open({
   filename: process.env.WISHLIST_DB_FILE_PATH,

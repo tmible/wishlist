@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf';
-import { TmibleId } from '../constants.js';
+import { TmibleId } from '../constants/tmible-id.const.js';
 
 export const configureAnonymousMessagesModule = (bot) => {
   console.log('configuring anonymous messages module');
