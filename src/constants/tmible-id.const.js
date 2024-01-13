@@ -1,1 +1,3 @@
-export const TmibleId = 455852268;
+const TmibleId = 455852268;
+
+export default TmibleId;

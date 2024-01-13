@@ -1,4 +1,4 @@
-export const DefaultCommandSet = [{
+const DefaultCommandSet = [{
   command: 'list',
   description: 'показать список',
 }, {
@@ -11,3 +11,5 @@ export const DefaultCommandSet = [{
   command: 'help',
   description: 'справка',
 }];
+
+export default DefaultCommandSet;

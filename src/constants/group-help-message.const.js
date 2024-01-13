@@ -1,4 +1,4 @@
-export const GroupHelpMessage =
+const GroupHelpMessage =
 `Этот бот может:
 \\- отправить сообщение мне \\(@tmible\\) анонимно,
 \\- прислать вам ответ от меня\\.
@@ -9,3 +9,5 @@ export const GroupHelpMessage =
 /help — справка\\.
 
 В любой непонятной ситуации можете писать мне: \\@tmible`;
+
+export default GroupHelpMessage;

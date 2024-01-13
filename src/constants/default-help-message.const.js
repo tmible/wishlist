@@ -1,4 +1,4 @@
-export const DefaultHelpMessage =
+const DefaultHelpMessage =
 `Этот бот может:
 \\- показать список желаний,
 \\- забронировать за вами позицию списка,
@@ -25,3 +25,5 @@ export const DefaultHelpMessage =
 /help — справка\\.
 
 В любой непонятной ситуации можете писать мне: \\@tmible`;
+
+export default DefaultHelpMessage;

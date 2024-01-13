@@ -1,21 +1,20 @@
 import 'dotenv/config';
-import { open } from 'sqlite';
-import sqlite3 from 'sqlite3';
 import { session, Telegraf } from 'telegraf';
-import { DefaultCommandSet } from './constants/default-command-set.const.js';
-import { DefaultHelpMessage } from './constants/default-help-message.const.js';
-import { GroupCommandSet } from './constants/group-command-set.const.js';
-import { GroupHelpMessage } from './constants/group-help-message.const.js';
-import { TmibleCommandSet } from './constants/tmible-command-set.const.js';
-import { TmibleId } from './constants/tmible-id.const.js';
-import { configureAnonymousMessagesModule } from './modules/anonymous-messages.js';
-import { configureEditingModule } from './modules/editing.js';
-import { configureWishlistModule } from './modules/wishlist.js';
+import DefaultCommandSet from 'wishlist-bot/constants/default-command-set';
+import DefaultHelpMessage from 'wishlist-bot/constants/default-help-message';
+import GroupCommandSet from 'wishlist-bot/constants/group-command-set';
+import GroupHelpMessage from 'wishlist-bot/constants/group-help-message';
+import TmibleCommandSet from 'wishlist-bot/constants/tmible-command-set';
+import TmibleId from 'wishlist-bot/constants/tmible-id';
+import AnonymousMessagesModule from 'wishlist-bot/modules/anonymous-messages';
+import EditingModule from 'wishlist-bot/modules/editing';
+import WishlistModule from 'wishlist-bot/modules/wishlist';
+import { initStore, destroyStore } from 'wishlist-bot/store';
+import configureModules from 'wishlist-bot/helpers/configure-modules';
 
-const db = await open({
-  filename: process.env.WISHLIST_DB_FILE_PATH,
-  driver: sqlite3.Database,
-});
+console.log('initializing store');
+
+await initStore();
 
 console.log('creating bot');
 
@@ -41,9 +40,11 @@ bot.help((ctx) => ctx.replyWithMarkdownV2(
   ctx.update.message.chat.type === 'group' ? GroupHelpMessage : DefaultHelpMessage
 ));
 
-configureWishlistModule(bot, db);
-configureAnonymousMessagesModule(bot);
-configureEditingModule(bot, db);
+configureModules(bot, [
+  WishlistModule,
+  AnonymousMessagesModule,
+  EditingModule,
+]);
 
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
@@ -55,14 +56,14 @@ console.log('bot started');
 
 process.once('SIGINT', async () => {
   await Promise.all([
-    db.close(),
+    destroyStore(),
     bot.stop('SIGINT'),
   ]);
   process.exit();
 });
 process.once('SIGTERM', async () => {
   await Promise.all([
-    db.close(),
+    destroyStore(),
     bot.stop('SIGTERM'),
   ]);
   process.exit();

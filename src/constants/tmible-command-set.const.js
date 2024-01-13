@@ -1,4 +1,4 @@
-export const TmibleCommandSet = [{
+const TmibleCommandSet = [{
   command: 'edit',
   description: 'редактировать список',
 }, {
@@ -26,3 +26,5 @@ export const TmibleCommandSet = [{
   command: 'cancel_answer',
   description: 'отменить отправку ответа',
 }];
+
+export default TmibleCommandSet;

@@ -1,4 +1,4 @@
-export const GroupCommandSet = [{
+const GroupCommandSet = [{
   command: 'message',
   description: 'отправить анонимное сообщение',
 }, {
@@ -8,3 +8,5 @@ export const GroupCommandSet = [{
   command: 'help',
   description: 'справка',
 }];
+
+export default GroupCommandSet;

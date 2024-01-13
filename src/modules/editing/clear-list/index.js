@@ -1,0 +1,41 @@
+import TmibleId from 'wishlist-bot/constants/tmible-id';
+import { emit } from 'wishlist-bot/store/event-bus';
+import Events from 'wishlist-bot/store/events';
+import sendList from '../helpers/send-list.js';
+
+const configure = (bot) => {
+  bot.command('clear_list', async (ctx) => {
+    if (ctx.update.message.chat.id !== TmibleId) {
+      return;
+    }
+
+    ctx.session = { ...ctx.session, clearList: true };
+    await ctx.reply(
+      'Отправьте мне список id позиций, которые нужно удалить\n' +
+      'Если передумаете, используйте команду /cancel_clear_list'
+    );
+  });
+};
+
+const messageHandler = (bot) => {
+  bot.on('message', async (ctx, next) => {
+    if (ctx.session?.clearList) {
+      const ids = ctx.update.message.text.split(/[^\d]+/).filter((id) => !!id);
+      delete ctx.session.clearList;
+
+      if (ids.length === 0) {
+        return ctx.reply('Не могу найти ни одного id');
+      }
+
+      await emit(Events.Editing.DeleteItems, ids);
+
+      await ctx.reply('Список очищен!');
+      await sendList(ctx);
+      return;
+    }
+
+    return next();
+  });
+};
+
+export default { configure, messageHandler };

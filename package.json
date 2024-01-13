@@ -1,6 +1,6 @@
 {
   "name": "wishlist-bot",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -14,6 +14,15 @@
     "url": "git+https://github.com/tmible/wishlist-bot.git"
   },
   "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./constants/*": "./src/constants/*.const.js",
+    "./helpers/*": "./src/helpers/*.js",
+    "./modules/*": "./src/modules/*/index.js",
+    "./store": "./src/store/index.js",
+    "./store/*": "./src/store/*.js",
+    "./utils/*": "./src/utils/*.js"
+  },
   "dependencies": {
     "dotenv": "^16.3.1",
     "sqlite": "^5.0.1",
