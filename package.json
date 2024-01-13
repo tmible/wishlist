@@ -1,6 +1,6 @@
 {
   "name": "wishlist-bot",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",

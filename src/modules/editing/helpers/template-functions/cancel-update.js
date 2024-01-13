@@ -1,14 +1,12 @@
 import TmibleId from 'wishlist-bot/constants/tmible-id';
 
-const cancelUpdate = async (ctx, sessionKeys, reply) => {
+const cancelUpdate = async (ctx, sessionKey, reply) => {
   if (ctx.update.message.chat.id !== TmibleId) {
     return;
   }
 
-  for (const key of sessionKeys) {
-    if (ctx.session[key]) {
-      delete ctx.session[key];
-    }
+  if (ctx.session[sessionKey]) {
+    delete ctx.session[sessionKey];
   }
 
   await ctx.reply(reply);

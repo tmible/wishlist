@@ -4,7 +4,7 @@ const configure = (bot) => {
   bot.command('cancel_update_priority', async (ctx) => {
     await cancelUpdate(
       ctx,
-      [ 'updatePriority', 'updatePriorityId' ],
+      'updatePriorityId',
       'Обновление приоритета отменено',
     );
   });

@@ -4,7 +4,7 @@ const configure = (bot) => {
   bot.command('cancel_update_description', async (ctx) => {
     await cancelUpdate(
       ctx,
-      [ 'updateDescription', 'updateDescriptionId' ],
+      'updateDescriptionId',
       'Обновление описания отменено',
     );
   });
