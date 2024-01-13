@@ -6,7 +6,7 @@ const configure = (bot) => {
       return;
     }
 
-    if (!ctx.session?.sendMessageAnonymously) {
+    if (!ctx.session.sendMessageAnonymously) {
       return;
     }
 

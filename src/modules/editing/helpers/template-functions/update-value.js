@@ -3,22 +3,20 @@ import sendList from '../send-list.js';
 
 const updateValue = async (
   ctx,
-  sessionKeys,
+  sessionKey,
   valueRegexp,
   errorMessage,
   event,
   successMessage,
 ) => {
-  if (sessionKeys.some((key) => !ctx.session?.[key])) {
+  if (!ctx.session[sessionKey]) {
     return;
   }
 
   const match = valueRegexp.exec(ctx.update.message.text);
-  const itemId = ctx.session[sessionKeys[1]];
+  const itemId = ctx.session[sessionKey];
 
-  for (const key of sessionKeys) {
-    delete ctx.session[key];
-  }
+  delete ctx.session[sessionKey];
 
   if (!match) {
     return ctx.reply(errorMessage);

@@ -6,7 +6,7 @@ const configure = (bot) => {
   bot.action(/^update_name ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
       ctx,
-      [ 'updateName', 'updateNameId' ],
+      'updateNameId',
       'Отправьте мне новое название (произвольный текст без переносов строк)\n' +
       'Если передумаете, используйте команду /cancel_update_name',
     );
@@ -17,7 +17,7 @@ const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     await updateValue(
       ctx,
-      [ 'updateName', 'updateNameId' ],
+      'updateNameId',
       /^.+$/,
       'Ошибка в названии. Не могу обновить',
       Events.Editing.UpdateItemName,

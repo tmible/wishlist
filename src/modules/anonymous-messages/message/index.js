@@ -7,7 +7,7 @@ const configure = (bot) => {
       return;
     }
 
-    ctx.session = { ...ctx.session, sendMessageAnonymously: true };
+    ctx.session.sendMessageAnonymously = true;
     return ctx.reply(`Напишите сообщение${
       ctx.update.message.chat.type === 'group' ? ' ответом на это' : ''
     }, и я анонимно отправлю его`);
@@ -16,7 +16,7 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session?.sendMessageAnonymously) {
+    if (ctx.session.sendMessageAnonymously) {
       await ctx.telegram.sendCopy(
         TmibleId,
         ctx.update.message,

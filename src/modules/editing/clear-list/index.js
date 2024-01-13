@@ -9,7 +9,7 @@ const configure = (bot) => {
       return;
     }
 
-    ctx.session = { ...ctx.session, clearList: true };
+    ctx.session.clearList = true;
     await ctx.reply(
       'Отправьте мне список id позиций, которые нужно удалить\n' +
       'Если передумаете, используйте команду /cancel_clear_list'
@@ -19,7 +19,7 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session?.clearList) {
+    if (ctx.session.clearList) {
       const ids = ctx.update.message.text.split(/[^\d]+/).filter((id) => !!id);
       delete ctx.session.clearList;
 

@@ -9,7 +9,7 @@ const configure = (bot) => {
       return;
     }
 
-    ctx.session = { ...ctx.session, addItemToWishlist: true };
+    ctx.session.addItemToWishlist = true;
     await ctx.replyWithMarkdownV2(
       'Опишите подарок в формате:\n\n' +
       'приоритет\nназвание\nописание\n\n'+
@@ -24,7 +24,7 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session?.addItemToWishlist) {
+    if (ctx.session.addItemToWishlist) {
       const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.update.message.text);
 
       delete ctx.session.addItemToWishlist;

@@ -6,7 +6,7 @@ const configure = (bot) => {
       return;
     }
 
-    if (!ctx.session?.answerChatId && !ctx.session?.answerToMessageId) {
+    if (!ctx.session.answerChatId && !ctx.session.answerToMessageId) {
       return;
     }
 

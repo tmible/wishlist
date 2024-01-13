@@ -6,7 +6,7 @@ const configure = (bot) => {
   bot.action(/^update_priority ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
       ctx,
-      [ 'updatePriority', 'updatePriorityId' ],
+      'updatePriorityId',
       'Отправьте мне новое значение приоритета (целое число больше 0)\n' +
       'Если передумаете, используйте команду /cancel_update_priority',
     );
@@ -17,7 +17,7 @@ const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     await updateValue(
       ctx,
-      [ 'updatePriority', 'updatePriorityId' ],
+      'updatePriorityId',
       /^[\d]+$/,
       'Ошибка в значении приоритета. Не могу обновить',
       Events.Editing.UpdateItemPriority,

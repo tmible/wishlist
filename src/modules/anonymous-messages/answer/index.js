@@ -1,13 +1,14 @@
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
-    ctx.session = { ...ctx.session, answerChatId: ctx.match[1], answerToMessageId: ctx.match[2] };
+    ctx.session.answerChatId = ctx.match[1];
+    ctx.session.answerToMessageId = ctx.match[2];
     return ctx.reply('Отправьте сообщение, и я перешлю его');
   });
 };
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session?.answerChatId && ctx.session?.answerToMessageId) {
+    if (ctx.session.answerChatId && ctx.session.answerToMessageId) {
       await ctx.telegram.sendMessage(
         ctx.session.answerChatId,
         'Ответ:',

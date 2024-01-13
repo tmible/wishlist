@@ -6,7 +6,7 @@ const cancelUpdate = async (ctx, sessionKeys, reply) => {
   }
 
   for (const key of sessionKeys) {
-    if (ctx.session?.[key]) {
+    if (ctx.session[key]) {
       delete ctx.session[key];
     }
   }

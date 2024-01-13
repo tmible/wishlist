@@ -7,7 +7,7 @@ const configure = (bot) => {
   bot.action(/^update_description ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
       ctx,
-      [ 'updateDescription', 'updateDescriptionId' ],
+      'updateDescriptionId',
       'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)\n' +
       'Если передумаете, используйте команду /cancel_update_description',
     );
@@ -16,11 +16,10 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session?.updateDescription && ctx.session?.updateDescriptionId) {
+    if (ctx.session.updateDescriptionId) {
       const match = /^[\s\S]+$/.exec(ctx.update.message.text);
       const itemId = ctx.session.updateDescriptionId;
 
-      delete ctx.session.updateDescription;
       delete ctx.session.updateDescriptionId;
 
       if (!match) {
