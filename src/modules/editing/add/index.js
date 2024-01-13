@@ -1,3 +1,4 @@
+import { Markup } from 'telegraf';
 import TmibleId from 'wishlist-bot/constants/tmible-id';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -13,11 +14,11 @@ const configure = (bot) => {
     await ctx.replyWithMarkdownV2(
       'Опишите подарок в формате:\n\n' +
       'приоритет\nназвание\nописание\n\n'+
-      'и я добавлю его в список\\.\n' +
-      'Если передумаете, используйте команду /cancel\\_add\n\n' +
+      'и я добавлю его в список\\.\n\n' +
       'Приоритет — целое число больше 0\n' +
       'Название — произвольный текст без переносов строк\n' +
-      'Описание — произвольный текст с переносами строк и форматированием'
+      'Описание — произвольный текст с переносами строк и форматированием',
+      Markup.inlineKeyboard([ Markup.button.callback('Отменить добавление', 'cancel_add') ]),
     );
   });
 };

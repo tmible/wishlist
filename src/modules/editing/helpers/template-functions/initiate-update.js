@@ -6,7 +6,7 @@ const initiateUpdate = async (ctx, sessionKey, reply) => {
   }
 
   ctx.session[sessionKey] = ctx.match[1];
-  await ctx.reply(reply);
+  await ctx.reply(...reply);
 };
 
 export default initiateUpdate;

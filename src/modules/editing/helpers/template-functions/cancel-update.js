@@ -1,7 +1,7 @@
 import TmibleId from 'wishlist-bot/constants/tmible-id';
 
 const cancelUpdate = async (ctx, sessionKey, reply) => {
-  if (ctx.update.message.chat.id !== TmibleId) {
+  if (ctx.update.callback_query.message.chat.id !== TmibleId) {
     return;
   }
 

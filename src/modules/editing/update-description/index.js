@@ -1,3 +1,4 @@
+import { Markup } from 'telegraf';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
@@ -8,8 +9,12 @@ const configure = (bot) => {
     await initiateUpdate(
       ctx,
       'updateDescriptionId',
-      'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)\n' +
-      'Если передумаете, используйте команду /cancel_update_description',
+      [
+        'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)',
+        Markup.inlineKeyboard([
+          Markup.button.callback('Отменить обновление описания', 'cancel_update_description'),
+        ]),
+      ],
     );
   });
 };

@@ -1,8 +1,13 @@
+import { Markup } from 'telegraf';
+
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
     ctx.session.answerChatId = ctx.match[1];
     ctx.session.answerToMessageId = ctx.match[2];
-    return ctx.reply('Отправьте сообщение, и я перешлю его');
+    return ctx.reply(
+      'Отправьте сообщение, и я перешлю его',
+      Markup.inlineKeyboard([ Markup.button.callback('Отменить отправку', 'cancel_answer') ]),
+    );
   });
 };
 
@@ -14,6 +19,7 @@ const messageHandler = (bot) => {
         'Ответ:',
         { reply_to_message_id: ctx.session.answerToMessageId },
       );
+
       await ctx.forwardMessage(
         ctx.session.answerChatId,
         ctx.update.message.chat.id,

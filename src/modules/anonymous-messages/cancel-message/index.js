@@ -1,8 +1,8 @@
 import TmibleId from 'wishlist-bot/constants/tmible-id';
 
 const configure = (bot) => {
-  bot.command('cancel_message', (ctx) => {
-    if (ctx.update.message.chat.id === TmibleId) {
+  bot.action('cancel_message', (ctx) => {
+    if (ctx.update.callback_query.message.chat.id === TmibleId) {
       return;
     }
 

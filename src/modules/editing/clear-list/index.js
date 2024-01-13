@@ -1,3 +1,4 @@
+import { Markup } from 'telegraf';
 import TmibleId from 'wishlist-bot/constants/tmible-id';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -11,8 +12,10 @@ const configure = (bot) => {
 
     ctx.session.clearList = true;
     await ctx.reply(
-      'Отправьте мне список id позиций, которые нужно удалить\n' +
-      'Если передумаете, используйте команду /cancel_clear_list'
+      'Отправьте мне список id позиций, которые нужно удалить',
+      Markup.inlineKeyboard([
+        Markup.button.callback('Отменить очищение списка', 'cancel_clear_list'),
+      ]),
     );
   });
 };

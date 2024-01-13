@@ -8,9 +8,12 @@ const configure = (bot) => {
     }
 
     ctx.session.sendMessageAnonymously = true;
-    return ctx.reply(`Напишите сообщение${
-      ctx.update.message.chat.type === 'group' ? ' ответом на это' : ''
-    }, и я анонимно отправлю его`);
+    return ctx.reply(
+      `Напишите сообщение${
+        ctx.update.message.chat.type === 'group' ? ' ответом на это' : ''
+      }, и я анонимно отправлю его`,
+      Markup.inlineKeyboard([ Markup.button.callback('Отменить отправку', 'cancel_message') ]),
+    );
   });
 };
 
