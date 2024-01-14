@@ -1,7 +1,8 @@
 import TmibleId from 'wishlist-bot/constants/tmible-id';
+import { removeLastMarkup } from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
-  bot.action('cancel_answer', (ctx) => {
+  bot.action('cancel_answer', async (ctx) => {
     if (ctx.update.callback_query.message.chat.id !== TmibleId) {
       return;
     }
@@ -10,9 +11,11 @@ const configure = (bot) => {
       return;
     }
 
+    await removeLastMarkup(ctx);
+
     delete ctx.session.answerChatId;
     delete ctx.session.answerToMessageId;
-    return ctx.reply('Отправка ответа отменена');
+    return ctx.deleteMessage();
   });
 };
 

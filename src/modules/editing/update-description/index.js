@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import { removeLastMarkup } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
@@ -22,6 +23,8 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.updateDescriptionId) {
+      await removeLastMarkup(ctx);
+
       const match = /^[\s\S]+$/.exec(ctx.update.message.text);
       const itemId = ctx.session.updateDescriptionId;
 

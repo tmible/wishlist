@@ -1,5 +1,9 @@
 import { Markup } from 'telegraf';
 import TmibleId from 'wishlist-bot/constants/tmible-id';
+import {
+  removeLastMarkup,
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
   bot.command('message', (ctx) => {
@@ -8,7 +12,9 @@ const configure = (bot) => {
     }
 
     ctx.session.sendMessageAnonymously = true;
-    return ctx.reply(
+    return sendMessageAndMarkItForMarkupRemove(
+      ctx,
+      'reply',
       `Напишите сообщение${
         ctx.update.message.chat.type === 'group' ? ' ответом на это' : ''
       }, и я анонимно отправлю его`,
@@ -20,6 +26,8 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.sendMessageAnonymously) {
+      await removeLastMarkup(ctx);
+
       await ctx.telegram.sendCopy(
         TmibleId,
         ctx.update.message,

@@ -1,5 +1,9 @@
 import { Markup } from 'telegraf';
 import TmibleId from 'wishlist-bot/constants/tmible-id';
+import {
+  removeLastMarkup,
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
@@ -11,7 +15,9 @@ const configure = (bot) => {
     }
 
     ctx.session.addItemToWishlist = true;
-    await ctx.replyWithMarkdownV2(
+    await sendMessageAndMarkItForMarkupRemove(
+      ctx,
+      'replyWithMarkdownV2',
       'Опишите подарок в формате:\n\n' +
       'приоритет\nназвание\nописание\n\n'+
       'и я добавлю его в список\\.\n\n' +
@@ -26,6 +32,8 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.addItemToWishlist) {
+      await removeLastMarkup(ctx);
+
       const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.update.message.text);
 
       delete ctx.session.addItemToWishlist;

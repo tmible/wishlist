@@ -1,10 +1,16 @@
 import { Markup } from 'telegraf';
+import {
+  removeLastMarkup,
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
     ctx.session.answerChatId = ctx.match[1];
     ctx.session.answerToMessageId = ctx.match[2];
-    return ctx.reply(
+    return sendMessageAndMarkItForMarkupRemove(
+      ctx,
+      'reply',
       'Отправьте сообщение, и я перешлю его',
       Markup.inlineKeyboard([ Markup.button.callback('Отменить отправку', 'cancel_answer') ]),
     );
@@ -14,6 +20,8 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.answerChatId && ctx.session.answerToMessageId) {
+      await removeLastMarkup(ctx);
+
       await ctx.telegram.sendMessage(
         ctx.session.answerChatId,
         'Ответ:',
