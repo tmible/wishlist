@@ -1,5 +1,4 @@
 import TmibleId from 'wishlist-bot/constants/tmible-id';
-import { removeLastMarkup } from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
   bot.action('cancel_answer', async (ctx) => {
@@ -10,8 +9,6 @@ const configure = (bot) => {
     if (!ctx.session.answerChatId && !ctx.session.answerToMessageId) {
       return;
     }
-
-    await removeLastMarkup(ctx);
 
     delete ctx.session.answerChatId;
     delete ctx.session.answerToMessageId;

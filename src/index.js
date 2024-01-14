@@ -11,6 +11,7 @@ import EditingModule from 'wishlist-bot/modules/editing';
 import WishlistModule from 'wishlist-bot/modules/wishlist';
 import { initStore, destroyStore } from 'wishlist-bot/store';
 import configureModules from 'wishlist-bot/helpers/configure-modules';
+import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/remove-markup';
 
 console.log('initializing store');
 
@@ -39,6 +40,9 @@ bot.start(async (ctx) => {
 bot.help((ctx) => ctx.replyWithMarkdownV2(
   ctx.update.message.chat.type === 'group' ? GroupHelpMessage : DefaultHelpMessage
 ));
+
+bot.on('message', removeLastMarkupMiddleware);
+bot.action(/.*/, removeLastMarkupMiddleware);
 
 configureModules(bot, [
   WishlistModule,

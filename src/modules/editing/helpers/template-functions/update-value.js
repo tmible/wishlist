@@ -1,4 +1,3 @@
-import { removeLastMarkup } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import sendList from '../send-list.js';
 
@@ -13,8 +12,6 @@ const updateValue = async (
   if (!ctx.session[sessionKey]) {
     return;
   }
-
-  await removeLastMarkup(ctx);
 
   const match = valueRegexp.exec(ctx.update.message.text);
   const itemId = ctx.session[sessionKey];

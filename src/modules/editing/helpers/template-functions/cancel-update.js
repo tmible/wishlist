@@ -7,8 +7,6 @@ const cancelUpdate = async (ctx, sessionKey, reply, deleteMessage = true) => {
 
   if (deleteMessage) {
     await ctx.deleteMessage();
-  } else {
-    await ctx.editMessageReplyMarkup();
   }
 
   if (ctx.session[sessionKey]) {

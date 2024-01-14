@@ -7,11 +7,17 @@ export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...me
   };
 };
 
-export const removeLastMarkup = async (ctx) => {
+export const removeLastMarkupMiddleware = async (ctx, next) => {
+  if (!ctx.session.messageForMarkupRemove) {
+    return next();
+  }
+
   await ctx.telegram.editMessageReplyMarkup(
     ctx.session.messageForMarkupRemove.chatId,
     ctx.session.messageForMarkupRemove.id,
   );
 
   delete ctx.session.messageForMarkupRemove;
+
+  return next();
 };

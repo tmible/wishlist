@@ -1,9 +1,6 @@
 import { Markup } from 'telegraf';
 import TmibleId from 'wishlist-bot/constants/tmible-id';
-import {
-  removeLastMarkup,
-  sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/remove-markup';
+import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
   bot.command('message', (ctx) => {
@@ -26,8 +23,6 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.sendMessageAnonymously) {
-      await removeLastMarkup(ctx);
-
       await ctx.telegram.sendCopy(
         TmibleId,
         ctx.update.message,

@@ -1,8 +1,5 @@
 import { Markup } from 'telegraf';
-import {
-  removeLastMarkup,
-  sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/remove-markup';
+import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
@@ -20,8 +17,6 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.answerChatId && ctx.session.answerToMessageId) {
-      await removeLastMarkup(ctx);
-
       await ctx.telegram.sendMessage(
         ctx.session.answerChatId,
         'Ответ:',
