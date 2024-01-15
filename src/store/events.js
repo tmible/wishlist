@@ -5,6 +5,7 @@ const Events = Object.freeze({
     BookItem: 'wishlist | book item',
     CooperateOnItem: 'wishlist | cooperate on item',
     RetireFromItem: 'wishlist | retire from item',
+    HandleOwnList: 'wishlist | handle own list',
   },
   Editing: {
     GetList: 'editing | get list',
@@ -14,6 +15,11 @@ const Events = Object.freeze({
     UpdateItemDescription: 'editing | update item description',
     SaveItemDescriptionEntities: 'editing | save item description entities',
     DeleteItems: 'editing | delete items',
+  },
+  Usernames: {
+    GetUseridByUsername: 'usernames | get userid by username',
+    CheckIfUsernameIsPresent: 'usernames | check if username is present',
+    StoreUsername: 'usernames | store username',
   },
 });
 

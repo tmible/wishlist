@@ -23,3 +23,9 @@ CREATE TABLE "description_entities" (
   "additional"	TEXT,
   FOREIGN KEY("list_item_id") REFERENCES "list" ON DELETE CASCADE
 )
+
+CREATE TABLE "usernames" (
+	"userid"	INTEGER NOT NULL,
+	"username"	TEXT,
+	PRIMARY KEY("userid")
+)

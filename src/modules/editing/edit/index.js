@@ -1,13 +1,10 @@
-import TmibleId from 'wishlist-bot/constants/tmible-id';
+import { subscribe } from 'wishlist-bot/store/event-bus';
+import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
-  bot.command('edit', async (ctx) => {
-    if (ctx.update.message.chat.id !== TmibleId) {
-      return;
-    }
-    await sendList(ctx);
-  });
+  bot.command('edit', sendList);
+  subscribe(Events.Wishlist.HandleOwnList, sendList);
 };
 
 export default { configure };

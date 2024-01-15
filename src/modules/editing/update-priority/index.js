@@ -11,7 +11,7 @@ const configure = (bot) => {
       [
         'Отправьте мне новое значение приоритета (целое число больше 0)',
         Markup.inlineKeyboard([
-          Markup.button.callback('Отменить обновление приоритета', 'cancel_update_priority'),
+          Markup.button.callback('Не обновлять приоритет', 'cancel_update_priority'),
         ]),
       ],
     );

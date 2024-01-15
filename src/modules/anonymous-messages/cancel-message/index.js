@@ -1,16 +1,12 @@
-import TmibleId from 'wishlist-bot/constants/tmible-id';
-
 const configure = (bot) => {
-  bot.action('cancel_message', async (ctx) => {
-    if (ctx.update.callback_query.message.chat.id === TmibleId) {
+  bot.action('cancel_message', (ctx) => {
+    if (!ctx.session.anonymousMessageChatId && !ctx.session.waitingForUsernameForMessage) {
       return;
     }
 
-    if (!ctx.session.sendMessageAnonymously) {
-      return;
-    }
+    delete ctx.session.anonymousMessageChatId;
+    delete ctx.session.waitingForUsernameForMessage;
 
-    delete ctx.session.sendMessageAnonymously;
     return ctx.reply('Отправка сообщения отменена');
   });
 };

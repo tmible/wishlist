@@ -4,7 +4,7 @@ import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
-  bot.action(/^cooperate (\d+)$/, async (ctx) => {
+  bot.action(/^cooperate (\d+) ([a-z0-9_]+)$/, async (ctx) => {
     const id = ctx.match[1];
 
     if ((await emit(Events.Wishlist.GetItemState, id)) !== ListItemState.BOOKED) {
@@ -14,7 +14,7 @@ const configure = (bot) => {
       await ctx.sendMessage('Уже забронировано');
     }
 
-    await sendList(ctx, 'callback_query');
+    await sendList(ctx, 'callback_query', ctx.match[2]);
   });
 };
 

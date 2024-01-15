@@ -4,7 +4,7 @@ import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
-  bot.action(/^book (\d+)$/, async (ctx) => {
+  bot.action(/^book (\d+) ([a-z0-9_]+)$/, async (ctx) => {
     const id = ctx.match[1];
 
     if ((await emit(Events.Wishlist.GetItemState, id)) === ListItemState.FREE) {
@@ -14,7 +14,7 @@ const configure = (bot) => {
       await ctx.sendMessage('Невозможно забронировать');
     }
 
-    await sendList(ctx, 'callback_query');
+    await sendList(ctx, 'callback_query', ctx.match[2]);
   });
 };
 

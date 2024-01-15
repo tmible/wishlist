@@ -1,5 +1,4 @@
 import { Markup } from 'telegraf';
-import TmibleId from 'wishlist-bot/constants/tmible-id';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -7,17 +6,13 @@ import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
   bot.command('clear_list', async (ctx) => {
-    if (ctx.update.message.chat.id !== TmibleId) {
-      return;
-    }
-
     ctx.session.clearList = true;
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
       'reply',
       'Отправьте мне список id позиций, которые нужно удалить',
       Markup.inlineKeyboard([
-        Markup.button.callback('Отменить очищение списка', 'cancel_clear_list'),
+        Markup.button.callback('Не очищать список', 'cancel_clear_list'),
       ]),
     );
   });

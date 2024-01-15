@@ -3,6 +3,7 @@ import sqlite3 from 'sqlite3';
 
 import './editing/index.js';
 import './wishlist/index.js';
+import './usernames/index.js';
 
 export let db;
 

@@ -12,7 +12,7 @@ const configure = (bot) => {
       [
         'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)',
         Markup.inlineKeyboard([
-          Markup.button.callback('Отменить обновление описания', 'cancel_update_description'),
+          Markup.button.callback('Не обновлять описание', 'cancel_update_description'),
         ]),
       ],
     );

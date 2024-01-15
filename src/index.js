@@ -4,14 +4,14 @@ import DefaultCommandSet from 'wishlist-bot/constants/default-command-set';
 import DefaultHelpMessage from 'wishlist-bot/constants/default-help-message';
 import GroupCommandSet from 'wishlist-bot/constants/group-command-set';
 import GroupHelpMessage from 'wishlist-bot/constants/group-help-message';
-import TmibleCommandSet from 'wishlist-bot/constants/tmible-command-set';
-import TmibleId from 'wishlist-bot/constants/tmible-id';
+import configureModules from 'wishlist-bot/helpers/configure-modules';
+import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/remove-markup';
 import AnonymousMessagesModule from 'wishlist-bot/modules/anonymous-messages';
 import EditingModule from 'wishlist-bot/modules/editing';
 import WishlistModule from 'wishlist-bot/modules/wishlist';
 import { initStore, destroyStore } from 'wishlist-bot/store';
-import configureModules from 'wishlist-bot/helpers/configure-modules';
-import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/remove-markup';
+import { emit } from 'wishlist-bot/store/event-bus';
+import Events from 'wishlist-bot/store/events';
 
 console.log('initializing store');
 
@@ -25,15 +25,20 @@ bot.use(session({ defaultSession: () => ({}) }));
 bot.start(async (ctx) => {
   ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }},);
   ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
-  ctx.telegram.setMyCommands(TmibleCommandSet, { scope: { type: 'chat', chat_id: TmibleId }});
 
   if (ctx.update.message.chat.type === 'group') {
     return ctx.reply('Всем привет, всем здравствуйте!');
   }
-  await ctx.sendMessage('Привет!');
-  if (ctx.update.message.chat.id === TmibleId) {
-    return;
+
+  if (!(await emit(Events.Usernames.CheckIfUsernameIsPresent, ctx.update.message.chat.id))) {
+    await emit(
+      Events.Usernames.StoreUsername,
+      ctx.update.message.chat.id,
+      ctx.update.message.chat.username ?? null,
+    );
   }
+
+  await ctx.sendMessage('Привет!');
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
 });
 

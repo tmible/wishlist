@@ -5,8 +5,8 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
-const sendList = async (ctx, updatePropertyKey) => {
-  const messages = (await emit(Events.Wishlist.GetList)).map((item) => {
+const sendList = async (ctx, updatePropertyKey, username) => {
+  const messages = (await emit(Events.Wishlist.GetList, username)).map((item) => {
     const stateBlock = ListItemStateToEmojiMap.get(item.state);
     const priorityBlock = digitToEmoji(item.priority);
     const nameOffset = `${stateBlock} ${priorityBlock} `.length;
@@ -33,7 +33,7 @@ const sendList = async (ctx, updatePropertyKey) => {
       Markup.inlineKeyboard([
         ...(
           item.state === ListItemState.FREE ?
-            [ Markup.button.callback('Забронировать', `book ${item.id}`) ] :
+            [ Markup.button.callback('Забронировать', `book ${item.id} ${username}`) ] :
             []
         ),
         ...(
@@ -42,7 +42,7 @@ const sendList = async (ctx, updatePropertyKey) => {
             item.state === ListItemState.COOPERATIVE &&
             !item.participants.includes(ctx.update[updatePropertyKey].from.username)
           ) ?
-            [ Markup.button.callback('Поучаствовать', `cooperate ${item.id}`) ] :
+            [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${username}`) ] :
             []
         ),
         ...(
@@ -50,14 +50,18 @@ const sendList = async (ctx, updatePropertyKey) => {
             item.state === ListItemState.COOPERATIVE ||
             item.state === ListItemState.BOOKED
           ) && item.participants.includes(ctx.update[updatePropertyKey].from.username) ?
-            [ Markup.button.callback('Отказаться', `retire ${item.id}`) ] :
+            [ Markup.button.callback('Отказаться', `retire ${item.id} ${username}`) ] :
             []
         ),
       ]),
     ];
   });
 
-  await ctx.sendMessage('Актуальный список:');
+  if (messages.length === 0) {
+    return ctx.sendMessage(`Список @${username} пуст`);
+  }
+
+  await ctx.sendMessage(`Актуальный список @${username}`);
   for (const message of messages) {
     await ctx.reply(...message);
   }

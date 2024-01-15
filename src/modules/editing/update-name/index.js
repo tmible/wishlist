@@ -11,7 +11,7 @@ const configure = (bot) => {
       [
         'Отправьте мне новое название (произвольный текст без переносов строк)',
         Markup.inlineKeyboard([
-          Markup.button.callback('Отменить обновление названия', 'cancel_update_name'),
+          Markup.button.callback('Не обновлять название', 'cancel_update_name'),
         ]),
       ],
     );

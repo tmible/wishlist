@@ -4,7 +4,10 @@ import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
 const sendList = async (ctx) => {
-  const messages = (await emit(Events.Editing.GetList)).map((item) => {
+  const messages = (await emit(
+    Events.Editing.GetList,
+    ctx.update.message?.chat.username || ctx.update.callback_query.message.chat.username,
+  )).map((item) => {
     const idLine = `id: ${item.id}`;
     const priorityBlock = digitToEmoji(item.priority);
     const priorityAndNameLine = `${priorityBlock} ${item.name}`;
@@ -33,7 +36,11 @@ const sendList = async (ctx) => {
     ];
   });
 
-  await ctx.sendMessage('Актуальный список:');
+  if (messages.length === 0) {
+    return ctx.reply('Ваш список пуст. Вы можете добавить в него что-нибудь с помощью команды /add');
+  }
+
+  await ctx.reply('Ваш актуальный список');
   for (const message of messages) {
     await ctx.reply(...message);
   }
