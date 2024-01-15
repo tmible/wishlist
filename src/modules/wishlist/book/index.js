@@ -9,9 +9,6 @@ const configure = (bot) => {
 
     if ((await emit(Events.Wishlist.GetItemState, id)) === ListItemState.FREE) {
       await emit(Events.Wishlist.BookItem, id, ctx.update.callback_query.from.username);
-      await ctx.sendMessage('Забронировано!');
-    } else {
-      await ctx.sendMessage('Невозможно забронировать');
     }
 
     await sendList(ctx, 'callback_query', ctx.match[2]);

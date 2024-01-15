@@ -29,8 +29,13 @@ const configure = (bot) => {
       );
     }
 
-    await sendList(ctx, 'message', username);
+    await sendList(ctx, 'message', username, false, true);
   });
+
+  bot.action(
+    /^force_list ([a-z0-9_]+)$/,
+    (ctx) => sendList(ctx, 'callback_query', ctx.match[1], true),
+  );
 };
 
 const messageHandler = (bot) => {
@@ -47,7 +52,7 @@ const messageHandler = (bot) => {
         return emit(Events.Wishlist.HandleOwnList, ctx);
       }
 
-      await sendList(ctx, 'message', username);
+      await sendList(ctx, 'message', username, false, true);
       return;
     }
 

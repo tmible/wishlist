@@ -9,9 +9,6 @@ const configure = (bot) => {
 
     if ((await emit(Events.Wishlist.GetItemState, id)) !== ListItemState.BOOKED) {
       await emit(Events.Wishlist.CooperateOnItem, id, ctx.update.callback_query.from.username);
-      await ctx.sendMessage('Вы добавлены в кооперацию!');
-    } else {
-      await ctx.sendMessage('Уже забронировано');
     }
 
     await sendList(ctx, 'callback_query', ctx.match[2]);

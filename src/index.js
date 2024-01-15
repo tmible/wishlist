@@ -20,7 +20,7 @@ await initStore();
 console.log('creating bot');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-bot.use(session({ defaultSession: () => ({}) }));
+bot.use(session({ defaultSession: () => ({ lists: {} }) }));
 
 bot.start(async (ctx) => {
   ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }},);

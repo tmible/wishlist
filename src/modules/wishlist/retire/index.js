@@ -9,7 +9,6 @@ const configure = (bot) => {
       ctx.match[1],
       ctx.update.callback_query.from.username,
     );
-    await ctx.sendMessage('Успешный отказ!');
     await sendList(ctx, 'callback_query', ctx.match[2]);
   });
 };
