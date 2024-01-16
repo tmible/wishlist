@@ -8,7 +8,6 @@ import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
 const sendList = async (
   ctx,
-  updatePropertyKey,
   username,
   shouldForceNewMessages = false,
   shouldSendNotification = false,
@@ -49,7 +48,7 @@ const sendList = async (
             item.state === ListItemState.FREE ||
             (
               item.state === ListItemState.COOPERATIVE &&
-              !item.participants.includes(ctx.update[updatePropertyKey].from.username)
+              !item.participants.includes(ctx.from.username)
             ) ?
               [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${username}`) ] :
               []
@@ -58,7 +57,7 @@ const sendList = async (
             (
               item.state === ListItemState.COOPERATIVE ||
               item.state === ListItemState.BOOKED
-            ) && item.participants.includes(ctx.update[updatePropertyKey].from.username) ?
+            ) && item.participants.includes(ctx.from.username) ?
               [ Markup.button.callback('Отказаться', `retire ${item.id} ${username}`) ] :
               []
           ),

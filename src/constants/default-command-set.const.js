@@ -9,7 +9,7 @@ const DefaultCommandSet = [{
   description: 'добавить подарок в свой список',
 }, {
   command: 'clear_list',
-  description: 'очистить свой список (удалить подаренное, очистить кооперацию)',
+  description: 'частично очистить свой список',
 }, {
   command: 'message',
   description: 'отправить анонимное сообщение',

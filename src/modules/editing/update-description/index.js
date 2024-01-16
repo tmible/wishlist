@@ -22,7 +22,7 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.updateDescriptionId) {
-      const match = /^[\s\S]+$/.exec(ctx.update.message.text);
+      const match = /^[\s\S]+$/.exec(ctx.message.text);
       const itemId = ctx.session.updateDescriptionId;
 
       delete ctx.session.updateDescriptionId;
@@ -32,12 +32,7 @@ const messageHandler = (bot) => {
       }
 
       await emit(Events.Editing.UpdateItemDescription, itemId, match[0]);
-      await emit(
-        Events.Editing.SaveItemDescriptionEntities,
-        itemId,
-        ctx.update.message.entities,
-        0,
-      );
+      await emit(Events.Editing.SaveItemDescriptionEntities, itemId, ctx.message.entities, 0);
 
       await ctx.reply('Описание обновлено!');
       await sendList(ctx);

@@ -8,10 +8,10 @@ const configure = (bot) => {
     const id = ctx.match[1];
 
     if ((await emit(Events.Wishlist.GetItemState, id)) !== ListItemState.BOOKED) {
-      await emit(Events.Wishlist.CooperateOnItem, id, ctx.update.callback_query.from.username);
+      await emit(Events.Wishlist.CooperateOnItem, id, ctx.from.username);
     }
 
-    await sendList(ctx, 'callback_query', ctx.match[2]);
+    await sendList(ctx, ctx.match[2]);
   });
 };
 

@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -6,6 +7,10 @@ import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
   bot.command('add', async (ctx) => {
+    if (isChatGroup(ctx)) {
+      return;
+    }
+
     ctx.session.addItemToWishlist = true;
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
@@ -24,7 +29,7 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.addItemToWishlist) {
-      const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.update.message.text);
+      const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.message.text);
 
       delete ctx.session.addItemToWishlist;
 
@@ -36,12 +41,12 @@ const messageHandler = (bot) => {
 
       const { lastID } = await emit(
         Events.Editing.AddItem,
-        [ ctx.update.message.chat.username, ...match.slice(1) ],
+        [ ctx.chat.username, ...match.slice(1) ],
       );
       await emit(
         Events.Editing.SaveItemDescriptionEntities,
         lastID,
-        ctx.update.message.entities,
+        ctx.message.entities,
         descriptionOffset,
       );
 

@@ -5,6 +5,8 @@ import DefaultHelpMessage from 'wishlist-bot/constants/default-help-message';
 import GroupCommandSet from 'wishlist-bot/constants/group-command-set';
 import GroupHelpMessage from 'wishlist-bot/constants/group-help-message';
 import configureModules from 'wishlist-bot/helpers/configure-modules';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
+import forcePrivacyModeMiddleware from 'wishlist-bot/helpers/force-privacy-mode';
 import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/remove-markup';
 import AnonymousMessagesModule from 'wishlist-bot/modules/anonymous-messages';
 import EditingModule from 'wishlist-bot/modules/editing';
@@ -23,19 +25,15 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.use(session({ defaultSession: () => ({ lists: {} }) }));
 
 bot.start(async (ctx) => {
-  ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }},);
-  ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
+  await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
+  await ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
 
-  if (ctx.update.message.chat.type === 'group') {
+  if (isChatGroup(ctx)) {
     return ctx.reply('Всем привет, всем здравствуйте!');
   }
 
-  if (!(await emit(Events.Usernames.CheckIfUsernameIsPresent, ctx.update.message.chat.id))) {
-    await emit(
-      Events.Usernames.StoreUsername,
-      ctx.update.message.chat.id,
-      ctx.update.message.chat.username ?? null,
-    );
+  if (!(await emit(Events.Usernames.CheckIfUsernameIsPresent, ctx.chat.id))) {
+    await emit(Events.Usernames.StoreUsername, ctx.chat.id, ctx.chat.username ?? null);
   }
 
   await ctx.sendMessage('Привет!');
@@ -43,9 +41,10 @@ bot.start(async (ctx) => {
 });
 
 bot.help((ctx) => ctx.replyWithMarkdownV2(
-  ctx.update.message.chat.type === 'group' ? GroupHelpMessage : DefaultHelpMessage
+  isChatGroup(ctx) ? GroupHelpMessage : DefaultHelpMessage
 ));
 
+bot.on('message', forcePrivacyModeMiddleware);
 bot.on('message', removeLastMarkupMiddleware);
 bot.action(/.*/, removeLastMarkupMiddleware);
 

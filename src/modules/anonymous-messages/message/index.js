@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf';
 import UsernameRegexp from 'wishlist-bot/constants/username-regexp';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -7,7 +8,7 @@ import Events from 'wishlist-bot/store/events';
 const handleAnonymousMessage = async (ctx) => {
   const chatId = await emit(
     Events.Usernames.GetUseridByUsername,
-    UsernameRegexp.exec(ctx.payload || ctx.update.message.text)[1]
+    UsernameRegexp.exec(ctx.payload || ctx.message.text)[1]
   );
 
   if (!chatId) {
@@ -16,11 +17,11 @@ const handleAnonymousMessage = async (ctx) => {
 
   ctx.session.anonymousMessageChatId = chatId;
 
-  return sendMessageAndMarkItForMarkupRemove(
+  await sendMessageAndMarkItForMarkupRemove(
     ctx,
     'reply',
     `Напишите сообщение${
-      ctx.update.message.chat.type === 'group' ? ' ответом на это' : ''
+      isChatGroup(ctx) ? ' ответом на это' : ''
     }, и я анонимно отправлю его`,
     Markup.inlineKeyboard([ Markup.button.callback('Не отправлять сообщение', 'cancel_message') ]),
   );
@@ -31,16 +32,18 @@ const configure = (bot) => {
     if (!ctx.payload) {
       ctx.session.waitingForUsernameForMessage = true;
 
-      return sendMessageAndMarkItForMarkupRemove(
+      await sendMessageAndMarkItForMarkupRemove(
         ctx,
         'reply',
         `Не указано имя пользователя. Кому вы хотите отправить анонимное сообщение?${
-          ctx.update.message.chat.type === 'group' ? '\nНапишите его ответом на это сообщение' : ''
+          isChatGroup(ctx) ? '\nНапишите его ответом на это сообщение' : ''
         }`,
         Markup.inlineKeyboard([
           Markup.button.callback('Не отправлять сообщение', 'cancel_message'),
         ]),
       );
+
+      return;
     }
 
     await handleAnonymousMessage(ctx);
@@ -57,12 +60,9 @@ const messageHandler = (bot) => {
     if (ctx.session.anonymousMessageChatId) {
       await ctx.telegram.sendCopy(
         parseInt(ctx.session.anonymousMessageChatId),
-        ctx.update.message,
+        ctx.message,
         Markup.inlineKeyboard([
-          Markup.button.callback(
-            'Ответить',
-            `answer ${ctx.update.message.chat.id} ${ctx.update.message.message_id}`,
-          ),
+          Markup.button.callback('Ответить', `answer ${ctx.chat.id} ${ctx.message.message_id}`),
         ]),
       );
 

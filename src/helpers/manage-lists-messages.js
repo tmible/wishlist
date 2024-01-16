@@ -1,37 +1,28 @@
 import { Markup } from 'telegraf';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
+import tryEditing from 'wishlist-bot/helpers/try-editing';
+import tryPinning from 'wishlist-bot/helpers/try-pinning';
 
-const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, messages, chatId) => {
-  for (let i = 0; i < messagesToEditIds.length; ++i) {
-    const messageToEditId = messagesToEditIds[i];
+const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, messages, username) => {
+  await Promise.all(messagesToEditIds.map((messageToEditId) => {
     const message = messages.find(({ listItemId }) =>
       listItemId === messageToEditId.listItemId
     )?.message;
 
-    if (!message) {
-      await ctx.deleteMessage(messageToEditId.messageId);
-      continue;
-    }
-
-    try {
-      await ctx.telegram.editMessageText(
-        chatId,
+    return !!message ?
+      tryEditing(
+        ctx.telegram,
+        'editMessageText',
+        ctx.chat.id,
         messageToEditId.messageId,
         undefined,
         message[0],
         { ...message[1], parse_mode: 'MarkdownV2' },
-      );
-    } catch(e) {
-      if (!e.message.startsWith('400: Bad Request: message is not modified')) {
-        throw e;
-      }
-    }
-  }
+      ) :
+      ctx.deleteMessage(messageToEditId.messageId);
+  }));
 
   if (shouldSendNotification) {
-    const chatUsername =
-      ctx.update.message?.chat.username || ctx.update.callback_query.message.chat.username;
-
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
       'reply',
@@ -41,9 +32,9 @@ const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, mess
           Markup.button.callback(
             'Отправить новые сообщения',
             `force_${
-              username === chatUsername ? 'own_' : ''
+              username === ctx.chat.username ? 'own_' : ''
             }list${
-              username === chatUsername ? '' : ` ${username}`
+              username === ctx.chat.username ? '' : ` ${username}`
             }`,
           ),
         ]),
@@ -51,6 +42,40 @@ const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, mess
       },
     );
   }
+};
+
+const editOutdatedMessages = (ctx, messagesToEditIds, messages, username, titleMessageText) => {
+  return Promise.all([
+    ...(ctx.session.lists[username]?.pinnedMessageId ?
+      [
+        ctx.telegram.editMessageText(
+          ctx.chat.id,
+          ctx.session.lists[username].pinnedMessageId,
+          undefined,
+          titleMessageText.replace(
+            /(А|а)ктуальный/,
+            (match, p1) => `${p1 === 'А' ? 'Н' : 'н'}еактуальный`,
+          ),
+        ),
+      ] :
+      []
+    ),
+    (messagesToEditIds ?? [])
+    .filter(({ listItemId }) => !!messages.find((message) => message.listItemId === listItemId))
+    .map(({ messageId }) => ctx.telegram.editMessageReplyMarkup(ctx.chat.id, messageId)),
+  ]);
+};
+
+const pinMessage = async (ctx, username, titleMessageText) => {
+  if (!!ctx.session.lists[username]?.pinnedMessageId) {
+    await tryPinning(ctx, 'unpinChatMessage', ctx.session.lists[username].pinnedMessageId);
+  }
+
+  const messageToPin = await ctx.reply(titleMessageText);
+
+  await tryPinning(ctx, 'pinChatMessage', messageToPin.message_id);
+
+  return messageToPin;
 };
 
 const manageListsMessages = async (
@@ -61,8 +86,6 @@ const manageListsMessages = async (
   shouldForceNewMessages = false,
   shouldSendNotification = true,
 ) => {
-  const chatId = ctx.update.message?.chat.id || ctx.update.callback_query.message.chat.id;
-
   const messagesToEditIds = ctx.session.lists[username]?.messagesToEditIds;
   if (
     !shouldForceNewMessages &&
@@ -70,22 +93,17 @@ const manageListsMessages = async (
       !messagesToEditIds?.find(({ listItemId }) => listItemId === message.listItemId)
     )
   ) {
-    await editMessages(ctx, shouldSendNotification, messagesToEditIds, messages, chatId);
+    await tryPinning(ctx, 'pinChatMessage', ctx.session.lists[username].pinnedMessageId);
+    await editMessages(ctx, shouldSendNotification, messagesToEditIds, messages, username);
     return;
   }
 
-  for (const { listItemId, messageId } of ctx.session.lists[username]?.messagesToEditIds ?? []) {
-    await ctx.telegram.editMessageReplyMarkup(chatId, messageId);
-  }
+  await editOutdatedMessages(ctx, messagesToEditIds, messages, username, titleMessageText);
 
-  if (!!ctx.session.lists[username]?.pinnedMessageId) {
-    await ctx.unpinChatMessage(ctx.session.lists[username].pinnedMessageId);
-  }
-  const messageToPin = await ctx.reply(titleMessageText);
-  await ctx.pinChatMessage(messageToPin.message_id);
+  const pinnedMessage = await pinMessage(ctx, username, titleMessageText);
 
   ctx.session.lists[username] = {
-    pinnedMessageId: messageToPin.message_id,
+    pinnedMessageId: pinnedMessage.message_id,
     messagesToEditIds: [],
   };
 

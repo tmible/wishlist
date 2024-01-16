@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -6,6 +7,10 @@ import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
   bot.command('clear_list', async (ctx) => {
+    if (isChatGroup(ctx)) {
+      return;
+    }
+
     ctx.session.clearList = true;
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
@@ -21,7 +26,7 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.clearList) {
-      const ids = ctx.update.message.text.split(/[^\d]+/).filter((id) => !!id);
+      const ids = ctx.message.text.split(/[^\d]+/).filter((id) => !!id);
       delete ctx.session.clearList;
 
       if (ids.length === 0) {

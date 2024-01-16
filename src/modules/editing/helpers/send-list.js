@@ -1,12 +1,16 @@
 import { Format, Markup } from 'telegraf';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import manageListsMessages from 'wishlist-bot/helpers/manage-lists-messages';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
 const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotification = true) => {
-  const username =
-    ctx.update.message?.chat.username || ctx.update.callback_query.message.chat.username;
+  if (isChatGroup(ctx)) {
+    return;
+  }
+
+  const username = ctx.chat.username;
 
   const messages = (await emit(Events.Editing.GetList, username)).map((item) => {
     const idLine = `id: ${item.id}`;

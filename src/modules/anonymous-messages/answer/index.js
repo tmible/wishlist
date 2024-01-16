@@ -23,11 +23,7 @@ const messageHandler = (bot) => {
         { reply_to_message_id: ctx.session.answerToMessageId },
       );
 
-      await ctx.forwardMessage(
-        ctx.session.answerChatId,
-        ctx.update.message.chat.id,
-        ctx.update.message.message_id,
-      );
+      await ctx.forwardMessage(ctx.session.answerChatId, ctx.chat.id, ctx.message.message_id);
 
       delete ctx.session.answerChatId;
       delete ctx.session.answerToMessageId;
