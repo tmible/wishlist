@@ -3,7 +3,7 @@ import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove
 import tryEditing from 'wishlist-bot/helpers/try-editing';
 import tryPinning from 'wishlist-bot/helpers/try-pinning';
 
-const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, messages, username) => {
+const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, messages, userid) => {
   await Promise.all(messagesToEditIds.map((messageToEditId) => {
     const message = messages.find(({ listItemId }) =>
       listItemId === messageToEditId.listItemId
@@ -32,25 +32,25 @@ const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, mess
           Markup.button.callback(
             'Отправить новые сообщения',
             `force_${
-              username === ctx.chat.username ? 'own_' : ''
+              userid === ctx.chat.id ? 'own_' : ''
             }list${
-              username === ctx.chat.username ? '' : ` ${username}`
+              userid === ctx.chat.id ? '' : ` ${userid}`
             }`,
           ),
         ]),
-        reply_to_message_id: ctx.session.lists[username].pinnedMessageId,
+        reply_to_message_id: ctx.session.lists[userid].pinnedMessageId,
       },
     );
   }
 };
 
-const editOutdatedMessages = (ctx, messagesToEditIds, messages, username, titleMessageText) => {
+const editOutdatedMessages = (ctx, messagesToEditIds, messages, userid, titleMessageText) => {
   return Promise.all([
-    ...(ctx.session.lists[username]?.pinnedMessageId ?
+    ...(ctx.session.lists[userid]?.pinnedMessageId ?
       [
         ctx.telegram.editMessageText(
           ctx.chat.id,
-          ctx.session.lists[username].pinnedMessageId,
+          ctx.session.lists[userid].pinnedMessageId,
           undefined,
           titleMessageText.replace(
             /(А|а)ктуальный/,
@@ -66,9 +66,9 @@ const editOutdatedMessages = (ctx, messagesToEditIds, messages, username, titleM
   ]);
 };
 
-const pinMessage = async (ctx, username, titleMessageText) => {
-  if (!!ctx.session.lists[username]?.pinnedMessageId) {
-    await tryPinning(ctx, 'unpinChatMessage', ctx.session.lists[username].pinnedMessageId);
+const pinMessage = async (ctx, userid, titleMessageText) => {
+  if (!!ctx.session.lists[userid]?.pinnedMessageId) {
+    await tryPinning(ctx, 'unpinChatMessage', ctx.session.lists[userid].pinnedMessageId);
   }
 
   const messageToPin = await ctx.reply(titleMessageText);
@@ -80,36 +80,36 @@ const pinMessage = async (ctx, username, titleMessageText) => {
 
 const manageListsMessages = async (
   ctx,
-  username,
+  userid,
   messages,
   titleMessageText,
   shouldForceNewMessages = false,
   shouldSendNotification = true,
 ) => {
-  const messagesToEditIds = ctx.session.lists[username]?.messagesToEditIds;
+  const messagesToEditIds = ctx.session.lists[userid]?.messagesToEditIds;
   if (
     !shouldForceNewMessages &&
     !messages.some((message) =>
       !messagesToEditIds?.find(({ listItemId }) => listItemId === message.listItemId)
     )
   ) {
-    await tryPinning(ctx, 'pinChatMessage', ctx.session.lists[username].pinnedMessageId);
-    await editMessages(ctx, shouldSendNotification, messagesToEditIds, messages, username);
+    await tryPinning(ctx, 'pinChatMessage', ctx.session.lists[userid].pinnedMessageId);
+    await editMessages(ctx, shouldSendNotification, messagesToEditIds, messages, userid);
     return;
   }
 
-  await editOutdatedMessages(ctx, messagesToEditIds, messages, username, titleMessageText);
+  await editOutdatedMessages(ctx, messagesToEditIds, messages, userid, titleMessageText);
 
-  const pinnedMessage = await pinMessage(ctx, username, titleMessageText);
+  const pinnedMessage = await pinMessage(ctx, userid, titleMessageText);
 
-  ctx.session.lists[username] = {
+  ctx.session.lists[userid] = {
     pinnedMessageId: pinnedMessage.message_id,
     messagesToEditIds: [],
   };
 
   for (const { listItemId, message } of messages) {
     const sentMessage = await ctx.reply(...message);
-    ctx.session.lists[username].messagesToEditIds.push({
+    ctx.session.lists[userid].messagesToEditIds.push({
       listItemId,
       messageId: sentMessage.message_id,
     });

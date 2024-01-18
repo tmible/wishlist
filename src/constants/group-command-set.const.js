@@ -1,9 +1,12 @@
 const GroupCommandSet = [{
   command: 'list',
-  description: 'показать список',
+  description: 'получить список',
 }, {
   command: 'message',
   description: 'отправить анонимное сообщение',
+}, {
+  command: 'my_nickname',
+  description: 'получить свой никнейм',
 }, {
   command: 'help',
   description: 'справка',

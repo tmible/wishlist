@@ -4,11 +4,11 @@ import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
 const configure = (bot) => {
-  bot.action(/^book (\d+) ([a-z0-9_]+)$/, async (ctx) => {
+  bot.action(/^book (\d+) ([0-9]+)$/, async (ctx) => {
     const id = ctx.match[1];
 
     if ((await emit(Events.Wishlist.GetItemState, id)) === ListItemState.FREE) {
-      await emit(Events.Wishlist.BookItem, id, ctx.from.username);
+      await emit(Events.Wishlist.BookItem, id, ctx.from.id);
     }
 
     await sendList(ctx, ctx.match[2]);

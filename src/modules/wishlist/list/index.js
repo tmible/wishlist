@@ -1,19 +1,18 @@
 import { Markup } from 'telegraf';
-import UsernameRegexp from 'wishlist-bot/constants/username-regexp';
+import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
-const handleListCommand = async (ctx, username) => {
-  const userid = await emit(Events.Usernames.GetUseridByUsername, username);
+const handleListCommand = async (ctx, userid) => {
   if (!!userid && isChatGroup(ctx) && !!(await ctx.getChatMember(userid))) {
     await ctx.reply('Этот пользователь есть в этой группе!');
     return false;
   }
 
-  if (username === ctx.from.username) {
+  if (userid === ctx.from.id) {
     if (isChatGroup(ctx)) {
       return false;
     }
@@ -26,9 +25,9 @@ const handleListCommand = async (ctx, username) => {
 
 const configure = (bot) => {
   bot.command('list', async (ctx) => {
-    const username = UsernameRegexp.exec(ctx.payload)?.[1];
+    const [ userid, username ] = await getUseridFromInput(ctx.payload);
 
-    if (!(await handleListCommand(ctx, username))) {
+    if (!(await handleListCommand(ctx, userid))) {
       return;
     }
 
@@ -49,10 +48,15 @@ const configure = (bot) => {
       return;
     }
 
-    await sendList(ctx, username, false, true);
+    await sendList(ctx, userid, username, false, true);
   });
 
-  bot.action(/^force_list ([a-z0-9_]+)$/, (ctx) => sendList(ctx, ctx.match[1], true));
+  bot.action(/^force_list ([0-9]+)$/, async (ctx) => sendList(
+    ctx,
+    ctx.match[1],
+    await emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
+    true,
+  ));
 };
 
 const messageHandler = (bot) => {
@@ -60,13 +64,13 @@ const messageHandler = (bot) => {
     if (ctx.session.waitingForUsernameForList) {
       delete ctx.session.waitingForUsernameForList;
 
-      const username = UsernameRegexp.exec(ctx.message.text)[1];
+      const [ userid, username ] = await getUseridFromInput(ctx.message.text);
 
-      if (!(await handleListCommand(ctx, username))) {
+      if (!(await handleListCommand(ctx, userid))) {
         return;
       }
 
-      await sendList(ctx, username, false, true);
+      await sendList(ctx, userid, username, false, true);
       return;
     }
 

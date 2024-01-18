@@ -1,64 +1,72 @@
 import { Format, Markup } from 'telegraf';
 import ListItemState from 'wishlist-bot/constants/list-item-state';
 import ListItemStateToEmojiMap from 'wishlist-bot/constants/list-item-state-to-emoji-map';
+import getMentionFromUseridOrUsername from 'wishlist-bot/helpers/get-mention-from-userid-or-username';
 import manageListsMessages from 'wishlist-bot/helpers/manage-lists-messages';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
+const formParticipantsBlock = (item) => {
+  const participantsMentions = item.participants.map((username, i) =>
+    getMentionFromUseridOrUsername(item.participantsIds[i], username)
+  );
+
+  if (item.participants.length === 0) {
+    return new Format.FmtString('');
+  }
+
+  return item.state === ListItemState.BOOKED ?
+    Format.join([ '\n\nзабронировал', participantsMentions[0] ], ' ') :
+    Format.join([ '\n\nучастники:', Format.join(participantsMentions, ', ') ], ' ');
+};
+
 const sendList = async (
   ctx,
+  userid,
   username,
   shouldForceNewMessages = false,
   shouldSendNotification = false,
 ) => {
-  const messages = (await emit(Events.Wishlist.GetList, username)).map((item) => {
+  const messages = (await emit(Events.Wishlist.GetList, userid)).map((item) => {
     const stateBlock = ListItemStateToEmojiMap.get(item.state);
     const priorityBlock = digitToEmoji(item.priority);
-    const nameOffset = `${stateBlock} ${priorityBlock} `.length;
-    const descriptionOffset = `${stateBlock} ${priorityBlock} ${item.name}\n`.length;
-    const participantsBlock =
-      item.participants.length > 0 ?
-        item.state === ListItemState.BOOKED ?
-          `\n\nзабронировал @${item.participants[0]}` :
-          `\n\nучастники: @${item.participants.join(', @')}` :
-        '';
+    const emojisBlock = `${stateBlock} ${priorityBlock} `;
+    const participantsBlock = formParticipantsBlock(item);
 
     return {
       listItemId: item.id,
       message: [
-        new Format.FmtString(
-          `${stateBlock} ${priorityBlock} ${item.name}\n${item.description}${participantsBlock}`,
-          [
-            ...item.descriptionEntities.map((entity) => ({
-              ...entity,
-              offset: entity.offset + descriptionOffset,
-            })),
-            { offset: nameOffset, length: item.name.length, type: 'bold' },
-          ],
-        ),
+        Format.join([
+          new Format.FmtString(
+            `${emojisBlock}${item.name}\n`,
+            [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
+          ),
+          new Format.FmtString(item.description, item.descriptionEntities),
+          participantsBlock,
+        ]),
 
         Markup.inlineKeyboard([
           ...(
             item.state === ListItemState.FREE ?
-              [ Markup.button.callback('Забронировать', `book ${item.id} ${username}`) ] :
+              [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
               []
           ),
           ...(
             item.state === ListItemState.FREE ||
             (
               item.state === ListItemState.COOPERATIVE &&
-              !item.participants.includes(ctx.from.username)
+              !item.participantsIds.includes(ctx.from.id.toString())
             ) ?
-              [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${username}`) ] :
+              [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
               []
           ),
           ...(
             (
               item.state === ListItemState.COOPERATIVE ||
               item.state === ListItemState.BOOKED
-            ) && item.participants.includes(ctx.from.username) ?
-              [ Markup.button.callback('Отказаться', `retire ${item.id} ${username}`) ] :
+            ) && item.participantsIds.includes(ctx.from.id.toString()) ?
+              [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
               []
           ),
         ]),
@@ -66,15 +74,17 @@ const sendList = async (
     };
   });
 
+  const userMention = getMentionFromUseridOrUsername(userid, username);
+
   if (messages.length === 0) {
-    return ctx.sendMessage(`Список @${username} пуст`);
+    return ctx.sendMessage(Format.join([ 'Список', userMention, 'пуст' ], ' '));
   }
 
   await manageListsMessages(
     ctx,
-    username,
+    userid,
     messages,
-    `Актуальный список @${username}`,
+    Format.join([ 'Актуальный список', userMention ], ' '),
     shouldForceNewMessages,
     shouldSendNotification,
   );

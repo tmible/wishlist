@@ -1,6 +1,6 @@
 {
   "name": "wishlist-bot",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -24,6 +24,7 @@
     "./utils/*": "./src/utils/*.js"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.3.1",
     "dotenv": "^16.3.1",
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",

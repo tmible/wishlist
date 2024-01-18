@@ -1,15 +1,12 @@
 import { Markup } from 'telegraf';
-import UsernameRegexp from 'wishlist-bot/constants/username-regexp';
+import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
 const handleAnonymousMessage = async (ctx) => {
-  const chatId = await emit(
-    Events.Usernames.GetUseridByUsername,
-    UsernameRegexp.exec(ctx.payload || ctx.message.text)[1]
-  );
+  const [ chatId ] = await getUseridFromInput(ctx.payload || ctx.message.text);
 
   if (!chatId) {
     return ctx.sendMessage('Я не могу отправить сообщение этому адресату ☹️');

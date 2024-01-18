@@ -1,6 +1,6 @@
 const DefaultCommandSet = [{
   command: 'list',
-  description: 'показать список',
+  description: 'получить список',
 }, {
   command: 'edit',
   description: 'редактировать свой список',
@@ -13,6 +13,9 @@ const DefaultCommandSet = [{
 }, {
   command: 'message',
   description: 'отправить анонимное сообщение',
+}, {
+  command: 'my_nickname',
+  description: 'получить свой никнейм',
 }, {
   command: 'help',
   description: 'справка',

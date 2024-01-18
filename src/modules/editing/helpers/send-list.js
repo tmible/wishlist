@@ -10,9 +10,9 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
     return;
   }
 
-  const username = ctx.chat.username;
+  const userid = ctx.chat.id;
 
-  const messages = (await emit(Events.Editing.GetList, username)).map((item) => {
+  const messages = (await emit(Events.Editing.GetList, userid)).map((item) => {
     const idLine = `id: ${item.id}`;
     const priorityBlock = digitToEmoji(item.priority);
     const priorityAndNameLine = `${priorityBlock} ${item.name}`;
@@ -50,7 +50,7 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
 
   await manageListsMessages(
     ctx,
-    username,
+    userid,
     messages,
     'Ваш актуальный список',
     shouldForceNewMessages,

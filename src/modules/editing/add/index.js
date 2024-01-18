@@ -41,7 +41,7 @@ const messageHandler = (bot) => {
 
       const { lastID } = await emit(
         Events.Editing.AddItem,
-        [ ctx.chat.username, ...match.slice(1) ],
+        [ ctx.from.id, ...match.slice(1) ],
       );
       await emit(
         Events.Editing.SaveItemDescriptionEntities,

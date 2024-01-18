@@ -3,7 +3,7 @@ import { db } from 'wishlist-bot/store';
 
 const addItem = (item) => {
   return db.run(
-    `INSERT INTO list (username, priority, name, description, state) VALUES (?, ?, ?, ?, ${ListItemState.FREE})`,
+    `INSERT INTO list (userid, priority, name, description, state) VALUES (?, ?, ?, ?, ${ListItemState.FREE})`,
     item,
   );
 };
