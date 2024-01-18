@@ -2,6 +2,7 @@ import { Format, Markup } from 'telegraf';
 import ListItemState from 'wishlist-bot/constants/list-item-state';
 import ListItemStateToEmojiMap from 'wishlist-bot/constants/list-item-state-to-emoji-map';
 import getMentionFromUseridOrUsername from 'wishlist-bot/helpers/get-mention-from-userid-or-username';
+import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import manageListsMessages from 'wishlist-bot/helpers/manage-lists-messages';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -19,6 +20,33 @@ const formParticipantsBlock = (item) => {
   return item.state === ListItemState.BOOKED ?
     Format.join([ '\n\nзабронировал', participantsMentions[0] ], ' ') :
     Format.join([ '\n\nучастники:', Format.join(participantsMentions, ', ') ], ' ');
+};
+
+const formReplyMarkup = (ctx, item, userid) => {
+  const bookButton = isChatGroup(ctx) || item.state === ListItemState.FREE ?
+    [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
+    [];
+
+  const cooperateButton =
+    isChatGroup(ctx) ||
+    item.state === ListItemState.FREE ||
+    (
+      item.state === ListItemState.COOPERATIVE &&
+      !item.participantsIds.includes(ctx.from.id.toString())
+    ) ?
+      [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
+      [];
+
+  const retireButton =
+    isChatGroup(ctx) ||
+    (
+      item.state !== ListItemState.FREE &&
+      item.participantsIds.includes(ctx.from.id.toString())
+    ) ?
+      [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
+      [];
+
+  return Markup.inlineKeyboard([[ ...bookButton, ...cooperateButton ], [ ...retireButton ]]);
 };
 
 const sendList = async (
@@ -46,30 +74,7 @@ const sendList = async (
           participantsBlock,
         ]),
 
-        Markup.inlineKeyboard([
-          ...(
-            item.state === ListItemState.FREE ?
-              [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
-              []
-          ),
-          ...(
-            item.state === ListItemState.FREE ||
-            (
-              item.state === ListItemState.COOPERATIVE &&
-              !item.participantsIds.includes(ctx.from.id.toString())
-            ) ?
-              [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
-              []
-          ),
-          ...(
-            (
-              item.state === ListItemState.COOPERATIVE ||
-              item.state === ListItemState.BOOKED
-            ) && item.participantsIds.includes(ctx.from.id.toString()) ?
-              [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
-              []
-          ),
-        ]),
+        formReplyMarkup(ctx, item, userid),
       ],
     };
   });
