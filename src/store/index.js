@@ -1,3 +1,4 @@
+import { join } from 'node:path';
 import { open } from 'sqlite';
 import sqlite3 from 'sqlite3';
 
@@ -12,6 +13,8 @@ export const initStore = async () => {
     filename: process.env.WISHLIST_DB_FILE_PATH,
     driver: sqlite3.Database,
   });
+
+  await db.migrate({ migrationsPath: join(process.cwd(), 'db-migrations') });
 };
 
 export const destroyStore = () => {

@@ -1,13 +1,12 @@
 {
   "name": "wishlist-bot",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
     "start:bg": "forever start --uid \"wishlist-bot\" ./src/index.js",
     "restart:bg": "forever restart wishlist-bot",
-    "stop:bg": "forever stop wishlist-bot",
-    "initDB": "node ./src/initDB.js"
+    "stop:bg": "forever stop wishlist-bot"
   },
   "repository": {
     "type": "git",
