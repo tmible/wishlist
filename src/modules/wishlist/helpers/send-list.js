@@ -62,21 +62,18 @@ const sendList = async (
     const emojisBlock = `${stateBlock} ${priorityBlock} `;
     const participantsBlock = formParticipantsBlock(item);
 
-    return {
-      listItemId: item.id,
-      message: [
-        Format.join([
-          new Format.FmtString(
-            `${emojisBlock}${item.name}\n`,
-            [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
-          ),
-          new Format.FmtString(item.description, item.descriptionEntities),
-          participantsBlock,
-        ]),
+    return [
+      Format.join([
+        new Format.FmtString(
+          `${emojisBlock}${item.name}\n`,
+          [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
+        ),
+        new Format.FmtString(item.description, item.descriptionEntities),
+        participantsBlock,
+      ]),
 
-        formReplyMarkup(ctx, item, userid),
-      ],
-    };
+      formReplyMarkup(ctx, item, userid),
+    ];
   });
 
   const userMention = getMentionFromUseridOrUsername(userid, username);
@@ -90,6 +87,7 @@ const sendList = async (
     userid,
     messages,
     Format.join([ 'Актуальный список', userMention ], ' '),
+    Format.join([ 'Неактуальный список', userMention ], ' '),
     shouldForceNewMessages,
     shouldSendNotification,
   );

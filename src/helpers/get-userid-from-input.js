@@ -3,11 +3,13 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
 const getUseridFromInput = async (input) => {
-  const [ _, userid, username ] = UseridOrUsernameRegexp.exec(input);
+  const match = UseridOrUsernameRegexp.exec(input);
 
-  if (!userid && !username) {
-    return null;
+  if (!match) {
+    return [ null, null ];
   }
+
+  const [ _, userid, username ] = match;
 
   let usernameFromStore;
   if (!!userid) {

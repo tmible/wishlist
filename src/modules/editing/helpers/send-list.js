@@ -19,29 +19,26 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
     const nameOffset = `${idLine}\n${priorityBlock} `.length;
     const descriptionOffset = `${idLine}\n${priorityAndNameLine}\n`.length;
 
-    return {
-      listItemId: item.id,
-      message: [
-        new Format.FmtString(
-          `${idLine}\n${priorityAndNameLine}\n${item.description}`,
-          [
-            ...item.descriptionEntities.map((entity) => ({
-              ...entity,
-              offset: entity.offset + descriptionOffset,
-            })),
-            { offset: 0, length: idLine.length, type: 'italic' },
-            { offset: nameOffset, length: item.name.length, type: 'bold' },
-          ],
-        ),
+    return [
+      new Format.FmtString(
+        `${idLine}\n${priorityAndNameLine}\n${item.description}`,
+        [
+          ...item.descriptionEntities.map((entity) => ({
+            ...entity,
+            offset: entity.offset + descriptionOffset,
+          })),
+          { offset: 0, length: idLine.length, type: 'italic' },
+          { offset: nameOffset, length: item.name.length, type: 'bold' },
+        ],
+      ),
 
-        Markup.inlineKeyboard([
-          [ Markup.button.callback('Изменить приоритет', `update_priority ${item.id}`) ],
-          [ Markup.button.callback('Изменить название', `update_name ${item.id}`) ],
-          [ Markup.button.callback('Изменить описание', `update_description ${item.id}`) ],
-          [ Markup.button.callback('Удалить', `delete ${item.id}`) ],
-        ]),
-      ],
-    };
+      Markup.inlineKeyboard([
+        [ Markup.button.callback('Изменить приоритет', `update_priority ${item.id}`) ],
+        [ Markup.button.callback('Изменить название', `update_name ${item.id}`) ],
+        [ Markup.button.callback('Изменить описание', `update_description ${item.id}`) ],
+        [ Markup.button.callback('Удалить', `delete ${item.id}`) ],
+      ]),
+    ];
   });
 
   if (messages.length === 0) {
@@ -53,6 +50,7 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
     userid,
     messages,
     'Ваш актуальный список',
+    'Ваш неактуальный список',
     shouldForceNewMessages,
     shouldSendNotification,
   );

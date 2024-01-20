@@ -4,22 +4,21 @@ import tryEditing from 'wishlist-bot/helpers/try-editing';
 import tryPinning from 'wishlist-bot/helpers/try-pinning';
 
 const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, messages, userid) => {
-  await Promise.all(messagesToEditIds.map((messageToEditId) => {
-    const message = messages.find(({ listItemId }) =>
-      listItemId === messageToEditId.listItemId
-    )?.message;
+  await Promise.all(messagesToEditIds.map((messageToEditId, i) => {
+    if (i >= messages.length) {
+      return ctx.deleteMessage(messageToEditId);
+    }
 
-    return !!message ?
-      tryEditing(
-        ctx.telegram,
-        'editMessageText',
-        ctx.chat.id,
-        messageToEditId.messageId,
-        undefined,
-        message[0],
-        { ...message[1], parse_mode: 'MarkdownV2' },
-      ) :
-      ctx.deleteMessage(messageToEditId.messageId);
+    const message = messages[i];
+
+    return tryEditing(
+      ctx.telegram,
+      'editMessageText',
+      ctx.chat.id,
+      messageToEditId,
+      undefined,
+      ...message,
+    );
   }));
 
   if (shouldSendNotification) {
@@ -44,7 +43,13 @@ const editMessages = async (ctx, shouldSendNotification, messagesToEditIds, mess
   }
 };
 
-const editOutdatedMessages = (ctx, messagesToEditIds, messages, userid, titleMessageText) => {
+const editOutdatedMessages = (
+  ctx,
+  messagesToEditIds,
+  messages,
+  userid,
+  outdatedTitleMessageText,
+) => {
   return Promise.all([
     ...(ctx.session.lists[userid]?.pinnedMessageId ?
       [
@@ -52,17 +57,14 @@ const editOutdatedMessages = (ctx, messagesToEditIds, messages, userid, titleMes
           ctx.chat.id,
           ctx.session.lists[userid].pinnedMessageId,
           undefined,
-          titleMessageText.replace(
-            /(А|а)ктуальный/,
-            (match, p1) => `${p1 === 'А' ? 'Н' : 'н'}еактуальный`,
-          ),
+          outdatedTitleMessageText,
         ),
       ] :
       []
     ),
-    (messagesToEditIds ?? [])
-    .filter(({ listItemId }) => !!messages.find((message) => message.listItemId === listItemId))
-    .map(({ messageId }) => ctx.telegram.editMessageReplyMarkup(ctx.chat.id, messageId)),
+    (messagesToEditIds ?? []).map((messagesToEditId) =>
+      ctx.telegram.editMessageReplyMarkup(ctx.chat.id, messagesToEditId)
+    ),
   ]);
 };
 
@@ -83,22 +85,22 @@ const manageListsMessages = async (
   userid,
   messages,
   titleMessageText,
+  outdatedTitleMessageText,
   shouldForceNewMessages = false,
   shouldSendNotification = true,
 ) => {
   const messagesToEditIds = ctx.session.lists[userid]?.messagesToEditIds;
   if (
     !shouldForceNewMessages &&
-    !messages.some((message) =>
-      !messagesToEditIds?.find(({ listItemId }) => listItemId === message.listItemId)
-    )
+    (messagesToEditIds?.length ?? -1) >= messages.length
   ) {
     await tryPinning(ctx, 'pinChatMessage', ctx.session.lists[userid].pinnedMessageId);
     await editMessages(ctx, shouldSendNotification, messagesToEditIds, messages, userid);
+    ctx.session.lists[userid].messagesToEditIds = messagesToEditIds.slice(0, messages.length);
     return;
   }
 
-  await editOutdatedMessages(ctx, messagesToEditIds, messages, userid, titleMessageText);
+  await editOutdatedMessages(ctx, messagesToEditIds, messages, userid, outdatedTitleMessageText);
 
   const pinnedMessage = await pinMessage(ctx, userid, titleMessageText);
 
@@ -107,12 +109,9 @@ const manageListsMessages = async (
     messagesToEditIds: [],
   };
 
-  for (const { listItemId, message } of messages) {
+  for (const message of messages) {
     const sentMessage = await ctx.reply(...message);
-    ctx.session.lists[userid].messagesToEditIds.push({
-      listItemId,
-      messageId: sentMessage.message_id,
-    });
+    ctx.session.lists[userid].messagesToEditIds.push(sentMessage.message_id);
   }
 };
 
