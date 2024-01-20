@@ -38,8 +38,8 @@ const configure = (bot) => {
       await sendMessageAndMarkItForMarkupRemove(
         ctx,
         'reply',
-        `Не указано имя пользователя. Чей список вы хотите посмотреть?${
-          isChatGroup(ctx) ? '\nНапишите его ответом на это сообщение' : ''
+        `Чей список вы хотите посмотреть?\nОтправьте мне имя или идентификатор пользователя${
+          isChatGroup(ctx) ? ' ответом на это сообщение' : ''
         }`,
         Markup.inlineKeyboard([
           [ Markup.button.callback('Не смотреть список', 'cancel_list') ],

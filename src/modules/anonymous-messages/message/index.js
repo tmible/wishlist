@@ -32,8 +32,8 @@ const configure = (bot) => {
       await sendMessageAndMarkItForMarkupRemove(
         ctx,
         'reply',
-        `Не указано имя пользователя. Кому вы хотите отправить анонимное сообщение?${
-          isChatGroup(ctx) ? '\nНапишите его ответом на это сообщение' : ''
+        `Кому вы хотите отправить анонимное сообщение?\nОтправьте мне имя или идентификатор пользователя${
+          isChatGroup(ctx) ? ' ответом на это сообщение' : ''
         }`,
         Markup.inlineKeyboard([
           Markup.button.callback('Не отправлять сообщение', 'cancel_message'),
