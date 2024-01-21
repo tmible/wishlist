@@ -1,4 +1,7 @@
 const GroupCommandSet = [{
+  command: '/start',
+  description: 'перезапустить бота',
+}, {
   command: 'list',
   description: 'получить список',
 }, {

@@ -1,4 +1,7 @@
 const DefaultCommandSet = [{
+  command: '/start',
+  description: 'перезапустить бота',
+}, {
   command: 'list',
   description: 'получить список',
 }, {
