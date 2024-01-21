@@ -17,6 +17,4 @@ export const initStore = async () => {
   await db.migrate({ migrationsPath: join(process.cwd(), 'db-migrations') });
 };
 
-export const destroyStore = () => {
-  return db.close();
-};
+export const destroyStore = () => db.close();

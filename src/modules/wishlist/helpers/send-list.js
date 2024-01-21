@@ -1,9 +1,9 @@
 import { Format, Markup } from 'telegraf';
 import ListItemState from 'wishlist-bot/constants/list-item-state';
 import ListItemStateToEmojiMap from 'wishlist-bot/constants/list-item-state-to-emoji-map';
-import getMentionFromUseridOrUsername from 'wishlist-bot/helpers/get-mention-from-userid-or-username';
+import getMentionFromUseridOrUsername from 'wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import manageListsMessages from 'wishlist-bot/helpers/manage-lists-messages';
+import manageListsMessages from 'wishlist-bot/helpers/messaging/manage-lists-messages';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';

@@ -1,6 +1,8 @@
 import { Markup } from 'telegraf';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
+import {
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/middlewares/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';

@@ -1,5 +1,7 @@
 import { Markup } from 'telegraf';
-import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
+import {
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/middlewares/remove-markup';
 
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {

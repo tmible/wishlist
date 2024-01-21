@@ -1,5 +1,5 @@
 import { Format } from 'telegraf';
-import getNickname from 'wishlist-bot/helpers/get-nickname';
+import getNickname from 'wishlist-bot/utils/get-nickname';
 
 const getMentionFromUseridOrUsername = (userid, username) => {
   const mention = !!username ? `@${username}` : getNickname(parseInt(userid));

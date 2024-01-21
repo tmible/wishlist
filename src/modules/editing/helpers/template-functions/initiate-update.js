@@ -1,4 +1,6 @@
-import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
+import {
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/middlewares/remove-markup';
 
 const initiateUpdate = async (ctx, sessionKey, reply) => {
   ctx.session[sessionKey] = ctx.match[1];

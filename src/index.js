@@ -5,26 +5,34 @@ import DefaultHelpMessage from 'wishlist-bot/constants/default-help-message';
 import GroupCommandSet from 'wishlist-bot/constants/group-command-set';
 import GroupHelpMessage from 'wishlist-bot/constants/group-help-message';
 import configureModules from 'wishlist-bot/helpers/configure-modules';
-import getNickname from 'wishlist-bot/helpers/get-nickname';
+import getSessionKey from 'wishlist-bot/helpers/get-session-key';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import forcePrivacyModeMiddleware from 'wishlist-bot/helpers/force-privacy-mode';
-import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/remove-markup';
+import forcePrivacyModeMiddleware from 'wishlist-bot/helpers/middlewares/force-privacy-mode';
+import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/middlewares/remove-markup';
 import AnonymousMessagesModule from 'wishlist-bot/modules/anonymous-messages';
 import EditingModule from 'wishlist-bot/modules/editing';
 import WishlistModule from 'wishlist-bot/modules/wishlist';
+import {
+  initPersistentSession,
+  dropPersistentSession,
+  destroyPersistentSession,
+} from 'wishlist-bot/session';
 import { initStore, destroyStore } from 'wishlist-bot/store';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
+import getNickname from 'wishlist-bot/utils/get-nickname';
 
 console.log('initializing store');
-
 await initStore();
 
 console.log('creating bot');
-
 const bot = new Telegraf(process.env.BOT_TOKEN);
-bot.use(session({ defaultSession: () => ({ lists: {} }) }));
 
+console.log('initializing session');
+bot.use(session({ getSessionKey, defaultSession: () => ({}) }));
+bot.use(initPersistentSession());
+
+console.log('configuring bot');
 bot.start(async (ctx) => {
   await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
   await ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
@@ -34,6 +42,7 @@ bot.start(async (ctx) => {
   }
 
   await emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
+  await dropPersistentSession(ctx);
 
   await ctx.sendMessage('Привет!');
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
@@ -68,6 +77,7 @@ console.log('bot started');
 
 process.once('SIGINT', async () => {
   await Promise.all([
+    destroyPersistentSession(),
     destroyStore(),
     bot.stop('SIGINT'),
   ]);
@@ -75,6 +85,7 @@ process.once('SIGINT', async () => {
 });
 process.once('SIGTERM', async () => {
   await Promise.all([
+    destroyPersistentSession(),
     destroyStore(),
     bot.stop('SIGTERM'),
   ]);

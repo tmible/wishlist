@@ -1,7 +1,9 @@
 import { Markup } from 'telegraf';
 import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import { sendMessageAndMarkItForMarkupRemove } from 'wishlist-bot/helpers/remove-markup';
+import {
+  sendMessageAndMarkItForMarkupRemove,
+} from 'wishlist-bot/helpers/middlewares/remove-markup';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
