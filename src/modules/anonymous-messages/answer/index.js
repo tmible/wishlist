@@ -1,12 +1,18 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import {
   sendMessageAndMarkItForMarkupRemove,
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
 
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
-    ctx.session.answerChatId = ctx.match[1];
-    ctx.session.answerToMessageId = ctx.match[2];
+    ctx.session.messagePurpose = {
+      type: MessagePurposeType.AnonymousMessageAnswer,
+      payload: {
+        answerChatId: ctx.match[1],
+        answerToMessageId: ctx.match[2],
+      },
+    };
     return sendMessageAndMarkItForMarkupRemove(
       ctx,
       'reply',
@@ -18,17 +24,17 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.answerChatId && ctx.session.answerToMessageId) {
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageAnswer) {
+      const { answerChatId, answerToMessageId } = ctx.session.messagePurpose.payload;
       await ctx.telegram.sendMessage(
-        ctx.session.answerChatId,
+        answerChatId,
         'Ответ:',
-        { reply_to_message_id: ctx.session.answerToMessageId },
+        { reply_to_message_id: answerToMessageId },
       );
 
-      await ctx.forwardMessage(ctx.session.answerChatId, ctx.chat.id, ctx.message.message_id);
+      await ctx.forwardMessage(answerChatId, ctx.chat.id, ctx.message.message_id);
 
-      delete ctx.session.answerChatId;
-      delete ctx.session.answerToMessageId;
+      delete ctx.session.messagePurpose;
       return ctx.reply('Ответ отправлен!');
     }
 

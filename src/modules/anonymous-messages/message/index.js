@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import {
@@ -14,7 +15,10 @@ const handleAnonymousMessage = async (ctx) => {
     return ctx.sendMessage('Я не могу отправить сообщение этому адресату ☹️');
   }
 
-  ctx.session.anonymousMessageChatId = chatId;
+  ctx.session.messagePurpose = {
+    type: MessagePurposeType.AnonymousMessage,
+    payload: chatId,
+  };
 
   await sendMessageAndMarkItForMarkupRemove(
     ctx,
@@ -29,7 +33,7 @@ const handleAnonymousMessage = async (ctx) => {
 const configure = (bot) => {
   bot.command('message', async (ctx) => {
     if (!ctx.payload) {
-      ctx.session.waitingForUsernameForMessage = true;
+      ctx.session.messagePurpose = { type: MessagePurposeType.AnonymousMessageRecieverUsername };
 
       await sendMessageAndMarkItForMarkupRemove(
         ctx,
@@ -51,21 +55,21 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.waitingForUsernameForMessage) {
-      delete ctx.session.waitingForUsernameForMessage;
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageRecieverUsername) {
+      delete ctx.session.messagePurpose;
       return handleAnonymousMessage(ctx);
     }
 
-    if (ctx.session.anonymousMessageChatId) {
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessage) {
       await ctx.telegram.sendCopy(
-        parseInt(ctx.session.anonymousMessageChatId),
+        parseInt(ctx.session.messagePurpose.payload),
         ctx.message,
         Markup.inlineKeyboard([
           Markup.button.callback('Ответить', `answer ${ctx.chat.id} ${ctx.message.message_id}`),
         ]),
       );
 
-      delete ctx.session.anonymousMessageChatId;
+      delete ctx.session.messagePurpose;
       return ctx.reply('Сообщение отправлено!');
     }
 

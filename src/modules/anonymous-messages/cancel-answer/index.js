@@ -1,13 +1,8 @@
-const configure = (bot) => {
-  bot.action('cancel_answer', async (ctx) => {
-    if (!ctx.session.answerChatId && !ctx.session.answerToMessageId) {
-      return;
-    }
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
+import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
 
-    delete ctx.session.answerChatId;
-    delete ctx.session.answerToMessageId;
-    return ctx.deleteMessage();
-  });
+const configure = (bot) => {
+  bot.action('cancel_answer', (ctx) => cancelActionHandler(ctx));
 };
 
 export default { configure };

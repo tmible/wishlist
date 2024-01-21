@@ -1,11 +1,8 @@
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
+import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
+
 const configure = (bot) => {
-  bot.action('cancel_list', async (ctx) => {
-    if (!ctx.session.waitingForUsernameForList) {
-      return;
-    }
-    delete ctx.session.waitingForUsernameForList;
-    await ctx.sendMessage('Отменено');
-  });
+  bot.action('cancel_list', (ctx) => cancelActionHandler(ctx, 'Отменено', false));
 };
 
 export default { configure };

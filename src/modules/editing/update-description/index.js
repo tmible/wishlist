@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
@@ -8,7 +9,7 @@ const configure = (bot) => {
   bot.action(/^update_description ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
       ctx,
-      'updateDescriptionId',
+      MessagePurposeType.UpdateDescription,
       [
         'Отправьте мне новое описание (произвольный текст с переносами строк и форматированием)',
         Markup.inlineKeyboard([
@@ -21,11 +22,11 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.updateDescriptionId) {
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.UpdateDescription) {
       const match = /^[\s\S]+$/.exec(ctx.message.text);
-      const itemId = ctx.session.updateDescriptionId;
+      const itemId = ctx.session.messagePurpose.payload;
 
-      delete ctx.session.updateDescriptionId;
+      delete ctx.session.messagePurpose;
 
       if (!match) {
         return ctx.reply('Ошибка в описании. Не могу обновить');

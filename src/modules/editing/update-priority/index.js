@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import Events from 'wishlist-bot/store/events';
 import initiateUpdate from '../helpers/template-functions/initiate-update.js';
 import updateValue from '../helpers/template-functions/update-value.js';
@@ -7,7 +8,7 @@ const configure = (bot) => {
   bot.action(/^update_priority ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
       ctx,
-      'updatePriorityId',
+      MessagePurposeType.UpdatePriority,
       [
         'Отправьте мне новое значение приоритета (целое число больше 0)',
         Markup.inlineKeyboard([
@@ -22,7 +23,7 @@ const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     await updateValue(
       ctx,
-      'updatePriorityId',
+      MessagePurposeType.UpdatePriority,
       /^[\d]+$/,
       'Ошибка в значении приоритета. Не могу обновить',
       Events.Editing.UpdateItemPriority,

@@ -1,9 +1,7 @@
-import cancelUpdate from '../helpers/template-functions/cancel-update.js';
+import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
 
 const configure = (bot) => {
-  bot.action('cancel_update_description', async (ctx) => {
-    await cancelUpdate(ctx, 'updateDescriptionId');
-  });
+  bot.action('cancel_update_description', (ctx) => cancelActionHandler(ctx));
 };
 
 export default { configure };

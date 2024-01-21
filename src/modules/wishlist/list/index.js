@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import isUserInChat from 'wishlist-bot/helpers/is-user-in-chat';
@@ -35,7 +36,7 @@ const configure = (bot) => {
     }
 
     if (!ctx.payload) {
-      ctx.session.waitingForUsernameForList = true;
+      ctx.session.messagePurpose = { type: MessagePurposeType.WishlistOwnerUsername };
 
       await sendMessageAndMarkItForMarkupRemove(
         ctx,
@@ -64,8 +65,8 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.waitingForUsernameForList) {
-      delete ctx.session.waitingForUsernameForList;
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.WishlistOwnerUsername) {
+      delete ctx.session.messagePurpose;
 
       const [ userid, username ] = await getUseridFromInput(ctx.message.text);
 

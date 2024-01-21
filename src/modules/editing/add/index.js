@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import {
   sendMessageAndMarkItForMarkupRemove,
@@ -13,7 +14,7 @@ const configure = (bot) => {
       return;
     }
 
-    ctx.session.addItemToWishlist = true;
+    ctx.session.messagePurpose = { type: MessagePurposeType.AddItemToWishlist };
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
       'replyWithMarkdownV2',
@@ -30,10 +31,10 @@ const configure = (bot) => {
 
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.addItemToWishlist) {
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.AddItemToWishlist) {
       const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.message.text);
 
-      delete ctx.session.addItemToWishlist;
+      delete ctx.session.messagePurpose;
 
       if (!match || match.length < 4) {
         return ctx.reply('Ошибка в описании подарка. Не могу добавить');
