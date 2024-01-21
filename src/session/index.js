@@ -6,11 +6,11 @@ let db;
 export const initPersistentSession = () => {
   db = new ClassicLevel('persistent-session.db', { valueEncoding: 'json' });
 
+  let cached;
   let touched = false;
 
   return async (ctx, next) => {
     const key = getSessionKey(ctx);
-    let cached;
 
     try {
       cached = await db.get(key);
@@ -22,17 +22,18 @@ export const initPersistentSession = () => {
       cached = await db.get(key);
     }
 
-    Object.defineProperty(ctx.session, 'persistent', {
-      get: () => {
-        touched = true;
-        return cached;
-      },
-      set: (value) => {
-        touched = true;
-        cached = value;
-      },
-      configurable: true,
-    });
+    if (!Object.hasOwn(ctx.session, 'persistent')) {
+      Object.defineProperty(ctx.session, 'persistent', {
+        get: () => {
+          touched = true;
+          return cached;
+        },
+        set: (value) => {
+          touched = true;
+          cached = value;
+        },
+      });
+    }
 
     try {
       await next();
@@ -40,6 +41,7 @@ export const initPersistentSession = () => {
       if (touched) {
         await db.put(key, cached);
       }
+      touched = false;
     }
 
   };
