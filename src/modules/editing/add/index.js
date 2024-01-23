@@ -1,4 +1,7 @@
 import { Markup } from 'telegraf';
+import ItemDescriptionPattern from 'wishlist-bot/constants/item-description-pattern';
+import ItemNamePattern from 'wishlist-bot/constants/item-name-pattern';
+import ItemPriorityPattern from 'wishlist-bot/constants/item-priority-pattern';
 import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import {
@@ -32,7 +35,9 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AddItemToWishlist) {
-      const match = /^([\d]+)\n(.+)\n([\s\S]+)$/.exec(ctx.message.text);
+      const match = new RegExp(
+        `^(${ItemPriorityPattern})\n(${ItemNamePattern})\n(${ItemDescriptionPattern})$`,
+      ).exec(ctx.message.text);
 
       delete ctx.session.messagePurpose;
 
@@ -40,17 +45,11 @@ const messageHandler = (bot) => {
         return ctx.reply('Ошибка в описании подарка. Не могу добавить');
       }
 
-      const descriptionOffset = match[1].length + match[2].length + 2;
-
-      const { lastID } = await emit(
+      const itemId = emit(
         Events.Editing.AddItem,
         [ ctx.from.id, ...match.slice(1) ],
-      );
-      await emit(
-        Events.Editing.SaveItemDescriptionEntities,
-        lastID,
         ctx.message.entities,
-        descriptionOffset,
+        match[1].length + match[2].length + 2,
       );
 
       await ctx.reply('Добавлено!');

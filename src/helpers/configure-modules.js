@@ -5,7 +5,7 @@ const configureModules = (bot, modules) => {
     return module.messageHandler;
   })
   .filter((messageHandler) => !!messageHandler)
-  .forEach((messageHandler) => messageHandler(bot))
+  .forEach((messageHandler) => messageHandler(bot));
 };
 
 export default configureModules;

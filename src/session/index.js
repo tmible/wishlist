@@ -4,7 +4,7 @@ import getSessionKey from 'wishlist-bot/helpers/get-session-key';
 let db;
 
 export const initPersistentSession = () => {
-  db = new ClassicLevel('persistent-session.db', { valueEncoding: 'json' });
+  db = new ClassicLevel(process.env.PERSISTENT_SESSION_PATH, { valueEncoding: 'json' });
 
   let cached;
   let touched = false;

@@ -1,7 +1,9 @@
 import { db } from 'wishlist-bot/store';
 
-const getUseridByUsername = async (username) => {
-  return (await db.get('SELECT userid FROM usernames WHERE username = ?', username))?.userid;
-};
+let statement;
 
-export default getUseridByUsername;
+const prepare = () => statement = db.prepare('SELECT userid FROM usernames WHERE username = ?');
+
+const eventHandler = (username) => statement.get(username)?.userid;
+
+export default { eventHandler, prepare };

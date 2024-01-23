@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import ItemDescriptionPattern from 'wishlist-bot/constants/item-description-pattern';
 import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
@@ -23,7 +24,7 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.UpdateDescription) {
-      const match = /^[\s\S]+$/.exec(ctx.message.text);
+      const match = new RegExp(`^${ItemDescriptionPattern}$`).exec(ctx.message.text);
       const itemId = ctx.session.messagePurpose.payload;
 
       delete ctx.session.messagePurpose;
@@ -32,8 +33,7 @@ const messageHandler = (bot) => {
         return ctx.reply('Ошибка в описании. Не могу обновить');
       }
 
-      await emit(Events.Editing.UpdateItemDescription, itemId, match[0]);
-      await emit(Events.Editing.SaveItemDescriptionEntities, itemId, ctx.message.entities, 0);
+      emit(Events.Editing.UpdateItemDescription, itemId, match[0], ctx.message.entities);
 
       await ctx.reply('Описание обновлено!');
       await sendList(ctx);

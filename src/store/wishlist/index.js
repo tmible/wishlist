@@ -1,15 +1,24 @@
 import { subscribe } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
-import bookItem from './book-item.js';
-import cooperateOnItem from './cooperate-on-item.js';
-import getList from './get-list.js';
-import getItemState from './get-item-state.js';
-import retireFromItem from './retire-from-item.js';
+import BookItem from './book-item.js';
+import CooperateOnItem from './cooperate-on-item.js';
+import GetList from './get-list.js';
+import RetireFromItem from './retire-from-item.js';
 
-[
-  [ Events.Wishlist.GetList, getList ],
-  [ Events.Wishlist.GetItemState, getItemState ],
-  [ Events.Wishlist.BookItem, bookItem ],
-  [ Events.Wishlist.CooperateOnItem, cooperateOnItem ],
-  [ Events.Wishlist.RetireFromItem, retireFromItem ],
-].forEach(([ event, handler ]) => subscribe(event, handler));
+const configure = () => {
+  [
+    [ Events.Wishlist.GetList, GetList ],
+    [ Events.Wishlist.BookItem, BookItem ],
+    [ Events.Wishlist.CooperateOnItem, CooperateOnItem ],
+    [ Events.Wishlist.RetireFromItem, RetireFromItem ],
+  ].forEach(([ event, { eventHandler } ]) => subscribe(event, eventHandler));
+
+  [
+    GetList,
+    BookItem,
+    CooperateOnItem,
+    RetireFromItem,
+  ].forEach(({ prepare }) => prepare());
+};
+
+export default { configure };

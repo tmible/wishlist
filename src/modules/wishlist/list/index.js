@@ -29,7 +29,7 @@ const handleListCommand = async (ctx, userid) => {
 
 const configure = (bot) => {
   bot.command('list', async (ctx) => {
-    const [ userid, username ] = await getUseridFromInput(ctx.payload);
+    const [ userid, username ] = getUseridFromInput(ctx.payload);
 
     if (!(await handleListCommand(ctx, userid))) {
       return;
@@ -55,10 +55,10 @@ const configure = (bot) => {
     await sendList(ctx, userid, username, false, true);
   });
 
-  bot.action(/^force_list ([0-9]+)$/, async (ctx) => sendList(
+  bot.action(/^force_list ([0-9]+)$/, (ctx) => sendList(
     ctx,
     ctx.match[1],
-    await emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
+    emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
     true,
   ));
 };
@@ -68,7 +68,7 @@ const messageHandler = (bot) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.WishlistOwnerUsername) {
       delete ctx.session.messagePurpose;
 
-      const [ userid, username ] = await getUseridFromInput(ctx.message.text);
+      const [ userid, username ] = getUseridFromInput(ctx.message.text);
 
       if (!(await handleListCommand(ctx, userid))) {
         return;

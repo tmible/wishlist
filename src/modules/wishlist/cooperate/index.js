@@ -7,9 +7,7 @@ const configure = (bot) => {
   bot.action(/^cooperate (\d+) ([0-9]+)$/, async (ctx) => {
     const id = ctx.match[1];
 
-    if ((await emit(Events.Wishlist.GetItemState, id)) !== ListItemState.BOOKED) {
-      await emit(Events.Wishlist.CooperateOnItem, id, ctx.from.id);
-    }
+    emit(Events.Wishlist.CooperateOnItem, id, ctx.from.id);
 
     await sendList(ctx, ctx.match[2]);
   });

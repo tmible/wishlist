@@ -22,7 +22,7 @@ const updateValue = async (
     return ctx.reply(errorMessage);
   }
 
-  await emit(event, itemId, match[0]);
+  emit(event, itemId, match[0]);
 
   await ctx.reply(successMessage);
   await sendList(ctx);

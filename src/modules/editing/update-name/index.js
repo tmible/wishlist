@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import ItemNamePattern from 'wishlist-bot/constants/item-name-pattern';
 import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import Events from 'wishlist-bot/store/events';
 import initiateUpdate from '../helpers/template-functions/initiate-update.js';
@@ -24,7 +25,7 @@ const messageHandler = (bot) => {
     await updateValue(
       ctx,
       MessagePurposeType.UpdateName,
-      /^.+$/,
+      new RegExp(`^${ItemNamePattern}$`),
       'Ошибка в названии. Не могу обновить',
       Events.Editing.UpdateItemName,
       'Название обновлено!',

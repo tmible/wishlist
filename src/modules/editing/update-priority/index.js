@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import ItemPriorityPattern from 'wishlist-bot/constants/item-priority-pattern';
 import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import Events from 'wishlist-bot/store/events';
 import initiateUpdate from '../helpers/template-functions/initiate-update.js';
@@ -24,7 +25,7 @@ const messageHandler = (bot) => {
     await updateValue(
       ctx,
       MessagePurposeType.UpdatePriority,
-      /^[\d]+$/,
+      new RegExp(`^${ItemPriorityPattern}$`),
       'Ошибка в значении приоритета. Не могу обновить',
       Events.Editing.UpdateItemPriority,
       'Приоритет обновлён!',

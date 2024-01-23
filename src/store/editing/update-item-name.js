@@ -1,7 +1,9 @@
 import { db } from 'wishlist-bot/store';
 
-const updateItemName = async (itemId, name) => {
-  await db.run('UPDATE list SET name = ? WHERE id = ?', [ name, itemId ]);
-};
+let statement;
 
-export default updateItemName;
+export const prepare = () => statement = db.prepare('UPDATE list SET name = ? WHERE id = ?');
+
+const eventHandler = (itemId, name) => statement.run(name, itemId);
+
+export default { eventHandler, prepare };

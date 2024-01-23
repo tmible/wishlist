@@ -41,7 +41,7 @@ bot.start(async (ctx) => {
     return ctx.reply('Всем привет, всем здравствуйте!');
   }
 
-  await emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
+  emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
   await dropPersistentSession(ctx);
 
   await ctx.sendMessage('Привет!');
@@ -76,17 +76,17 @@ bot.launch();
 console.log('bot started');
 
 process.once('SIGINT', async () => {
+  destroyStore(),
   await Promise.all([
     destroyPersistentSession(),
-    destroyStore(),
     bot.stop('SIGINT'),
   ]);
   process.exit();
 });
 process.once('SIGTERM', async () => {
+  destroyStore(),
   await Promise.all([
     destroyPersistentSession(),
-    destroyStore(),
     bot.stop('SIGTERM'),
   ]);
   process.exit();

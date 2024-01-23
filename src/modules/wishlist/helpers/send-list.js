@@ -56,7 +56,7 @@ const sendList = async (
   shouldForceNewMessages = false,
   shouldSendNotification = false,
 ) => {
-  const messages = (await emit(Events.Wishlist.GetList, userid)).map((item) => {
+  const messages = emit(Events.Wishlist.GetList, userid).map((item) => {
     const stateBlock = ListItemStateToEmojiMap.get(item.state);
     const priorityBlock = digitToEmoji(item.priority);
     const emojisBlock = `${stateBlock} ${priorityBlock} `;

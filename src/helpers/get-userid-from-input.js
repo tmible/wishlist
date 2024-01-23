@@ -2,7 +2,7 @@ import UseridOrUsernameRegexp from 'wishlist-bot/constants/userid-or-username-re
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
-const getUseridFromInput = async (input) => {
+const getUseridFromInput = (input) => {
   const match = UseridOrUsernameRegexp.exec(input);
 
   if (!match) {
@@ -11,14 +11,9 @@ const getUseridFromInput = async (input) => {
 
   const [ _, userid, username ] = match;
 
-  let usernameFromStore;
-  if (!!userid) {
-    usernameFromStore = await emit(Events.Usernames.GetUsernameByUserid, userid);
-  }
-
   return !!userid ?
-    [ userid, usernameFromStore ] :
-    [ await emit(Events.Usernames.GetUseridByUsername, username), username ];
+    [ userid, emit(Events.Usernames.GetUsernameByUserid, userid) ] :
+    [ emit(Events.Usernames.GetUseridByUsername, username), username ];
 };
 
 export default getUseridFromInput;

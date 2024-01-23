@@ -5,11 +5,10 @@ import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import {
   sendMessageAndMarkItForMarkupRemove,
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
-import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
 const handleAnonymousMessage = async (ctx) => {
-  const [ chatId ] = await getUseridFromInput(ctx.payload || ctx.message.text);
+  const [ chatId ] = getUseridFromInput(ctx.payload || ctx.message.text);
 
   if (!chatId) {
     return ctx.sendMessage('Я не могу отправить сообщение этому адресату ☹️');

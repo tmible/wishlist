@@ -11,5 +11,5 @@ CREATE TABLE "participants" (
 	"list_item_id"	INTEGER NOT NULL,
 	"username"	TEXT NOT NULL,
 	FOREIGN KEY("list_item_id") REFERENCES "list",
-	UNIQUE("list_item_id","username")
+	UNIQUE("list_item_id", "username")
 );

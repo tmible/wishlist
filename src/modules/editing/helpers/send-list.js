@@ -12,7 +12,7 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
 
   const userid = ctx.chat.id;
 
-  const messages = (await emit(Events.Editing.GetList, userid)).map((item) => {
+  const messages = emit(Events.Editing.GetList, userid).map((item) => {
     const idLine = `id: ${item.id}`;
     const priorityBlock = digitToEmoji(item.priority);
     const priorityAndNameLine = `${priorityBlock} ${item.name}`;

@@ -36,7 +36,7 @@ const messageHandler = (bot) => {
         return ctx.reply('Не могу найти ни одного id');
       }
 
-      await emit(Events.Editing.DeleteItems, ids);
+      emit(Events.Editing.DeleteItems, ids);
 
       await ctx.reply('Список очищен!');
       await sendList(ctx);

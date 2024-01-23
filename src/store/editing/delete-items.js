@@ -1,12 +1,14 @@
 import { db } from 'wishlist-bot/store';
 
-const deleteItems = async (itemsIds) => {
+const eventHandler = (itemsIds) => {
   const idsPlaceholders = new Array(itemsIds.length).fill('?').join(', ');
-  await Promise.all([
-    db.run(`DELETE FROM description_entities WHERE list_item_id IN (${idsPlaceholders})`, itemsIds),
-    db.run(`DELETE FROM participants WHERE list_item_id IN (${idsPlaceholders})`, itemsIds),
-  ]);
-  await db.run(`DELETE FROM list WHERE id IN (${idsPlaceholders})`, itemsIds);
+  db.transaction(() =>
+    [
+      `DELETE FROM description_entities WHERE list_item_id IN (${idsPlaceholders})`,
+      `DELETE FROM participants WHERE list_item_id IN (${idsPlaceholders})`,
+      `DELETE FROM list WHERE id IN (${idsPlaceholders})`,
+    ].forEach((statement) => db.prepare(statement).run(itemsIds))
+  )();
 };
 
-export default deleteItems;
+export default { eventHandler };

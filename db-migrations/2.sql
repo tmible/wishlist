@@ -8,7 +8,7 @@ CREATE TABLE "participants" (
 	"list_item_id"	INTEGER NOT NULL,
 	"userid"	INTEGER NOT NULL,
 	FOREIGN KEY("list_item_id") REFERENCES "list",
-	UNIQUE("list_item_id","userid") ON CONFLICT IGNORE
+	UNIQUE("list_item_id", "userid") ON CONFLICT IGNORE
 );
 
 CREATE TABLE "description_entities" (

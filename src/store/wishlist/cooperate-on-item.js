@@ -1,11 +1,16 @@
 import ListItemState from 'wishlist-bot/constants/list-item-state';
 import { db } from 'wishlist-bot/store';
 
-const cooperateOnItem = (itemId, userid) => {
-  return Promise.all([
-    db.run('INSERT INTO participants VALUES (?, ?)', [ itemId, userid ]),
-    db.run('UPDATE list SET state = ? WHERE id = ?', [ ListItemState.COOPERATIVE, itemId ]),
-  ]);
+let statements;
+
+const prepare = () => statements = [
+  `INSERT INTO participants SELECT id, ? FROM list WHERE id = ? AND state != ${ListItemState.BOOKED}`,
+  `UPDATE list SET state = ${ListItemState.COOPERATIVE} WHERE id = ? AND state != ${ListItemState.BOOKED}`,
+].map((statement) => db.prepare(statement));
+
+const eventHandler = (itemId, userid) => {
+  const parameters = [[ userid, itemId ], itemId];
+  db.transaction(() => statements.forEach((statement, i) => statement.run(parameters[i])))();
 };
 
-export default cooperateOnItem;
+export default { eventHandler, prepare };
