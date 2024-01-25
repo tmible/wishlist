@@ -1,5 +1,12 @@
-import descriptionEntityKeys from 'wishlist-bot/constants/description-entity-keys';
+import DescriptionEntityKeys from 'wishlist-bot/constants/description-entity-keys';
 
+/**
+ * Обработчик списка желаний, группирующий элементы разметки элементов списка с одинаковыми идентификаторами
+ * @function descriptionEntitiesReducer
+ * @param {({ id: string; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]} accum Обработанные ранее элементы списка
+ * @param {{ id: string } & EntityBase & { additional: string } & Record<string, unknown>} current Очередной элемент списка
+ * @returns {({ id: string; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]}
+ */
 const descriptionEntitiesReducer = (accum, current) => {
   const found = accum.find(({ id }) => id === current.id);
 
@@ -16,7 +23,7 @@ const descriptionEntitiesReducer = (accum, current) => {
 
     accum.push({
       ...Object.fromEntries(
-        Object.entries(current).filter(([ key ]) => !descriptionEntityKeys.has(key)),
+        Object.entries(current).filter(([ key ]) => !DescriptionEntityKeys.has(key)),
       ),
       descriptionEntities: [],
     });

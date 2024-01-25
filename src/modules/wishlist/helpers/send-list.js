@@ -8,6 +8,13 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
+/**
+ * Формирование блока с упоминаниями забронировавего подарок пользователя
+ * или участников кооперации по подарку
+ * @function formParticipantsBlock
+ * @param {ListItem} item Элемент списка желаний
+ * @returns {FmtString} Блок с упоминаниями
+ */
 const formParticipantsBlock = (item) => {
   const participantsMentions = item.participants.map((username, i) =>
     getMentionFromUseridOrUsername(item.participantsIds[i], username)
@@ -22,6 +29,16 @@ const formParticipantsBlock = (item) => {
     Format.join([ '\n\nучастники:', Format.join(participantsMentions, ', ') ], ' ');
 };
 
+/**
+ * Формирование встроенной клавиатуры для сообщения с элементом списка желаний
+ * В групповом чате отображаются всегда все опции, иначе опции выбираются исходя из состояния
+ * подарка и участия пользователя, запрашивающего список, в подарке
+ * @function formReplyMarkup
+ * @param {Context} ctx Контекст
+ * @param {ListItem} item Элемент списка желаний
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @returns {Markup<InlineKeyboardMarkup>} Встроенная клавиатура
+ */
 const formReplyMarkup = (ctx, item, userid) => {
   const bookButton = isChatGroup(ctx) || item.state === ListItemState.FREE ?
     [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
@@ -49,6 +66,17 @@ const formReplyMarkup = (ctx, item, userid) => {
   return Markup.inlineKeyboard([[ ...bookButton, ...cooperateButton ], [ ...retireButton ]]);
 };
 
+/**
+ * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages} списка желаний пользователя,
+ * при его наличии, другим пользователям. При отсутствии желаний пользователя отправляется сообщение об этом
+ * @async
+ * @function sendList
+ * @param {Context} ctx Контекст
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {string} username Имя пользователя -- владельца списка
+ * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений (см. аргумент shouldForceNewMessages {@link manageListsMessages})
+ * @param {boolean} [shouldSendNotification=false] Признак необходимости отправки сообщения-уведомления об обновлении
+ */
 const sendList = async (
   ctx,
   userid,

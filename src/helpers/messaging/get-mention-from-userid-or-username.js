@@ -1,6 +1,13 @@
 import { Format } from 'telegraf';
 import getNickname from 'wishlist-bot/utils/get-nickname';
 
+/**
+ * Формирование упоминания пользователя по его идентификатору и/или имени
+ * @function getMentionFromUseridOrUsername
+ * @param {string} userid идентификатор пользователя
+ * @param {string} username имя пользователя
+ * @returns {FmtString} строка формата с упоминанием пользователя
+ */
 const getMentionFromUseridOrUsername = (userid, username) => {
   const mention = !!username ? `@${username}` : getNickname(parseInt(userid));
 

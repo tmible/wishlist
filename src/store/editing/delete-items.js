@@ -1,5 +1,10 @@
 import { db } from 'wishlist-bot/store';
 
+/**
+ * Удаление подарков из БД
+ * @function eventHandler
+ * @param {string[]} itemsIds Идентификаторы удаляемых подарков
+ */
 const eventHandler = (itemsIds) => {
   const idsPlaceholders = new Array(itemsIds.length).fill('?').join(', ');
   db.transaction(() =>

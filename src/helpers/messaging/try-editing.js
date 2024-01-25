@@ -1,8 +1,16 @@
 import EditMessageErrorMessage from 'wishlist-bot/constants/edit-message-error-message';
 
-const tryEditing = async (ctx, editing, ...editingArgs) => {
+/**
+ * Редактирование сообщения с учётом того, что, возможно, обновлений нет.
+ * В таком случае API Телеграма бросит ошибку и она (и только она) будет поймана
+ * @async
+ * @function tryEditing
+ * @param ctx {Context} Контекст
+ * @param editingArgs {Parameters<Telegram[editMessageText]>} Аргументы для редактирования сообщения
+ */
+const tryEditing = async (ctx, ...editingArgs) => {
   try {
-    await ctx[editing](...editingArgs);
+    await ctx.telegram.editMessageText(...editingArgs);
   } catch(e) {
     if (!e.message.startsWith(EditMessageErrorMessage)) {
       throw e;

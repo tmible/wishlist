@@ -5,6 +5,16 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
 
+/**
+ * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages}
+ * собственного списка желаний пользователя, при его наличии и при условии, что чат не групповой.
+ * При отсутствии желаний пользователя отправляется сообщение об этом
+ * @async
+ * @function sendList
+ * @param {Context} ctx Контекст
+ * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений (см. аргумент shouldForceNewMessages {@link manageListsMessages})
+ * @param {boolean} [shouldSendNotification=true] Признак необходимости отправки сообщения-уведомления об обновлении
+ */
 const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotification = true) => {
   if (isChatGroup(ctx)) {
     return;

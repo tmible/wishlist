@@ -10,6 +10,17 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
+/**
+ * Проверки возможности отправки списка желаний
+ * 1. Список желаний не отправляется в группу, если владелец списка есть в ней;
+ * 2. Собственный список желаний отправляется пользователю только не в группе;
+ *    эта проверка [выпускает]{@link emit} событие получения собственного списка и считается проваленной;
+ * @async
+ * @function handleListCommand
+ * @param {Context} ctx Контекст
+ * @param {string} [userid] Идентификатор пользователя, список желаний которого запрашивается
+ * @returns {boolean} Признак успешного прохождения всех проверок
+ */
 const handleListCommand = async (ctx, userid) => {
   if (await isUserInChat(ctx, userid)) {
     await ctx.reply('Этот пользователь есть в этой группе!');
@@ -27,6 +38,15 @@ const handleListCommand = async (ctx, userid) => {
   return true;
 };
 
+/**
+ * При получении команды /list запуск [проверок]{@link handleListCommand} и при их прохождении,
+ * если у команды нет полезной нагрузки, бот отправляет сообщение-приглашение для отправки
+ * идентификатора или имени пользователя, список желаний которого запрашивается,
+ * иначе бот [отправлает обновлённый или обновляет отправленный ранее список]{@link sendList}
+ *
+ * При вызове действия отправки списка желаний новыми сообщениями бот
+ * [отправляет список новыми сообщениями (см. аргумент shouldForceNewMessages)]{@link sendList}
+ */
 const configure = (bot) => {
   bot.command('list', async (ctx) => {
     const [ userid, username ] = getUseridFromInput(ctx.payload);
@@ -63,6 +83,12 @@ const configure = (bot) => {
   ));
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается идентификатор или имя пользователя,
+ * список желаний которого запрашивается, полученный идентификатор или имя [извлекаются]{@link getUseridFromInput} из сообщения,
+ * и, если все [проверки]{@link handleListCommand} проходятся, бот
+ * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.WishlistOwnerUsername) {

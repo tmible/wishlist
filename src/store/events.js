@@ -1,3 +1,7 @@
+/**
+ * Набор событий для [подписки на них]{@link subscribe}
+ * и [их выпуска]{@link emit} через шину событий
+ */
 const Events = Object.freeze({
   Wishlist: {
     GetList: 'wishlist | get list',

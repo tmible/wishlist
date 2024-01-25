@@ -1,5 +1,9 @@
-import descriptionEntityBaseKeys from './description-entity-base-keys.const.js';
+import DescriptionEntityBaseKeys from './description-entity-base-keys.const.js';
 
-const descriptionEntityKeys = new Set([ ...descriptionEntityBaseKeys, 'additional' ]);
+/**
+ * Множество свойств элементов разметки текста сообщения
+ * @constant {Set<string>}
+ */
+const DescriptionEntityKeys = new Set([ ...DescriptionEntityBaseKeys, 'additional' ]);
 
-export default descriptionEntityKeys;
+export default DescriptionEntityKeys;

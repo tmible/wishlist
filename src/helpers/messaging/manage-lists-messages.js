@@ -5,6 +5,20 @@ import {
   sendMessageAndMarkItForMarkupRemove,
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
 
+/**
+ * Отправляемое сообщение с элементом списка
+ * @typedef {[ FmtString, Markup<InlineKeyboardMarkup> ]} Message
+ */
+
+/**
+ * Обновление содержания сообщений с опциональной отправкой сообщения об этом
+ * @async
+ * @function editMessages
+ * @param {Context} ctx Контекст
+ * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения об обновлении
+ * @param {Message[]} messages Новые сообщения со списком
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ */
 const editMessages = async (ctx, shouldSendNotification, messages, userid) => {
   await Promise.all(
     ctx.session.persistent.lists[userid].messagesToEditIds.map((messageToEditId, i) => {
@@ -15,8 +29,7 @@ const editMessages = async (ctx, shouldSendNotification, messages, userid) => {
       const message = messages[i];
 
       return tryEditing(
-        ctx.telegram,
-        'editMessageText',
+        ctx,
         ctx.chat.id,
         messageToEditId,
         undefined,
@@ -47,7 +60,16 @@ const editMessages = async (ctx, shouldSendNotification, messages, userid) => {
   }
 };
 
-const editOutdatedMessages = (ctx, messages, userid, outdatedTitleMessageText) => {
+/**
+ * Обновление старых сообщений с элементами списка:
+ * указание неактуальности и удаление встроенной клавиатуры
+ * @async
+ * @function editOutdatedMessages
+ * @param {Context} ctx Контекст
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
+ */
+const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText) => {
   return Promise.all([
     ...(ctx.session.persistent.lists[userid]?.pinnedMessageId ?
       [
@@ -66,6 +88,15 @@ const editOutdatedMessages = (ctx, messages, userid, outdatedTitleMessageText) =
   ]);
 };
 
+/**
+ * Открепление заглавного сообщения неактуального списка (при наличии)
+ * и отправка и закрепление нового заглавного сообщения
+ * @async
+ * @function pinMessage
+ * @param {Context} ctx Контекст
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
+ */
 const pinMessage = async (ctx, userid, titleMessageText) => {
   if (!!ctx.session.persistent.lists[userid]?.pinnedMessageId) {
     await tryPinning(ctx, 'unpinChatMessage', ctx.session.persistent.lists[userid].pinnedMessageId);
@@ -78,6 +109,20 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
   return messageToPin;
 };
 
+/**
+ * Обновление списка. По умолчанию -- обновление отправленных ранее сообщений.
+ * При отсутствии возможности обновления или явном указании
+ * необходимости отправки новых сообщений -- отправка новых сообщений
+ * @async
+ * @function manageListsMessages
+ * @param {Context} ctx Контекст
+ * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {Message[]} messages Новые сообщения со списком
+ * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
+ * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
+ * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений
+ * @param {boolean} [shouldSendNotification=true] Признак необходимости отправки сообщения-уведомления об обновлении
+ */
 const manageListsMessages = async (
   ctx,
   userid,
@@ -97,7 +142,7 @@ const manageListsMessages = async (
     return;
   }
 
-  await editOutdatedMessages(ctx, messages, userid, outdatedTitleMessageText);
+  await editOutdatedMessages(ctx, userid, outdatedTitleMessageText);
 
   const pinnedMessage = await pinMessage(ctx, userid, titleMessageText);
 

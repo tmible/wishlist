@@ -1,3 +1,12 @@
+/**
+ * Отправка сообщения и отметка его для удаления встроенной клавиатуры
+ * при получении следующего обновления от пользователя
+ * @async
+ * @function sendMessageAndMarkItForMarkupRemove
+ * @param {Context} ctx Контекст
+ * @param {keyof Context} sendMethod Имя метода отправки сообщения
+ * @param {Parameters<Context[sendMethod]>} messageArgs Аргументы для отправки сообщения
+ */
 export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...messageArgs) => {
   const message = await ctx[sendMethod](...messageArgs);
 
@@ -7,6 +16,14 @@ export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...me
   };
 };
 
+/**
+ * Промежуточный обработчик, удаляющий у [отмеченного]{@link sendMessageAndMarkItForMarkupRemove}
+ * сообщения (при наличии) встроенную клавиатуру
+ * @async
+ * @function removeLastMarkupMiddleware
+ * @param {Context} ctx Контекст
+ * @param {() => Promise<void>} next Функция вызова следующего промежуточного обработчика
+ */
 export const removeLastMarkupMiddleware = async (ctx, next) => {
   if (!ctx.session.persistent.messageForMarkupRemove) {
     return next();

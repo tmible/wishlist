@@ -5,8 +5,29 @@ import WishlistModule from './wishlist/index.js';
 import EditingModule from './editing/index.js';
 import UsernamesModule from './usernames/index.js';
 
+/** @module Хранилище -- абстракция БД */
+
+/**
+ * Объект для доступа к БД
+ * @type {Database}
+ */
 export let db;
 
+/**
+ * Модули хранилища
+ * @type {Required<{ configure: Function }> & Record<string, unknown>}
+ */
+const storeModules = [
+  WishlistModule,
+  EditingModule,
+  UsernamesModule,
+];
+
+/**
+ * Миграции БД
+ * @async
+ * @function migrate
+ */
 const migrate = async () => {
   const userVersion = db.pragma('user_version', { simple: true });
   const migrations = await readdir(process.env.WISHLIST_DB_MIGRATIONS_PATH);
@@ -19,14 +40,18 @@ const migrate = async () => {
   }
 };
 
+/**
+ * Создание подключения к БД, [миграции БД]{@link migrate} и настройка модулей хранилища
+ * @function initStore
+ */
 export const initStore = async () => {
   db = new Database(process.env.WISHLIST_DB_FILE_PATH);
   await migrate();
-  [
-    WishlistModule,
-    EditingModule,
-    UsernamesModule,
-  ].forEach(({ configure }) => configure());
+  storeModules.forEach(({ configure }) => configure());
 };
 
+/**
+ * Закрытие подключения к БД
+ * @function destroyStore
+ */
 export const destroyStore = () => db.close();

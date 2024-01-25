@@ -7,6 +7,16 @@ import UpdateItemDescription from './update-item-description.js';
 import UpdateItemName from './update-item-name.js';
 import UpdateItemPriority from './update-item-priority.js';
 
+/**
+ * @module Модуль хранилища для обеспечения работы
+ * пользователей с собственными списками желаний
+ */
+
+/**
+ * Настройка модуля хранилища
+ * [Подписка]{@link subscribe} на [события]{@link Events} и подготовка выражений запроса БД
+ * @function configure
+ */
 const configure = () => {
   [
     [ Events.Editing.AddItem, AddItem ],

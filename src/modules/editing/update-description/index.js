@@ -6,6 +6,10 @@ import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 import initiateUpdate from '../helpers/template-functions/initiate-update.js';
 
+/**
+ * При вызове действия обновления описания подарка запуск
+ * [стандартного механизма запуска процесса обновления информации о подарке]{@link initiateUpdate}
+ */
 const configure = (bot) => {
   bot.action(/^update_description ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
@@ -21,6 +25,14 @@ const configure = (bot) => {
   });
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается новое описание подарка,
+ * текст полученного сообщения валидируется.
+ * При провале валидации бот отправляет сообщение-уведомление об ошибке валидации.
+ * При успехе валидации бот [выпускает]{@link emit} соответствующее событие,
+ * отправляет сообщение-уведомление об успехе сохранения нового описания подарка
+ * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.UpdateDescription) {

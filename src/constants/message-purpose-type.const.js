@@ -1,3 +1,7 @@
+/**
+ * Перечисление типов назначения ожидаемого от пользователя сообщения
+ * @enum {number}
+ */
 const MessagePurposeType = Object.freeze({
   WishlistOwnerUsername: 0,
   AddItemToWishlist: 1,

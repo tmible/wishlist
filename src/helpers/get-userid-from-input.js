@@ -2,6 +2,12 @@ import UseridOrUsernameRegexp from 'wishlist-bot/constants/userid-or-username-re
 import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 
+/**
+ * Получение идентификатора и имени пользователя из пользовательского ввода
+ * @function getUseridFromInput
+ * @param {string} input пользовательский ввод
+ * @returns {[ string | undefined, string | undefined ] | [ null, null ]} идентификатор и имя пользователя
+ */
 const getUseridFromInput = (input) => {
   const match = UseridOrUsernameRegexp.exec(input);
 

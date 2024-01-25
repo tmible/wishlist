@@ -11,6 +11,10 @@ import { emit } from 'wishlist-bot/store/event-bus';
 import Events from 'wishlist-bot/store/events';
 import sendList from '../helpers/send-list.js';
 
+/**
+ * При получении команды /add, если чат не групповой, бот отправляет сообщение-приглашение
+ * для отправки сообщения с информацией о подарке, добавляемом в список желаний
+ */
 const configure = (bot) => {
   bot.command('add', async (ctx) => {
     if (isChatGroup(ctx)) {
@@ -32,6 +36,14 @@ const configure = (bot) => {
   });
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается информация о подарке,
+ * добавляемом в список желаний, бот валидирует текст полученного сообщения.
+ * При провале валидации бот отправляет сообщение-уведомления об ошибке валидации.
+ * При успехе валидации бот [выпускает]{@link emit} соответствующее событие,
+ * отправляет сообщение-уведомление об успехе добавления подарка
+ * и [отправляет обновлённый список]{@link sendList}
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AddItemToWishlist) {
@@ -45,7 +57,7 @@ const messageHandler = (bot) => {
         return ctx.reply('Ошибка в описании подарка. Не могу добавить');
       }
 
-      const itemId = emit(
+      emit(
         Events.Editing.AddItem,
         [ ctx.from.id, ...match.slice(1) ],
         ctx.message.entities,

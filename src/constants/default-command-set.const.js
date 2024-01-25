@@ -1,3 +1,7 @@
+/**
+ * Набор команд по умолчанию
+ * @constant {{ command: string, description: string }[]}
+ */
 const DefaultCommandSet = [{
   command: '/start',
   description: 'перезапустить бота',

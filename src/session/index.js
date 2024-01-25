@@ -1,8 +1,24 @@
 import { ClassicLevel } from 'classic-level';
 import getSessionKey from 'wishlist-bot/helpers/get-session-key';
 
+/** @module Персистентная относительно запусков бота сессия */
+
+/**
+ * Объект для доступа к БД
+ */
 let db;
 
+/**
+ * Инициализация объекта для доступа к БД и создание промежуточного обработчика
+ * для работы персистентной относительно запусков бота сессии
+ * Промежуточный обработчик получает по [ключу]{@link getSessionKey} объект из БД,
+ * определяет в сессии свойство persistent, предоставляющее доступ к объекту из БД,
+ * если оно ещё не определено (сессия персистентна относительно получения обновлений от пользователя),
+ * вызывает следующие промежуточные обработчики и после завершения их работы, если необходимо,
+ * синхронизирует изменённый в процессе работы объект с его оригиналом в БД
+ * @function initPersistentSession
+ * @returns {MiddlewareFn<Context>} Промежуточный обработчик для работы персистентной относительно запусков бота сессии
+ */
 export const initPersistentSession = () => {
   db = new ClassicLevel(process.env.PERSISTENT_SESSION_PATH, { valueEncoding: 'json' });
 
@@ -47,6 +63,17 @@ export const initPersistentSession = () => {
   };
 };
 
+/**
+ * Установка оригинала персистентной относительно запусков бота сессии в БД в значение по умолчанию
+ * @async
+ * @function dropPersistentSession
+ * @param {Context} ctx Контекст
+ */
 export const dropPersistentSession = (ctx) => db.put(getSessionKey(ctx), { lists: {} });
 
+/**
+ * Закрытие [подключения к БД]{@link db}
+ * @async
+ * @function destroyPersistentSession
+ */
 export const destroyPersistentSession = () => db.close();

@@ -1,8 +1,16 @@
 import ListItemState from 'wishlist-bot/constants/list-item-state';
 import { db } from 'wishlist-bot/store';
 
+/**
+ * Подготовленные выражения запроса БД
+ * @type {Statement[]}
+ */
 let statements;
 
+/**
+ * Подготовка [выражений]{@link statements}
+ * @function prepare
+ */
 const prepare = () => statements = [
   'DELETE FROM participants WHERE list_item_id = ? AND userid = ?',
   `
@@ -26,6 +34,12 @@ const prepare = () => statements = [
   `,
 ].map((statement) => db.prepare(statement));
 
+/**
+ * Удаление пользователя из кооперации по подарку или отмена бронирования подарка пользователем
+ * @function eventHandler
+ * @param {string} itemId Идентификатор подарка
+ * @param {string} userid Идентификатор пользователя
+ */
 const eventHandler = (itemId, userid) => {
   const parameters = [
     [ itemId, userid ],

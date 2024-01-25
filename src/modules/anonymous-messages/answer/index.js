@@ -4,6 +4,10 @@ import {
   sendMessageAndMarkItForMarkupRemove,
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
 
+/**
+ * При вызове действия ответа на анонимное сообщение бот отправляет
+ * сообщение-приглашение для отправки сообщения-ответа
+ */
 const configure = (bot) => {
   bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
     ctx.session.messagePurpose = {
@@ -22,6 +26,10 @@ const configure = (bot) => {
   });
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается сообщение для отправки
+ * ответа на анонимное сообщение, полученного сообщение пересылается в исходный чат
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageAnswer) {

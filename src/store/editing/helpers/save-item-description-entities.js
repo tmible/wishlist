@@ -1,6 +1,13 @@
-import descriptionEntityBaseKeys from 'wishlist-bot/constants/description-entity-base-keys';
+import DescriptionEntityBaseKeys from 'wishlist-bot/constants/description-entity-base-keys';
 import { db } from 'wishlist-bot/store';
 
+/**
+ * Сохранение в БД элементов разметки текста описания подарка
+ * @function saveItemDescriptionEntities
+ * @param {string} itemId Идентификатор подарка
+ * @param {Entity[]} entities Элементы разметки
+ * @param {number} descriptionOffset Отступ начала описания от начала текста сообщения
+ */
 const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
   if (!Array.isArray(entities) || entities?.length === 0) {
     return;
@@ -15,7 +22,7 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
   statement.run(
     ...descriptionEntities.flatMap((entity) => {
       const additionalProperties = Object.entries(entity).filter(([ key ]) =>
-        !descriptionEntityBaseKeys.has(key)
+        !DescriptionEntityBaseKeys.has(key)
       );
       return [
         entity.type,

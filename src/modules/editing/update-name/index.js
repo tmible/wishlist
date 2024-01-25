@@ -5,6 +5,10 @@ import Events from 'wishlist-bot/store/events';
 import initiateUpdate from '../helpers/template-functions/initiate-update.js';
 import updateValue from '../helpers/template-functions/update-value.js';
 
+/**
+ * При вызове действия обновления названия подарка запуск
+ * [стандартного механизма запуска процесса обновления информации о подарке]{@link initiateUpdate}
+ */
 const configure = (bot) => {
   bot.action(/^update_name ([\-\d]+)$/, async (ctx) => {
     await initiateUpdate(
@@ -20,6 +24,10 @@ const configure = (bot) => {
   });
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается новое название подарка,
+ * [запускается стандартный механизм валидации и сохранения новой информации о подарке]{@link updateValue}.
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     await updateValue(

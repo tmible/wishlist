@@ -12,6 +12,10 @@ import UpdateDescriptionModule from 'wishlist-bot/modules/editing/update-descrip
 import UpdateNameModule from 'wishlist-bot/modules/editing/update-name';
 import UpdatePriorityModule from 'wishlist-bot/modules/editing/update-priority';
 
+/**
+ * Настройка модуля, обеспечивающего работу пользователя со своим списком желаний
+ * @function configure
+ */
 const configure = (bot) => {
   console.log('configuring editing module');
   configureModules(bot, [

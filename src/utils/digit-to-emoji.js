@@ -1,3 +1,9 @@
+/**
+ * Преобразование числа в эмодзи с числом
+ * @function digitToEmoji
+ * @param {number} digit Преобразуемое число
+ * @returns {string} Эмодзи с числом
+ */
 const digitToEmoji = (digit) => {
   if (digit === 10) {
     return String.fromCodePoint(0x1F51F);

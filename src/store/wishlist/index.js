@@ -5,6 +5,13 @@ import CooperateOnItem from './cooperate-on-item.js';
 import GetList from './get-list.js';
 import RetireFromItem from './retire-from-item.js';
 
+/** @module Модуль хранилища для работы со списками желаний других пользователей */
+
+/**
+ * Настройка модуля хранилища
+ * [Подписка]{@link subscribe} на [события]{@link Events} и подготовка выражений запроса БД
+ * @function configure
+ */
 const configure = () => {
   [
     [ Events.Wishlist.GetList, GetList ],

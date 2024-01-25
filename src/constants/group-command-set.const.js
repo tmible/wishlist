@@ -1,3 +1,7 @@
+/**
+ * Набор команд для групповых чатов
+ * @constant {{ command: string, description: string }[]}
+ */
 const GroupCommandSet = [{
   command: '/start',
   description: 'перезапустить бота',

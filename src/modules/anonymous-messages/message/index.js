@@ -7,6 +7,14 @@ import {
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
 import Events from 'wishlist-bot/store/events';
 
+/**
+ * Проверка возможности отправки сообщений указанному адресату и,
+ * в случае успеха, отправка сообщения-приглашения для отправки сообщения,
+ * копия которого будет отправлена адресату
+ * @async
+ * @function handleAnonymousMessage
+ * @param {Context} ctx Контекст
+ */
 const handleAnonymousMessage = async (ctx) => {
   const [ chatId ] = getUseridFromInput(ctx.payload || ctx.message.text);
 
@@ -29,6 +37,12 @@ const handleAnonymousMessage = async (ctx) => {
   );
 };
 
+/**
+ * При получении команды /message, запускающей процесс отправки анонимного сообщения:
+ * 1) Если у неё нет полезной нагрузки, бот отправляет пользователю сообщение-приглашение
+ * для указания адресата,
+ * 2) Если полезная нагрузка есть, см. {@link handleAnonymousMessage}
+ */
 const configure = (bot) => {
   bot.command('message', async (ctx) => {
     if (!ctx.payload) {
@@ -52,6 +66,10 @@ const configure = (bot) => {
   });
 };
 
+/**
+ * При получении сообщения от пользователя, если ожидается сообщение для анонимной отправки,
+ * копия полученного сообщения отправляется адресату
+ */
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageRecieverUsername) {
