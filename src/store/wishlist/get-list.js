@@ -29,7 +29,6 @@ const prepare = () => statement = db.prepare(`
   ) as participants ON list.id = participants.list_item_id
   LEFT JOIN description_entities ON list.id = description_entities.list_item_id
   WHERE userid = ?
-  GROUP BY id
 `);
 
 const eventHandler = (userid) => {
