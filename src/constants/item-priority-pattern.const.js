@@ -1,3 +1,3 @@
-const ItemPriorityPattern = '[\d]+';
+const ItemPriorityPattern = '[\\d]+';
 
 export default ItemPriorityPattern;

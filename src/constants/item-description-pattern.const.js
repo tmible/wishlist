@@ -1,3 +1,3 @@
-const ItemDescriptionPattern = '[\s\S]+';
+const ItemDescriptionPattern = '[\\s\\S]+';
 
 export default ItemDescriptionPattern;
