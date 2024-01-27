@@ -15,11 +15,15 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
 
   const descriptionEntities = entities.filter(({ offset }) => offset >= descriptionOffset);
 
-  const statement = db.prepare(`INSERT INTO description_entities VALUES ${
-    descriptionEntities.map((_, i) => '($itemId, ?, ?, ?, ?)').join(', ')
-  }`);
-
-  statement.run(
+  db.prepare(
+    `INSERT INTO description_entities VALUES ${
+      descriptionEntities.map((entity) => `($itemId, ?, ?, ?, ${
+        !!Object.entries(entity).find(([ key ]) => !DescriptionEntityBaseKeys.has(key)) ?
+          '?' :
+          'NULL'
+      })`).join(', ')
+    }`,
+  ).run(
     ...descriptionEntities.flatMap((entity) => {
       const additionalProperties = Object.entries(entity).filter(([ key ]) =>
         !DescriptionEntityBaseKeys.has(key)
@@ -28,10 +32,8 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
         entity.type,
         entity.offset - descriptionOffset,
         entity.length,
-        JSON.stringify(
-          additionalProperties.length > 0 ? Object.fromEntries(additionalProperties) : null,
-        ),
-      ];
+        JSON.stringify(Object.fromEntries(additionalProperties)),
+      ].slice(0, additionalProperties.length > 0 ? 4 : 3);
     }),
     { itemId },
   );
