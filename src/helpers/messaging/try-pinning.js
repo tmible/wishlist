@@ -5,9 +5,9 @@ import PinMessageErrorMessage from '@tmible/wishlist-bot/constants/pin-message-e
  * В таком случае API Телеграма бросит ошибку и она (и только она) будет поймана
  * @async
  * @function tryPinning
- * @param ctx {Context} Контекст
- * @param pinning {keyof Context} название метода закрепления или открепления
- * @param pinningArgs {Parameters<Context[pinning]>} Аргументы для редактирования сообщения
+ * @param {Context} ctx Контекст
+ * @param {keyof Context} pinning Название метода закрепления или открепления
+ * @param {Parameters<Context[pinning]>} pinningArgs Аргументы для редактирования сообщения
  */
 const tryPinning = async (ctx, pinning, ...pinningArgs) => {
   try {

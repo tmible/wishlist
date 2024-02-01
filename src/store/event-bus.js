@@ -10,8 +10,8 @@ const subscribers = new Map();
 /**
  * Подписка обработчика на выпуск события
  * @function subscribe
- * @param {Event} event событие
- * @param {Function} handler обработчик
+ * @param {Event} event Событие
+ * @param {Function} handler Обработчик
  * @see {@link Events}
  */
 export const subscribe = (event, handler) => {
@@ -21,9 +21,9 @@ export const subscribe = (event, handler) => {
 /**
  * Выпуск события (вызов обработчика события)
  * @function emit
- * @param {Event} event событие
- * @param {unknown[]} args аргументы для обработчика
- * @returns {unknown} результат вызова обработчика
+ * @param {Event} event Событие
+ * @param {unknown[]} args Аргументы для обработчика
+ * @returns {unknown} Результат вызова обработчика
  * @see {@link Events}
  */
 export const emit = (event, ...args) => {

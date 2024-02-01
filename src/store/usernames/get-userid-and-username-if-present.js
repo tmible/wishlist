@@ -10,14 +10,20 @@ let statement;
  * Подготовка [выражения]{@link statement}
  * @function prepare
  */
-const prepare = () => statement = db.prepare('SELECT userid FROM usernames WHERE userid = ?');
+const prepare = () => statement = db.prepare(
+  'SELECT userid, username FROM usernames WHERE userid = ?',
+);
 
 /**
  * Проверка наличия идентификатора пользователя в БД
+ * и возврат его и соответствующего имени пользователя при успехе
  * @function eventHandler
  * @param {string} userid Идентификатор пользователя
- * @returns {boolean} Признак наличия идентификатора пользователя в БД
+ * @returns {[ string | null, string | null ]} Идентификатор пользователя и имя пользователя из БД
  */
-const eventHandler = (userid) => !!statement.get(userid)?.userid;
+const eventHandler = (userid) => {
+  const user = statement.get(userid);
+  return [ user?.userid ?? null, user?.username ?? null ];
+}
 
 export default { eventHandler, prepare };

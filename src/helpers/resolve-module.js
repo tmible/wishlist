@@ -9,7 +9,7 @@ import { promisify } from 'node:util';
  * Используется только в юнит-тестах
  * @async
  * @function resolveModule
- * @param {string} moduleAlias адресу модуля, использующий сокращения из "exports" package.json
+ * @param {string} moduleAlias Адрес модуля, использующий сокращения из "exports" package.json
  * @returns {Promise<string>} Абсолютный путь к модулю
  */
 const resolveModule = async (moduleAlias) => {

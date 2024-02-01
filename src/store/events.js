@@ -21,7 +21,7 @@ const Events = Object.freeze({
   Usernames: {
     GetUseridByUsername: 'usernames | get userid by username',
     GetUsernameByUserid: 'usernames | get username by userid',
-    CheckIfUseridIsPresent: 'usernames | check if userid is present',
+    GetUseridAndUsernameIfPresent: 'usernames | get userid and username if present',
     StoreUsername: 'usernames | store username',
   },
 });

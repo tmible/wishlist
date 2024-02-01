@@ -5,7 +5,7 @@ import SharedHelpSupportSection from '@tmible/wishlist-bot/constants/help/sectio
 import HelpMessageMarkup from '@tmible/wishlist-bot/constants/help/message-markup';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
-describe.only('help module', () => {
+describe('help module', () => {
   let HelpModule;
 
   beforeEach(async () => {
@@ -18,14 +18,14 @@ describe.only('help module', () => {
 
   afterEach(() => td.reset());
 
-  it.only('should register help command handler', () => {
+  it('should register help command handler', () => {
     const bot = td.object([ 'action', 'command' ]);
     HelpModule.configure(bot);
     td.verify(bot.command('help', td.matchers.isA(Function)));
   });
 
-  describe.only('help command handler', () => {
-    it.only('should reply', async (testContext) => {
+  describe('help command handler', () => {
+    it('should reply', async (testContext) => {
       const generalHelpSection = (await td.replaceEsm(await resolveModule(
         '@tmible/wishlist-bot/constants/help/sections/default/general',
       ))).default;
@@ -46,14 +46,14 @@ describe.only('help module', () => {
     });
   });
 
-  it.only('should register help action handler', () => {
+  it('should register help action handler', () => {
     const bot = td.object([ 'action', 'command' ]);
     HelpModule.configure(bot);
     td.verify(bot.action(/^help ([a-z\-]+)$/, td.matchers.isA(Function)));
   });
 
-  describe.only('help action handler', () => {
-    it.only('should edit help message', async (testContext) => {
+  describe('help action handler', () => {
+    it('should edit help message', async (testContext) => {
       const nicknameHelpSection = (await td.replaceEsm(await resolveModule(
         '@tmible/wishlist-bot/constants/help/sections/default/nickname',
       ))).default;

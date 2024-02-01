@@ -25,16 +25,16 @@ describe('getUseridFromInput', () => {
   });
 
   describe('if userid found', () => {
-    it('should request username', () => {
+    it('should request username and check userid', () => {
       getUseridFromInput('123');
-      td.verify(emit(Events.Usernames.GetUsernameByUserid, '123'));
+      td.verify(emit(Events.Usernames.GetUseridAndUsernameIfPresent, '123'));
     });
 
     it('should return userid and username', () => {
       td.when(
         emit(td.matchers.anything(), td.matchers.isA(String)),
       ).thenDo(
-        (_, useridOrUsername) => usernames.get(useridOrUsername),
+        (_, useridOrUsername) => [ useridOrUsername, usernames.get(useridOrUsername) ],
       );
       assert.deepEqual(getUseridFromInput('123'), [ '123', 'username' ]);
     });

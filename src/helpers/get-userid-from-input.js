@@ -5,8 +5,8 @@ import Events from '@tmible/wishlist-bot/store/events';
 /**
  * Получение идентификатора и имени пользователя из пользовательского ввода
  * @function getUseridFromInput
- * @param {string} input пользовательский ввод
- * @returns {[ string | undefined, string | undefined ] | [ null, null ]} идентификатор и имя пользователя
+ * @param {string} input Пользовательский ввод
+ * @returns {[ string | undefined, string | undefined ] | [ null, null ]} Идентификатор и имя пользователя
  */
 const getUseridFromInput = (input) => {
   const match = UseridOrUsernameRegexp.exec(input);
@@ -18,7 +18,7 @@ const getUseridFromInput = (input) => {
   const [ _, userid, username ] = match;
 
   return !!userid ?
-    [ userid, emit(Events.Usernames.GetUsernameByUserid, userid) ] :
+    emit(Events.Usernames.GetUseridAndUsernameIfPresent, userid) :
     [ emit(Events.Usernames.GetUseridByUsername, username), username ];
 };
 

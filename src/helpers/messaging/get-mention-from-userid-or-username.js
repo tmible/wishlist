@@ -4,9 +4,9 @@ import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
 /**
  * Формирование упоминания пользователя по его идентификатору и/или имени
  * @function getMentionFromUseridOrUsername
- * @param {string} userid идентификатор пользователя
- * @param {string} username имя пользователя
- * @returns {FmtString} строка формата с упоминанием пользователя
+ * @param {string} userid Идентификатор пользователя
+ * @param {string} username Имя пользователя
+ * @returns {FmtString} Строка формата с упоминанием пользователя
  */
 const getMentionFromUseridOrUsername = (userid, username) => {
   const mention = !!username ? `@${username}` : getNickname(parseInt(userid));
