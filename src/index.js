@@ -1,9 +1,7 @@
 import 'dotenv/config';
 import { session, Telegraf } from 'telegraf';
 import DefaultCommandSet from '@tmible/wishlist-bot/constants/default-command-set';
-import DefaultHelpMessage from '@tmible/wishlist-bot/constants/default-help-message';
 import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
-import GroupHelpMessage from '@tmible/wishlist-bot/constants/group-help-message';
 import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
 import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
@@ -11,6 +9,7 @@ import forcePrivacyModeMiddleware from '@tmible/wishlist-bot/helpers/middlewares
 import { removeLastMarkupMiddleware } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-messages';
 import EditingModule from '@tmible/wishlist-bot/modules/editing';
+import HelpModule from '@tmible/wishlist-bot/modules/help';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import {
   initPersistentSession,
@@ -48,10 +47,6 @@ bot.start(async (ctx) => {
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
 });
 
-bot.help((ctx) => ctx.replyWithMarkdownV2(
-  isChatGroup(ctx) ? GroupHelpMessage : DefaultHelpMessage
-));
-
 bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
 bot.on('message', removeLastMarkupMiddleware);
 bot.action(/.*/, removeLastMarkupMiddleware);
@@ -62,6 +57,7 @@ bot.command('my_nickname', (ctx) => ctx.reply(
 ));
 
 configureModules(bot, [
+  HelpModule,
   WishlistModule,
   AnonymousMessagesModule,
   EditingModule,
