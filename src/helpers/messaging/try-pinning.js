@@ -1,4 +1,4 @@
-import PinMessageErrorMessage from 'wishlist-bot/constants/pin-message-error-message';
+import PinMessageErrorMessage from '@tmible/wishlist-bot/constants/pin-message-error-message';
 
 /**
  * Закрепление или открепление сообщения с учётом того, что, возможно, для этого недостаточно прав.

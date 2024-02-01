@@ -2,9 +2,9 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import * as td from 'testdouble';
-import ItemNamePattern from 'wishlist-bot/constants/item-name-pattern';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import Events from 'wishlist-bot/store/events';
+import ItemNamePattern from '@tmible/wishlist-bot/constants/item-name-pattern';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import Events from '@tmible/wishlist-bot/store/events';
 
 describe('editing/update-name module', () => {
   let initiateUpdate;
@@ -20,7 +20,7 @@ describe('editing/update-name module', () => {
         (await td.replaceEsm('../helpers/template-functions/update-value.js')).default
       )(),
     ]);
-    UpdateNameModule = (await import('../update-name/index.js')).default;
+    UpdateNameModule = (await import('../update-name.js')).default;
   });
 
   afterEach(() => td.reset());

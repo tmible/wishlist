@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('saveItemDescriptionEntities', () => {
   let db;
@@ -21,7 +21,7 @@ describe('saveItemDescriptionEntities', () => {
 
   beforeEach(async () => {
     db = td.object([ 'prepare', 'pragma' ]);
-    await td.replaceEsm(await resolveModule('wishlist-bot/store'), { db });
+    await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store'), { db });
     saveItemDescriptionEntities = (await import('../save-item-description-entities.js')).default;
   });
 

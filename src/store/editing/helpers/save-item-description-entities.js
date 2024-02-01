@@ -1,5 +1,5 @@
-import DescriptionEntityBaseKeys from 'wishlist-bot/constants/description-entity-base-keys';
-import { db } from 'wishlist-bot/store';
+import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/constants/description-entity-base-keys';
+import { db } from '@tmible/wishlist-bot/store';
 
 /**
  * Сохранение в БД элементов разметки текста описания подарка

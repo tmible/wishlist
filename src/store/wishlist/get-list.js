@@ -1,6 +1,6 @@
-import { db } from 'wishlist-bot/store';
-import descriptionEntitiesReducer from 'wishlist-bot/store/helpers/description-entities-reducer';
-import participantsMapper from 'wishlist-bot/store/helpers/participants-mapper';
+import { db } from '@tmible/wishlist-bot/store';
+import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
+import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-mapper';
 
 /**
  * Обязательная часть элемента разметки текста

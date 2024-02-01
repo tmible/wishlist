@@ -1,9 +1,9 @@
 import { Markup } from 'telegraf';
-import ItemPriorityPattern from 'wishlist-bot/constants/item-priority-pattern';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import Events from 'wishlist-bot/store/events';
-import initiateUpdate from '../helpers/template-functions/initiate-update.js';
-import updateValue from '../helpers/template-functions/update-value.js';
+import ItemPriorityPattern from '@tmible/wishlist-bot/constants/item-priority-pattern';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import Events from '@tmible/wishlist-bot/store/events';
+import initiateUpdate from './helpers/template-functions/initiate-update.js';
+import updateValue from './helpers/template-functions/update-value.js';
 
 /**
  * При вызове действия обновления приоритета подарка запуск

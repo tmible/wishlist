@@ -1,4 +1,4 @@
-import { emit } from 'wishlist-bot/store/event-bus';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import sendList from '../send-list.js';
 
 /**

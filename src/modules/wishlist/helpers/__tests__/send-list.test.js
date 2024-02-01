@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
 import { Format } from 'telegraf';
 import * as td from 'testdouble';
-import ListItemState from 'wishlist-bot/constants/list-item-state';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('wishlist/send-list', () => {
   let emit;
@@ -21,18 +21,18 @@ describe('wishlist/send-list', () => {
       isChatGroup,
       manageListsMessages,
     ] = await Promise.all([
-      td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       (async () =>
         (await td.replaceEsm(await resolveModule(
-          'wishlist-bot/helpers/messaging/get-mention-from-userid-or-username',
+          '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username',
         ))).default
       )(),
       (async () =>
-        (await td.replaceEsm(await resolveModule('wishlist-bot/helpers/is-chat-group'))).default
+        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
       )(),
       (async () =>
         (await td.replaceEsm(await resolveModule(
-          'wishlist-bot/helpers/messaging/manage-lists-messages',
+          '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages',
         ))).default
       )(),
     ]);

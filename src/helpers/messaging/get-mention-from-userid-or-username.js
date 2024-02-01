@@ -1,5 +1,5 @@
 import { Format } from 'telegraf';
-import getNickname from 'wishlist-bot/utils/get-nickname';
+import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
 
 /**
  * Формирование упоминания пользователя по его идентификатору и/или имени

@@ -1,5 +1,5 @@
-import ListItemState from 'wishlist-bot/constants/list-item-state';
-import { db } from 'wishlist-bot/store';
+import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
+import { db } from '@tmible/wishlist-bot/store';
 
 /**
  * Подготовленные выражения запроса БД

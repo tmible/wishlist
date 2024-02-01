@@ -1,4 +1,4 @@
-import tryPinning from 'wishlist-bot/helpers/messaging/try-pinning';
+import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 
 /**
  * Обновление старых сообщений с элементами списка:

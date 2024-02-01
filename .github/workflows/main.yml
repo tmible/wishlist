@@ -19,7 +19,7 @@ jobs:
         pnpm pkg delete scripts.prepare
         pnpm install
     - name: run tests
-      run: pnpm test
+      run: pnpm test:clean
 
   deploy:
     needs: tests

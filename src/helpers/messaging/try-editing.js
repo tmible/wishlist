@@ -1,4 +1,4 @@
-import EditMessageErrorMessage from 'wishlist-bot/constants/edit-message-error-message';
+import EditMessageErrorMessage from '@tmible/wishlist-bot/constants/edit-message-error-message';
 
 /**
  * Редактирование сообщения с учётом того, что, возможно, обновлений нет.

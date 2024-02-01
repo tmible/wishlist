@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/initiate-update', () => {
   let sendMessageAndMarkItForMarkupRemove;
@@ -10,7 +10,7 @@ describe('editing/initiate-update', () => {
 
   beforeEach(async () => {
     ({ sendMessageAndMarkItForMarkupRemove } =
-      await td.replaceEsm(await resolveModule('wishlist-bot/helpers/middlewares/remove-markup'))
+      await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'))
     );
     initiateUpdate = (await import('../initiate-update.js')).default;
     ctx = { session: {}, match: [ null, 'match 1' ] };

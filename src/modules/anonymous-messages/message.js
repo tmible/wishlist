@@ -1,10 +1,10 @@
 import { Markup } from 'telegraf';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import getUseridFromInput from 'wishlist-bot/helpers/get-userid-from-input';
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import getUseridFromInput from '@tmible/wishlist-bot/helpers/get-userid-from-input';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import {
   sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/middlewares/remove-markup';
+} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
 /**
  * Проверка возможности отправки сообщений указанному адресату и,

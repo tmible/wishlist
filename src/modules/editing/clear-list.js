@@ -1,12 +1,12 @@
 import { Markup } from 'telegraf';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import {
   sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/middlewares/remove-markup';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import sendList from '../helpers/send-list.js';
+} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import sendList from './helpers/send-list.js';
 
 /**
  * При получении комманды /clear_list, если чат не групповой, бот отправляет сообщение-приглашение

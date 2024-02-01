@@ -1,5 +1,5 @@
-import resendListsMessages from 'wishlist-bot/helpers/messaging/resend-lists-messages';
-import updateListsMessages from 'wishlist-bot/helpers/messaging/update-lists-messages';
+import resendListsMessages from '@tmible/wishlist-bot/helpers/messaging/resend-lists-messages';
+import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-lists-messages';
 
 /**
  * Отправляемое сообщение с элементом списка

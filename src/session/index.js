@@ -1,5 +1,5 @@
 import { ClassicLevel } from 'classic-level';
-import getSessionKey from 'wishlist-bot/helpers/get-session-key';
+import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
 
 /** @module Персистентная относительно запусков бота сессия */
 

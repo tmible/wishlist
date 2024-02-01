@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('manageListsMessages', () => {
   let manageListsMessages;
@@ -59,12 +59,12 @@ describe('manageListsMessages', () => {
     [ mocks.resendListsMessages, mocks.updateListsMessages ] = await Promise.all([
       (async () =>
         (await td.replaceEsm(await resolveModule(
-          'wishlist-bot/helpers/messaging/resend-lists-messages',
+          '@tmible/wishlist-bot/helpers/messaging/resend-lists-messages',
         ))).default
       )(),
       (async () =>
         (await td.replaceEsm(await resolveModule(
-          'wishlist-bot/helpers/messaging/update-lists-messages',
+          '@tmible/wishlist-bot/helpers/messaging/update-lists-messages',
         ))).default
       )(),
     ]);

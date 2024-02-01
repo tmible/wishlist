@@ -1,4 +1,4 @@
-import { db } from 'wishlist-bot/store';
+import { db } from '@tmible/wishlist-bot/store';
 
 /**
  * Удаление подарков из БД

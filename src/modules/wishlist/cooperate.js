@@ -1,7 +1,7 @@
-import ListItemState from 'wishlist-bot/constants/list-item-state';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import sendList from '../helpers/send-list.js';
+import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import sendList from './helpers/send-list.js';
 
 /**
  * При вызове действия добавления в кооперация по подарку [выпуск]{@link emit} соответсвующего события

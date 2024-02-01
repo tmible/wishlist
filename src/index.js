@@ -1,26 +1,26 @@
 import 'dotenv/config';
 import { session, Telegraf } from 'telegraf';
-import DefaultCommandSet from 'wishlist-bot/constants/default-command-set';
-import DefaultHelpMessage from 'wishlist-bot/constants/default-help-message';
-import GroupCommandSet from 'wishlist-bot/constants/group-command-set';
-import GroupHelpMessage from 'wishlist-bot/constants/group-help-message';
-import configureModules from 'wishlist-bot/helpers/configure-modules';
-import getSessionKey from 'wishlist-bot/helpers/get-session-key';
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import forcePrivacyModeMiddleware from 'wishlist-bot/helpers/middlewares/force-privacy-mode';
-import { removeLastMarkupMiddleware } from 'wishlist-bot/helpers/middlewares/remove-markup';
-import AnonymousMessagesModule from 'wishlist-bot/modules/anonymous-messages';
-import EditingModule from 'wishlist-bot/modules/editing';
-import WishlistModule from 'wishlist-bot/modules/wishlist';
+import DefaultCommandSet from '@tmible/wishlist-bot/constants/default-command-set';
+import DefaultHelpMessage from '@tmible/wishlist-bot/constants/default-help-message';
+import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
+import GroupHelpMessage from '@tmible/wishlist-bot/constants/group-help-message';
+import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
+import forcePrivacyModeMiddleware from '@tmible/wishlist-bot/helpers/middlewares/force-privacy-mode';
+import { removeLastMarkupMiddleware } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-messages';
+import EditingModule from '@tmible/wishlist-bot/modules/editing';
+import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import {
   initPersistentSession,
   dropPersistentSession,
   destroyPersistentSession,
-} from 'wishlist-bot/session';
-import { initStore, destroyStore } from 'wishlist-bot/store';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import getNickname from 'wishlist-bot/utils/get-nickname';
+} from '@tmible/wishlist-bot/session';
+import { initStore, destroyStore } from '@tmible/wishlist-bot/store';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
 
 console.log('initializing store');
 await initStore();

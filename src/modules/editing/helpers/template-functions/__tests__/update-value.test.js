@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/update-value if there is message purpose in session', () => {
   let emit;
@@ -11,7 +11,7 @@ describe('editing/update-value if there is message purpose in session', () => {
 
   beforeEach(async () => {
     [ { emit }, sendList ] = await Promise.all([
-      td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       (async () => (await td.replaceEsm('../../send-list.js')).default)(),
     ]);
     updateValue = (await import('../update-value.js')).default;

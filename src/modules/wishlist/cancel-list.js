@@ -1,5 +1,5 @@
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import cancelActionHandler from '@tmible/wishlist-bot/helpers/cancel-action-handler';
 
 /**
  * При вызове действия отмены получения списка желаний запуск

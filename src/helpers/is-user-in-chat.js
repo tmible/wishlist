@@ -1,4 +1,4 @@
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 
 /**
  * Проверка наличия пользователя среди участников чата

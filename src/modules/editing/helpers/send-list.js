@@ -1,9 +1,9 @@
 import { Format, Markup } from 'telegraf';
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import manageListsMessages from 'wishlist-bot/helpers/messaging/manage-lists-messages';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
+import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages}

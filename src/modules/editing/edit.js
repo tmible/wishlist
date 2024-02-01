@@ -1,6 +1,6 @@
-import { subscribe } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import sendList from '../helpers/send-list.js';
+import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import sendList from './helpers/send-list.js';
 
 /**
  * При получении команды /edit бот

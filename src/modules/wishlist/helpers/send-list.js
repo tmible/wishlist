@@ -1,12 +1,12 @@
 import { Format, Markup } from 'telegraf';
-import ListItemState from 'wishlist-bot/constants/list-item-state';
-import ListItemStateToEmojiMap from 'wishlist-bot/constants/list-item-state-to-emoji-map';
-import getMentionFromUseridOrUsername from 'wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
-import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
-import manageListsMessages from 'wishlist-bot/helpers/messaging/manage-lists-messages';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import digitToEmoji from 'wishlist-bot/utils/digit-to-emoji';
+import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
+import ListItemStateToEmojiMap from '@tmible/wishlist-bot/constants/list-item-state-to-emoji-map';
+import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
+import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
+import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * Формирование блока с упоминаниями забронировавего подарок пользователя

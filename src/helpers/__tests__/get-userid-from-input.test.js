@@ -1,8 +1,8 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
-import Events from 'wishlist-bot/store/events';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import Events from '@tmible/wishlist-bot/store/events';
 
 describe('getUseridFromInput', () => {
   let getUseridFromInput;
@@ -14,7 +14,7 @@ describe('getUseridFromInput', () => {
   ]);
 
   beforeEach(async () => {
-    ({ emit } = await td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')));
+    ({ emit } = await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')));
     getUseridFromInput = (await import('../get-userid-from-input.js')).default;
   });
 

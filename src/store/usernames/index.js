@@ -1,5 +1,5 @@
-import { subscribe } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
+import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
 import CheckIfUseridIsPresent from './check-if-userid-is-present.js';
 import GetUseridByUsername from './get-userid-by-username.js';
 import GetUsernameByUserid from './get-username-by-userid.js';

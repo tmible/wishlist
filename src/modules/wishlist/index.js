@@ -1,9 +1,9 @@
-import configureModules from 'wishlist-bot/helpers/configure-modules';
-import BookModule from 'wishlist-bot/modules/wishlist/book';
-import CancelListModule from 'wishlist-bot/modules/wishlist/cancel-list';
-import CooperateModule from 'wishlist-bot/modules/wishlist/cooperate';
-import ListModule from 'wishlist-bot/modules/wishlist/list';
-import RetireModule from 'wishlist-bot/modules/wishlist/retire';
+import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import BookModule from './book.js';
+import CancelListModule from './cancel-list.js';
+import CooperateModule from './cooperate.js';
+import ListModule from './list.js';
+import RetireModule from './retire.js';
 
 /**
  * Настройка модуля просмотра списков желаний

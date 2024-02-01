@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
-import Events from 'wishlist-bot/store/events';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import Events from '@tmible/wishlist-bot/store/events';
 
 describe('wishlist/book module', () => {
   let emit;
@@ -10,10 +10,10 @@ describe('wishlist/book module', () => {
 
   beforeEach(async () => {
     [ { emit }, sendList ] = await Promise.all([
-      td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       (async () => (await td.replaceEsm('../helpers/send-list.js')).default)(),
     ]);
-    BookModule = (await import('../book/index.js')).default;
+    BookModule = (await import('../book.js')).default;
   });
 
   afterEach(() => td.reset());

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/cancel-clear-list module', () => {
   let cancelActionHandler;
@@ -8,9 +8,9 @@ describe('editing/cancel-clear-list module', () => {
 
   beforeEach(async () => {
     cancelActionHandler = (await td.replaceEsm(await resolveModule(
-      'wishlist-bot/helpers/cancel-action-handler',
+      '@tmible/wishlist-bot/helpers/cancel-action-handler',
     ))).default;
-    CancelClearListModule = (await import('../cancel-clear-list/index.js')).default;
+    CancelClearListModule = (await import('../cancel-clear-list.js')).default;
   });
 
   afterEach(() => td.reset());

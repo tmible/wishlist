@@ -1,4 +1,4 @@
-import { db } from 'wishlist-bot/store';
+import { db } from '@tmible/wishlist-bot/store';
 import saveItemDescriptionEntities from './helpers/save-item-description-entities.js';
 
 /**

@@ -1,6 +1,6 @@
-import UseridOrUsernameRegexp from 'wishlist-bot/constants/userid-or-username-regexp';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
+import UseridOrUsernameRegexp from '@tmible/wishlist-bot/constants/userid-or-username-regexp';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
 
 /**
  * Получение идентификатора и имени пользователя из пользовательского ввода

@@ -1,6 +1,6 @@
 import {
   sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/middlewares/remove-markup';
+} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
 /**
  * Запуск процесса обновления информации и подарке

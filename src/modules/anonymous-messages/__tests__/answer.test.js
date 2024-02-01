@@ -2,8 +2,8 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import * as td from 'testdouble';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('anonymous-messages/answer module', () => {
   let sendMessageAndMarkItForMarkupRemove;
@@ -11,9 +11,9 @@ describe('anonymous-messages/answer module', () => {
 
   beforeEach(async () => {
     ({ sendMessageAndMarkItForMarkupRemove } =
-      await td.replaceEsm(await resolveModule('wishlist-bot/helpers/middlewares/remove-markup'))
+      await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'))
     );
-    AnswerModule = (await import('../answer/index.js')).default;
+    AnswerModule = (await import('../answer.js')).default;
   });
 
   afterEach(() => td.reset());

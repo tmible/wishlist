@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import PinMessageErrorMessage from 'wishlist-bot/constants/pin-message-error-message';
+import PinMessageErrorMessage from '@tmible/wishlist-bot/constants/pin-message-error-message';
 import tryPinning from '../try-pinning.js';
 
 describe('tryPinning', () => {

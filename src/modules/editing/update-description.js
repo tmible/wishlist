@@ -1,10 +1,10 @@
 import { Markup } from 'telegraf';
-import ItemDescriptionPattern from 'wishlist-bot/constants/item-description-pattern';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import sendList from '../helpers/send-list.js';
-import initiateUpdate from '../helpers/template-functions/initiate-update.js';
+import ItemDescriptionPattern from '@tmible/wishlist-bot/constants/item-description-pattern';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import sendList from './helpers/send-list.js';
+import initiateUpdate from './helpers/template-functions/initiate-update.js';
 
 /**
  * При вызове действия обновления описания подарка запуск

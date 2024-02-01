@@ -1,8 +1,8 @@
-import configureModules from 'wishlist-bot/helpers/configure-modules';
-import AnswerModule from 'wishlist-bot/modules/anonymous-messages/answer';
-import CancelAnswerModule from 'wishlist-bot/modules/anonymous-messages/cancel-answer';
-import CancelMessageModule from 'wishlist-bot/modules/anonymous-messages/cancel-message';
-import MessageModule from 'wishlist-bot/modules/anonymous-messages/message';
+import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import AnswerModule from './answer.js';
+import CancelAnswerModule from './cancel-answer.js';
+import CancelMessageModule from './cancel-message.js';
+import MessageModule from './message.js';
 
 /**
  * Настройка модуля отправки анонимных сообщений и ответов на них

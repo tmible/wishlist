@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('getMentionFromUseridOrUsername', () => {
   let getNickname;
@@ -10,7 +10,7 @@ describe('getMentionFromUseridOrUsername', () => {
 
   beforeEach(async () => {
     getNickname =
-      (await td.replaceEsm(await resolveModule('wishlist-bot/utils/get-nickname'))).default;
+      (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/utils/get-nickname'))).default;
     getMentionFromUseridOrUsername =
       (await import('../get-mention-from-userid-or-username.js')).default;
   });

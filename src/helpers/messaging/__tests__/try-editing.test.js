@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
-import EditMessageErrorMessage from 'wishlist-bot/constants/edit-message-error-message';
+import EditMessageErrorMessage from '@tmible/wishlist-bot/constants/edit-message-error-message';
 import tryEditing from '../try-editing.js';
 
 describe('tryEditing', () => {

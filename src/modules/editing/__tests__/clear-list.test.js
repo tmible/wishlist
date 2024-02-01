@@ -2,9 +2,9 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import * as td from 'testdouble';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
-import Events from 'wishlist-bot/store/events';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import Events from '@tmible/wishlist-bot/store/events';
 
 describe('editing/clear-list module', () => {
   let isChatGroup;
@@ -21,13 +21,13 @@ describe('editing/clear-list module', () => {
       sendList,
     ] = await Promise.all([
       (async () =>
-        (await td.replaceEsm(await resolveModule('wishlist-bot/helpers/is-chat-group'))).default
+        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
       )(),
-      td.replaceEsm(await resolveModule('wishlist-bot/helpers/middlewares/remove-markup')),
-      td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       (async () => (await td.replaceEsm('../helpers/send-list.js')).default)(),
     ]);
-    ClearListModule = (await import('../clear-list/index.js')).default;
+    ClearListModule = (await import('../clear-list.js')).default;
   });
 
   afterEach(() => td.reset());

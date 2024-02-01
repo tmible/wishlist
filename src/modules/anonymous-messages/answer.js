@@ -1,8 +1,8 @@
 import { Markup } from 'telegraf';
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
+import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import {
   sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/middlewares/remove-markup';
+} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
 /**
  * При вызове действия ответа на анонимное сообщение бот отправляет

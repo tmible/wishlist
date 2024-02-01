@@ -1,5 +1,5 @@
-import { subscribe } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
+import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
 import BookItem from './book-item.js';
 import CooperateOnItem from './cooperate-on-item.js';
 import GetList from './get-list.js';

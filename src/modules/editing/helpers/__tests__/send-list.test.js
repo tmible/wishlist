@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/send-list if chat isn\'t group', () => {
   let emit;
@@ -18,13 +18,13 @@ describe('editing/send-list if chat isn\'t group', () => {
       isChatGroup,
       manageListsMessages,
     ] = await Promise.all([
-      td.replaceEsm(await resolveModule('wishlist-bot/store/event-bus')),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       (async () =>
-        (await td.replaceEsm(await resolveModule('wishlist-bot/helpers/is-chat-group'))).default
+        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
       )(),
       (async () =>
         (await td.replaceEsm(await resolveModule(
-          'wishlist-bot/helpers/messaging/manage-lists-messages',
+          '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages',
         ))).default
       )(),
     ]);

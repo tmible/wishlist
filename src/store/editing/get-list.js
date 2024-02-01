@@ -1,5 +1,5 @@
-import { db } from 'wishlist-bot/store';
-import descriptionEntitiesReducer from 'wishlist-bot/store/helpers/description-entities-reducer';
+import { db } from '@tmible/wishlist-bot/store';
+import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 
 /**
  * Элемент списка желаний пользователя

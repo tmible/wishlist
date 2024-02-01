@@ -1,6 +1,6 @@
-import { emit } from 'wishlist-bot/store/event-bus';
-import Events from 'wishlist-bot/store/events';
-import sendList from '../helpers/send-list.js';
+import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import Events from '@tmible/wishlist-bot/store/events';
+import sendList from './helpers/send-list.js';
 
 /**
  * При вызове действия отказа от участия в подарке (отмена бронирования или выход из кооперации)

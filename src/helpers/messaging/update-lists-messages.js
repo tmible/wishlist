@@ -1,9 +1,9 @@
 import { Markup } from 'telegraf';
-import tryEditing from 'wishlist-bot/helpers/messaging/try-editing';
-import tryPinning from 'wishlist-bot/helpers/messaging/try-pinning';
+import tryEditing from '@tmible/wishlist-bot/helpers/messaging/try-editing';
+import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 import {
   sendMessageAndMarkItForMarkupRemove,
-} from 'wishlist-bot/helpers/middlewares/remove-markup';
+} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
 /**
  * Обновление содержания сообщений с опциональной отправкой сообщения об этом

@@ -1,6 +1,6 @@
 {
-  "name": "wishlist-bot",
-  "version": "2.9.5",
+  "name": "@tmible/wishlist-bot",
+  "version": "2.9.6",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -8,6 +8,7 @@
     "restart:bg": "forever restart wishlist-bot",
     "stop:bg": "forever stop wishlist-bot",
     "test": "c8 node --test",
+    "test:clean": "c8 node --test && rm -rf ./coverage",
     "test:only": "pnpm test -- --test-only",
     "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
     "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import resolveModule from 'wishlist-bot/helpers/resolve-module';
+import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('persistent session', () => {
   let ClassicLevel;
@@ -17,7 +17,7 @@ describe('persistent session', () => {
     [ { ClassicLevel }, getSessionKey ] = await Promise.all([
       td.replaceEsm('classic-level'),
       (async () =>
-        (await td.replaceEsm(await resolveModule('wishlist-bot/helpers/get-session-key'))).default
+        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/get-session-key'))).default
       )(),
     ]);
 

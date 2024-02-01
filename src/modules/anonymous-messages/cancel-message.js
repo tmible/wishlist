@@ -1,4 +1,4 @@
-import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
+import cancelActionHandler from '@tmible/wishlist-bot/helpers/cancel-action-handler';
 
 /**
  * При вызове действия отмены отправки анонимного сообщения запуск
