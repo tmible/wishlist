@@ -9,10 +9,7 @@ import sendList from '../helpers/send-list.js';
  */
 const configure = (bot) => {
   bot.action(/^book (\d+) ([0-9]+)$/, async (ctx) => {
-    const id = ctx.match[1];
-
-    emit(Events.Wishlist.BookItem, id, ctx.from.id);
-
+    emit(Events.Wishlist.BookItem, ctx.match[1], ctx.from.id);
     await sendList(ctx, ctx.match[2]);
   });
 };

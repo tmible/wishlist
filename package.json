@@ -1,12 +1,17 @@
 {
   "name": "wishlist-bot",
-  "version": "2.9.4",
+  "version": "2.9.5",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
     "start:bg": "forever start --uid \"wishlist-bot\" ./src/index.js",
     "restart:bg": "forever restart wishlist-bot",
-    "stop:bg": "forever stop wishlist-bot"
+    "stop:bg": "forever stop wishlist-bot",
+    "test": "c8 node --test",
+    "test:only": "pnpm test -- --test-only",
+    "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
+    "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -24,10 +29,16 @@
     "./utils/*": "./src/utils/*.js"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.3.1",
+    "@faker-js/faker": "^8.4.0",
     "better-sqlite3": "^9.3.0",
     "classic-level": "^1.4.1",
-    "dotenv": "^16.3.1",
-    "telegraf": "^4.13.1"
+    "dotenv": "^16.4.1",
+    "telegraf": "^4.15.3"
+  },
+  "devDependencies": {
+    "c8": "^9.1.0",
+    "husky": "^9.0.7",
+    "snapshot-assertion": "^5.0.0",
+    "testdouble": "^3.20.1"
   }
 }

@@ -4,10 +4,30 @@ on:
     - master
 
 jobs:
-  deploy:
+  tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: install node
+      uses: actions/setup-node@v4
+    - name: install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    - name: install dependencies
+      run: |
+        pnpm pkg delete scripts.prepare
+        pnpm install
+    - name: run tests
+      run: pnpm test
+
+  deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: remove tests
+      run: find ./src/ -type d -name __tests__ -delete
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
@@ -15,7 +35,7 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
-        EXCLUDE: "/.git/, /.github/, /assets/, README.md, .gitignore"
+        EXCLUDE: "/.git/, /.github/, /.husky/, /assets/, .c8rc.json, .gitignore, README.md"
         SCRIPT_AFTER: |
           cd ${{ secrets.REMOTE_TARGET }}
           export NVM_DIR="$HOME/.nvm"

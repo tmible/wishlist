@@ -15,7 +15,7 @@ export let db;
 
 /**
  * Модули хранилища
- * @type {Required<{ configure: Function }> & Record<string, unknown>}
+ * @type {{ configure: Function } & Record<string, unknown>}
  */
 const storeModules = [
   WishlistModule,
@@ -42,6 +42,7 @@ const migrate = async () => {
 
 /**
  * Создание подключения к БД, [миграции БД]{@link migrate} и настройка модулей хранилища
+ * @async
  * @function initStore
  */
 export const initStore = async () => {

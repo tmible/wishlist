@@ -5,7 +5,6 @@ import isChatGroup from 'wishlist-bot/helpers/is-chat-group';
 import {
   sendMessageAndMarkItForMarkupRemove,
 } from 'wishlist-bot/helpers/middlewares/remove-markup';
-import Events from 'wishlist-bot/store/events';
 
 /**
  * Проверка возможности отправки сообщений указанному адресату и,

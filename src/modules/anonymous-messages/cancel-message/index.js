@@ -1,4 +1,3 @@
-import MessagePurposeType from 'wishlist-bot/constants/message-purpose-type';
 import cancelActionHandler from 'wishlist-bot/helpers/cancel-action-handler';
 
 /**

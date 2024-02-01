@@ -10,7 +10,7 @@ import DescriptionEntityKeys from 'wishlist-bot/constants/description-entity-key
 const descriptionEntitiesReducer = (accum, current) => {
   const found = accum.find(({ id }) => id === current.id);
 
-  if (found) {
+  if (!!found) {
 
     found.descriptionEntities.push({
       type: current.type,

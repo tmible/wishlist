@@ -9,7 +9,7 @@ import sendList from '../send-list.js';
  * отправляет сообщение-уведомление об успехе сохранения новой информации о подарке
  * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  * @async
- * @function initiateUpdate
+ * @function updateValue
  * @param {Context} ctx Контекст
  * @param {MessagePurposeType} messagePurposeType Тип назначения полученного от пользователя сообщения
  * @param {RegExp} valueRegexp Регулярное выражение для валидации

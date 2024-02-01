@@ -13,7 +13,6 @@ let db;
  * для работы персистентной относительно запусков бота сессии
  * Промежуточный обработчик получает по [ключу]{@link getSessionKey} объект из БД,
  * определяет в сессии свойство persistent, предоставляющее доступ к объекту из БД,
- * если оно ещё не определено (сессия персистентна относительно получения обновлений от пользователя),
  * вызывает следующие промежуточные обработчики и после завершения их работы, если необходимо,
  * синхронизирует изменённый в процессе работы объект с его оригиналом в БД
  * @function initPersistentSession
@@ -22,10 +21,10 @@ let db;
 export const initPersistentSession = () => {
   db = new ClassicLevel(process.env.PERSISTENT_SESSION_PATH, { valueEncoding: 'json' });
 
-  let cached;
-  let touched = false;
-
   return async (ctx, next) => {
+    let cached;
+    let touched = false;
+
     const key = getSessionKey(ctx);
 
     try {
@@ -38,18 +37,17 @@ export const initPersistentSession = () => {
       cached = await db.get(key);
     }
 
-    if (!Object.hasOwn(ctx.session, 'persistent')) {
-      Object.defineProperty(ctx.session, 'persistent', {
-        get: () => {
-          touched = true;
-          return cached;
-        },
-        set: (value) => {
-          touched = true;
-          cached = value;
-        },
-      });
-    }
+    Object.defineProperty(ctx.session, 'persistent', {
+      get: () => {
+        touched = true;
+        return cached;
+      },
+      set: (value) => {
+        touched = true;
+        cached = value;
+      },
+      configurable: true,
+    });
 
     try {
       await next();
@@ -57,7 +55,7 @@ export const initPersistentSession = () => {
       if (touched) {
         await db.put(key, cached);
       }
-      touched = false;
+      delete ctx.session.persistent;
     }
 
   };
