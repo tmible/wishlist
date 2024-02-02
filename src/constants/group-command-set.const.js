@@ -3,7 +3,7 @@
  * @constant {{ command: string, description: string }[]}
  */
 const GroupCommandSet = [{
-  command: '/start',
+  command: 'start',
   description: 'перезапустить бота',
 }, {
   command: 'list',

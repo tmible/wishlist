@@ -1,6 +1,6 @@
 import { Format, Markup } from 'telegraf';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
-import ListItemStateToEmojiMap from '@tmible/wishlist-bot/constants/list-item-state-to-emoji-map';
+import ListItemStateToEmojiMap from '../constants/list-item-state-to-emoji-map.const.js';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';

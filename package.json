@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "2.10.1",
+  "version": "2.10.2",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -26,6 +26,7 @@
     "./modules/*": "./src/modules/*/index.js",
     "./session": "./src/session/index.js",
     "./store": "./src/store/index.js",
+    "./store/constants/*": "./src/store/constants/*.const.js",
     "./store/*": "./src/store/*.js",
     "./utils/*": "./src/utils/*.js"
   },

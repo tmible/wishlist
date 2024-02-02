@@ -1,4 +1,4 @@
-import DescriptionEntityKeys from '@tmible/wishlist-bot/constants/description-entity-keys';
+import DescriptionEntityKeys from '@tmible/wishlist-bot/store/constants/description-entity-keys';
 
 /**
  * Обработчик списка желаний, группирующий элементы разметки элементов списка с одинаковыми идентификаторами

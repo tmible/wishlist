@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
-import SharedHelpSupportSection from '@tmible/wishlist-bot/constants/help/sections/shared/support';
-import HelpMessageMarkup from '@tmible/wishlist-bot/constants/help/message-markup';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import HelpMessageMarkup from '../constants/message-markup.const.js';
+import SharedHelpSupportSection from '../constants/sections/shared/support.const.js';
 
 describe('help module', () => {
   let HelpModule;
@@ -26,9 +26,9 @@ describe('help module', () => {
 
   describe('help command handler', () => {
     it('should reply', async (testContext) => {
-      const generalHelpSection = (await td.replaceEsm(await resolveModule(
-        '@tmible/wishlist-bot/constants/help/sections/default/general',
-      ))).default;
+      const generalHelpSection = (await td.replaceEsm(
+        '../constants/sections/default/general.const.js',
+      )).default;
 
       const bot = td.object([ 'action', 'command' ]);
       const replyWithMarkdownV2 = testContext.mock.fn(async () => {});
@@ -54,9 +54,9 @@ describe('help module', () => {
 
   describe('help action handler', () => {
     it('should edit help message', async (testContext) => {
-      const nicknameHelpSection = (await td.replaceEsm(await resolveModule(
-        '@tmible/wishlist-bot/constants/help/sections/default/nickname',
-      ))).default;
+      const nicknameHelpSection = (await td.replaceEsm(
+        '../constants/sections/default/nickname.const.js',
+      )).default;
 
       const bot = td.object([ 'action', 'command' ]);
       const editMessageText = testContext.mock.fn(async () => {});

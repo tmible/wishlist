@@ -3,7 +3,7 @@
  * @constant {{ command: string, description: string }[]}
  */
 const DefaultCommandSet = [{
-  command: '/start',
+  command: 'start',
   description: 'перезапустить бота',
 }, {
   command: 'list',

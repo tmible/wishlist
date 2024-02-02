@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
-import ItemPriorityPattern from '@tmible/wishlist-bot/constants/item-priority-pattern';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemPriorityPattern from './constants/item-priority-pattern.const.js';
 import initiateUpdate from './helpers/template-functions/initiate-update.js';
 import updateValue from './helpers/template-functions/update-value.js';
 

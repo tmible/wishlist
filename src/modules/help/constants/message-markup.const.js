@@ -6,7 +6,7 @@ import HelpSections from './sections.const.js';
  * Встроенная кладиватура для переключения между разделами справки
  * @constant {Markup<InlineKeyboardMarkup>}
  */
-const HelpMessageMarkup = Markup.inlineKeyboard(HelpSections.reduce((markupRows, section) => {
+const HelpMessageMarkup = Markup.inlineKeyboard(Object.values(HelpSections).reduce((markupRows, section) => {
   const sectionButton = Markup.button.callback(
     HelpSectionsNamesMap.get(section),
     `help ${section}`,

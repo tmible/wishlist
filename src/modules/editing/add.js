@@ -1,7 +1,4 @@
 import { Markup } from 'telegraf';
-import ItemDescriptionPattern from '@tmible/wishlist-bot/constants/item-description-pattern';
-import ItemNamePattern from '@tmible/wishlist-bot/constants/item-name-pattern';
-import ItemPriorityPattern from '@tmible/wishlist-bot/constants/item-priority-pattern';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import {
@@ -9,6 +6,9 @@ import {
 } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemDescriptionPattern from './constants/item-description-pattern.const.js';
+import ItemNamePattern from './constants/item-name-pattern.const.js';
+import ItemPriorityPattern from './constants/item-priority-pattern.const.js';
 import sendList from './helpers/send-list.js';
 
 /**

@@ -1,7 +1,7 @@
-import SharedHelpSupportSection from '@tmible/wishlist-bot/constants/help/sections/shared/support';
-import HelpMessageMarkup from '@tmible/wishlist-bot/constants/help/message-markup';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import tryEditing from '@tmible/wishlist-bot/helpers/messaging/try-editing';
+import SharedHelpSupportSection from './constants/sections/shared/support.const.js';
+import HelpMessageMarkup from './constants/message-markup.const.js';
 
 /**
  * Настройка модуля получения справки
@@ -21,9 +21,7 @@ const configure = (bot) => {
     await ctx.replyWithMarkdownV2(
       `${
         (await import(
-          `@tmible/wishlist-bot/constants/help/sections/${
-            isChatGroup(ctx) ? 'group' : 'default'
-          }/general`,
+          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/general.const.js`,
         )).default
       }\n\n${
         SharedHelpSupportSection
@@ -40,11 +38,7 @@ const configure = (bot) => {
       undefined,
       `${
         (await import(
-          `@tmible/wishlist-bot/constants/help/sections/${
-            isChatGroup(ctx) ? 'group' : 'default'
-          }/${
-            ctx.match[1]
-          }`
+          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/${ctx.match[1]}.const.js`
         )).default
       }\n\n${
         SharedHelpSupportSection

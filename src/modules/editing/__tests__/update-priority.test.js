@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import * as td from 'testdouble';
-import ItemPriorityPattern from '@tmible/wishlist-bot/constants/item-priority-pattern';
+import ItemPriorityPattern from '../constants/item-priority-pattern.const.js';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import Events from '@tmible/wishlist-bot/store/events';
 

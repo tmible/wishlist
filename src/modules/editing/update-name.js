@@ -1,7 +1,7 @@
 import { Markup } from 'telegraf';
-import ItemNamePattern from '@tmible/wishlist-bot/constants/item-name-pattern';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemNamePattern from './constants/item-name-pattern.const.js';
 import initiateUpdate from './helpers/template-functions/initiate-update.js';
 import updateValue from './helpers/template-functions/update-value.js';
 

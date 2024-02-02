@@ -2,10 +2,10 @@ import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import * as td from 'testdouble';
-import ItemDescriptionPattern from '@tmible/wishlist-bot/constants/item-description-pattern';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemDescriptionPattern from '../constants/item-description-pattern.const.js';
 
 describe('editing/update-description module', () => {
   let initiateUpdate;

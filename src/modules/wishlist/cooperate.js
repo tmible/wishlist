@@ -1,4 +1,3 @@
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
