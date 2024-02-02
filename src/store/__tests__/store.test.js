@@ -11,12 +11,14 @@ describe('store', () => {
   let destroyStore;
 
   beforeEach(async () => {
-    [ Database, { readdir, readFile }, ...modules ] = await Promise.all([
+    modules = new Array(3).fill(null).map(() => td.object([ 'configure' ]));
+
+    [ Database, { readdir, readFile } ] = await Promise.all([
       (async () => (await td.replaceEsm('better-sqlite3')).default)(),
       td.replaceEsm('node:fs/promises'),
-      (async () => (await td.replaceEsm('../wishlist/index.js')).default)(),
-      (async () => (await td.replaceEsm('../editing/index.js')).default)(),
-      (async () => (await td.replaceEsm('../usernames/index.js')).default)(),
+      td.replaceEsm('../wishlist/index.js', {}, modules[0]),
+      td.replaceEsm('../editing/index.js', {}, modules[1]),
+      td.replaceEsm('../usernames/index.js', {}, modules[2]),
     ]);
 
     ({ initStore, destroyStore } = await import('../index.js'));
