@@ -55,8 +55,7 @@ describe('editing/edit module', () => {
   });
 
   it('should register handle own list event handler', () => {
-    const bot = td.object([ 'action', 'command' ]);
-    EditModule.configure(bot);
+    EditModule.configure(td.object([ 'action', 'command' ]));
     td.verify(subscribe(Events.Wishlist.HandleOwnList, sendList));
   });
 });

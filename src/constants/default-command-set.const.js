@@ -3,9 +3,6 @@
  * @constant {{ command: string, description: string }[]}
  */
 const DefaultCommandSet = [{
-  command: 'start',
-  description: 'перезапустить бота',
-}, {
   command: 'list',
   description: 'получить список',
 }, {
@@ -18,6 +15,9 @@ const DefaultCommandSet = [{
   command: 'clear_list',
   description: 'частично очистить свой список',
 }, {
+  command: 'link',
+  description: 'получить ссылку на свой список желаний',
+}, {
   command: 'message',
   description: 'отправить анонимное сообщение',
 }, {
@@ -26,6 +26,9 @@ const DefaultCommandSet = [{
 }, {
   command: 'help',
   description: 'справка',
+}, {
+  command: 'start',
+  description: 'перезапустить бота',
 }];
 
 export default DefaultCommandSet;

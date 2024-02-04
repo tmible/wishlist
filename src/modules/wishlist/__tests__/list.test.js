@@ -10,27 +10,33 @@ describe('wishlist/list module', () => {
   let isUserInChat;
   let isChatGroup;
   let emit;
+  let subscribe;
   let sendMessageAndMarkItForMarkupRemove;
   let sendList;
   let getUseridFromInput;
   let ListModule;
   let ctx;
   let captor;
+  let userid;
 
   beforeEach(async () => {
     [
       isUserInChat,
       isChatGroup,
-      { emit },
+      { emit, subscribe },
       { sendMessageAndMarkItForMarkupRemove },
       sendList,
       getUseridFromInput,
     ] = await Promise.all([
       (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-user-in-chat'))).default
+        (await td.replaceEsm(await resolveModule(
+          '@tmible/wishlist-bot/helpers/is-user-in-chat',
+        ))).default
       )(),
       (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
+        (await td.replaceEsm(await resolveModule(
+          '@tmible/wishlist-bot/helpers/is-chat-group',
+        ))).default
       )(),
       td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
       td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')),
@@ -50,7 +56,7 @@ describe('wishlist/list module', () => {
     name: 'should not send list if user is in chat',
     test: async () => {
       td.when(isUserInChat(), { ignoreExtraArgs: true }).thenResolve(true);
-      await captor.value(ctx);
+      await captor.value(ctx, userid);
       td.verify(sendList(), { ignoreExtraArgs: true, times: 0 });
     },
   }, {
@@ -58,8 +64,8 @@ describe('wishlist/list module', () => {
     test: async () => {
       td.when(isUserInChat(), { ignoreExtraArgs: true }).thenResolve(false);
       td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(true);
-      ctx.from.id = 'userid';
-      await captor.value(ctx);
+      ctx.from.id = 123;
+      await captor.value(ctx, userid);
       td.verify(sendList(), { ignoreExtraArgs: true, times: 0 });
     },
   }, {
@@ -67,8 +73,8 @@ describe('wishlist/list module', () => {
     test: async () => {
       td.when(isUserInChat(), { ignoreExtraArgs: true }).thenResolve(false);
       td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
-      ctx.from.id = 'userid';
-      await captor.value(ctx);
+      ctx.from.id = 123;
+      await captor.value(ctx, userid);
       td.verify(emit(Events.Wishlist.HandleOwnList, ctx));
     },
   }, {
@@ -76,8 +82,8 @@ describe('wishlist/list module', () => {
     test: async () => {
       td.when(isUserInChat(), { ignoreExtraArgs: true }).thenResolve(false);
       td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
-      ctx.from.id = 'userid';
-      await captor.value(ctx);
+      ctx.from.id = 123;
+      await captor.value(ctx, userid);
       td.verify(sendList(), { ignoreExtraArgs: true, times: 0 });
     },
   }];
@@ -89,7 +95,7 @@ describe('wishlist/list module', () => {
   });
 
   describe('list command handler', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       const bot = td.object([ 'action', 'command' ]);
       ctx = {
         chat: {},
@@ -105,7 +111,7 @@ describe('wishlist/list module', () => {
         getUseridFromInput(),
         { ignoreExtraArgs: true },
       ).thenReturn(
-        [ 'userid', 'username' ],
+        [ 123, 'username' ],
       );
     });
 
@@ -140,7 +146,7 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx);
-        td.verify(sendList(ctx, 'userid', 'username', false, true));
+        td.verify(sendList(ctx, 123, 'username', false, true));
       });
     });
   });
@@ -154,13 +160,43 @@ describe('wishlist/list module', () => {
   describe('force_list action handler', () => {
     it('should send list', async () => {
       const bot = td.object([ 'action', 'command' ]);
-      ctx = { match: [ null, 'match 1' ] };
+      ctx = { match: [ null, 123 ] };
       captor = td.matchers.captor();
-      td.when(emit(Events.Usernames.GetUsernameByUserid, 'match 1')).thenReturn('username');
+      td.when(emit(Events.Usernames.GetUsernameByUserid, 123)).thenReturn('username');
       ListModule.configure(bot);
       td.verify(bot.action(/^force_list ([0-9]+)$/, captor.capture()));
       await captor.value(ctx);
-      td.verify(sendList(ctx, 'match 1', 'username', true));
+      td.verify(sendList(ctx, 123, 'username', true));
+    });
+  });
+
+  it('should register handle list link event handler', () => {
+    ListModule.configure(td.object([ 'action', 'command' ]));
+    td.verify(subscribe(Events.Wishlist.HandleListLink, td.matchers.isA(Function)));
+  });
+
+  describe('handle list link event handler', () => {
+    beforeEach(() => {
+      ctx = { from: { id: 'fromId' }, reply: () => {} };
+      userid = 123;
+      captor = td.matchers.captor();
+      ListModule.configure(td.object([ 'action', 'command' ]));
+      td.verify(subscribe(Events.Wishlist.HandleListLink, captor.capture()));
+      td.when(
+        getUseridFromInput(),
+        { ignoreExtraArgs: true },
+      ).thenReturn(
+        [ userid, 'username' ],
+      );
+    });
+
+    for (const { name, test } of handleListCommandTestCases) {
+      it(name, test);
+    }
+
+    it('should send list', async () => {
+      await captor.value(ctx, userid);
+      td.verify(sendList(ctx, userid, 'username', false, true));
     });
   });
 
@@ -205,7 +241,7 @@ describe('wishlist/list module', () => {
           getUseridFromInput(),
           { ignoreExtraArgs: true },
         ).thenReturn(
-          [ 'userid', 'username' ],
+          [ 123, 'username' ],
         );
       });
 
@@ -225,7 +261,7 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx, next);
-        td.verify(sendList(ctx, 'userid', 'username', false, true));
+        td.verify(sendList(ctx, 123, 'username', false, true));
       });
     });
   });

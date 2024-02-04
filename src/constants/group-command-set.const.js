@@ -3,11 +3,11 @@
  * @constant {{ command: string, description: string }[]}
  */
 const GroupCommandSet = [{
-  command: 'start',
-  description: 'перезапустить бота',
-}, {
   command: 'list',
   description: 'получить список',
+}, {
+  command: 'link',
+  description: 'получить ссылку на свой список желаний',
 }, {
   command: 'message',
   description: 'отправить анонимное сообщение',
@@ -17,6 +17,9 @@ const GroupCommandSet = [{
 }, {
   command: 'help',
   description: 'справка',
+}, {
+  command: 'start',
+  description: 'перезапустить бота',
 }];
 
 export default GroupCommandSet;

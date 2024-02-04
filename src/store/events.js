@@ -4,6 +4,7 @@
  */
 const Events = Object.freeze({
   Wishlist: {
+    HandleListLink: 'wishlist | handle list link',
     GetList: 'wishlist | get list',
     BookItem: 'wishlist | book item',
     CooperateOnItem: 'wishlist | cooperate on item',

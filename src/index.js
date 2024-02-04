@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { session, Telegraf } from 'telegraf';
+import { Telegraf, session } from 'telegraf';
 import DefaultCommandSet from '@tmible/wishlist-bot/constants/default-command-set';
 import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
 import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
@@ -10,6 +10,7 @@ import { removeLastMarkupMiddleware } from '@tmible/wishlist-bot/helpers/middlew
 import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-messages';
 import EditingModule from '@tmible/wishlist-bot/modules/editing';
 import HelpModule from '@tmible/wishlist-bot/modules/help';
+import LinkModule from '@tmible/wishlist-bot/modules/link';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import {
   initPersistentSession,
@@ -32,26 +33,33 @@ bot.use(session({ getSessionKey, defaultSession: () => ({}) }));
 bot.use(initPersistentSession());
 
 console.log('configuring bot');
+bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
+bot.on('message', removeLastMarkupMiddleware);
+bot.action(/.*/, removeLastMarkupMiddleware);
+
 bot.start(async (ctx) => {
   await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
   await ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
+
+  if (!isChatGroup(ctx)) {
+    emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
+  }
+
+  if (!!ctx.startPayload) {
+    return emit(Events.Wishlist.HandleListLink, ctx, ctx.startPayload);
+  }
+
+  await dropPersistentSession(ctx);
 
   if (isChatGroup(ctx)) {
     return ctx.reply('Всем привет, всем здравствуйте!');
   }
 
-  emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
-  await dropPersistentSession(ctx);
-
   await ctx.sendMessage('Привет!');
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
 });
 
-bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
-bot.on('message', removeLastMarkupMiddleware);
-bot.action(/.*/, removeLastMarkupMiddleware);
-
-bot.command('my_nickname', (ctx) => ctx.reply(
+bot.command('my_nickname', async (ctx) => ctx.reply(
   getNickname(ctx.from.id),
   ...(isChatGroup(ctx) ? [{ reply_to_message_id: ctx.message.message_id }] : []),
 ));
@@ -61,6 +69,7 @@ configureModules(bot, [
   WishlistModule,
   AnonymousMessagesModule,
   EditingModule,
+  LinkModule,
 ]);
 
 bot.catch((err, ctx) => {

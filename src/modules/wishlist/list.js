@@ -6,7 +6,7 @@ import isUserInChat from '@tmible/wishlist-bot/helpers/is-user-in-chat';
 import {
   sendMessageAndMarkItForMarkupRemove,
 } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
+import { emit, subscribe } from '@tmible/wishlist-bot/store/event-bus';
 import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
 
@@ -27,7 +27,7 @@ const handleListCommand = async (ctx, userid) => {
     return false;
   }
 
-  if (userid === ctx.from.id) {
+  if (parseInt(userid) === ctx.from.id) {
     if (isChatGroup(ctx)) {
       return false;
     }
@@ -81,6 +81,18 @@ const configure = (bot) => {
     emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
     true,
   ));
+
+  subscribe(Events.Wishlist.HandleListLink, async (ctx, userid) => {
+    if (!(await handleListCommand(ctx, userid))) {
+      return;
+    }
+    await sendList(
+      ctx,
+      ...getUseridFromInput(userid),
+      false,
+      true,
+    );
+  });
 };
 
 /**
