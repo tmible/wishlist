@@ -25,12 +25,9 @@ const configure = (bot) => {
     await sendMessageAndMarkItForMarkupRemove(
       ctx,
       'replyWithMarkdownV2',
-      'Опишите подарок в формате:\n\n' +
-      'приоритет\nназвание\nописание\n\n'+
-      'и я добавлю его в список\\.\n\n' +
-      'Приоритет — целое число больше 0\n' +
-      'Название — произвольный текст без переносов строк\n' +
-      'Описание — произвольный текст с переносами строк и форматированием',
+      'Опишите подарок в формате:\n' +
+      '>приоритет\n>название\n>описание\n' +
+      'Приоритет и описание можно не указывать',
       Markup.inlineKeyboard([ Markup.button.callback('Не добавлять', 'cancel_add') ]),
     );
   });
@@ -48,20 +45,25 @@ const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AddItemToWishlist) {
       const match = new RegExp(
-        `^(${ItemPriorityPattern})\n(${ItemNamePattern})\n(${ItemDescriptionPattern})$`,
+        `^((${ItemPriorityPattern})\n)?(${ItemNamePattern})(\n(${ItemDescriptionPattern}))?$`,
       ).exec(ctx.message.text);
 
       delete ctx.session.messagePurpose;
 
-      if (!match || match.length < 4) {
-        return ctx.reply('Ошибка в описании подарка. Не могу добавить');
+      if (!match || match.length < 6) {
+        return ctx.reply(
+          'Ошибка в описании подарка. Проверьте, что:\n' +
+          'Приоритет — целое число больше 0\n' +
+          'Название — произвольный текст без переносов строк\n' +
+          'Описание — произвольный текст с переносами строк и форматированием',
+        );
       }
 
       emit(
         Events.Editing.AddItem,
-        [ ctx.from.id, ...match.slice(1) ],
+        [ ctx.from.id, match[2] ?? '1', match[3], match[5] ?? '' ],
         ctx.message.entities,
-        match[1].length + match[2].length + 2,
+        (match[1] ?? '').length + match[3].length + 1,
       );
 
       await ctx.reply('Добавлено!');

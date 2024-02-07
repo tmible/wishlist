@@ -15,6 +15,10 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
 
   const descriptionEntities = entities.filter(({ offset }) => offset >= descriptionOffset);
 
+  if (descriptionEntities.length === 0) {
+    return;
+  }
+
   db.prepare(
     `INSERT INTO description_entities VALUES ${
       descriptionEntities.map((entity) => `($itemId, ?, ?, ?, ${
