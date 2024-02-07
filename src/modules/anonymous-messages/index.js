@@ -10,7 +10,7 @@ import MessageModule from './message.js';
  */
 const configure = (bot) => {
   console.log('configuring anonymous messages module');
-  configureModules(bot, [
+  return configureModules(bot, [
     AnswerModule,
     CancelAnswerModule,
     CancelMessageModule,

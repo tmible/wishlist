@@ -18,7 +18,7 @@ import UpdatePriorityModule from './update-priority.js';
  */
 const configure = (bot) => {
   console.log('configuring editing module');
-  configureModules(bot, [
+  return configureModules(bot, [
     EditModule,
     UpdatePriorityModule,
     CancelUpdatePriorityModule,

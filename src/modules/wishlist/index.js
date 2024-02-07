@@ -12,7 +12,7 @@ import RetireModule from './retire.js';
  */
 const configure = (bot) => {
   console.log('configuring wishlist module');
-  configureModules(bot, [
+  return configureModules(bot, [
     ListModule,
     CancelListModule,
     BookModule,

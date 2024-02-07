@@ -5,6 +5,7 @@ import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
 import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
 import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
+import deleteMessagePurposeMiddleware from '@tmible/wishlist-bot/helpers/middlewares/delete-message-purpose';
 import forcePrivacyModeMiddleware from '@tmible/wishlist-bot/helpers/middlewares/force-privacy-mode';
 import { removeLastMarkupMiddleware } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-messages';
@@ -36,6 +37,7 @@ console.log('configuring bot');
 bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
 bot.on('message', removeLastMarkupMiddleware);
 bot.action(/.*/, removeLastMarkupMiddleware);
+bot.on('message', deleteMessagePurposeMiddleware);
 
 bot.start(async (ctx) => {
   await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
@@ -70,7 +72,7 @@ configureModules(bot, [
   AnonymousMessagesModule,
   EditingModule,
   LinkModule,
-]);
+])(bot);
 
 bot.catch((err, ctx) => {
   console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);

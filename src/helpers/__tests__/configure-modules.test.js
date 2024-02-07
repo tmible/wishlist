@@ -23,7 +23,7 @@ describe('configureModules', () => {
   });
 
   it('should register modules message handlers if provided', () => {
-    configureModules({}, modules);
+    configureModules({}, modules)();
     assert.deepEqual(
       modules.filter(
         ({ messageHandler }) => !!messageHandler
@@ -32,5 +32,29 @@ describe('configureModules', () => {
       ),
       modules.filter(({ messageHandler }) => !!messageHandler).map(() => 1),
     );
+  });
+
+  it('should register all message handlers after all modules configured', (testContext) => {
+    let isLastConfigureCalled = false;
+    modules = [{
+      configure: testContext.mock.fn(() => {
+        return configureModules({}, [{
+          configure: testContext.mock.fn(),
+          messageHandler: testContext.mock.fn(() => {
+            if (!isLastConfigureCalled) {
+              throw new Error('message handler is registered before last module was configured');
+            }
+          }),
+        }]);
+      }),
+      messageHandler: testContext.mock.fn(() => {
+        if (!isLastConfigureCalled) {
+          throw new Error('message handler is registered before last module was configured');
+        }
+      }),
+    }, {
+      configure: testContext.mock.fn(() => { isLastConfigureCalled = true; }),
+    }];
+    assert.doesNotThrow(() => configureModules({}, modules)());
   });
 });
