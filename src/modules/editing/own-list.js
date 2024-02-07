@@ -3,7 +3,7 @@ import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
 
 /**
- * При получении команды /edit бот
+ * При получении команды /my_list бот
  * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  *
  * При вызове действия отправки собственного списка новыми сообщениями бот
@@ -14,7 +14,7 @@ import sendList from './helpers/send-list.js';
  * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  */
 const configure = (bot) => {
-  bot.command('edit', (ctx) => sendList(ctx, false));
+  bot.command('my_list', (ctx) => sendList(ctx, false));
   bot.action('force_own_list', (ctx) => sendList(ctx, true));
   subscribe(Events.Wishlist.HandleOwnList, sendList);
 };
