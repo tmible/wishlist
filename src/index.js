@@ -83,18 +83,14 @@ bot.launch();
 console.log('bot started');
 
 process.once('SIGINT', async () => {
-  destroyStore(),
-  await Promise.all([
-    destroyPersistentSession(),
-    bot.stop('SIGINT'),
-  ]);
+  destroyStore();
+  await destroyPersistentSession();
+  bot.stop('SIGINT');
   process.exit();
 });
 process.once('SIGTERM', async () => {
-  destroyStore(),
-  await Promise.all([
-    destroyPersistentSession(),
-    bot.stop('SIGTERM'),
-  ]);
+  destroyStore();
+  await destroyPersistentSession();
+  bot.stop('SIGTERM');
   process.exit();
 });

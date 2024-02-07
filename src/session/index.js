@@ -67,7 +67,12 @@ export const initPersistentSession = () => {
  * @function dropPersistentSession
  * @param {Context} ctx Контекст
  */
-export const dropPersistentSession = (ctx) => db.put(getSessionKey(ctx), { lists: {} });
+export const dropPersistentSession = async (ctx) => {
+  if (Object.hasOwn(ctx.session, 'persistent')) {
+    ctx.session.persistent = { lists: {} };
+  }
+  await db.put(getSessionKey(ctx), { lists: {} });
+};
 
 /**
  * Закрытие [подключения к БД]{@link db}

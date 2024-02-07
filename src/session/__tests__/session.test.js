@@ -57,16 +57,22 @@ describe('persistent session', () => {
         td.verify(db.get(sessionKey));
       });
 
-      it('should set default value on not found error', async () => {
-        td.when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
-        await middleware(ctx, next);
-        td.verify(dropPersistentSession());
-      });
+      describe('on not found error', () => {
+        let ctx;
 
-      it('should get default value on not found error', async () => {
-        td.when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
-        await middleware(ctx, next);
-        td.verify(db.get(sessionKey), { times: 2 });
+        beforeEach(async () => {
+          ctx = { session: {} };
+          td.when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
+          await middleware(ctx, next);
+        });
+
+        it('should set default value', () => {
+          td.verify(dropPersistentSession(ctx));
+        });
+
+        it('should get default value', () => {
+          td.verify(db.get(sessionKey), { times: 2 });
+        });
       });
 
       it('should throw other errors', async () => {
@@ -121,10 +127,27 @@ describe('persistent session', () => {
   });
 
   describe('on drop', () => {
-    it('should set default value to DB', async () => {
+    let ctx;
+
+    beforeEach(() => {
       td.when(new ClassicLevel(), { ignoreExtraArgs: true }).thenReturn(db);
       initPersistentSession();
-      await dropPersistentSession();
+      ctx = { session: { persistent: 'persistent' } };
+    });
+
+    it('should set default value to context if persistent session is not defined', async () => {
+      ctx = { session: {} };
+      await dropPersistentSession(ctx);
+      assert.deepEqual(ctx.session, {});
+    });
+
+    it('should set default value to context if persistent session is defined', async () => {
+      await dropPersistentSession(ctx);
+      assert.deepEqual(ctx.session.persistent, { lists: {} });
+    });
+
+    it('should set default value to DB', async () => {
+      await dropPersistentSession(ctx);
       td.verify(db.put(sessionKey, { lists: {} }));
     });
   });
