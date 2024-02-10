@@ -6,16 +6,24 @@ import Events from '@tmible/wishlist-bot/store/events';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
+* Значения параметры отправки списка по умолчанию
+* @constant {SendListOptions}
+*/
+const defaultOptions = {
+ shouldForceNewMessages: false,
+ shouldSendNotification: true,
+};
+
+/**
  * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages}
  * собственного списка желаний пользователя, при его наличии и при условии, что чат не групповой.
  * При отсутствии желаний пользователя отправляется сообщение об этом
  * @async
  * @function sendList
  * @param {Context} ctx Контекст
- * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений (см. аргумент shouldForceNewMessages {@link manageListsMessages})
- * @param {boolean} [shouldSendNotification=true] Признак необходимости отправки сообщения-уведомления об обновлении
+ * @param {SendListOptions} [passedOptions={}] Параметры отправки списка (см. аргумент passedOptions {@link manageListsMessages})
  */
-const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotification = true) => {
+const sendList = async (ctx, passedOptions = {}) => {
   if (isChatGroup(ctx)) {
     return;
   }
@@ -61,8 +69,10 @@ const sendList = async (ctx, shouldForceNewMessages = false, shouldSendNotificat
     messages,
     'Ваш актуальный список',
     'Ваш неактуальный список',
-    shouldForceNewMessages,
-    shouldSendNotification,
+    {
+      ...defaultOptions,
+      ...passedOptions,
+    },
   );
 };
 

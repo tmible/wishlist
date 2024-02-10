@@ -4,7 +4,21 @@ import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-l
 /**
  * Отправляемое сообщение с элементом списка
  * @typedef {[ FmtString, Markup<InlineKeyboardMarkup> ]} Message
+ *
+ * Параметры отправки списка
+ * @typedef {Object} SendListOptions
+ * @property {boolean} shouldForceNewMessages Признак необходимости отправки новых сообщений
+ * @property {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
  */
+
+/**
+ * Значения параметры отправки списка по умолчанию
+ * @constant {SendListOptions}
+ */
+const defaultOptions = {
+  shouldForceNewMessages: false,
+  shouldSendNotification: true,
+};
 
 /**
  * Обновление списка. По умолчанию -- обновление отправленных ранее сообщений.
@@ -17,8 +31,7 @@ import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-l
  * @param {Message[]} messages Новые сообщения со списком
  * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
- * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений
- * @param {boolean} [shouldSendNotification=true] Признак необходимости отправки сообщения-уведомления об обновлении
+ * @param {SendListOptions} [passedOptions={}] Параметры отправки списка
  */
 const manageListsMessages = async (
   ctx,
@@ -26,14 +39,18 @@ const manageListsMessages = async (
   messages,
   titleMessageText,
   outdatedTitleMessageText,
-  shouldForceNewMessages = false,
-  shouldSendNotification = true,
+  passedOptions = {},
 ) => {
+  const options = {
+    ...defaultOptions,
+    ...passedOptions,
+  };
+
   if (
-    !shouldForceNewMessages &&
+    !options.shouldForceNewMessages &&
     (ctx.session.persistent.lists[userid]?.messagesToEditIds.length ?? -1) >= messages.length
   ) {
-    await updateListsMessages(ctx, userid, messages, shouldSendNotification);
+    await updateListsMessages(ctx, userid, messages, options.shouldSendNotification);
     return;
   }
 

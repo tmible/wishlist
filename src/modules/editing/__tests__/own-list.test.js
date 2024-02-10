@@ -32,7 +32,7 @@ describe('editing/own-list module', () => {
       OwnListModule.configure(bot);
       td.verify(bot.command('my_list', captor.capture()));
       await captor.value(ctx);
-      td.verify(sendList(ctx, false));
+      td.verify(sendList(ctx));
     });
   });
 
@@ -50,7 +50,7 @@ describe('editing/own-list module', () => {
       OwnListModule.configure(bot);
       td.verify(bot.action('force_own_list', captor.capture()));
       await captor.value(ctx);
-      td.verify(sendList(ctx, true));
+      td.verify(sendList(ctx, { shouldForceNewMessages: true }));
     });
   });
 

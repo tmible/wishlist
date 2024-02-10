@@ -72,26 +72,21 @@ const configure = (bot) => {
       return;
     }
 
-    await sendList(ctx, userid, username, false, true);
+    await sendList(ctx, userid, username, { shouldSendNotification: true });
   });
 
   bot.action(/^force_list ([0-9]+)$/, (ctx) => sendList(
     ctx,
     ctx.match[1],
     emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
-    true,
+    { shouldForceNewMessages: true },
   ));
 
   subscribe(Events.Wishlist.HandleListLink, async (ctx, userid) => {
     if (!(await handleListCommand(ctx, userid))) {
       return;
     }
-    await sendList(
-      ctx,
-      ...getUseridFromInput(userid),
-      false,
-      true,
-    );
+    await sendList(ctx, ...getUseridFromInput(userid), { shouldSendNotification: true });
   });
 };
 
@@ -112,7 +107,7 @@ const messageHandler = (bot) => {
         return;
       }
 
-      await sendList(ctx, userid, username, false, true);
+      await sendList(ctx, userid, username, { shouldSendNotification: true });
       return;
     }
 

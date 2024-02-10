@@ -41,7 +41,7 @@ describe('editing/delete module', () => {
     });
 
     it('should send list', () => {
-      td.verify(sendList(ctx, false, false));
+      td.verify(sendList(ctx, { shouldSendNotification: false }));
     });
   });
 });

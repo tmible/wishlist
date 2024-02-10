@@ -67,6 +67,15 @@ const formReplyMarkup = (ctx, item, userid) => {
 };
 
 /**
+* Значения параметры отправки списка по умолчанию
+* @constant {SendListOptions}
+*/
+const defaultOptions = {
+ shouldForceNewMessages: false,
+ shouldSendNotification: false,
+};
+
+/**
  * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages} списка желаний пользователя,
  * при его наличии, другим пользователям. При отсутствии желаний пользователя отправляется сообщение об этом
  * @async
@@ -74,16 +83,9 @@ const formReplyMarkup = (ctx, item, userid) => {
  * @param {Context} ctx Контекст
  * @param {string} userid Идентификатор пользователя -- владельца списка
  * @param {string} username Имя пользователя -- владельца списка
- * @param {boolean} [shouldForceNewMessages=false] Признак необходимости отправки новых сообщений (см. аргумент shouldForceNewMessages {@link manageListsMessages})
- * @param {boolean} [shouldSendNotification=false] Признак необходимости отправки сообщения-уведомления об обновлении
+ * @param {SendListOptions} [passedOptions={}] Параметры отправки списка (см. аргумент passedOptions {@link manageListsMessages})
  */
-const sendList = async (
-  ctx,
-  userid,
-  username,
-  shouldForceNewMessages = false,
-  shouldSendNotification = false,
-) => {
+const sendList = async (ctx, userid, username, passedOptions = {}) => {
   const messages = emit(Events.Wishlist.GetList, userid).map((item) => {
     const stateBlock = ListItemStateToEmojiMap.get(item.state);
     const priorityBlock = digitToEmoji(item.priority);
@@ -116,8 +118,10 @@ const sendList = async (
     messages,
     Format.join([ 'Актуальный список', userMention ], ' '),
     Format.join([ 'Неактуальный список', userMention ], ' '),
-    shouldForceNewMessages,
-    shouldSendNotification,
+    {
+      ...defaultOptions,
+      ...passedOptions,
+    },
   );
 };
 

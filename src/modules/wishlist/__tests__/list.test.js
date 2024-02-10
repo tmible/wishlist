@@ -146,7 +146,7 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx);
-        td.verify(sendList(ctx, 123, 'username', false, true));
+        td.verify(sendList(ctx, 123, 'username', { shouldSendNotification: true }));
       });
     });
   });
@@ -166,7 +166,7 @@ describe('wishlist/list module', () => {
       ListModule.configure(bot);
       td.verify(bot.action(/^force_list ([0-9]+)$/, captor.capture()));
       await captor.value(ctx);
-      td.verify(sendList(ctx, 123, 'username', true));
+      td.verify(sendList(ctx, 123, 'username', { shouldForceNewMessages: true }));
     });
   });
 
@@ -196,7 +196,7 @@ describe('wishlist/list module', () => {
 
     it('should send list', async () => {
       await captor.value(ctx, userid);
-      td.verify(sendList(ctx, userid, 'username', false, true));
+      td.verify(sendList(ctx, userid, 'username', { shouldSendNotification: true }));
     });
   });
 
@@ -261,7 +261,7 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx, next);
-        td.verify(sendList(ctx, 123, 'username', false, true));
+        td.verify(sendList(ctx, 123, 'username', { shouldSendNotification: true }));
       });
     });
   });
