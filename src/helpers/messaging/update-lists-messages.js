@@ -1,5 +1,5 @@
+import { strict as assert } from 'node:assert';
 import { Markup } from 'telegraf';
-import tryEditing from '@tmible/wishlist-bot/helpers/messaging/try-editing';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 import {
   sendMessageAndMarkItForMarkupRemove,
@@ -11,26 +11,55 @@ import {
  * @async
  * @function editMessages
  * @param {Context} ctx Контекст
- * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения об обновлении
- * @param {Message[]} messages Новые сообщения со списком
  * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {Message[]} messages Новые сообщения со списком
+ * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
  */
-const editMessages = async (ctx, shouldSendNotification, messages, userid) => {
+const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
   await Promise.all(
-    ctx.session.persistent.lists[userid].messagesToEditIds.map((messageToEditId, i) => {
+    ctx.session.persistent.lists[userid].messagesToEdit.map((messageToEdit, i) => {
       if (i >= messages.length) {
-        return ctx.deleteMessage(messageToEditId);
+        return ctx.deleteMessage(messageToEdit.id);
       }
 
       const message = messages[i];
 
-      return tryEditing(
-        ctx,
-        ctx.chat.id,
-        messageToEditId,
-        undefined,
-        ...message,
-      );
+      let areEntitiesEqual = true;
+      let areReplyMarkupsEqual = true;
+
+      try {
+        assert.deepEqual(
+          messageToEdit.entities.filter(({ type }) => type !== 'url'),
+          message[0].entities.filter(({ type }) => type !== 'url'),
+        );
+      } catch {
+        areEntitiesEqual = false;
+      }
+
+      try {
+        assert.deepEqual(
+          messageToEdit.reply_markup.inline_keyboard.map((row) =>
+            row.map((button) => ({ text: button.text, callback_data: button.callback_data }))
+          ),
+          message[1].reply_markup.inline_keyboard.map((row) =>
+            row.map((button) => ({ text: button.text, callback_data: button.callback_data }))
+          ),
+        );
+      } catch {
+        areReplyMarkupsEqual = false;
+      }
+
+      if (messageToEdit.text === message[0].text && areEntitiesEqual && areReplyMarkupsEqual) {
+        return Promise.resolve();
+      }
+
+      ctx.session.persistent.lists[userid].messagesToEdit[i] = {
+        ...messageToEdit,
+        text: message[0].text,
+        entities: message[0].entities,
+        reply_markup: message[1].reply_markup,
+      };
+      return ctx.telegram.editMessageText(ctx.chat.id, messageToEdit.id, undefined, ...message);
     }),
   );
 
@@ -64,12 +93,12 @@ const editMessages = async (ctx, shouldSendNotification, messages, userid) => {
  * @param {Context} ctx Контекст
  * @param {string} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
- * @param {boolean} [shouldSendNotification=true] Признак необходимости отправки сообщения-уведомления об обновлении
+ * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
  */
-const updateListsMessages = async (ctx, userid, messages, shouldSendNotification = true) => {
+const updateListsMessages = async (ctx, userid, messages, shouldSendNotification) => {
   await tryPinning(ctx, 'pinChatMessage', ctx.session.persistent.lists[userid].pinnedMessageId);
-  await editMessages(ctx, shouldSendNotification, messages, userid);
-  ctx.session.persistent.lists[userid].messagesToEditIds.length = messages.length;
+  await editMessages(ctx, userid, messages, shouldSendNotification);
+  ctx.session.persistent.lists[userid].messagesToEdit.length = messages.length;
 };
 
 export default updateListsMessages;

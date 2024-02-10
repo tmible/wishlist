@@ -48,7 +48,7 @@ const manageListsMessages = async (
 
   if (
     !options.shouldForceNewMessages &&
-    (ctx.session.persistent.lists[userid]?.messagesToEditIds.length ?? -1) >= messages.length
+    (ctx.session.persistent.lists[userid]?.messagesToEdit.length ?? -1) >= messages.length
   ) {
     await updateListsMessages(ctx, userid, messages, options.shouldSendNotification);
     return;

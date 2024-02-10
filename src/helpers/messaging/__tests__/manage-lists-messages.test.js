@@ -12,7 +12,7 @@ describe('manageListsMessages', () => {
     sessionInitializer: () => ({
       userid: {
         pinnedMessageId: 'pinnedMessageId',
-        messagesToEditIds: [ 1, 2 ],
+        messagesToEdit: [ 1, 2 ],
       },
     }),
     positiveTestCaseName: 'should update messages',
@@ -25,7 +25,7 @@ describe('manageListsMessages', () => {
     sessionInitializer: () => ({
       userid: {
         pinnedMessageId: 'pinnedMessageId',
-        messagesToEditIds: [],
+        messagesToEdit: [],
       },
     }),
     positiveTestCaseName: 'should resend messages',
@@ -46,7 +46,7 @@ describe('manageListsMessages', () => {
     sessionInitializer: () => ({
       userid: {
         pinnedMessageId: 'pinnedMessageId',
-        messagesToEditIds: [],
+        messagesToEdit: [],
       },
     }),
     positiveTestCaseName: 'should resend messages',

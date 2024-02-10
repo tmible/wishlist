@@ -63,7 +63,13 @@ const formReplyMarkup = (ctx, item, userid) => {
       [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
       [];
 
-  return Markup.inlineKeyboard([[ ...bookButton, ...cooperateButton ], [ ...retireButton ]]);
+  return Markup.inlineKeyboard([
+    ...(bookButton.length > 0 || cooperateButton.length > 0 ?
+      [[ ...bookButton, ...cooperateButton ]] :
+      []
+    ),
+    ...(retireButton.length > 0 ? [[ ...retireButton ]] : []),
+  ]);
 };
 
 /**
@@ -71,8 +77,8 @@ const formReplyMarkup = (ctx, item, userid) => {
 * @constant {SendListOptions}
 */
 const defaultOptions = {
- shouldForceNewMessages: false,
- shouldSendNotification: false,
+  shouldForceNewMessages: false,
+  shouldSendNotification: false,
 };
 
 /**
@@ -82,7 +88,7 @@ const defaultOptions = {
  * @function sendList
  * @param {Context} ctx Контекст
  * @param {string} userid Идентификатор пользователя -- владельца списка
- * @param {string} username Имя пользователя -- владельца списка
+ * @param {string} [username] Имя пользователя -- владельца списка
  * @param {SendListOptions} [passedOptions={}] Параметры отправки списка (см. аргумент passedOptions {@link manageListsMessages})
  */
 const sendList = async (ctx, userid, username, passedOptions = {}) => {

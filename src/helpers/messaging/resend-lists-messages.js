@@ -22,8 +22,8 @@ const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText) => {
       ] :
       []
     ),
-    (ctx.session.persistent.lists[userid]?.messagesToEditIds ?? []).map((messagesToEditId) =>
-      ctx.telegram.editMessageReplyMarkup(ctx.chat.id, messagesToEditId)
+    ...(ctx.session.persistent.lists[userid]?.messagesToEdit ?? []).map(({ id }) =>
+      ctx.telegram.editMessageReplyMarkup(ctx.chat.id, id)
     ),
   ]);
 };
@@ -74,12 +74,17 @@ const resendListsMessages = async (
 
   ctx.session.persistent.lists[userid] = {
     pinnedMessageId: pinnedMessage.message_id,
-    messagesToEditIds: [],
+    messagesToEdit: [],
   };
 
   for (const message of messages) {
     const sentMessage = await ctx.reply(...message);
-    ctx.session.persistent.lists[userid].messagesToEditIds.push(sentMessage.message_id);
+    ctx.session.persistent.lists[userid].messagesToEdit.push({
+      id: sentMessage.message_id,
+      text: sentMessage.text,
+      entities: sentMessage.entities,
+      reply_markup: sentMessage.reply_markup,
+    });
   }
 };
 

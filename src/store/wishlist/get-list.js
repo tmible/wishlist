@@ -48,7 +48,7 @@ const prepare = () => statement = db.prepare(`
     offset,
     length,
     additional
-  FROM list
+  FROM (SELECT id, priority, name, description, state FROM list WHERE userid = ?) AS list
   LEFT JOIN (
     SELECT
       list_item_id,
@@ -59,7 +59,6 @@ const prepare = () => statement = db.prepare(`
     GROUP BY list_item_id
   ) as participants ON list.id = participants.list_item_id
   LEFT JOIN description_entities ON list.id = description_entities.list_item_id
-  WHERE userid = ?
 `);
 
 /**

@@ -26,7 +26,10 @@ describe('updateListsMessages', () => {
         persistent: {
           lists: {
             userid: {
-              messagesToEditIds: [ 1, 2 ],
+              messagesToEdit: [
+                { id: 1, text: 'message 1', entities: [], reply_markup: { inline_keyboard: [] } },
+                { id: 2, text: 'message 2', entities: [], reply_markup: { inline_keyboard: [] } },
+              ],
               pinnedMessageId: 'pinnedMessageId',
             },
           },
@@ -43,43 +46,91 @@ describe('updateListsMessages', () => {
   });
 
   describe('editing messages', () => {
-    it('should edit every message', async () => {
-      const messages = [[ 'message 1' ], [ 'message 2' ]];
+    it('should edit only changed messages', async () => {
+      const messages = [
+        [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        [{ text: 'message 2 new', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+      ];
 
       await updateListsMessages(ctx, 'userid', messages, false);
 
       assert.deepEqual(
         editMessageText.mock.calls.map((call) => call.arguments),
-        ctx.session.persistent.lists.userid.messagesToEditIds.map((messageToEditId, i) => [
+        [[
           ctx.chat.id,
-          messageToEditId,
+          2,
           undefined,
-          messages[i][0],
-        ]),
+          { text: 'message 2 new', entities: [] },
+          { reply_markup: { inline_keyboard: [] } },
+        ]],
       );
     });
 
-    it('should delete excess messages', async () => {
-      const messagesToEditIds = [ 1, 2, 3 ];
-      const messages = [[ 'message 1' ], [ 'message 2' ]];
-      ctx.session.persistent.lists.userid.messagesToEditIds = messagesToEditIds.slice();
+    it('should save changed messages in session', async () => {
+      const messages = [
+        [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        [{ text: 'message 2 new', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+      ];
 
       await updateListsMessages(ctx, 'userid', messages, false);
 
       assert.deepEqual(
-        deleteMessage.mock.calls.map((call) => call.arguments),
-        messagesToEditIds.slice(messages.length).map((messageToEditId) => [ messageToEditId ]),
+        ctx.session.persistent.lists.userid.messagesToEdit,
+        [{
+          id: 1,
+          text: 'message 1',
+          entities: [],
+          reply_markup: { inline_keyboard: [] },
+        }, {
+          id: 2,
+          text: 'message 2 new',
+          entities: [],
+          reply_markup: { inline_keyboard: [] },
+        }],
       );
     });
 
+    it('should delete excess messages', async () => {
+      const messages = [
+        [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+      ];
+      ctx.session.persistent.lists.userid.messagesToEdit.push({
+        id: 3,
+        text: 'message 3',
+        entities: [],
+        reply_markup: { inline_keyboard: [] },
+      });
+
+      await updateListsMessages(ctx, 'userid', messages, false);
+
+      assert.deepEqual(deleteMessage.mock.calls.map((call) => call.arguments), [[ 3 ]]);
+    });
+
     it('should not send notification if not requested', async () => {
-      await updateListsMessages(ctx, 'userid', [[ 'message 1' ], [ 'message 2' ]], false);
+      await updateListsMessages(
+        ctx,
+        'userid',
+        [
+          [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+          [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        ],
+        false,
+      );
       assert.equal(reply.mock.calls.length, 0);
     });
 
     describe('if notification is requested', () => {
       it('should send notification for foreign list', async () => {
-        await updateListsMessages(ctx, 'userid', [[ 'message 1' ], [ 'message 2' ]]);
+        await updateListsMessages(
+          ctx,
+          'userid',
+          [
+            [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+            [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+          ],
+          true,
+        );
 
         assert.deepEqual(
           reply.mock.calls[0].arguments,
@@ -102,7 +153,15 @@ describe('updateListsMessages', () => {
       it('should send notification for own list', async () => {
         ctx.chat.id = 'userid';
 
-        await updateListsMessages(ctx, 'userid', [[ 'message 1' ], [ 'message 2' ]]);
+        await updateListsMessages(
+          ctx,
+          'userid',
+          [
+            [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+            [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+          ],
+          true,
+        );
 
         assert.deepEqual(
           reply.mock.calls[0].arguments,
@@ -125,7 +184,15 @@ describe('updateListsMessages', () => {
   });
 
   it('should slice old messages list', async () => {
-    await updateListsMessages(ctx, 'userid', [[ 'message 1' ]]);
-    assert.deepEqual(ctx.session.persistent.lists.userid.messagesToEditIds, [ 1 ]);
+    await updateListsMessages(
+      ctx,
+      'userid',
+      [[{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } } ]],
+      false,
+    );
+    assert.deepEqual(
+      ctx.session.persistent.lists.userid.messagesToEdit,
+      [{ id: 1, text: 'message 1', entities: [], reply_markup: { inline_keyboard: [] } }],
+    );
   });
 });

@@ -13,13 +13,17 @@ describe('resendListsMessages', () => {
 
   const sessionInitializer = () => ({
     pinnedMessageId: 'pinnedMessageId',
-    messagesToEditIds: [ 1, 2 ],
+    messagesToEdit: [{ id: 1 }, { id: 2 }],
   });
 
   beforeEach(() => {
-    reply = mock.fn((text) => new Promise(
-      (resolve) => resolve({ message_id: ++messageId, chat: { id: 'chatId' }, text })),
-    );
+    reply = mock.fn((text) => Promise.resolve({
+      message_id: ++messageId,
+      chat: { id: 'chatId' },
+      text,
+      entities: `${messageId} entities`,
+      reply_markup: `${messageId} reply markup`,
+    }));
     pinChatMessage = mock.fn(async () => {});
     unpinChatMessage = mock.fn(async () => {});
     editMessageText = mock.fn(async () => {});
@@ -64,9 +68,7 @@ describe('resendListsMessages', () => {
 
     assert.deepEqual(
       editMessageReplyMarkup.mock.calls.map((call) => call.arguments),
-      sessionInitializer().messagesToEditIds.map(
-        (messagesToEditId) => [ 'chatId', messagesToEditId ],
-      ),
+      sessionInitializer().messagesToEdit.map(({ id }) => [ 'chatId', id ]),
     );
   });
 
@@ -150,8 +152,13 @@ describe('resendListsMessages', () => {
       'outdatedTitleMessageText',
     );
     assert.deepEqual(
-      ctx.session.persistent.lists.userid.messagesToEditIds,
-      messages.map((_, i) => messageId - (messages.length - i - 1)),
+      ctx.session.persistent.lists.userid.messagesToEdit,
+      messages.map((_, i) => ({
+        id: messageId - (messages.length - i - 1),
+        text: `message ${i + 1}`,
+        entities: `${messageId - (messages.length - i - 1)} entities`,
+        reply_markup: `${messageId - (messages.length - i - 1)} reply markup`,
+      })),
     );
   });
 });
