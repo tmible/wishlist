@@ -1,16 +1,20 @@
 /**
  * Промежуточный обработчик, удаляющий из сессии информацию о назначении
- * ожидаемого от пользователя сообщения по окончании обработчки сообщения
+ * ожидаемого от пользователя сообщения по окончании обработчки сообщения,
+ * если назначение не изменилось
  * @async
  * @function deleteMessagePurposeMiddleware
  * @param {Context} ctx Контекст
  * @param {() => Promise<void>} next Функция вызова следующего промежуточного обработчика
  */
 const deleteMessagePurposeMiddleware = async (ctx, next) => {
+  const memoized = ctx.session.messagePurpose?.type;
   try {
     await next();
   } finally {
-    delete ctx.session.messagePurpose;
+    if (memoized === ctx.session.messagePurpose?.type) {
+      delete ctx.session.messagePurpose;
+    }
   }
 };
 

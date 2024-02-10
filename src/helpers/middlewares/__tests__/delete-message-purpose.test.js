@@ -7,7 +7,7 @@ describe('deleteMessagePurposeMiddleware', () => {
   let next;
 
   beforeEach(() => {
-    ctx = { session: { messagePurpose: 'messagePurpose' } };
+    ctx = { session: { messagePurpose: { type: 'messagePurpose' } } };
     next = mock.fn(async () => {});
   });
 
@@ -18,9 +18,18 @@ describe('deleteMessagePurposeMiddleware', () => {
     assert.equal(next.mock.calls.length, 1);
   });
 
-  it('should delete message purpose from session', async () => {
+  it(
+    'should delete message purpose from session if it doesn\'t change after next call',
+    async () => {
+      await deleteMessagePurposeMiddleware(ctx, next);
+      assert.deepEqual(ctx.session, {});
+    },
+  );
+
+  it('should not delete message purpose from session if it changes after next call', async () => {
+    next = async () => ctx.session.messagePurpose.type = 'messagePurpose 2',
     await deleteMessagePurposeMiddleware(ctx, next);
-    assert.deepEqual(ctx.session, {});
+    assert.deepEqual(ctx.session.messagePurpose, { type: 'messagePurpose 2' });
   });
 
   it('should delete message purpose from session if next throws error', async (testContext) => {
