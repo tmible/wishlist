@@ -14,11 +14,15 @@ import HelpModule from '@tmible/wishlist-bot/modules/help';
 import LinkModule from '@tmible/wishlist-bot/modules/link';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import {
-  initPersistentSession,
   dropPersistentSession,
-  destroyPersistentSession,
-} from '@tmible/wishlist-bot/session';
-import { initStore, destroyStore } from '@tmible/wishlist-bot/store';
+  initPersistentSession,
+} from '@tmible/wishlist-bot/persistent-session';
+import {
+  autoUpdateMiddleware,
+  startAutoUpdateService,
+} from '@tmible/wishlist-bot/services/lists-auto-update';
+import { closeLocalDB } from '@tmible/wishlist-bot/services/local-db';
+import { destroyStore, initStore } from '@tmible/wishlist-bot/store';
 import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import Events from '@tmible/wishlist-bot/store/events';
 import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
@@ -33,11 +37,16 @@ console.log('initializing session');
 bot.use(session({ getSessionKey, defaultSession: () => ({}) }));
 bot.use(initPersistentSession());
 
+console.log('starting auto update service');
+startAutoUpdateService();
+
 console.log('configuring bot');
 bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
 bot.on('message', removeLastMarkupMiddleware);
 bot.action(/.*/, removeLastMarkupMiddleware);
 bot.on('message', deleteMessagePurposeMiddleware);
+bot.on('message', autoUpdateMiddleware);
+bot.action(/.*/, autoUpdateMiddleware);
 
 bot.start(async (ctx) => {
   await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
@@ -84,13 +93,13 @@ console.log('bot started');
 
 process.once('SIGINT', async () => {
   destroyStore();
-  await destroyPersistentSession();
+  await closeLocalDB();
   bot.stop('SIGINT');
   process.exit();
 });
 process.once('SIGTERM', async () => {
   destroyStore();
-  await destroyPersistentSession();
+  await closeLocalDB();
   bot.stop('SIGTERM');
   process.exit();
 });

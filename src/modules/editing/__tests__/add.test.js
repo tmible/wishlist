@@ -112,6 +112,7 @@ describe('editing/add module', () => {
       });
 
       it('should reply if couldn\'t match message text and pattern', async () => {
+        ctx.message.text = '';
         await captor.value(ctx, next);
         td.verify(ctx.reply(td.matchers.isA(String)));
       });

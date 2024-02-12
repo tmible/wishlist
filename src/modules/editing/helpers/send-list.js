@@ -6,7 +6,7 @@ import Events from '@tmible/wishlist-bot/store/events';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
-* Значения параметры отправки списка по умолчанию
+* Значения параметров отправки списка по умолчанию
 * @constant {SendListOptions}
 */
 const defaultOptions = {

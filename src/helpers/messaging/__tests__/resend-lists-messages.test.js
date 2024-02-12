@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import { Markup } from 'telegraf';
 import resendListsMessages from '../resend-lists-messages.js';
 
 describe('resendListsMessages', () => {
@@ -49,11 +50,36 @@ describe('resendListsMessages', () => {
       [[ 'message 1' ]],
       'titleMessageText',
       'outdatedTitleMessageText',
+      {},
     );
 
     assert.deepEqual(
       editMessageText.mock.calls[0].arguments,
       [ 'chatId', 'pinnedMessageId', undefined, 'outdatedTitleMessageText' ],
+    );
+  });
+
+  it('should add reply markup to pinned message on auto update', async () => {
+    await resendListsMessages(
+      ctx,
+      'userid',
+      [[ 'message 1' ]],
+      'titleMessageText',
+      'outdatedTitleMessageText',
+      { isAutoUpdate: true },
+    );
+
+    assert.deepEqual(
+      editMessageText.mock.calls[0].arguments,
+      [
+        'chatId',
+        'pinnedMessageId',
+        undefined,
+        'outdatedTitleMessageText',
+        Markup.inlineKeyboard([
+          Markup.button.callback('Обновить', 'manual_update userid'),
+        ])
+      ],
     );
   });
 
@@ -64,12 +90,26 @@ describe('resendListsMessages', () => {
       [[ 'message 1' ]],
       'titleMessageText',
       'outdatedTitleMessageText',
+      {},
     );
 
     assert.deepEqual(
       editMessageReplyMarkup.mock.calls.map((call) => call.arguments),
       sessionInitializer().messagesToEdit.map(({ id }) => [ 'chatId', id ]),
     );
+  });
+
+  it('should not remove list messages reply markup on manual update', async () => {
+    await resendListsMessages(
+      ctx,
+      'userid',
+      [[ 'message 1' ]],
+      'titleMessageText',
+      'outdatedTitleMessageText',
+      { isManualUpdate: true },
+    );
+
+    assert.equal(editMessageReplyMarkup.mock.calls.length, 0);
   });
 
   describe('pinning title message', () => {
@@ -80,6 +120,7 @@ describe('resendListsMessages', () => {
         [[ 'message 1' ]],
         'titleMessageText',
         'outdatedTitleMessageText',
+        {},
       );
       assert.deepEqual(unpinChatMessage.mock.calls[0].arguments, [ 'pinnedMessageId' ]);
     });
@@ -92,6 +133,7 @@ describe('resendListsMessages', () => {
         [[ 'message 1' ]],
         'titleMessageText',
         'outdatedTitleMessageText',
+        {},
       );
       assert.equal(unpinChatMessage.mock.calls.length, 0);
     });
@@ -103,6 +145,7 @@ describe('resendListsMessages', () => {
         [[ 'message 1' ]],
         'titleMessageText',
         'outdatedTitleMessageText',
+        {},
       );
       assert.deepEqual(reply.mock.calls[0].arguments, [ 'titleMessageText' ]);
     });
@@ -114,6 +157,7 @@ describe('resendListsMessages', () => {
         [[ 'message 1' ]],
         'titleMessageText',
         'outdatedTitleMessageText',
+        {},
       );
       assert.deepEqual(pinChatMessage.mock.calls[0].arguments, [ messageId - 1 ]);
     });
@@ -125,6 +169,7 @@ describe('resendListsMessages', () => {
         [[ 'message 1' ]],
         'titleMessageText',
         'outdatedTitleMessageText',
+        {},
       );
       assert.equal(ctx.session.persistent.lists.userid.pinnedMessageId, messageId - 1);
     });
@@ -138,6 +183,7 @@ describe('resendListsMessages', () => {
       messages,
       'titleMessageText',
       'outdatedTitleMessageText',
+      {},
     );
     assert.deepEqual(reply.mock.calls.slice(1).map((call) => call.arguments), messages);
   });
@@ -150,6 +196,7 @@ describe('resendListsMessages', () => {
       messages,
       'titleMessageText',
       'outdatedTitleMessageText',
+      {},
     );
     assert.deepEqual(
       ctx.session.persistent.lists.userid.messagesToEdit,

@@ -170,6 +170,30 @@ describe('wishlist/list module', () => {
     });
   });
 
+  it('should register manual_update action handler', () => {
+    const bot = td.object([ 'action', 'command' ]);
+    ListModule.configure(bot);
+    td.verify(bot.action(/^manual_update ([0-9]+)$/, td.matchers.isA(Function)));
+  });
+
+  describe('manual_update action handler', () => {
+    it('should send list', async () => {
+      const bot = td.object([ 'action', 'command' ]);
+      ctx = { match: [ null, 123 ] };
+      captor = td.matchers.captor();
+      td.when(emit(Events.Usernames.GetUsernameByUserid, 123)).thenReturn('username');
+      ListModule.configure(bot);
+      td.verify(bot.action(/^manual_update ([0-9]+)$/, captor.capture()));
+      await captor.value(ctx);
+      td.verify(sendList(
+        ctx,
+        123,
+        'username',
+        { shouldForceNewMessages: true, isManualUpdate: true },
+      ));
+    });
+  });
+
   it('should register handle list link event handler', () => {
     ListModule.configure(td.object([ 'action', 'command' ]));
     td.verify(subscribe(Events.Wishlist.HandleListLink, td.matchers.isA(Function)));

@@ -4,9 +4,9 @@ import * as td from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('persistent session', () => {
-  let ClassicLevel;
   let db;
   let getSessionKey;
+  let getLocalDB;
   let initPersistentSession;
   let dropPersistentSession;
   let destroyPersistentSession;
@@ -14,30 +14,31 @@ describe('persistent session', () => {
   const sessionKey = 'sessionKey';
 
   beforeEach(async () => {
-    [ { ClassicLevel }, getSessionKey ] = await Promise.all([
-      td.replaceEsm('classic-level'),
+    [ getSessionKey, { getLocalDB } ] = await Promise.all([
       (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/get-session-key'))).default
+        (await td.replaceEsm(await resolveModule(
+          '@tmible/wishlist-bot/helpers/get-session-key',
+        ))).default
       )(),
+      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/services/local-db')),
     ]);
 
-    db = td.object([ 'get', 'put', 'close' ]);
+    db = td.object([ 'get', 'put' ]);
     td.when(getSessionKey(), { ignoreExtraArgs: true }).thenReturn(sessionKey);
 
     ({
       initPersistentSession,
       dropPersistentSession,
       destroyPersistentSession,
-    } = await import('../index.js'));
+    } = await import('../persistent-session.js'));
   });
 
   afterEach(() => td.reset());
 
   describe('on init', () => {
-    it('should open DB connection', () => {
-      process.env.PERSISTENT_SESSION_PATH = 'PERSISTENT_SESSION_PATH';
+    it('should get DB', () => {
       initPersistentSession();
-      td.verify(new ClassicLevel('PERSISTENT_SESSION_PATH', { valueEncoding: 'json' }));
+      td.verify(getLocalDB('persistent-session'));
     });
 
     describe('session middleware', () => {
@@ -46,7 +47,7 @@ describe('persistent session', () => {
       let next;
 
       beforeEach(() => {
-        td.when(new ClassicLevel(), { ignoreExtraArgs: true }).thenReturn(db);
+        td.when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
         middleware = initPersistentSession();
         ctx = { session: {} };
         next = async () => {};
@@ -130,7 +131,7 @@ describe('persistent session', () => {
     let ctx;
 
     beforeEach(() => {
-      td.when(new ClassicLevel(), { ignoreExtraArgs: true }).thenReturn(db);
+      td.when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
       initPersistentSession();
       ctx = { session: { persistent: 'persistent' } };
     });
@@ -149,15 +150,6 @@ describe('persistent session', () => {
     it('should set default value to DB', async () => {
       await dropPersistentSession(ctx);
       td.verify(db.put(sessionKey, { lists: {} }));
-    });
-  });
-
-  describe('on destroy', () => {
-    it('should close DB connection', async () => {
-      td.when(new ClassicLevel(), { ignoreExtraArgs: true }).thenReturn(db);
-      initPersistentSession();
-      await destroyPersistentSession();
-      td.verify(db.close());
     });
   });
 });

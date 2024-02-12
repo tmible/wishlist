@@ -9,15 +9,19 @@ import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-l
  * @typedef {Object} SendListOptions
  * @property {boolean} shouldForceNewMessages Признак необходимости отправки новых сообщений
  * @property {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
+ * @property {boolean} isAutoUpdate Признак автоматического обновления списка при внешних изменениях
+ * @property {boolean} isManualUpdate Признак ручного обновления списка после внешних изменений при невозможности автоматического
  */
 
 /**
- * Значения параметры отправки списка по умолчанию
+ * Значения параметров отправки списка по умолчанию
  * @constant {SendListOptions}
  */
 const defaultOptions = {
   shouldForceNewMessages: false,
   shouldSendNotification: true,
+  isAutoUpdate: false,
+  isManualUpdate: false,
 };
 
 /**
@@ -46,6 +50,14 @@ const manageListsMessages = async (
     ...passedOptions,
   };
 
+  if (!options.isAutoUpdate && !options.isManualUpdate && !options.shouldForceNewMessages) {
+    ctx.state.autoUpdate = { userid };
+  }
+
+  if (options.isManualUpdate) {
+    ctx.state.autoUpdate = { shouldAddChat: userid };
+  }
+
   if (
     !options.shouldForceNewMessages &&
     (ctx.session.persistent.lists[userid]?.messagesToEdit.length ?? -1) >= messages.length
@@ -54,7 +66,18 @@ const manageListsMessages = async (
     return;
   }
 
-  await resendListsMessages(ctx, userid, messages, titleMessageText, outdatedTitleMessageText);
+  await resendListsMessages(
+    ctx,
+    userid,
+    messages,
+    titleMessageText,
+    outdatedTitleMessageText,
+    options,
+  );
+
+  if (options.isAutoUpdate) {
+    ctx.state.autoUpdate = { shouldRemoveChat: true };
+  }
 };
 
 export default manageListsMessages;

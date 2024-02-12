@@ -1,9 +1,12 @@
+import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import * as td from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('manageListsMessages', () => {
   let manageListsMessages;
+  let ctx;
+
   const mocks = {};
 
   const testSuits = [{
@@ -77,12 +80,12 @@ describe('manageListsMessages', () => {
     describe(suit.name, () => {
       beforeEach(async () => {
         await manageListsMessages(
-          { session: { persistent: { lists: suit.sessionInitializer() } } },
+          { session: { persistent: { lists: suit.sessionInitializer() } }, state: {} },
           'userid',
           [[ 'message 1' ]],
           'titleMessageText',
           'outdatedTitleMessageText',
-          suit.shouldForceNewMessages,
+          { shouldForceNewMessages: suit.shouldForceNewMessages },
         );
       });
 
@@ -95,4 +98,42 @@ describe('manageListsMessages', () => {
       });
     });
   }
+
+  it('should mark list for auto update', async () => {
+    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    await manageListsMessages(
+      ctx,
+      'userid',
+      [[ 'message 1' ]],
+      'titleMessageText',
+      'outdatedTitleMessageText',
+    );
+    assert.deepEqual(ctx.state, { autoUpdate: { userid: 'userid' } });
+  });
+
+  it('should add chat to auto update', async () => {
+    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    await manageListsMessages(
+      ctx,
+      'userid',
+      [[ 'message 1' ]],
+      'titleMessageText',
+      'outdatedTitleMessageText',
+      { isManualUpdate: true },
+    );
+    assert.deepEqual(ctx.state, { autoUpdate: { shouldAddChat: 'userid' } });
+  });
+
+  it('should remove chat from auto update', async () => {
+    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    await manageListsMessages(
+      ctx,
+      'userid',
+      [[ 'message 1' ]],
+      'titleMessageText',
+      'outdatedTitleMessageText',
+      { shouldForceNewMessages: true, isAutoUpdate: true },
+    );
+    assert.deepEqual(ctx.state, { autoUpdate: { shouldRemoveChat: true } });
+  });
 });

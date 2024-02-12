@@ -1,15 +1,16 @@
-import { ClassicLevel } from 'classic-level';
 import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
+import { getLocalDB } from '@tmible/wishlist-bot/services/local-db';
 
 /** @module Персистентная относительно запусков бота сессия */
 
 /**
  * Объект для доступа к БД
+ * @type {ClassicLevel}
  */
 let db;
 
 /**
- * Инициализация объекта для доступа к БД и создание промежуточного обработчика
+ * [Получение]{@link getLocalDB} объекта для доступа к БД и создание промежуточного обработчика
  * для работы персистентной относительно запусков бота сессии
  * Промежуточный обработчик получает по [ключу]{@link getSessionKey} объект из БД,
  * определяет в сессии свойство persistent, предоставляющее доступ к объекту из БД,
@@ -19,7 +20,7 @@ let db;
  * @returns {MiddlewareFn<Context>} Промежуточный обработчик для работы персистентной относительно запусков бота сессии
  */
 export const initPersistentSession = () => {
-  db = new ClassicLevel(process.env.PERSISTENT_SESSION_PATH, { valueEncoding: 'json' });
+  db = getLocalDB('persistent-session');
 
   return async (ctx, next) => {
     let cached;
@@ -73,10 +74,3 @@ export const dropPersistentSession = async (ctx) => {
   }
   await db.put(getSessionKey(ctx), { lists: {} });
 };
-
-/**
- * Закрытие [подключения к БД]{@link db}
- * @async
- * @function destroyPersistentSession
- */
-export const destroyPersistentSession = () => db.close();

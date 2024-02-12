@@ -45,7 +45,10 @@ const handleListCommand = async (ctx, userid) => {
  * иначе бот [отправлает обновлённый или обновляет отправленный ранее список]{@link sendList}
  *
  * При вызове действия отправки списка желаний новыми сообщениями бот
- * [отправляет список новыми сообщениями (см. аргумент shouldForceNewMessages)]{@link sendList}
+ * [отправляет список новыми сообщениями (см. параметр shouldForceNewMessages)]{@link sendList}
+ *
+ * При вызове действия ручного обновления внешне изменённого списка желаний бот
+ * [отправляет список новыми сообщениями (см. параметры shouldForceNewMessages и isManualUpdate)]{@link sendList}
  */
 const configure = (bot) => {
   bot.command('list', async (ctx) => {
@@ -80,6 +83,13 @@ const configure = (bot) => {
     ctx.match[1],
     emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
     { shouldForceNewMessages: true },
+  ));
+
+  bot.action(/^manual_update ([0-9]+)$/, (ctx) => sendList(
+    ctx,
+    ctx.match[1],
+    emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
+    { shouldForceNewMessages: true, isManualUpdate: true },
   ));
 
   subscribe(Events.Wishlist.HandleListLink, async (ctx, userid) => {

@@ -1,3 +1,4 @@
+import { Markup } from 'telegraf';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 
 /**
@@ -8,8 +9,9 @@ import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
  * @param {Context} ctx Контекст
  * @param {string} userid Идентификатор пользователя -- владельца списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
+ * @param {SendListOptions} options Параметры отправки списка
  */
-const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText) => {
+const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText, options) => {
   return Promise.all([
     ...(ctx.session.persistent.lists[userid]?.pinnedMessageId ?
       [
@@ -18,11 +20,23 @@ const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText) => {
           ctx.session.persistent.lists[userid].pinnedMessageId,
           undefined,
           outdatedTitleMessageText,
+          ...(options.isAutoUpdate ?
+            [
+              Markup.inlineKeyboard([
+                Markup.button.callback('Обновить', `manual_update ${userid}`),
+              ]),
+            ] :
+            []
+          ),
         ),
       ] :
       []
     ),
-    ...(ctx.session.persistent.lists[userid]?.messagesToEdit ?? []).map(({ id }) =>
+    ...(
+      options.isManualUpdate ?
+        [] :
+        ctx.session.persistent.lists[userid]?.messagesToEdit ?? []
+    ).map(({ id }) =>
       ctx.telegram.editMessageReplyMarkup(ctx.chat.id, id)
     ),
   ]);
@@ -60,6 +74,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
  * @param {Message[]} messages Новые сообщения со списком
  * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
+ * @param {SendListOptions} options Параметры отправки списка
  */
 const resendListsMessages = async (
   ctx,
@@ -67,8 +82,13 @@ const resendListsMessages = async (
   messages,
   titleMessageText,
   outdatedTitleMessageText,
+  options,
 ) => {
-  await editOutdatedMessages(ctx, userid, outdatedTitleMessageText);
+  await editOutdatedMessages(ctx, userid, outdatedTitleMessageText, options);
+
+  if (options.isAutoUpdate) {
+    return;
+  }
 
   const pinnedMessage = await pinMessage(ctx, userid, titleMessageText);
 
