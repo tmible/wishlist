@@ -89,10 +89,14 @@ const formMessages = (ctx, userid) => {
     return [
       Format.join([
         new Format.FmtString(
-          `${emojisBlock}${item.name}\n`,
+          `${emojisBlock}${item.name}`,
           [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
         ),
-        new Format.FmtString(item.description, item.descriptionEntities),
+        ...(
+          item.description ?
+            [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
+            []
+        ),
         participantsBlock,
       ]),
 

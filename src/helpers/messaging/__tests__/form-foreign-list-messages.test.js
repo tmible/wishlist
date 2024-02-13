@@ -75,7 +75,7 @@ describe('form foreign list messages', () => {
     id: 4,
     priority: 1,
     name: 'name 4',
-    description: 'description 4',
+    description: '',
     descriptionEntities: [],
     state: ListItemState.BOOKED,
     participants: [ 'from' ],
