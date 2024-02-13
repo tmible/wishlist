@@ -16,7 +16,7 @@ const prepare = () => statement = db.prepare('SELECT userid FROM usernames WHERE
  * Получение идентификатора пользователя по имени пользователя
  * @function eventHandler
  * @param {string} username Имя пользователя
- * @returns {string} Идентификатор пользователя
+ * @returns {number} Идентификатор пользователя
  */
 const eventHandler = (username) => statement.get(username)?.userid;
 

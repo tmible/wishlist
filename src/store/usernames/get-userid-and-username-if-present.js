@@ -18,8 +18,8 @@ const prepare = () => statement = db.prepare(
  * Проверка наличия идентификатора пользователя в БД
  * и возврат его и соответствующего имени пользователя при успехе
  * @function eventHandler
- * @param {string} userid Идентификатор пользователя
- * @returns {[ string | null, string | null ]} Идентификатор пользователя и имя пользователя из БД
+ * @param {number} userid Идентификатор пользователя
+ * @returns {[ number | null, string | null ]} Идентификатор пользователя и имя пользователя из БД
  */
 const eventHandler = (userid) => {
   const user = statement.get(userid);

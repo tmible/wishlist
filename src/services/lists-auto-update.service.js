@@ -28,7 +28,7 @@ export const startAutoUpdateService = () => db = getLocalDB('auto-update');
  * Добавление чата в список автоматического обновления для списка желаний
  * @async
  * @function addChatToAutoUpdate
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {{ id: number, type: string }} chat Добавляемый к автоматическому обновлению чат
  */
 const addChatToAutoUpdate = async (userid, chat) => {
@@ -46,8 +46,8 @@ const addChatToAutoUpdate = async (userid, chat) => {
  * Удаление чата из списка автоматического обновления для списка желаний
  * @async
  * @function removeChatFromAutoUpdate
- * @param {string[]} userids Идентификаторы пользователей -- владельцев списков, которые были в удаляемом чате
- * @param {string} chatId Идентификатор удаляемого чата
+ * @param {number[]} userids Идентификаторы пользователей -- владельцев списков, которые были в удаляемом чате
+ * @param {number} chatId Идентификатор удаляемого чата
  */
 const removeChatFromAutoUpdate = async (userids, chatId) => {
   const current = await db.getMany(userids);
@@ -64,9 +64,9 @@ const removeChatFromAutoUpdate = async (userids, chatId) => {
  * @async
  * @function checkChatsToAdd
  * @param {Context} ctx Контекст
- * @param {Set<string>} memoizedSet Множество идентификаторов пользователей -- владельцев списков,
+ * @param {Set<number>} memoizedSet Множество идентификаторов пользователей -- владельцев списков,
  * списки которых были в чате в начале работы [промежуточного обработчика]{@link autoUpdateMiddleware}
- * @param {string[]} current Массив идентификаторов пользователей -- владельцев списков,
+ * @param {number[]} current Массив идентификаторов пользователей -- владельцев списков,
  * списки которых были в чате в конце работы [промежуточного обработчика]{@link autoUpdateMiddleware}
  */
 const checkChatsToAdd = async (ctx, memoizedSet, current) => {
@@ -75,7 +75,7 @@ const checkChatsToAdd = async (ctx, memoizedSet, current) => {
       continue;
     }
     delete ctx.state.autoUpdate?.userid;
-    if (ctx.from.id.toString() === userid.toString()) {
+    if (ctx.from.id === userid) {
       continue;
     }
     await addChatToAutoUpdate(userid, { id: ctx.chat.id, type: ctx.chat.type });
@@ -94,9 +94,9 @@ const checkChatsToAdd = async (ctx, memoizedSet, current) => {
  * @async
  * @function checkChatsToRemove
  * @param {Context} ctx Контекст
- * @param {string[]} memoized Массив идентификаторов пользователей -- владельцев списков,
+ * @param {number[]} memoized Массив идентификаторов пользователей -- владельцев списков,
  * списки которых были в чате в начале работы [промежуточного обработчика]{@link autoUpdateMiddleware}
- * @param {Set<string>} currentSet Множество идентификаторов пользователей -- владельцев списков,
+ * @param {Set<number>} currentSet Множество идентификаторов пользователей -- владельцев списков,
  * списки которых были в чате в конце работы [промежуточного обработчика]{@link autoUpdateMiddleware}
  */
 const checkChatsToRemove = async (ctx, memoized, currentSet) => {
@@ -119,13 +119,13 @@ const checkChatsToRemove = async (ctx, memoized, currentSet) => {
 const sendUpdates = (ctx, fakeCtx) => {
   return initPersistentSession()(fakeCtx, async () => {
     const userMention = getMentionFromUseridOrUsername(
-      ctx.state.autoUpdate.userid.toString(),
-      emit(Events.Usernames.GetUsernameByUserid, ctx.state.autoUpdate.userid.toString()),
+      ctx.state.autoUpdate.userid,
+      emit(Events.Usernames.GetUsernameByUserid, ctx.state.autoUpdate.userid),
     );
     await manageListsMessages(
       fakeCtx,
-      ctx.state.autoUpdate.userid.toString(),
-      formMessages(fakeCtx, ctx.state.autoUpdate.userid.toString()),
+      ctx.state.autoUpdate.userid,
+      formMessages(fakeCtx, ctx.state.autoUpdate.userid),
       Format.join([ 'Актуальный список', userMention ], ' '),
       Format.join([ 'Неактуальный список', userMention ], ' '),
       { shouldSendNotification: false, isAutoUpdate: true },
@@ -158,9 +158,7 @@ export const autoUpdateMiddleware = async (ctx, next) => {
     return;
   }
 
-  const chats = (
-    await db.get(ctx.state.autoUpdate.userid.toString())
-  ).filter(({ id }) => id !== ctx.chat.id);
+  const chats = (await db.get(ctx.state.autoUpdate.userid)).filter(({ id }) => id !== ctx.chat.id);
   await Promise.all(chats.map((chat, i) => {
 
     const fakeCtx = Object.assign(
@@ -174,7 +172,7 @@ export const autoUpdateMiddleware = async (ctx, next) => {
     return sendUpdates(ctx, fakeCtx).then(async () => {
       if (fakeCtx.state.autoUpdate?.shouldRemoveChat) {
         await removeChatFromAutoUpdate(
-          [ ctx.state.autoUpdate.userid.toString() ],
+          [ ctx.state.autoUpdate.userid ],
           chat.id,
         );
       }

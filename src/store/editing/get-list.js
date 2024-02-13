@@ -32,7 +32,7 @@ const prepare = () => statement = db.prepare(`
 /**
  * Получение пользователем своего списка желаний
  * @function eventHandler
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {OwnListItem[]} Список желаний пользователя, отсортированный по возрастанию идентификаторов
  */
 const eventHandler = (userid) => {

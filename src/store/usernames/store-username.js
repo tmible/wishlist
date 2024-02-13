@@ -15,7 +15,7 @@ const prepare = () => statement = db.prepare('INSERT INTO usernames VALUES (?, ?
 /**
  * Сохранение идентификатора и имени пользователя в БД
  * @function eventHandler
- * @param {string} userid Идентификатор пользователя
+ * @param {number} userid Идентификатор пользователя
  * @param {string} username Имя пользователя
  */
 const eventHandler = (userid, username) => statement.run(userid, username);

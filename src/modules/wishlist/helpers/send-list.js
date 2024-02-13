@@ -19,7 +19,7 @@ const defaultOptions = {
  * @async
  * @function sendList
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {string} [username] Имя пользователя -- владельца списка
  * @param {SendListOptions} [passedOptions={}] Параметры отправки списка (см. аргумент passedOptions {@link manageListsMessages})
  */

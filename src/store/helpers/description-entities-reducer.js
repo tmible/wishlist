@@ -3,9 +3,9 @@ import DescriptionEntityKeys from '@tmible/wishlist-bot/store/constants/descript
 /**
  * Обработчик списка желаний, группирующий элементы разметки элементов списка с одинаковыми идентификаторами
  * @function descriptionEntitiesReducer
- * @param {({ id: string; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]} accum Обработанные ранее элементы списка
- * @param {{ id: string } & EntityBase & { additional: string } & Record<string, unknown>} current Очередной элемент списка
- * @returns {({ id: string; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]}
+ * @param {({ id: number; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]} accum Обработанные ранее элементы списка
+ * @param {{ id: number } & EntityBase & { additional: string } & Record<string, unknown>} current Очередной элемент списка
+ * @returns {({ id: number; descriptionEntities: (EntityBase & { additional: string })[] } & Record<string, unknown>)[]}
  */
 const descriptionEntitiesReducer = (accum, current) => {
   const found = accum.find(({ id }) => id === current.id);

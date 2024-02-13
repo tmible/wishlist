@@ -41,7 +41,7 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.ClearList) {
-      const ids = ctx.message.text.split(/[^\d]+/).filter((id) => !!id);
+      const ids = ctx.message.text.split(/[^\d]+/).filter((id) => !!id).map((id) => parseInt(id));
       delete ctx.session.messagePurpose;
 
       if (ids.length === 0) {

@@ -154,7 +154,7 @@ describe('wishlist/list module', () => {
   it('should register force_list action handler', () => {
     const bot = td.object([ 'action', 'command' ]);
     ListModule.configure(bot);
-    td.verify(bot.action(/^force_list ([0-9]+)$/, td.matchers.isA(Function)));
+    td.verify(bot.action(/^force_list (\d+)$/, td.matchers.isA(Function)));
   });
 
   describe('force_list action handler', () => {
@@ -164,7 +164,7 @@ describe('wishlist/list module', () => {
       captor = td.matchers.captor();
       td.when(emit(Events.Usernames.GetUsernameByUserid, 123)).thenReturn('username');
       ListModule.configure(bot);
-      td.verify(bot.action(/^force_list ([0-9]+)$/, captor.capture()));
+      td.verify(bot.action(/^force_list (\d+)$/, captor.capture()));
       await captor.value(ctx);
       td.verify(sendList(ctx, 123, 'username', { shouldForceNewMessages: true }));
     });
@@ -173,7 +173,7 @@ describe('wishlist/list module', () => {
   it('should register manual_update action handler', () => {
     const bot = td.object([ 'action', 'command' ]);
     ListModule.configure(bot);
-    td.verify(bot.action(/^manual_update ([0-9]+)$/, td.matchers.isA(Function)));
+    td.verify(bot.action(/^manual_update (\d+)$/, td.matchers.isA(Function)));
   });
 
   describe('manual_update action handler', () => {
@@ -183,7 +183,7 @@ describe('wishlist/list module', () => {
       captor = td.matchers.captor();
       td.when(emit(Events.Usernames.GetUsernameByUserid, 123)).thenReturn('username');
       ListModule.configure(bot);
-      td.verify(bot.action(/^manual_update ([0-9]+)$/, captor.capture()));
+      td.verify(bot.action(/^manual_update (\d+)$/, captor.capture()));
       await captor.value(ctx);
       td.verify(sendList(
         ctx,

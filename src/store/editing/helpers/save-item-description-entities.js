@@ -4,7 +4,7 @@ import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/store/constants/desc
 /**
  * Сохранение в БД элементов разметки текста описания подарка
  * @function saveItemDescriptionEntities
- * @param {string} itemId Идентификатор подарка
+ * @param {number} itemId Идентификатор подарка
  * @param {Entity[]} entities Элементы разметки
  * @param {number} descriptionOffset Отступ начала описания от начала текста сообщения
  */

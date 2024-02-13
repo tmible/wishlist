@@ -21,7 +21,7 @@ describe('wishlist/cooperate module', () => {
   it('should register cooperate action handler', () => {
     const bot = td.object([ 'action' ]);
     CooperateModule.configure(bot);
-    td.verify(bot.action(/^cooperate (\d+) ([0-9]+)$/, td.matchers.isA(Function)));
+    td.verify(bot.action(/^cooperate (\d+) (\d+)$/, td.matchers.isA(Function)));
   });
 
   describe('cooperate action handler', () => {
@@ -29,19 +29,19 @@ describe('wishlist/cooperate module', () => {
 
     beforeEach(async () => {
       const bot = td.object([ 'action' ]);
-      ctx = { from: { id: 'fromId' }, match: [ null, 'match 1', 'match 2' ] };
+      ctx = { from: { id: 'fromId' }, match: [ null, '1', '2' ] };
       const captor = td.matchers.captor();
       CooperateModule.configure(bot);
-      td.verify(bot.action(/^cooperate (\d+) ([0-9]+)$/, captor.capture()));
+      td.verify(bot.action(/^cooperate (\d+) (\d+)$/, captor.capture()));
       await captor.value(ctx);
     });
 
     it('should emit cooperate event', () => {
-      td.verify(emit(Events.Wishlist.CooperateOnItem, 'match 1', 'fromId'));
+      td.verify(emit(Events.Wishlist.CooperateOnItem, 1, 'fromId'));
     });
 
     it('should send list', () => {
-      td.verify(sendList(ctx, 'match 2'));
+      td.verify(sendList(ctx, 2));
     });
   });
 });

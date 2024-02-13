@@ -21,7 +21,7 @@ import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-
  * @property {string} description Описание подарка
  * @property {ListItemState} state Состояние подарка
  * @property {string[]} participants Имена пользователей -- участников кооперации по подарку или имя забронировавшего пользователя
- * @property {string[]} participantsIds Идентификаторы пользователей -- участников кооперации по подарку или идентификатор забронировавшего пользователя
+ * @property {number[]} participantsIds Идентификаторы пользователей -- участников кооперации по подарку или идентификатор забронировавшего пользователя
  * @property {Entity[]} descriptionEntities Элементы разметки текста описания подарка
  */
 
@@ -64,7 +64,7 @@ const prepare = () => statement = db.prepare(`
 /**
  * Получение списка желаний пользователя для других пользователей
  * @function eventHandler
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {ListItem[]} Список желаний пользователя, отсортированный по убыванию приоритета
  */
 const eventHandler = (userid) => {

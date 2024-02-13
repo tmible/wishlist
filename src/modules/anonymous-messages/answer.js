@@ -13,8 +13,8 @@ const configure = (bot) => {
     ctx.session.messagePurpose = {
       type: MessagePurposeType.AnonymousMessageAnswer,
       payload: {
-        answerChatId: ctx.match[1],
-        answerToMessageId: ctx.match[2],
+        answerChatId: parseInt(ctx.match[1]),
+        answerToMessageId: parseInt(ctx.match[2]),
       },
     };
     return sendMessageAndMarkItForMarkupRemove(

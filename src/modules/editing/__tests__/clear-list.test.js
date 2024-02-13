@@ -124,7 +124,7 @@ describe('editing/clear-list module', () => {
         });
 
         it('should emit delete event', () => {
-          td.verify(emit(Events.Editing.DeleteItems, [ '1', '2', '3' ]));
+          td.verify(emit(Events.Editing.DeleteItems, [ 1, 2, 3 ]));
         });
 
         it('should reply', () => {

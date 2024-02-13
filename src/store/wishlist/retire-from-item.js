@@ -37,8 +37,8 @@ const prepare = () => statements = [
 /**
  * Удаление пользователя из кооперации по подарку или отмена бронирования подарка пользователем
  * @function eventHandler
- * @param {string} itemId Идентификатор подарка
- * @param {string} userid Идентификатор пользователя
+ * @param {number} itemId Идентификатор подарка
+ * @param {number} userid Идентификатор пользователя
  */
 const eventHandler = (itemId, userid) => {
   const parameters = [

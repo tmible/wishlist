@@ -7,9 +7,9 @@ import sendList from './helpers/send-list.js';
  * и [отправка обновлённого или обновление отправленного ранее списка]{@link sendList}
  */
 const configure = (bot) => {
-  bot.action(/^book (\d+) ([0-9]+)$/, async (ctx) => {
-    emit(Events.Wishlist.BookItem, ctx.match[1], ctx.from.id);
-    await sendList(ctx, ctx.match[2]);
+  bot.action(/^book (\d+) (\d+)$/, async (ctx) => {
+    emit(Events.Wishlist.BookItem, parseInt(ctx.match[1]), ctx.from.id);
+    await sendList(ctx, parseInt(ctx.match[2]));
   });
 };
 

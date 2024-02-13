@@ -19,7 +19,7 @@ const prepare = () => statements = [
 /**
  * Обновление описания подарка в БД
  * @function eventHandler
- * @param {string} itemId Идентификатор подарка
+ * @param {number} itemId Идентификатор подарка
  * @param {string} description Описание подарка
  * @param {Entity[]} entities Элементы разметки текста описания подарка
  */

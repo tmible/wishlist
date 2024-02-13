@@ -126,7 +126,7 @@ describe('editing/add module', () => {
         it('should emit add event', () => {
           td.verify(emit(
             Events.Editing.AddItem,
-            [ 'fromId', '1', 'name', 'description' ],
+            [ 'fromId', 1, 'name', 'description' ],
             [{ type: 'type', offset: 0, length: 0 }],
             7,
           ));

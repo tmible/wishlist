@@ -29,7 +29,7 @@ describe('anonymous-messages/answer module', () => {
 
     beforeEach(async () => {
       const bot = td.object([ 'action' ]);
-      ctx = { session: {}, match: [ null, 'match 1', 'match 2' ] };
+      ctx = { session: {}, match: [ null, '1', '2' ] };
       const captor = td.matchers.captor();
       AnswerModule.configure(bot);
       td.verify(bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, captor.capture()));
@@ -42,8 +42,8 @@ describe('anonymous-messages/answer module', () => {
         {
           type: MessagePurposeType.AnonymousMessageAnswer,
           payload: {
-            answerChatId: 'match 1',
-            answerToMessageId: 'match 2',
+            answerChatId: 1,
+            answerToMessageId: 2,
           },
         },
       );

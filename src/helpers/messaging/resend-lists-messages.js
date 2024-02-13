@@ -7,7 +7,7 @@ import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
  * @async
  * @function editOutdatedMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
  * @param {SendListOptions} options Параметры отправки списка
  */
@@ -48,9 +48,9 @@ const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText, options) =>
  * @async
  * @function pinMessage
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
- * @returns {{ message_id: unknown } & Record<string, unknown>} Новое заглавное сообщение
+ * @returns {{ message_id: number } & Record<string, unknown>} Новое заглавное сообщение
  */
 const pinMessage = async (ctx, userid, titleMessageText) => {
   if (!!ctx.session.persistent.lists[userid]?.pinnedMessageId) {
@@ -70,7 +70,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
  * @async
  * @function resendListsMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
  * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка

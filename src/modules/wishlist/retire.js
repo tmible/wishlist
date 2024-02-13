@@ -8,9 +8,9 @@ import sendList from './helpers/send-list.js';
  * [отправка обновлённого или обновление отправленного ранее списка]{@link sendList}
  */
 const configure = (bot) => {
-  bot.action(/^retire (\d+) ([0-9]+)$/, async (ctx) => {
-    emit(Events.Wishlist.RetireFromItem, ctx.match[1], ctx.from.id);
-    await sendList(ctx, ctx.match[2]);
+  bot.action(/^retire (\d+) (\d+)$/, async (ctx) => {
+    emit(Events.Wishlist.RetireFromItem, parseInt(ctx.match[1]), ctx.from.id);
+    await sendList(ctx, parseInt(ctx.match[2]));
   });
 };
 

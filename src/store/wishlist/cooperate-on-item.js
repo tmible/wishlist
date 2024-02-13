@@ -19,8 +19,8 @@ const prepare = () => statements = [
 /**
  * Добавление пользователя в кооперацию по подарку
  * @function eventHandler
- * @param {string} itemId Идентификатор подарка
- * @param {string} userid Идентификатор пользователя
+ * @param {number} itemId Идентификатор подарка
+ * @param {number} userid Идентификатор пользователя
  */
 const eventHandler = (itemId, userid) => {
   const parameters = [[ userid, itemId ], itemId];

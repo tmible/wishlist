@@ -18,7 +18,7 @@ import sendList from './helpers/send-list.js';
  * @async
  * @function handleListCommand
  * @param {Context} ctx Контекст
- * @param {string} [userid] Идентификатор пользователя, список желаний которого запрашивается
+ * @param {number} [userid] Идентификатор пользователя, список желаний которого запрашивается
  * @returns {boolean} Признак успешного прохождения всех проверок
  */
 const handleListCommand = async (ctx, userid) => {
@@ -27,7 +27,7 @@ const handleListCommand = async (ctx, userid) => {
     return false;
   }
 
-  if (parseInt(userid) === ctx.from.id) {
+  if (userid === ctx.from.id) {
     if (isChatGroup(ctx)) {
       return false;
     }
@@ -78,17 +78,17 @@ const configure = (bot) => {
     await sendList(ctx, userid, username, { shouldSendNotification: true });
   });
 
-  bot.action(/^force_list ([0-9]+)$/, (ctx) => sendList(
+  bot.action(/^force_list (\d+)$/, (ctx) => sendList(
     ctx,
-    ctx.match[1],
-    emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
+    parseInt(ctx.match[1]),
+    emit(Events.Usernames.GetUsernameByUserid, parseInt(ctx.match[1])),
     { shouldForceNewMessages: true },
   ));
 
-  bot.action(/^manual_update ([0-9]+)$/, (ctx) => sendList(
+  bot.action(/^manual_update (\d+)$/, (ctx) => sendList(
     ctx,
-    ctx.match[1],
-    emit(Events.Usernames.GetUsernameByUserid, ctx.match[1]),
+    parseInt(ctx.match[1]),
+    emit(Events.Usernames.GetUsernameByUserid, parseInt(ctx.match[1])),
     { shouldForceNewMessages: true, isManualUpdate: true },
   ));
 

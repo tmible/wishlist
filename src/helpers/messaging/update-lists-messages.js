@@ -11,7 +11,7 @@ import {
  * @async
  * @function editMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
  * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
  */
@@ -91,7 +91,7 @@ const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
  * @async
  * @function updateListsMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
  * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
  */

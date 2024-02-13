@@ -6,7 +6,7 @@ import Events from '@tmible/wishlist-bot/store/events';
  * Получение идентификатора и имени пользователя из пользовательского ввода
  * @function getUseridFromInput
  * @param {string} input Пользовательский ввод
- * @returns {[ string | undefined, string | undefined ] | [ null, null ]} Идентификатор и имя пользователя
+ * @returns {[ number | undefined, string | undefined ] | [ null, null ]} Идентификатор и имя пользователя
  */
 const getUseridFromInput = (input) => {
   const match = UseridOrUsernameRegexp.exec(input);

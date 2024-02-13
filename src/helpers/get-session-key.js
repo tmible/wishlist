@@ -2,8 +2,8 @@
  * Получение ключа для хранения сессии конкретного чата среди остальных сессий
  * @function getSessionKey
  * @param {Context} ctx Контекст
- * @returns {string} Ключ сессии
+ * @returns {number} Ключ сессии
  */
-const getSessionKey = (ctx) => ctx.chat.id.toString();
+const getSessionKey = (ctx) => ctx.chat.id;
 
 export default getSessionKey;

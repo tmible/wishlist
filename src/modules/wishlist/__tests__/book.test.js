@@ -21,7 +21,7 @@ describe('wishlist/book module', () => {
   it('should register book action handler', () => {
     const bot = td.object([ 'action' ]);
     BookModule.configure(bot);
-    td.verify(bot.action(/^book (\d+) ([0-9]+)$/, td.matchers.isA(Function)));
+    td.verify(bot.action(/^book (\d+) (\d+)$/, td.matchers.isA(Function)));
   });
 
   describe('book action handler', () => {
@@ -29,19 +29,19 @@ describe('wishlist/book module', () => {
 
     beforeEach(async () => {
       const bot = td.object([ 'action' ]);
-      ctx = { from: { id: 'fromId' }, match: [ null, 'match 1', 'match 2' ] };
+      ctx = { from: { id: 'fromId' }, match: [ null, '1', '2' ] };
       const captor = td.matchers.captor();
       BookModule.configure(bot);
-      td.verify(bot.action(/^book (\d+) ([0-9]+)$/, captor.capture()));
+      td.verify(bot.action(/^book (\d+) (\d+)$/, captor.capture()));
       await captor.value(ctx);
     });
 
     it('should emit book event', () => {
-      td.verify(emit(Events.Wishlist.BookItem, 'match 1', 'fromId'));
+      td.verify(emit(Events.Wishlist.BookItem, 1, 'fromId'));
     });
 
     it('should send list', () => {
-      td.verify(sendList(ctx, 'match 2'));
+      td.verify(sendList(ctx, 2));
     });
   });
 });

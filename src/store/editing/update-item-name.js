@@ -15,7 +15,7 @@ const prepare = () => statement = db.prepare('UPDATE list SET name = ? WHERE id 
 /**
  * Обновление названия подарка в БД
  * @function eventHandler
- * @param {string} itemId Идентификатор подарка
+ * @param {number} itemId Идентификатор подарка
  * @param {string} name Название подарка
  */
 const eventHandler = (itemId, name) => statement.run(name, itemId);

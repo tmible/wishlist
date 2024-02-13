@@ -21,7 +21,7 @@ describe('wishlist/retire module', () => {
   it('should register retire action handler', () => {
     const bot = td.object([ 'action' ]);
     RetireModule.configure(bot);
-    td.verify(bot.action(/^retire (\d+) ([0-9]+)$/, td.matchers.isA(Function)));
+    td.verify(bot.action(/^retire (\d+) (\d+)$/, td.matchers.isA(Function)));
   });
 
   describe('retire action handler', () => {
@@ -29,19 +29,19 @@ describe('wishlist/retire module', () => {
 
     beforeEach(async () => {
       const bot = td.object([ 'action' ]);
-      ctx = { from: { id: 'fromId' }, match: [ null, 'match 1', 'match 2' ] };
+      ctx = { from: { id: 'fromId' }, match: [ null, '1', '2' ] };
       const captor = td.matchers.captor();
       RetireModule.configure(bot);
-      td.verify(bot.action(/^retire (\d+) ([0-9]+)$/, captor.capture()));
+      td.verify(bot.action(/^retire (\d+) (\d+)$/, captor.capture()));
       await captor.value(ctx);
     });
 
     it('should emit retire event', () => {
-      td.verify(emit(Events.Wishlist.RetireFromItem, 'match 1', 'fromId'));
+      td.verify(emit(Events.Wishlist.RetireFromItem, 1, 'fromId'));
     });
 
     it('should send list', () => {
-      td.verify(sendList(ctx, 'match 2'));
+      td.verify(sendList(ctx, 2));
     });
   });
 });

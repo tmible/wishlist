@@ -35,7 +35,7 @@ const formParticipantsBlock = (item) => {
  * @function formReplyMarkup
  * @param {Context} ctx Контекст
  * @param {ListItem} item Элемент списка желаний
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {Markup<InlineKeyboardMarkup>} Встроенная клавиатура
  */
 const formReplyMarkup = (ctx, item, userid) => {
@@ -48,7 +48,7 @@ const formReplyMarkup = (ctx, item, userid) => {
     item.state === ListItemState.FREE ||
     (
       item.state === ListItemState.COOPERATIVE &&
-      !item.participantsIds.includes(ctx.from.id.toString())
+      !item.participantsIds.includes(ctx.from.id)
     ) ?
       [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
       [];
@@ -57,7 +57,7 @@ const formReplyMarkup = (ctx, item, userid) => {
     isChatGroup(ctx) ||
     (
       item.state !== ListItemState.FREE &&
-      item.participantsIds.includes(ctx.from.id.toString())
+      item.participantsIds.includes(ctx.from.id)
     ) ?
       [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
       [];
@@ -76,7 +76,7 @@ const formReplyMarkup = (ctx, item, userid) => {
  * для просмотра списка другими пользователями
  * @function formMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {Message[]} Сформированные сообщения
  */
 const formMessages = (ctx, userid) => {

@@ -31,7 +31,7 @@ const defaultOptions = {
  * @async
  * @function manageListsMessages
  * @param {Context} ctx Контекст
- * @param {string} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
  * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
  * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка

@@ -17,7 +17,7 @@ describe('participantsMapper', () => {
   it('should map participantsIds if there are some', () => {
     assert.deepEqual(
       participantsMapper({ participants_ids: '1,2,3' }).participantsIds,
-      [ '1', '2', '3' ],
+      [ 1, 2, 3 ],
     );
   });
 

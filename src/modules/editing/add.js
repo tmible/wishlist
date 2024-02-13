@@ -61,7 +61,7 @@ const messageHandler = (bot) => {
 
       emit(
         Events.Editing.AddItem,
-        [ ctx.from.id, match[2] ?? '1', match[3], match[5] ?? '' ],
+        [ ctx.from.id, parseInt(match[2] ?? '1'), match[3], match[5] ?? '' ],
         ctx.message.entities,
         (match[1] ?? '').length + match[3].length + 1,
       );

@@ -5,7 +5,7 @@ import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
  * @async
  * @function isUserInChat
  * @param {Context} ctx Контекст
- * @param {string} [userid] Идентификатор пользователя
+ * @param {number} [userid] Идентификатор пользователя
  * @returns {boolean} Признак наличия пользователя среди участников чата
  */
 const isUserInChat = async (ctx, userid) => {

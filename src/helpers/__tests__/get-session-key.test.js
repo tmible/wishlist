@@ -10,6 +10,6 @@ describe('getSessionKey', () => {
         Number.MIN_SAFE_INTEGER
     );
     const ctx = { chat: { id: chatId } };
-    assert.equal(getSessionKey(ctx), chatId.toString());
+    assert.equal(getSessionKey(ctx), chatId);
   });
 });
