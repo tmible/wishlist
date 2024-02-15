@@ -6,6 +6,9 @@ import sendList from './helpers/send-list.js';
  * При получении команды /my_list бот
  * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  *
+ * При вызове действия обновления собственного списка бот
+ * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ *
  * При вызове действия отправки собственного списка новыми сообщениями бот
  * [отправляет обновлённый список (см. параметр shouldForceNewMessages)]{@link sendList}
  *
@@ -15,6 +18,7 @@ import sendList from './helpers/send-list.js';
  */
 const configure = (bot) => {
   bot.command('my_list', (ctx) => sendList(ctx));
+  bot.action('update_own_list', (ctx) => sendList(ctx));
   bot.action('force_own_list', (ctx) => sendList(ctx, { shouldForceNewMessages: true }));
   subscribe(Events.Wishlist.HandleOwnList, sendList);
 };

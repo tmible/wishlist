@@ -147,7 +147,16 @@ describe('resendListsMessages', () => {
         'outdatedTitleMessageText',
         {},
       );
-      assert.deepEqual(reply.mock.calls[0].arguments, [ 'titleMessageText' ]);
+      assert.deepEqual(
+        reply.mock.calls[0].arguments,
+        [
+          'titleMessageText',
+          Markup.inlineKeyboard([
+            [ Markup.button.callback('Обновить', 'update_list userid') ],
+            [ Markup.button.callback('Отправить новые сообщения', 'force_list userid') ],
+          ]),
+        ],
+      );
     });
 
     it('should pin new message', async () => {

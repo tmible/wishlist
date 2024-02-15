@@ -42,7 +42,10 @@ const handleListCommand = async (ctx, userid) => {
  * При получении команды /list запуск [проверок]{@link handleListCommand} и при их прохождении,
  * если у команды нет полезной нагрузки, бот отправляет сообщение-приглашение для отправки
  * идентификатора или имени пользователя, список желаний которого запрашивается,
- * иначе бот [отправлает обновлённый или обновляет отправленный ранее список]{@link sendList}
+ * иначе бот [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ *
+ * При вызове действия обновления списка желаний бот
+ * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  *
  * При вызове действия отправки списка желаний новыми сообщениями бот
  * [отправляет список новыми сообщениями (см. параметр shouldForceNewMessages)]{@link sendList}
@@ -77,6 +80,13 @@ const configure = (bot) => {
 
     await sendList(ctx, userid, username, { shouldSendNotification: true });
   });
+
+  bot.action(/^update_list (\d+)$/, (ctx) => sendList(
+    ctx,
+    parseInt(ctx.match[1]),
+    emit(Events.Usernames.GetUsernameByUserid, parseInt(ctx.match[1])),
+    { shouldSendNotification: true },
+  ));
 
   bot.action(/^force_list (\d+)$/, (ctx) => sendList(
     ctx,

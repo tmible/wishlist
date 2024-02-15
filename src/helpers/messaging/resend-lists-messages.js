@@ -57,7 +57,28 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
     await tryPinning(ctx, 'unpinChatMessage', ctx.session.persistent.lists[userid].pinnedMessageId);
   }
 
-  const messageToPin = await ctx.reply(titleMessageText);
+  const messageToPin = await ctx.reply(
+    titleMessageText,
+    Markup.inlineKeyboard([[
+      Markup.button.callback(
+        'Обновить',
+        `update_${
+          userid === ctx.chat.id ? 'own_' : ''
+        }list${
+          userid === ctx.chat.id ? '' : ` ${userid}`
+        }`,
+      ),
+    ], [
+      Markup.button.callback(
+        'Отправить новые сообщения',
+        `force_${
+          userid === ctx.chat.id ? 'own_' : ''
+        }list${
+          userid === ctx.chat.id ? '' : ` ${userid}`
+        }`,
+      ),
+    ]]),
+  );
 
   await tryPinning(ctx, 'pinChatMessage', messageToPin.message_id);
 

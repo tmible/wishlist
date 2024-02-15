@@ -7,6 +7,7 @@ describe('editing/own-list module', () => {
   let subscribe;
   let sendList;
   let OwnListModule;
+  let bot;
 
   beforeEach(async () => {
     [ { subscribe }, sendList ] = await Promise.all([
@@ -14,19 +15,18 @@ describe('editing/own-list module', () => {
       (async () => (await td.replaceEsm('../helpers/send-list.js')).default)(),
     ]);
     OwnListModule = (await import('../own-list.js')).default;
+    bot = td.object([ 'action', 'command' ]);
   });
 
   afterEach(() => td.reset());
 
   it('should register my_list command handler', () => {
-    const bot = td.object([ 'action', 'command' ]);
     OwnListModule.configure(bot);
     td.verify(bot.command('my_list', td.matchers.isA(Function)));
   });
 
   describe('my_list command handler', () => {
     it('should send list', async () => {
-      const bot = td.object([ 'action', 'command' ]);
       const ctx = {};
       const captor = td.matchers.captor();
       OwnListModule.configure(bot);
@@ -36,15 +36,29 @@ describe('editing/own-list module', () => {
     });
   });
 
+  it('should register update_own_list action handler', () => {
+    OwnListModule.configure(bot);
+    td.verify(bot.action('update_own_list', td.matchers.isA(Function)));
+  });
+
+  describe('update_own_list action handler', () => {
+    it('should send list', async () => {
+      const ctx = {};
+      const captor = td.matchers.captor();
+      OwnListModule.configure(bot);
+      td.verify(bot.action('update_own_list', captor.capture()));
+      await captor.value(ctx);
+      td.verify(sendList(ctx));
+    });
+  });
+
   it('should register force_own_list action handler', () => {
-    const bot = td.object([ 'action', 'command' ]);
     OwnListModule.configure(bot);
     td.verify(bot.action('force_own_list', td.matchers.isA(Function)));
   });
 
   describe('force_own_list action handler', () => {
     it('should send list', async () => {
-      const bot = td.object([ 'action', 'command' ]);
       const ctx = {};
       const captor = td.matchers.captor();
       OwnListModule.configure(bot);
