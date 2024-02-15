@@ -154,7 +154,7 @@ export const autoUpdateMiddleware = async (ctx, next) => {
   await checkChatsToAdd(ctx, new Set(memoized), current);
   await checkChatsToRemove(ctx, memoized, new Set(current));
 
-  if (!ctx.state.autoUpdate?.userid || !db) {
+  if (!ctx.state.autoUpdate?.userid || ctx.state.autoUpdate.userid === ctx.chat.id || !db) {
     return;
   }
 

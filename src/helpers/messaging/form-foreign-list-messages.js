@@ -8,6 +8,13 @@ import Events from '@tmible/wishlist-bot/store/events';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
+ * Отправляемое сообщение с элементом списка
+ * @typedef {Object} Message
+ * @property {number} itemId Идентификатор подарка, отображаемого в сообщении
+ * @property {[ FmtString, Markup<InlineKeyboardMarkup> ]} message Текст и элеменьы разметки текста сообщения
+ */
+
+/**
  * Формирование блока с упоминаниями забронировавего подарок пользователя
  * или участников кооперации по подарку
  * @function formParticipantsBlock
@@ -36,7 +43,7 @@ const formParticipantsBlock = (item) => {
  * @param {Context} ctx Контекст
  * @param {ListItem} item Элемент списка желаний
  * @param {number} userid Идентификатор пользователя -- владельца списка
- * @returns {Markup<InlineKeyboardMarkup>} Встроенная клавиатура
+ * @returns {Markup<InlineKeyboardMarkup>[]} Встроенная клавиатура
  */
 const formReplyMarkup = (ctx, item, userid) => {
   const bookButton = isChatGroup(ctx) || item.state === ListItemState.FREE ?
@@ -62,13 +69,15 @@ const formReplyMarkup = (ctx, item, userid) => {
       [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
       [];
 
-  return Markup.inlineKeyboard([
-    ...(bookButton.length > 0 || cooperateButton.length > 0 ?
-      [[ ...bookButton, ...cooperateButton ]] :
-      []
-    ),
-    ...(retireButton.length > 0 ? [[ ...retireButton ]] : []),
-  ]);
+  return [ bookButton, cooperateButton, retireButton ].some(({ length }) => length > 0) ?
+    [ Markup.inlineKeyboard([
+      ...(bookButton.length > 0 || cooperateButton.length > 0 ?
+        [[ ...bookButton, ...cooperateButton ]] :
+        []
+      ),
+      ...(retireButton.length > 0 ? [[ ...retireButton ]] : []),
+    ]) ] :
+    [];
 };
 
 /**
@@ -86,22 +95,25 @@ const formMessages = (ctx, userid) => {
     const emojisBlock = `${stateBlock} ${priorityBlock} `;
     const participantsBlock = formParticipantsBlock(item);
 
-    return [
-      Format.join([
-        new Format.FmtString(
-          `${emojisBlock}${item.name}`,
-          [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
-        ),
-        ...(
-          item.description ?
-            [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
-            []
-        ),
-        participantsBlock,
-      ]),
+    return {
+      itemId: item.id,
+      message: [
+        Format.join([
+          new Format.FmtString(
+            `${emojisBlock}${item.name}`,
+            [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
+          ),
+          ...(
+            item.description ?
+              [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
+              []
+          ),
+          participantsBlock,
+        ]),
 
-      formReplyMarkup(ctx, item, userid),
-    ];
+        ...formReplyMarkup(ctx, item, userid),
+      ],
+    };
   });
 };
 

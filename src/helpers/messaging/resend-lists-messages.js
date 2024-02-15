@@ -97,10 +97,11 @@ const resendListsMessages = async (
     messagesToEdit: [],
   };
 
-  for (const message of messages) {
+  for (const { itemId, message } of messages) {
     const sentMessage = await ctx.reply(...message);
     ctx.session.persistent.lists[userid].messagesToEdit.push({
       id: sentMessage.message_id,
+      itemId,
       text: sentMessage.text,
       entities: sentMessage.entities,
       reply_markup: sentMessage.reply_markup,

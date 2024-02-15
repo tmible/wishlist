@@ -47,7 +47,7 @@ describe('resendListsMessages', () => {
     await resendListsMessages(
       ctx,
       'userid',
-      [[ 'message 1' ]],
+      [{ itemId: 'itemId', message: [ 'message 1' ] }],
       'titleMessageText',
       'outdatedTitleMessageText',
       {},
@@ -63,7 +63,7 @@ describe('resendListsMessages', () => {
     await resendListsMessages(
       ctx,
       'userid',
-      [[ 'message 1' ]],
+      [{ itemId: 'itemId', message: [ 'message 1' ] }],
       'titleMessageText',
       'outdatedTitleMessageText',
       { isAutoUpdate: true },
@@ -87,7 +87,7 @@ describe('resendListsMessages', () => {
     await resendListsMessages(
       ctx,
       'userid',
-      [[ 'message 1' ]],
+      [{ itemId: 'itemId', message: [ 'message 1' ] }],
       'titleMessageText',
       'outdatedTitleMessageText',
       {},
@@ -103,7 +103,7 @@ describe('resendListsMessages', () => {
     await resendListsMessages(
       ctx,
       'userid',
-      [[ 'message 1' ]],
+      [{ itemId: 'itemId', message: [ 'message 1' ] }],
       'titleMessageText',
       'outdatedTitleMessageText',
       { isManualUpdate: true },
@@ -117,7 +117,7 @@ describe('resendListsMessages', () => {
       await resendListsMessages(
         ctx,
         'userid',
-        [[ 'message 1' ]],
+        [{ itemId: 'itemId', message: [ 'message 1' ] }],
         'titleMessageText',
         'outdatedTitleMessageText',
         {},
@@ -130,7 +130,7 @@ describe('resendListsMessages', () => {
       await resendListsMessages(
         ctx,
         'userid',
-        [[ 'message 1' ]],
+        [{ itemId: 'itemId', message: [ 'message 1' ] }],
         'titleMessageText',
         'outdatedTitleMessageText',
         {},
@@ -142,7 +142,7 @@ describe('resendListsMessages', () => {
       await resendListsMessages(
         ctx,
         'userid',
-        [[ 'message 1' ]],
+        [{ itemId: 'itemId', message: [ 'message 1' ] }],
         'titleMessageText',
         'outdatedTitleMessageText',
         {},
@@ -154,7 +154,7 @@ describe('resendListsMessages', () => {
       await resendListsMessages(
         ctx,
         'userid',
-        [[ 'message 1' ]],
+        [{ itemId: 'itemId', message: [ 'message 1' ] }],
         'titleMessageText',
         'outdatedTitleMessageText',
         {},
@@ -166,7 +166,7 @@ describe('resendListsMessages', () => {
       await resendListsMessages(
         ctx,
         'userid',
-        [[ 'message 1' ]],
+        [{ itemId: 'itemId', message: [ 'message 1' ] }],
         'titleMessageText',
         'outdatedTitleMessageText',
         {},
@@ -176,7 +176,10 @@ describe('resendListsMessages', () => {
   });
 
   it('should send new messages', async () => {
-    const messages = [[ 'message 1' ], [ 'message 2' ]];
+    const messages = [
+      { itemId: 1, message: [ 'message 1' ] },
+      { itemId: 2, message: [ 'message 2' ] },
+    ];
     await resendListsMessages(
       ctx,
       'userid',
@@ -185,11 +188,17 @@ describe('resendListsMessages', () => {
       'outdatedTitleMessageText',
       {},
     );
-    assert.deepEqual(reply.mock.calls.slice(1).map((call) => call.arguments), messages);
+    assert.deepEqual(
+      reply.mock.calls.slice(1).map((call) => call.arguments),
+      messages.map(({ message }) => message),
+    );
   });
 
   it('should save messages in session', async () => {
-    const messages = [[ 'message 1' ], [ 'message 2' ]];
+    const messages = [
+      { itemId: 1, message: [ 'message 1' ] },
+      { itemId: 2, message: [ 'message 2' ] },
+    ];
     await resendListsMessages(
       ctx,
       'userid',
@@ -202,6 +211,7 @@ describe('resendListsMessages', () => {
       ctx.session.persistent.lists.userid.messagesToEdit,
       messages.map((_, i) => ({
         id: messageId - (messages.length - i - 1),
+        itemId: i + 1,
         text: `message ${i + 1}`,
         entities: `${messageId - (messages.length - i - 1)} entities`,
         reply_markup: `${messageId - (messages.length - i - 1)} reply markup`,

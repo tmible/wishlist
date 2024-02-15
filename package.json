@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "2.13.2",
+  "version": "2.13.3",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -36,6 +36,7 @@
     "better-sqlite3": "^9.3.0",
     "classic-level": "^1.4.1",
     "dotenv": "^16.4.1",
+    "seal-wasm": "^0.0.3",
     "telegraf": "^4.15.3"
   },
   "devDependencies": {

@@ -17,6 +17,9 @@ dependencies:
   dotenv:
     specifier: ^16.4.1
     version: 16.4.1
+  seal-wasm:
+    specifier: ^0.0.3
+    version: 0.0.3
   telegraf:
     specifier: ^4.15.3
     version: 4.15.3
@@ -687,6 +690,10 @@ packages:
   /sandwich-stream@2.0.2:
     resolution: {integrity: sha512-jLYV0DORrzY3xaz/S9ydJL6Iz7essZeAfnAavsJ+zsJGZ1MOnsS52yRjU3uF3pJa/lla7+wisp//fxOwOH8SKQ==}
     engines: {node: '>= 0.10'}
+    dev: false
+
+  /seal-wasm@0.0.3:
+    resolution: {integrity: sha512-MNw7TWdQMlKqivXqNqubsPKy49qEvzJxqsg29GZXmRd3VRQUyV7y8SpAS7DmIbNyYGC7D+Cu/hRlO1CR+k8QXg==}
     dev: false
 
   /semver@7.5.4:

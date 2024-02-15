@@ -2,9 +2,6 @@ import resendListsMessages from '@tmible/wishlist-bot/helpers/messaging/resend-l
 import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-lists-messages';
 
 /**
- * Отправляемое сообщение с элементом списка
- * @typedef {[ FmtString, Markup<InlineKeyboardMarkup> ]} Message
- *
  * Параметры отправки списка
  * @typedef {Object} SendListOptions
  * @property {boolean} shouldForceNewMessages Признак необходимости отправки новых сообщений

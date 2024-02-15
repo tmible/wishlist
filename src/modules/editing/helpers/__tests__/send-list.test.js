@@ -52,7 +52,7 @@ describe('editing/send-list if chat isn\'t group', () => {
     id: 1,
     priority: 1,
     name: 'name 1',
-    description: 'description 1',
+    description: '',
     descriptionEntities: [],
   }, {
     id: 2,
