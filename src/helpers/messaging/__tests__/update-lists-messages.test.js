@@ -246,7 +246,7 @@ describe('updateListsMessages', () => {
               inline_keyboard: [[{
                 callback_data: 'force_list userid',
                 hide: false,
-                text: 'Отправить новые сообщения',
+                text: '💬 Отправить новые сообщения',
               }]],
             },
             reply_to_message_id: 'pinnedMessageId',
@@ -269,7 +269,7 @@ describe('updateListsMessages', () => {
               inline_keyboard: [[{
                 callback_data: 'force_own_list',
                 hide: false,
-                text: 'Отправить новые сообщения',
+                text: '💬 Отправить новые сообщения',
               }]],
             },
             reply_to_message_id: 'pinnedMessageId',

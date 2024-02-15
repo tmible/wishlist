@@ -77,7 +77,7 @@ describe('resendListsMessages', () => {
         undefined,
         'outdatedTitleMessageText',
         Markup.inlineKeyboard([
-          Markup.button.callback('Обновить', 'manual_update userid'),
+          Markup.button.callback('🔄 Обновить', 'manual_update userid'),
         ])
       ],
     );
@@ -152,8 +152,8 @@ describe('resendListsMessages', () => {
         [
           'titleMessageText',
           Markup.inlineKeyboard([
-            [ Markup.button.callback('Обновить', 'update_list userid') ],
-            [ Markup.button.callback('Отправить новые сообщения', 'force_list userid') ],
+            [ Markup.button.callback('🔄 Обновить', 'update_list userid') ],
+            [ Markup.button.callback('💬 Отправить новые сообщения', 'force_list userid') ],
           ]),
         ],
       );

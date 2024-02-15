@@ -47,7 +47,7 @@ const formParticipantsBlock = (item) => {
  */
 const formReplyMarkup = (ctx, item, userid) => {
   const bookButton = isChatGroup(ctx) || item.state === ListItemState.FREE ?
-    [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
+    [ Markup.button.callback('🔒 Забронировать', `book ${item.id} ${userid}`) ] :
     [];
 
   const cooperateButton =
@@ -57,7 +57,7 @@ const formReplyMarkup = (ctx, item, userid) => {
       item.state === ListItemState.COOPERATIVE &&
       !item.participantsIds.includes(ctx.from.id)
     ) ?
-      [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
+      [ Markup.button.callback('🤝 Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
       [];
 
   const retireButton =
@@ -66,7 +66,7 @@ const formReplyMarkup = (ctx, item, userid) => {
       item.state !== ListItemState.FREE &&
       item.participantsIds.includes(ctx.from.id)
     ) ?
-      [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
+      [ Markup.button.callback('🙅 Отказаться', `retire ${item.id} ${userid}`) ] :
       [];
 
   return [ bookButton, cooperateButton, retireButton ].some(({ length }) => length > 0) ?

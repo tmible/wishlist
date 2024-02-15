@@ -24,7 +24,7 @@ const configure = (bot) => {
       'reply',
       'Отправьте мне список id позиций, которые нужно удалить',
       Markup.inlineKeyboard([
-        Markup.button.callback('Не очищать список', 'cancel_clear_list'),
+        Markup.button.callback('🚫 Не очищать список', 'cancel_clear_list'),
       ]),
     );
   });

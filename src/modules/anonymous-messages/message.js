@@ -32,7 +32,7 @@ const handleAnonymousMessage = async (ctx) => {
     `Напишите сообщение${
       isChatGroup(ctx) ? ' ответом на это' : ''
     }, и я анонимно отправлю его`,
-    Markup.inlineKeyboard([ Markup.button.callback('Не отправлять сообщение', 'cancel_message') ]),
+    Markup.inlineKeyboard([ Markup.button.callback('🚫 Не отправлять сообщение', 'cancel_message') ]),
   );
 };
 
@@ -54,7 +54,7 @@ const configure = (bot) => {
           isChatGroup(ctx) ? ' ответом на это сообщение' : ''
         }`,
         Markup.inlineKeyboard([
-          Markup.button.callback('Не отправлять сообщение', 'cancel_message'),
+          Markup.button.callback('🚫 Не отправлять сообщение', 'cancel_message'),
         ]),
       );
 
@@ -81,7 +81,7 @@ const messageHandler = (bot) => {
         parseInt(ctx.session.messagePurpose.payload),
         ctx.message,
         Markup.inlineKeyboard([
-          Markup.button.callback('Ответить', `answer ${ctx.chat.id} ${ctx.message.message_id}`),
+          Markup.button.callback('↩️ Ответить', `answer ${ctx.chat.id} ${ctx.message.message_id}`),
         ]),
       );
 

@@ -170,7 +170,7 @@ const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
       {
         ...Markup.inlineKeyboard([
           Markup.button.callback(
-            'Отправить новые сообщения',
+            '💬 Отправить новые сообщения',
             `force_${
               userid === ctx.chat.id ? 'own_' : ''
             }list${

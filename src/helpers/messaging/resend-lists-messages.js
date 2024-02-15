@@ -23,7 +23,7 @@ const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText, options) =>
           ...(options.isAutoUpdate ?
             [
               Markup.inlineKeyboard([
-                Markup.button.callback('Обновить', `manual_update ${userid}`),
+                Markup.button.callback('🔄 Обновить', `manual_update ${userid}`),
               ]),
             ] :
             []
@@ -61,7 +61,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
     titleMessageText,
     Markup.inlineKeyboard([[
       Markup.button.callback(
-        'Обновить',
+        '🔄 Обновить',
         `update_${
           userid === ctx.chat.id ? 'own_' : ''
         }list${
@@ -70,7 +70,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
       ),
     ], [
       Markup.button.callback(
-        'Отправить новые сообщения',
+        '💬 Отправить новые сообщения',
         `force_${
           userid === ctx.chat.id ? 'own_' : ''
         }list${

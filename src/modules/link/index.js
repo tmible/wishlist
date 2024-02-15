@@ -1,11 +1,11 @@
 import { Format, Markup } from 'telegraf';
 
 const LinkForGroupsMarkup = Markup.inlineKeyboard([
-  Markup.button.callback('Мне нужна ссылка для групп', 'link_for_groups'),
+  Markup.button.callback('👥 Мне нужна ссылка для групп', 'link_for_groups'),
 ]);
 
 const LinkForPrivateMarkup = Markup.inlineKeyboard([
-  Markup.button.callback('Мне нужна ссылка на чат с ботом', 'link_for_private'),
+  Markup.button.callback('🤖 Мне нужна ссылка на чат с ботом', 'link_for_private'),
 ]);
 
 const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
