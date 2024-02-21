@@ -9,21 +9,44 @@ describe('forcePrivacyModeMiddleware', () => {
 
   afterEach(() => mock.reset());
 
-  it('should ignore messages that are not commands and are not replies', async () => {
-    await forcePrivacyModeMiddleware(
-      { updateType: 'message', message: {}, botInfo: { id: 'botId' } },
-      next,
-    );
-    assert.equal(next.mock.calls.length, 0);
-  });
+  it(
+    'should ignore messages that are not commands, not replies and don\'t mention bot',
+    async () => {
+      await forcePrivacyModeMiddleware(
+        { updateType: 'message', message: {}, botInfo: { id: 'botId' } },
+        next,
+      );
+      assert.equal(next.mock.calls.length, 0);
+    },
+  );
 
   it(
-    'should ignore messages that are not commands and are replies not to bot messages',
+    'should ignore messages that are not commands, not replies and don\'t have mentions',
     async () => {
       await forcePrivacyModeMiddleware(
         {
           updateType: 'message',
-          message: { reply_to_message: { from: { id: 'fromId' } } },
+          message: {},
+          botInfo: { id: 'botId' },
+        },
+        next,
+      );
+      assert.equal(next.mock.calls.length, 0);
+    },
+  );
+
+  it(
+    'should ignore messages that are not commands, are ' +
+    'replies not to bot messages and don\'t mention bot',
+    async () => {
+      await forcePrivacyModeMiddleware(
+        {
+          updateType: 'message',
+          message: {
+            text: '',
+            entities: [{ type: 'mention', offset: 0, length: 0 }],
+            reply_to_message: { from: { id: 'fromId' } },
+          },
           botInfo: { id: 'botId' },
         },
         next,
@@ -33,13 +56,28 @@ describe('forcePrivacyModeMiddleware', () => {
   );
 
   it('should pass non-message updates', async () => {
-    await forcePrivacyModeMiddleware({ updateType: 'action' }, next);
+    await forcePrivacyModeMiddleware({ updateType: 'action', message: {} }, next);
     assert(next.mock.calls.length > 0);
   });
 
   it('should pass messages that are commands', async () => {
     await forcePrivacyModeMiddleware(
-      { updateType: 'message', message: { entities: [{ type: 'bot_command' }] } },
+      { updateType: 'message', message: { text: '', entities: [{ type: 'bot_command' }] } },
+      next,
+    );
+    assert(next.mock.calls.length > 0);
+  });
+
+  it('should pass messages where bot is mentioned', async () => {
+    await forcePrivacyModeMiddleware(
+      {
+        updateType: 'message',
+        message: {
+          text: '@bot_username',
+          entities: [{ type: 'mention', offset: 0, length: 13 }],
+        },
+        botInfo: { username: 'bot_username' },
+      },
       next,
     );
     assert(next.mock.calls.length > 0);

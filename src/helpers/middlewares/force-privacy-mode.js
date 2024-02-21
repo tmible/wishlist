@@ -11,9 +11,15 @@
  * @async
  */
 const forcePrivacyModeMiddleware = async (ctx, next) => {
+  const isBotMentioned = !!ctx.message.entities?.some((entity) => {
+    const entityText = ctx.message.text.slice(entity.offset, entity.offset + entity.length);
+    return entity.type === 'mention' && entityText === `@${ctx.botInfo.username}`;
+  });
+
   if (
     ctx.updateType === 'message' &&
-    !ctx.message.entities?.find(({ type }) => type === 'bot_command') &&
+    !ctx.message.entities?.some(({ type }) => type === 'bot_command') &&
+    !isBotMentioned &&
     ctx.message.reply_to_message?.from.id !== ctx.botInfo.id
   ) {
     return;
