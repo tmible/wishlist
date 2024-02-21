@@ -1,18 +1,15 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import HelpMessageMarkup from '../constants/message-markup.const.js';
 import SharedHelpSupportSection from '../constants/sections/shared/support.const.js';
 
-describe('help module', () => {
-  let HelpModule;
+const isChatGroup = await replaceModule('@tmible/wishlist-bot/helpers/is-chat-group');
+const HelpModule = await import('../index.js').then((module) => module.default);
 
-  beforeEach(async () => {
-    const isChatGroup = await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
-      .then((path) => replaceEsm(path))
-      .then((module) => module.default);
-    HelpModule = await import('../index.js').then((module) => module.default);
+describe('help module', () => {
+  beforeEach(() => {
     when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
   });
 

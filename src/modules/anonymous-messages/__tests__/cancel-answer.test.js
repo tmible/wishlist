@@ -1,15 +1,13 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { matchers, object, reset, verify } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 describe('anonymous-messages/cancel-answer module', () => {
   let cancelActionHandler;
   let CancelAnswerModule;
 
   beforeEach(async () => {
-    cancelActionHandler = await resolveModule('@tmible/wishlist-bot/helpers/cancel-action-handler')
-      .then((path) => replaceEsm(path))
-      .then((module) => module.default);
+    cancelActionHandler = await replaceModule('@tmible/wishlist-bot/helpers/cancel-action-handler');
     CancelAnswerModule = await import('../cancel-answer.js').then((module) => module.default);
   });
 

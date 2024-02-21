@@ -1,34 +1,21 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
-import { replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const [
+  formMessages,
+  getMentionFromUseridOrUsername,
+  manageListsMessages,
+] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages'),
+]);
+const sendList = await import('../send-list.js').then((module) => module.default);
 
 describe('wishlist/send-list', () => {
-  let formMessages;
-  let getMentionFromUseridOrUsername;
-  let manageListsMessages;
-  let sendList;
-
-  beforeEach(async () => {
-    [
-      formMessages,
-      getMentionFromUseridOrUsername,
-      manageListsMessages,
-    ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-    ]);
-    sendList = await import('../send-list.js').then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should send notification message if list is empty', async (testContext) => {

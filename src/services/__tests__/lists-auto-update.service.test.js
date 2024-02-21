@@ -1,51 +1,37 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { matchers, object, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import Events from '@tmible/wishlist-bot/store/events';
+
+const [
+  { getLocalDB },
+  { initPersistentSession },
+  getMentionFromUseridOrUsername,
+  { emit },
+  manageListsMessages,
+  formMessages,
+] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/services/local-db'),
+  replaceModule('@tmible/wishlist-bot/persistent-session'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username'),
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages'),
+]);
+
+const {
+  startAutoUpdateService,
+  autoUpdateMiddleware,
+} = await import('../lists-auto-update.service.js');
 
 describe('lists auto update service', () => {
   let db;
-  let getLocalDB;
-  let initPersistentSession;
-  let getMentionFromUseridOrUsername;
-  let emit;
-  let manageListsMessages;
-  let formMessages;
-  let startAutoUpdateService;
-  let autoUpdateMiddleware;
 
-  beforeEach(async () => {
-    [
-      { getLocalDB },
-      { initPersistentSession },
-      getMentionFromUseridOrUsername,
-      { emit },
-      manageListsMessages,
-      formMessages,
-    ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/services/local-db').then((path) => replaceEsm(path)),
-      resolveModule('@tmible/wishlist-bot/persistent-session').then((path) => replaceEsm(path)),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-    ]);
-
+  beforeEach(() => {
     db = object([ 'get', 'getMany', 'put', 'batch' ]);
     when(getLocalDB('auto-update')).thenReturn(db);
-
-    ({
-      startAutoUpdateService,
-      autoUpdateMiddleware,
-    } = await import('../lists-auto-update.service.js'));
   });
 
   afterEach(reset);

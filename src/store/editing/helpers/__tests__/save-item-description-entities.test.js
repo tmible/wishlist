@@ -1,31 +1,26 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { afterEach, describe, it } from 'node:test';
+import { matchers, object, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const itemId = 'itemId';
+const entities = [{
+  type: 'type 1',
+  offset: 0,
+  length: 1,
+}, {
+  type: 'type 2',
+  offset: 1,
+  length: 2,
+  additional: 'property',
+}];
+
+const db = object([ 'prepare', 'pragma' ]);
+await replaceModule('@tmible/wishlist-bot/store', { db });
+const saveItemDescriptionEntities = await import('../save-item-description-entities.js')
+  .then((module) => module.default);
 
 describe('saveItemDescriptionEntities', () => {
-  let db;
-  let saveItemDescriptionEntities;
-
-  const itemId = 'itemId';
-  const entities = [{
-    type: 'type 1',
-    offset: 0,
-    length: 1,
-  }, {
-    type: 'type 2',
-    offset: 1,
-    length: 2,
-    additional: 'property',
-  }];
-
-  beforeEach(async () => {
-    db = object([ 'prepare', 'pragma' ]);
-    await resolveModule('@tmible/wishlist-bot/store').then((path) => replaceEsm(path, { db }));
-    saveItemDescriptionEntities = await import('../save-item-description-entities.js')
-      .then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should return if entities is not array', () => {

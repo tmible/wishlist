@@ -1,21 +1,14 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
-import { replaceEsm, reset, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { reset, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const getNickname = await replaceModule('@tmible/wishlist-bot/utils/get-nickname');
+const getMentionFromUseridOrUsername = await import('../get-mention-from-userid-or-username.js')
+  .then((module) => module.default);
 
 describe('getMentionFromUseridOrUsername', () => {
-  let getNickname;
-  let getMentionFromUseridOrUsername;
-
-  beforeEach(async () => {
-    getNickname = await resolveModule('@tmible/wishlist-bot/utils/get-nickname')
-      .then((path) => replaceEsm(path))
-      .then((module) => module.default);
-    getMentionFromUseridOrUsername = await import('../get-mention-from-userid-or-username.js')
-      .then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should return mention for username', () => {

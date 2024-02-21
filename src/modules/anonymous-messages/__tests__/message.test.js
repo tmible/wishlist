@@ -1,30 +1,22 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import { matchers, object, reset, verify, when } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
-describe('anonymous-messages/message module', () => {
-  let getUseridFromInput;
-  let sendMessageAndMarkItForMarkupRemove;
-  let MessageModule;
-  let ctx;
-  let captor;
-
-  beforeEach(async () => {
-    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
       Пробелы для консистентности с другими элементами массива
     */
-    [ getUseridFromInput, { sendMessageAndMarkItForMarkupRemove } ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/helpers/get-userid-from-input')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')
-        .then((path) => replaceEsm(path)),
-    ]);
-    MessageModule = await import('../message.js').then((module) => module.default);
-  });
+const [ getUseridFromInput, { sendMessageAndMarkItForMarkupRemove } ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/helpers/get-userid-from-input'),
+  replaceModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'),
+]);
+const MessageModule = await import('../message.js').then((module) => module.default);
+
+describe('anonymous-messages/message module', () => {
+  let ctx;
+  let captor;
 
   afterEach(reset);
 

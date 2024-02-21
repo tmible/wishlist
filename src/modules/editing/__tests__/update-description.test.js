@@ -3,26 +3,18 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import Events from '@tmible/wishlist-bot/store/events';
 
+const [ initiateUpdate, { emit }, sendList ] = await Promise.all([
+  replaceEsm('../helpers/template-functions/initiate-update.js').then((module) => module.default),
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceEsm('../helpers/send-list.js').then((module) => module.default),
+]);
+const UpdateDescriptionModule = await import('../update-description.js')
+  .then((module) => module.default);
+
 describe('editing/update-description module', () => {
-  let initiateUpdate;
-  let emit;
-  let sendList;
-  let UpdateDescriptionModule;
-
-  beforeEach(async () => {
-    [ initiateUpdate, { emit }, sendList ] = await Promise.all([
-      replaceEsm('../helpers/template-functions/initiate-update.js')
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      replaceEsm('../helpers/send-list.js').then((module) => module.default),
-    ]);
-    UpdateDescriptionModule = await import('../update-description.js')
-      .then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should register update_description action handler', () => {

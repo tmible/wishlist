@@ -1,23 +1,21 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import Events from '@tmible/wishlist-bot/store/events';
 
+/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+    Пробелы для консистентности с другими элементами массива
+  */
+const [ { subscribe }, sendList ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceEsm('../helpers/send-list.js').then((module) => module.default),
+]);
+const OwnListModule = await import('../own-list.js').then((module) => module.default);
+
 describe('editing/own-list module', () => {
-  let subscribe;
-  let sendList;
-  let OwnListModule;
   let bot;
 
-  beforeEach(async () => {
-    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-      Пробелы для консистентности с другими элементами массива
-    */
-    [ { subscribe }, sendList ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      replaceEsm('../helpers/send-list.js').then((module) => module.default),
-    ]);
-    OwnListModule = await import('../own-list.js').then((module) => module.default);
+  beforeEach(() => {
     bot = object([ 'action', 'command' ]);
   });
 

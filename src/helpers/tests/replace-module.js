@@ -1,17 +1,22 @@
 import { exec } from 'node:child_process';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
+import { replaceEsm } from 'testdouble';
 
 /**
  * Определение абсолютного пути к модулю по адресу,
  * использующему сокращения из "exports" package.json
+ * и подмена этого модуля с помощью {@link replaceEsm}
  * Используется только в юнит-тестах, при деплое удаляется
- * @function resolveModule
+ * @function replaceModule
  * @param {string} moduleAlias Адрес модуля, использующий сокращения из "exports" package.json
- * @returns {Promise<string>} Абсолютный путь к модулю
+ * @param {object} [moduleMocks] Объект для подмены экспортов модуля
+ * @returns {Promise<unknown>} Экспорт по умолчанию или все именованные экспорты подменённого модуля
  * @async
+ * @throws {Error} Ошибка, если ни одно сокращение из "exports" package.json не соответствует
+ *   указанному адресу
  */
-const resolveModule = async (moduleAlias) => {
+const replaceModule = async (moduleAlias, moduleMocks) => {
   const [ prefix, pkg ] = await Promise.all([
     promisify(exec)('npm prefix').then(({ stdout }) => stdout.replaceAll(/\s/g, '')),
     promisify(exec)('npm pkg get name exports').then(({ stdout }) => JSON.parse(stdout)),
@@ -28,7 +33,15 @@ const resolveModule = async (moduleAlias) => {
     }
   }
 
-  return resolve(prefix, matchingPath);
+  if (!matchingPath) {
+    throw new Error(`Cannot match any path in package.json "exports" with ${moduleAlias}`);
+  }
+
+  const replacedModule = await (moduleMocks ?
+    replaceEsm(resolve(prefix, matchingPath), moduleMocks) :
+    replaceEsm(resolve(prefix, matchingPath))
+  );
+  return replacedModule?.default ?? replacedModule;
 };
 
-export default resolveModule;
+export default replaceModule;

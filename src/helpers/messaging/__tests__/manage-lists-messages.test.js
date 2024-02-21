@@ -1,74 +1,70 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { reset, verify } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const testSuits = [{
+  name: 'if there are less or equal new messages than old messages',
+  shouldForceNewMessages: false,
+  sessionInitializer: () => ({
+    userid: {
+      pinnedMessageId: 'pinnedMessageId',
+      messagesToEdit: [ 1, 2 ],
+    },
+  }),
+  positiveTestCaseName: 'should update messages',
+  targetMock: 'updateListsMessages',
+  negativeTestCaseName: 'should not resend messages',
+  avoidedMock: 'resendListsMessages',
+}, {
+  name: 'if shouldForceNewMessages is true',
+  shouldForceNewMessages: true,
+  sessionInitializer: () => ({
+    userid: {
+      pinnedMessageId: 'pinnedMessageId',
+      messagesToEdit: [],
+    },
+  }),
+  positiveTestCaseName: 'should resend messages',
+  targetMock: 'resendListsMessages',
+  negativeTestCaseName: 'should not update messages',
+  avoidedMock: 'updateListsMessages',
+}, {
+  name: 'if there are no old messages',
+  shouldForceNewMessages: false,
+  sessionInitializer: () => ({}),
+  positiveTestCaseName: 'should resend messages',
+  targetMock: 'resendListsMessages',
+  negativeTestCaseName: 'should not update messages',
+  avoidedMock: 'updateListsMessages',
+}, {
+  name: 'if there are more new messages than old messages',
+  shouldForceNewMessages: false,
+  sessionInitializer: () => ({
+    userid: {
+      pinnedMessageId: 'pinnedMessageId',
+      messagesToEdit: [],
+    },
+  }),
+  positiveTestCaseName: 'should resend messages',
+  targetMock: 'resendListsMessages',
+  negativeTestCaseName: 'should not update messages',
+  avoidedMock: 'updateListsMessages',
+}];
+
+const mocks = {};
+[ mocks.resendListsMessages, mocks.updateListsMessages ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/resend-lists-messages'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/update-lists-messages'),
+]);
+const manageListsMessages = await import('../manage-lists-messages.js')
+  .then((module) => module.default);
 
 describe('manageListsMessages', () => {
-  let manageListsMessages;
   let ctx;
 
-  const mocks = {};
-
-  const testSuits = [{
-    name: 'if there are less or equal new messages than old messages',
-    shouldForceNewMessages: false,
-    sessionInitializer: () => ({
-      userid: {
-        pinnedMessageId: 'pinnedMessageId',
-        messagesToEdit: [ 1, 2 ],
-      },
-    }),
-    positiveTestCaseName: 'should update messages',
-    targetMock: 'updateListsMessages',
-    negativeTestCaseName: 'should not resend messages',
-    avoidedMock: 'resendListsMessages',
-  }, {
-    name: 'if shouldForceNewMessages is true',
-    shouldForceNewMessages: true,
-    sessionInitializer: () => ({
-      userid: {
-        pinnedMessageId: 'pinnedMessageId',
-        messagesToEdit: [],
-      },
-    }),
-    positiveTestCaseName: 'should resend messages',
-    targetMock: 'resendListsMessages',
-    negativeTestCaseName: 'should not update messages',
-    avoidedMock: 'updateListsMessages',
-  }, {
-    name: 'if there are no old messages',
-    shouldForceNewMessages: false,
-    sessionInitializer: () => ({}),
-    positiveTestCaseName: 'should resend messages',
-    targetMock: 'resendListsMessages',
-    negativeTestCaseName: 'should not update messages',
-    avoidedMock: 'updateListsMessages',
-  }, {
-    name: 'if there are more new messages than old messages',
-    shouldForceNewMessages: false,
-    sessionInitializer: () => ({
-      userid: {
-        pinnedMessageId: 'pinnedMessageId',
-        messagesToEdit: [],
-      },
-    }),
-    positiveTestCaseName: 'should resend messages',
-    targetMock: 'resendListsMessages',
-    negativeTestCaseName: 'should not update messages',
-    avoidedMock: 'updateListsMessages',
-  }];
-
-  beforeEach(async () => {
-    [ mocks.resendListsMessages, mocks.updateListsMessages ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/resend-lists-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/update-lists-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-    ]);
-    manageListsMessages = await import('../manage-lists-messages.js')
-      .then((module) => module.default);
+  beforeEach(() => {
+    ctx = { session: { persistent: { lists: {} } }, state: {} };
   });
 
   afterEach(reset);
@@ -97,7 +93,6 @@ describe('manageListsMessages', () => {
   }
 
   it('should mark list for auto update', async () => {
-    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',
@@ -109,7 +104,6 @@ describe('manageListsMessages', () => {
   });
 
   it('should add chat to auto update', async () => {
-    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',
@@ -122,7 +116,6 @@ describe('manageListsMessages', () => {
   });
 
   it('should remove chat from auto update', async () => {
-    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',

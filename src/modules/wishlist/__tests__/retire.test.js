@@ -1,24 +1,18 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import Events from '@tmible/wishlist-bot/store/events';
 
-describe('wishlist/retire module', () => {
-  let emit;
-  let sendList;
-  let RetireModule;
-
-  beforeEach(async () => {
-    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
       Пробелы для консистентности с другими элементами массива
     */
-    [ { emit }, sendList ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      replaceEsm('../helpers/send-list.js').then((module) => module.default),
-    ]);
-    RetireModule = await import('../retire.js').then((module) => module.default);
-  });
+const [ { emit }, sendList ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceEsm('../helpers/send-list.js').then((module) => module.default),
+]);
+const RetireModule = await import('../retire.js').then((module) => module.default);
 
+describe('wishlist/retire module', () => {
   afterEach(reset);
 
   it('should register retire action handler', () => {

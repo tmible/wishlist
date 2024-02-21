@@ -1,19 +1,14 @@
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { afterEach, describe, it } from 'node:test';
+import { matchers, object, reset, verify } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const cancelActionHandler = await replaceModule(
+  '@tmible/wishlist-bot/helpers/cancel-action-handler',
+);
+const CancelUpdateNameModule = await import('../cancel-update-name.js')
+  .then((module) => module.default);
 
 describe('editing/cancel-update-name module', () => {
-  let cancelActionHandler;
-  let CancelUpdateNameModule;
-
-  beforeEach(async () => {
-    cancelActionHandler = await resolveModule('@tmible/wishlist-bot/helpers/cancel-action-handler')
-      .then((path) => replaceEsm(path))
-      .then((module) => module.default);
-    CancelUpdateNameModule = await import('../cancel-update-name.js')
-      .then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should register cancel_update_name action handler', () => {

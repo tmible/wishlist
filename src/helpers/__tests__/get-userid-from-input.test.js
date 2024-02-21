@@ -1,25 +1,19 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, beforeEach, describe, it } from 'node:test';
-import { matchers, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { afterEach, describe, it } from 'node:test';
+import { matchers, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import Events from '@tmible/wishlist-bot/store/events';
 
+const usernames = new Map([
+  [ '123', 'username' ],
+  [ 'username', '123' ],
+]);
+
+const { emit } = await replaceModule('@tmible/wishlist-bot/store/event-bus');
+const getUseridFromInput = await import('../get-userid-from-input.js')
+  .then((module) => module.default);
+
 describe('getUseridFromInput', () => {
-  let getUseridFromInput;
-  let emit;
-
-  const usernames = new Map([
-    [ '123', 'username' ],
-    [ 'username', '123' ],
-  ]);
-
-  beforeEach(async () => {
-    ({ emit } = await resolveModule('@tmible/wishlist-bot/store/event-bus')
-      .then((path) => replaceEsm(path)));
-    getUseridFromInput = await import('../get-userid-from-input.js')
-      .then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should return nulls if no userid or username found', () => {

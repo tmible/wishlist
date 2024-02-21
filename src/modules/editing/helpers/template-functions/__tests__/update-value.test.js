@@ -1,23 +1,21 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { object, replaceEsm, reset, verify } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+    Пробелы для консистентности с другими элементами массива
+  */
+const [ { emit }, sendList ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceEsm('../../send-list.js').then((module) => module.default),
+]);
+const updateValue = await import('../update-value.js').then((module) => module.default);
 
 describe('editing/update-value if there is message purpose in session', () => {
-  let emit;
-  let sendList;
-  let updateValue;
   let ctx;
 
-  beforeEach(async () => {
-    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-      Пробелы для консистентности с другими элементами массива
-    */
-    [ { emit }, sendList ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      replaceEsm('../../send-list.js').then((module) => module.default),
-    ]);
-    updateValue = await import('../update-value.js').then((module) => module.default);
+  beforeEach(() => {
     ctx = object({
       update: { message: {} },
       reply: () => {},

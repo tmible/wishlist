@@ -1,21 +1,16 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
+import { matchers, object, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const { sendMessageAndMarkItForMarkupRemove } = await replaceModule(
+  '@tmible/wishlist-bot/helpers/middlewares/remove-markup',
+);
+const AnswerModule = await import('../answer.js').then((module) => module.default);
 
 describe('anonymous-messages/answer module', () => {
-  let sendMessageAndMarkItForMarkupRemove;
-  let AnswerModule;
-
-  beforeEach(async () => {
-    ({ sendMessageAndMarkItForMarkupRemove } = await resolveModule(
-      '@tmible/wishlist-bot/helpers/middlewares/remove-markup',
-    ).then((path) => replaceEsm(path)));
-    AnswerModule = await import('../answer.js').then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should register answer action handler', () => {

@@ -2,31 +2,24 @@ import { strict as assert } from 'node:assert';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
-import { matchers, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { matchers, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const [
+  { emit },
+  isChatGroup,
+  manageListsMessages,
+] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
+  replaceModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages'),
+]);
+const sendList = await import('../send-list.js').then((module) => module.default);
 
 describe('editing/send-list if chat isn\'t group', () => {
-  let emit;
-  let isChatGroup;
-  let manageListsMessages;
-  let sendList;
   let ctx;
 
-  beforeEach(async () => {
-    [
-      { emit },
-      isChatGroup,
-      manageListsMessages,
-    ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
-      resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-    ]);
-    sendList = await import('../send-list.js').then((module) => module.default);
+  beforeEach(() => {
     when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
     ctx = { chat: { id: 'userid' } };
   });

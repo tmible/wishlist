@@ -1,35 +1,26 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { object, replaceEsm, reset, verify, when } from 'testdouble';
-import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
+import { object, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const sessionKey = 'sessionKey';
+
+/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+  Пробелы для консистентности с другими элементами массива
+*/
+const [ getSessionKey, { getLocalDB } ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/helpers/get-session-key'),
+  replaceModule('@tmible/wishlist-bot/services/local-db'),
+]);
+
+const { initPersistentSession, dropPersistentSession } = await import('../persistent-session.js');
 
 describe('persistent session', () => {
   let db;
-  let getSessionKey;
-  let getLocalDB;
-  let initPersistentSession;
-  let dropPersistentSession;
 
-  const sessionKey = 'sessionKey';
-
-  beforeEach(async () => {
-    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-      Пробелы для консистентности с другими элементами массива
-    */
-    [ getSessionKey, { getLocalDB } ] = await Promise.all([
-      resolveModule('@tmible/wishlist-bot/helpers/get-session-key')
-        .then((path) => replaceEsm(path))
-        .then((module) => module.default),
-      resolveModule('@tmible/wishlist-bot/services/local-db').then((path) => replaceEsm(path)),
-    ]);
-
+  beforeEach(() => {
     db = object([ 'get', 'put' ]);
     when(getSessionKey(), { ignoreExtraArgs: true }).thenReturn(sessionKey);
-
-    ({
-      initPersistentSession,
-      dropPersistentSession,
-    } = await import('../persistent-session.js'));
   });
 
   afterEach(reset);
