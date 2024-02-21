@@ -1,15 +1,40 @@
+/** @typedef {import('telegraf').Context} Context */
+
+/**
+ * Множество разрешённых методов для отправки сообщения
+ * @constant {Set<keyof Context>}
+ */
+const AllowedSendMethods = new Set([ 'reply', 'replyWithMarkdownV2' ]);
+
+/**
+ * Проверка метода для отправки сообщения на наличие во множестве разрешённых
+ * @function sendMethodGuard
+ * @param {keyof Context} sendMethod Имя метода отправки сообщения
+ * @returns {keyof Context} Имя метода отправки сообщения, прошедшего проверку
+ * @throws {Error} Ошибка в случае отсутствия метода отправки сообщения во множестве разрешённых
+ */
+const sendMethodGuard = (sendMethod) => {
+  if (!AllowedSendMethods.has(sendMethod)) {
+    throw new Error(`Not allowed send method ${sendMethod} detected`);
+  }
+  return sendMethod;
+};
+
 /**
  * Отправка сообщения и отметка его для удаления встроенной клавиатуры
  * при получении следующего обновления от пользователя
- * @async
  * @function sendMessageAndMarkItForMarkupRemove
  * @param {Context} ctx Контекст
  * @param {keyof Context} sendMethod Имя метода отправки сообщения
  * @param {Parameters<Context[sendMethod]>} messageArgs Аргументы для отправки сообщения
+ * @async
  */
 export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...messageArgs) => {
-  const message = await ctx[sendMethod](...messageArgs);
+  const message = await ctx[sendMethodGuard(sendMethod)](...messageArgs);
 
+  /* eslint-disable-next-line require-atomic-updates --
+    Даже после отправки сообщения персистентная сессия определена в контексте
+  */
   ctx.session.persistent.messageForMarkupRemove = {
     id: message.message_id,
     chatId: message.chat.id,
@@ -19,10 +44,11 @@ export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...me
 /**
  * Промежуточный обработчик, удаляющий у [отмеченного]{@link sendMessageAndMarkItForMarkupRemove}
  * сообщения (при наличии) встроенную клавиатуру
- * @async
  * @function removeLastMarkupMiddleware
  * @param {Context} ctx Контекст
  * @param {() => Promise<void>} next Функция вызова следующего промежуточного обработчика
+ * @returns {Promise<void>}
+ * @async
  */
 export const removeLastMarkupMiddleware = async (ctx, next) => {
   if (!ctx.session.persistent.messageForMarkupRemove) {

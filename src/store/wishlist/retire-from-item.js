@@ -1,5 +1,12 @@
+/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import { db } from '@tmible/wishlist-bot/store';
+
+/* eslint-enable import/no-cycle */
+
+/**
+ * @typedef {import('better-sqlite3').Statement} Statement
+ */
 
 /**
  * Подготовленные выражения запроса БД
@@ -10,6 +17,7 @@ let statements;
 /**
  * Подготовка [выражений]{@link statements}
  * @function prepare
+ * @returns {void}
  */
 const prepare = () => statements = [
   'DELETE FROM participants WHERE list_item_id = ? AND userid = ?',
@@ -39,6 +47,7 @@ const prepare = () => statements = [
  * @function eventHandler
  * @param {number} itemId Идентификатор подарка
  * @param {number} userid Идентификатор пользователя
+ * @returns {void}
  */
 const eventHandler = (itemId, userid) => {
   const parameters = [

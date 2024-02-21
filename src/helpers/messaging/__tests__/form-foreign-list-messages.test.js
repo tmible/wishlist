@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
-import * as td from 'testdouble';
+import { replaceEsm, reset, when } from 'testdouble';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
@@ -11,38 +11,6 @@ describe('form foreign list messages', () => {
   let isChatGroup;
   let formMessages;
   let ctx;
-
-  beforeEach(async () => {
-    [
-      { emit },
-      getMentionFromUseridOrUsername,
-      isChatGroup,
-    ] = await Promise.all([
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username',
-        ))).default
-      )(),
-      (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
-      )(),
-    ]);
-
-    formMessages = (await import('../form-foreign-list-messages.js')).default;
-
-    td.when(emit(), { ignoreExtraArgs: true }).thenReturn(list);
-    td.when(
-      getMentionFromUseridOrUsername(),
-      { ignoreExtraArgs: true },
-    ).thenDo(
-      (_, username) => `@${username}`,
-    );
-
-    ctx = { from: { id: 'fromId' } };
-  });
-
-  afterEach(() => td.reset());
 
   const list = [{
     id: 1,
@@ -91,8 +59,39 @@ describe('form foreign list messages', () => {
     participantsIds: [ 'anotherUserId' ],
   }];
 
+  beforeEach(async () => {
+    [
+      { emit },
+      getMentionFromUseridOrUsername,
+      isChatGroup,
+    ] = await Promise.all([
+      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+    ]);
+
+    formMessages = await import('../form-foreign-list-messages.js')
+      .then((module) => module.default);
+
+    when(emit(), { ignoreExtraArgs: true }).thenReturn(list);
+    when(
+      getMentionFromUseridOrUsername(),
+      { ignoreExtraArgs: true },
+    ).thenDo(
+      (_, username) => `@${username}`,
+    );
+
+    ctx = { from: { id: 'fromId' } };
+  });
+
+  afterEach(reset);
+
   it('should form in private chat', async () => {
-    td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
+    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
 
     const messages = formMessages(ctx, 'userid');
 
@@ -103,7 +102,7 @@ describe('form foreign list messages', () => {
   });
 
   it('should form in group chat', async () => {
-    td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(true);
+    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(true);
 
     const messages = formMessages(ctx, 'userid');
 

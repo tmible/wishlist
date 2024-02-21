@@ -2,6 +2,6 @@
  * Регулярное выражение для идентификатора или имени пользователя
  * @constant {RegExp}
  */
-const UseridOrUsernameRegexp = /^([0-9]+)|@?([a-z]{1}[a-z0-9_]+)$/;
+const UseridOrUsernameRegExp = /^(?<userid>\d+)|@?(?<username>[a-z][\d_a-z]+)$/;
 
-export default UseridOrUsernameRegexp;
+export default UseridOrUsernameRegExp;

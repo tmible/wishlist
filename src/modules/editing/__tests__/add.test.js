@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 import Events from '@tmible/wishlist-bot/store/events';
@@ -20,34 +20,35 @@ describe('editing/add module', () => {
       { emit },
       sendList,
     ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
-      )(),
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')),
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
-      (async () => (await td.replaceEsm('../helpers/send-list.js')).default)(),
+      resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')
+        .then((path) => replaceEsm(path)),
+      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
+      replaceEsm('../helpers/send-list.js').then((module) => module.default),
     ]);
-    AddModule = (await import('../add.js')).default;
+    AddModule = await import('../add.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register add command handler', () => {
-    const bot = td.object([ 'command' ]);
+    const bot = object([ 'command' ]);
     AddModule.configure(bot);
-    td.verify(bot.command('add', td.matchers.isA(Function)));
+    verify(bot.command('add', matchers.isA(Function)));
   });
 
   describe('add command handler if chat isn\'t group', () => {
     let ctx;
 
     beforeEach(async () => {
-      const bot = td.object([ 'command' ]);
+      const bot = object([ 'command' ]);
       ctx = { session: {} };
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       AddModule.configure(bot);
-      td.verify(bot.command('add', captor.capture()));
-      td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
+      verify(bot.command('add', captor.capture()));
+      when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
       await captor.value(ctx);
     });
 
@@ -56,19 +57,19 @@ describe('editing/add module', () => {
     });
 
     it('should reply', () => {
-      td.verify(sendMessageAndMarkItForMarkupRemove(
+      verify(sendMessageAndMarkItForMarkupRemove(
         ctx,
         'replyWithMarkdownV2',
-        td.matchers.isA(String),
-        Markup.inlineKeyboard([ Markup.button.callback(td.matchers.isA(String), 'cancel_add') ]),
+        matchers.isA(String),
+        Markup.inlineKeyboard([ Markup.button.callback(matchers.isA(String), 'cancel_add') ]),
       ));
     });
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     AddModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
@@ -77,11 +78,11 @@ describe('editing/add module', () => {
     let captor;
 
     beforeEach(() => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       AddModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
     });
 
     afterEach(() => mock.reset());
@@ -93,7 +94,7 @@ describe('editing/add module', () => {
 
     describe('if there is message purpose in session', () => {
       beforeEach(() => {
-        ctx = td.object({
+        ctx = object({
           from: { id: 'fromId' },
           message: { text: 'text', entities: [{ type: 'type', offset: 0, length: 0 }] },
           reply: () => {},
@@ -114,7 +115,7 @@ describe('editing/add module', () => {
       it('should reply if couldn\'t match message text and pattern', async () => {
         ctx.message.text = '';
         await captor.value(ctx, next);
-        td.verify(ctx.reply(td.matchers.isA(String)));
+        verify(ctx.reply(matchers.isA(String)));
       });
 
       describe('if message text matches pattern', () => {
@@ -124,7 +125,7 @@ describe('editing/add module', () => {
         });
 
         it('should emit add event', () => {
-          td.verify(emit(
+          verify(emit(
             Events.Editing.AddItem,
             [ 'fromId', 1, 'name', 'description' ],
             [{ type: 'type', offset: 0, length: 0 }],
@@ -133,11 +134,11 @@ describe('editing/add module', () => {
         });
 
         it('should reply', () => {
-          td.verify(ctx.reply(td.matchers.isA(String)));
+          verify(ctx.reply(matchers.isA(String)));
         });
 
         it('should send list', () => {
-          td.verify(sendList(ctx));
+          verify(sendList(ctx));
         });
       });
     });

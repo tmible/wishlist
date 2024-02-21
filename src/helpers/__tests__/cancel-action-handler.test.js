@@ -16,24 +16,24 @@ describe('cancelActionHandler', () => {
   afterEach(() => mock.reset());
 
   describe('if message deletion is required', () => {
-    it('should delete message', async (testContext) => {
+    it('should delete message', async () => {
       await cancelActionHandler(ctx);
       assert.equal(deleteMessage.mock.calls.length, 1);
     });
 
-    it('should not reply', async (testContext) => {
+    it('should not reply', async () => {
       await cancelActionHandler(ctx);
       assert.equal(reply.mock.calls.length, 0);
     });
   });
 
   describe('if message deletion is not required', () => {
-    it('should not delete message', async (testContext) => {
+    it('should not delete message', async () => {
       await cancelActionHandler(ctx, 'reply', false);
       assert.equal(deleteMessage.mock.calls.length, 0);
     });
 
-    it('should reply', async (testContext) => {
+    it('should reply', async () => {
       await cancelActionHandler(ctx, 'reply', false);
       assert.deepEqual(reply.mock.calls[0].arguments, [ 'reply' ]);
     });

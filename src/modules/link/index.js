@@ -1,13 +1,37 @@
 import { Format, Markup } from 'telegraf';
 
+/**
+ * @typedef {import('telegraf').Context} Context
+ * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ */
+
+/**
+ * Встроенная клавиатура для переключения содержимого сообщения на ссылку для групп
+ * @constant {Markup<InlineKeyboardMarkup>}
+ */
 const LinkForGroupsMarkup = Markup.inlineKeyboard([
   Markup.button.callback('👥 Мне нужна ссылка для групп', 'link_for_groups'),
 ]);
 
+/**
+ * Встроенная клавиатура для переключения содержимого сообщения на ссылку на чат с ботом
+ * @constant {Markup<InlineKeyboardMarkup>}
+ */
 const LinkForPrivateMarkup = Markup.inlineKeyboard([
   Markup.button.callback('🤖 Мне нужна ссылка на чат с ботом', 'link_for_private'),
 ]);
 
+/**
+ * Формирование ссылки
+ * @function formLink
+ * @param {Context} ctx Контекст
+ * @param {string} linkText Текст ссылки
+ * @param {boolean} isLinkForGroups Признак формирования ссылки для групп
+ * @returns {string | Format.FmtString} Ссылка
+ */
 const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
   const link =
     `https://t.me/${ctx.botInfo.username}?start${isLinkForGroups ? 'group' : ''}=${ctx.from.id}`;
@@ -20,7 +44,13 @@ const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
   return link;
 };
 
+/** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
+  /**
+   * При вызове действия переключения содержимого сообщения на ссылку для групп или на чат с ботом
+   * бот [формирует нужную ссылку]{@link formLink} и заменяет её в сообщении, сохраняя текст,
+   * если он есть, и обновляя встроенную клавиатуру
+   */
   bot.action(/^link_for_(groups|private)$/, async (ctx) => {
     await ctx.telegram.editMessageText(
       ctx.chat.id,
@@ -31,6 +61,11 @@ const configure = (bot) => {
     );
   });
 
+  /**
+   * При получении команды /link бот [формирует ссылку на чат с ботом]{@link formLink}
+   * и отправляет сообщение с ней и [встроенной клавиатурой для переключения содержимого сообщения
+   * на ссылку для групп]{@link LinkForGroupsMarkup}
+   */
   bot.command('link', async (ctx) => {
     await ctx.reply(formLink(ctx, ctx.payload), LinkForGroupsMarkup);
   });

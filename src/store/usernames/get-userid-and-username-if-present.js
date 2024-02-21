@@ -1,4 +1,9 @@
+/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import { db } from '@tmible/wishlist-bot/store';
+
+/**
+ * @typedef {import('better-sqlite3').Statement} Statement
+ */
 
 /**
  * Подготовленное выражение запроса БД
@@ -9,6 +14,7 @@ let statement;
 /**
  * Подготовка [выражения]{@link statement}
  * @function prepare
+ * @returns {void}
  */
 const prepare = () => statement = db.prepare(
   'SELECT userid, username FROM usernames WHERE userid = ?',
@@ -24,6 +30,6 @@ const prepare = () => statement = db.prepare(
 const eventHandler = (userid) => {
   const user = statement.get(userid);
   return [ user?.userid ?? null, user?.username ?? null ];
-}
+};
 
 export default { eventHandler, prepare };

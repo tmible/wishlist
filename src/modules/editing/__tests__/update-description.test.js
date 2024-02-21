@@ -1,11 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 import Events from '@tmible/wishlist-bot/store/events';
-import ItemDescriptionPattern from '../constants/item-description-pattern.const.js';
 
 describe('editing/update-description module', () => {
   let initiateUpdate;
@@ -15,38 +14,38 @@ describe('editing/update-description module', () => {
 
   beforeEach(async () => {
     [ initiateUpdate, { emit }, sendList ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm('../helpers/template-functions/initiate-update.js')).default
-      )(),
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
-      (async () => (await td.replaceEsm('../helpers/send-list.js')).default)(),
+      replaceEsm('../helpers/template-functions/initiate-update.js')
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
+      replaceEsm('../helpers/send-list.js').then((module) => module.default),
     ]);
-    UpdateDescriptionModule = (await import('../update-description.js')).default;
+    UpdateDescriptionModule = await import('../update-description.js')
+      .then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register update_description action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     UpdateDescriptionModule.configure(bot);
-    td.verify(bot.action(/^update_description ([\-\d]+)$/, td.matchers.isA(Function)));
+    verify(bot.action(/^update_description (\d+)$/, matchers.isA(Function)));
   });
 
   describe('update_description action handler', () => {
     it('should initiate update', async () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       const ctx = {};
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       UpdateDescriptionModule.configure(bot);
-      td.verify(bot.action(/^update_description ([\-\d]+)$/, captor.capture()));
+      verify(bot.action(/^update_description (\d+)$/, captor.capture()));
       await captor.value(ctx);
-      td.verify(initiateUpdate(
+      verify(initiateUpdate(
         ctx,
         MessagePurposeType.UpdateDescription,
         [
-          td.matchers.isA(String),
+          matchers.isA(String),
           Markup.inlineKeyboard([
-            Markup.button.callback(td.matchers.isA(String), 'cancel_update_description'),
+            Markup.button.callback(matchers.isA(String), 'cancel_update_description'),
           ]),
         ],
       ));
@@ -54,9 +53,9 @@ describe('editing/update-description module', () => {
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     UpdateDescriptionModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
@@ -65,11 +64,11 @@ describe('editing/update-description module', () => {
     let captor;
 
     beforeEach(() => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       UpdateDescriptionModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
     });
 
     afterEach(() => mock.reset());
@@ -80,56 +79,43 @@ describe('editing/update-description module', () => {
     });
 
     describe('if there is message purpose in session', () => {
-      beforeEach(() => {
-        ctx = td.object({
-          message: { text: '', entities: [{ type: 'type', offset: 0, length: 0 }] },
+      beforeEach(async () => {
+        ctx = object({
+          message: { text: 'text', entities: [{ type: 'type', offset: 0, length: 0 }] },
           reply: () => {},
           session: {
             messagePurpose: {
               type: MessagePurposeType.UpdateDescription,
               payload: 'itemId',
-             },
+            },
           },
         });
+        await captor.value(ctx, next);
       });
 
-      it('should not pass', async () => {
-        await captor.value(ctx, next);
+      it('should not pass', () => {
         assert.equal(next.mock.calls.length, 0);
       });
 
-      it('should remove message purpose from session', async () => {
-        await captor.value(ctx, next);
+      it('should remove message purpose from session', () => {
         assert.deepEqual(ctx.session, {});
       });
 
-      it('should reply if couldn\'t match message text and pattern', async () => {
-        await captor.value(ctx, next);
-        td.verify(ctx.reply(td.matchers.isA(String)));
+      it('should emit update description event', () => {
+        verify(emit(
+          Events.Editing.UpdateItemDescription,
+          'itemId',
+          'text',
+          [{ type: 'type', offset: 0, length: 0 }],
+        ));
       });
 
-      describe('if message text matches pattern', () => {
-        beforeEach(async () => {
-          ctx.message.text = 'text';
-          await captor.value(ctx, next);
-        });
+      it('should reply', () => {
+        verify(ctx.reply(matchers.isA(String)));
+      });
 
-        it('should emit update description event', () => {
-          td.verify(emit(
-            Events.Editing.UpdateItemDescription,
-            'itemId',
-            'text',
-            [{ type: 'type', offset: 0, length: 0 }],
-          ));
-        });
-
-        it('should reply', () => {
-          td.verify(ctx.reply(td.matchers.isA(String)));
-        });
-
-        it('should send list', () => {
-          td.verify(sendList(ctx));
-        });
+      it('should send list', () => {
+        verify(sendList(ctx));
       });
     });
   });

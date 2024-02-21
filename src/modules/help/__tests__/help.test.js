@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 import HelpMessageMarkup from '../constants/message-markup.const.js';
 import SharedHelpSupportSection from '../constants/sections/shared/support.const.js';
@@ -9,33 +9,32 @@ describe('help module', () => {
   let HelpModule;
 
   beforeEach(async () => {
-    const isChatGroup = (await td.replaceEsm(await resolveModule(
-      '@tmible/wishlist-bot/helpers/is-chat-group',
-    ))).default;
-    HelpModule = (await import('../index.js')).default;
-    td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
+    const isChatGroup = await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
+      .then((path) => replaceEsm(path))
+      .then((module) => module.default);
+    HelpModule = await import('../index.js').then((module) => module.default);
+    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register help command handler', () => {
-    const bot = td.object([ 'action', 'command' ]);
+    const bot = object([ 'action', 'command' ]);
     HelpModule.configure(bot);
-    td.verify(bot.command('help', td.matchers.isA(Function)));
+    verify(bot.command('help', matchers.isA(Function)));
   });
 
   describe('help command handler', () => {
     it('should reply', async (testContext) => {
-      const generalHelpSection = (await td.replaceEsm(
-        '../constants/sections/default/general.const.js',
-      )).default;
+      const generalHelpSection = await replaceEsm('../constants/sections/default/general.const.js')
+        .then((module) => module.default);
 
-      const bot = td.object([ 'action', 'command' ]);
+      const bot = object([ 'action', 'command' ]);
       const replyWithMarkdownV2 = testContext.mock.fn(async () => {});
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
 
       HelpModule.configure(bot);
-      td.verify(bot.command('help', captor.capture()));
+      verify(bot.command('help', captor.capture()));
 
       await captor.value({ replyWithMarkdownV2 });
 
@@ -47,23 +46,23 @@ describe('help module', () => {
   });
 
   it('should register help action handler', () => {
-    const bot = td.object([ 'action', 'command' ]);
+    const bot = object([ 'action', 'command' ]);
     HelpModule.configure(bot);
-    td.verify(bot.action(/^help ([a-z\-]+)$/, td.matchers.isA(Function)));
+    verify(bot.action(/^help ([a-z-]+)$/, matchers.isA(Function)));
   });
 
   describe('help action handler', () => {
     it('should edit help message', async (testContext) => {
-      const nicknameHelpSection = (await td.replaceEsm(
+      const nicknameHelpSection = await replaceEsm(
         '../constants/sections/default/nickname.const.js',
-      )).default;
+      ).then((module) => module.default);
 
-      const bot = td.object([ 'action', 'command' ]);
+      const bot = object([ 'action', 'command' ]);
       const editMessageText = testContext.mock.fn(async () => {});
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
 
       HelpModule.configure(bot);
-      td.verify(bot.action(/^help ([a-z\-]+)$/, captor.capture()));
+      verify(bot.action(/^help ([a-z-]+)$/, captor.capture()));
 
       await captor.value({
         chat: { id: 'chatId' },

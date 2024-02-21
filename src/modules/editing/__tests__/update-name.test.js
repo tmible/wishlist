@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
-import ItemNamePattern from '../constants/item-name-pattern.const.js';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemNamePattern from '../constants/item-name-pattern.const.js';
 
 describe('editing/update-name module', () => {
   let initiateUpdate;
@@ -13,39 +13,36 @@ describe('editing/update-name module', () => {
 
   beforeEach(async () => {
     [ initiateUpdate, updateValue ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm('../helpers/template-functions/initiate-update.js')).default
-      )(),
-      (async () =>
-        (await td.replaceEsm('../helpers/template-functions/update-value.js')).default
-      )(),
+      replaceEsm('../helpers/template-functions/initiate-update.js')
+        .then((module) => module.default),
+      replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
     ]);
-    UpdateNameModule = (await import('../update-name.js')).default;
+    UpdateNameModule = await import('../update-name.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register update_name action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     UpdateNameModule.configure(bot);
-    td.verify(bot.action(/^update_name ([\-\d]+)$/, td.matchers.isA(Function)));
+    verify(bot.action(/^update_name (\d+)$/, matchers.isA(Function)));
   });
 
   describe('update_name action handler', () => {
     it('should initiate update', async () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       const ctx = {};
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       UpdateNameModule.configure(bot);
-      td.verify(bot.action(/^update_name ([\-\d]+)$/, captor.capture()));
+      verify(bot.action(/^update_name (\d+)$/, captor.capture()));
       await captor.value(ctx);
-      td.verify(initiateUpdate(
+      verify(initiateUpdate(
         ctx,
         MessagePurposeType.UpdateName,
         [
-          td.matchers.isA(String),
+          matchers.isA(String),
           Markup.inlineKeyboard([
-            Markup.button.callback(td.matchers.isA(String), 'cancel_update_name'),
+            Markup.button.callback(matchers.isA(String), 'cancel_update_name'),
           ]),
         ],
       ));
@@ -53,9 +50,9 @@ describe('editing/update-name module', () => {
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     UpdateNameModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
@@ -64,25 +61,30 @@ describe('editing/update-name module', () => {
     let captor;
 
     beforeEach(async () => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
       ctx = {};
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       UpdateNameModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
       await captor.value(ctx, next);
     });
 
     afterEach(() => mock.reset());
 
     it('should update value', () => {
-      td.verify(updateValue(
+      verify(updateValue(
         ctx,
         MessagePurposeType.UpdateName,
+        /* eslint-disable-next-line
+          security/detect-non-literal-regexp,
+          security-node/non-literal-reg-expr --
+          Регулярное выражение из константы, так что тут нет уязвимости
+        */
         new RegExp(`^${ItemNamePattern}$`),
-        td.matchers.isA(String),
+        matchers.isA(String),
         Events.Editing.UpdateItemName,
-        td.matchers.isA(String),
+        matchers.isA(String),
       ));
     });
 

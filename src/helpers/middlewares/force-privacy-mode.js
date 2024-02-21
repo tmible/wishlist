@@ -1,12 +1,16 @@
+/** @typedef {import('telegraf').Context} Context */
+
 /**
- * Промежуточный обработчик, обеспечивающий использование [приватного режима]{@link https://core.telegram.org/bots/features#privacy-mode},
+ * Промежуточный обработчик, обеспечивающий использование
+ * [приватного режима]{@link https://core.telegram.org/bots/features#privacy-mode},
  * даже если он выключен
- * @async
  * @function forcePrivacyModeMiddleware
  * @param {Context} ctx Контекст
  * @param {() => Promise<void>} next Функция вызова следующего промежуточного обработчика
+ * @returns {Promise<void>}
+ * @async
  */
-const forcePrivacyModeMiddleware = (ctx, next) => {
+const forcePrivacyModeMiddleware = async (ctx, next) => {
   if (
     ctx.updateType === 'message' &&
     !ctx.message.entities?.find(({ type }) => type === 'bot_command') &&
@@ -15,7 +19,7 @@ const forcePrivacyModeMiddleware = (ctx, next) => {
     return;
   }
 
-  return next();
+  await next();
 };
 
 export default forcePrivacyModeMiddleware;

@@ -13,8 +13,14 @@ import UpdateNameModule from './update-name.js';
 import UpdatePriorityModule from './update-priority.js';
 
 /**
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ */
+
+/**
  * Настройка модуля, обеспечивающего работу пользователя со своим списком желаний
- * @function configure
+ * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
   console.log('configuring editing module');

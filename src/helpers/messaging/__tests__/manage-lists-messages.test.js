@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { replaceEsm, reset, verify } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('manageListsMessages', () => {
@@ -60,21 +60,18 @@ describe('manageListsMessages', () => {
 
   beforeEach(async () => {
     [ mocks.resendListsMessages, mocks.updateListsMessages ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/resend-lists-messages',
-        ))).default
-      )(),
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/update-lists-messages',
-        ))).default
-      )(),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/resend-lists-messages')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/update-lists-messages')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
     ]);
-    manageListsMessages = (await import('../manage-lists-messages.js')).default;
+    manageListsMessages = await import('../manage-lists-messages.js')
+      .then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   for (const suit of testSuits) {
     describe(suit.name, () => {
@@ -90,17 +87,17 @@ describe('manageListsMessages', () => {
       });
 
       it(suit.positiveTestCaseName, () => {
-        td.verify(mocks[suit.targetMock](), { ignoreExtraArgs: true, times: 1 });
+        verify(mocks[suit.targetMock](), { ignoreExtraArgs: true, times: 1 });
       });
 
       it(suit.negativeTestCaseName, () => {
-        td.verify(mocks[suit.avoidedMock](), { ignoreExtraArgs: true, times: 0 });
+        verify(mocks[suit.avoidedMock](), { ignoreExtraArgs: true, times: 0 });
       });
     });
   }
 
   it('should mark list for auto update', async () => {
-    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',
@@ -112,7 +109,7 @@ describe('manageListsMessages', () => {
   });
 
   it('should add chat to auto update', async () => {
-    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',
@@ -125,7 +122,7 @@ describe('manageListsMessages', () => {
   });
 
   it('should remove chat from auto update', async () => {
-    ctx = { session: { persistent: { lists : {} } }, state: {} };
+    ctx = { session: { persistent: { lists: {} } }, state: {} };
     await manageListsMessages(
       ctx,
       'userid',

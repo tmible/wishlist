@@ -5,8 +5,14 @@ import CancelMessageModule from './cancel-message.js';
 import MessageModule from './message.js';
 
 /**
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ */
+
+/**
  * Настройка модуля отправки анонимных сообщений и ответов на них
- * @function configure
+ * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
   console.log('configuring anonymous messages module');

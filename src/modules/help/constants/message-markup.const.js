@@ -1,6 +1,8 @@
 import { Markup } from 'telegraf';
-import HelpSectionsNamesMap from './sections-names-map.const.js';
 import HelpSections from './sections.const.js';
+import HelpSectionsNamesMap from './sections-names-map.const.js';
+
+/** @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup */
 
 /**
  * Встроенная кладиватура для переключения между разделами справки

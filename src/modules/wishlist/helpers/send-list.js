@@ -4,6 +4,13 @@ import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messagi
 import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
 
 /**
+ * @typedef {import('telegraf').Context} Context
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').SendListOptions
+ * } SendListOptions
+ */
+
+/**
  * Значения параметров отправки списка по умолчанию
  * @constant {SendListOptions}
  */
@@ -14,14 +21,17 @@ const defaultOptions = {
 };
 
 /**
- * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages} списка желаний пользователя,
- * при его наличии, другим пользователям. При отсутствии желаний пользователя отправляется сообщение об этом
- * @async
+ * [Отправка (или обновление уже отправленных сообщений)]{@link manageListsMessages}
+ * списка желаний пользователя, при его наличии, другим пользователям.
+ * При отсутствии желаний пользователя отправляется сообщение об этом
  * @function sendList
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {string} [username] Имя пользователя -- владельца списка
- * @param {SendListOptions} [passedOptions={}] Параметры отправки списка (см. аргумент passedOptions {@link manageListsMessages})
+ * @param {SendListOptions} passedOptions Параметры отправки списка
+ *   (см. аргумент passedOptions {@link manageListsMessages})
+ * @returns {Promise<void>}
+ * @async
  */
 const sendList = async (ctx, userid, username, passedOptions = {}) => {
   const messages = formMessages(ctx, userid);
@@ -29,7 +39,8 @@ const sendList = async (ctx, userid, username, passedOptions = {}) => {
   const userMention = getMentionFromUseridOrUsername(userid, username);
 
   if (messages.length === 0) {
-    return ctx.sendMessage(Format.join([ 'Список', userMention, 'пуст' ], ' '));
+    await ctx.sendMessage(Format.join([ 'Список', userMention, 'пуст' ], ' '));
+    return;
   }
 
   await manageListsMessages(

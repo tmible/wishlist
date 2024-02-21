@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/cancel-add module', () => {
@@ -7,29 +7,29 @@ describe('editing/cancel-add module', () => {
   let CancelAddModule;
 
   beforeEach(async () => {
-    cancelActionHandler = (await td.replaceEsm(await resolveModule(
-      '@tmible/wishlist-bot/helpers/cancel-action-handler',
-    ))).default;
-    CancelAddModule = (await import('../cancel-add.js')).default;
+    cancelActionHandler = await resolveModule('@tmible/wishlist-bot/helpers/cancel-action-handler')
+      .then((path) => replaceEsm(path))
+      .then((module) => module.default);
+    CancelAddModule = await import('../cancel-add.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register cancel_add action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     CancelAddModule.configure(bot);
-    td.verify(bot.action('cancel_add', td.matchers.isA(Function)));
+    verify(bot.action('cancel_add', matchers.isA(Function)));
   });
 
   describe('cancel_add action handler', () => {
     it('should call cancelActionHandler', () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       const ctx = {};
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       CancelAddModule.configure(bot);
-      td.verify(bot.action('cancel_add', captor.capture()));
+      verify(bot.action('cancel_add', captor.capture()));
       captor.value(ctx);
-      td.verify(cancelActionHandler(ctx, td.matchers.isA(String), false));
+      verify(cancelActionHandler(ctx, matchers.isA(String), false));
     });
   });
 });

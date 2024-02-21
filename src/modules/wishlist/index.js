@@ -6,9 +6,15 @@ import ListModule from './list.js';
 import RetireModule from './retire.js';
 
 /**
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ */
+
+/**
  * Настройка модуля просмотра списков желаний
  * других пользователей и взаимодействия с ними
- * @function configure
+ * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
   console.log('configuring wishlist module');

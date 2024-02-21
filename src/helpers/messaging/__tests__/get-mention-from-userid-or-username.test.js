@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
-import * as td from 'testdouble';
+import { replaceEsm, reset, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('getMentionFromUseridOrUsername', () => {
@@ -9,13 +9,14 @@ describe('getMentionFromUseridOrUsername', () => {
   let getMentionFromUseridOrUsername;
 
   beforeEach(async () => {
-    getNickname =
-      (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/utils/get-nickname'))).default;
-    getMentionFromUseridOrUsername =
-      (await import('../get-mention-from-userid-or-username.js')).default;
+    getNickname = await resolveModule('@tmible/wishlist-bot/utils/get-nickname')
+      .then((path) => replaceEsm(path))
+      .then((module) => module.default);
+    getMentionFromUseridOrUsername = await import('../get-mention-from-userid-or-username.js')
+      .then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should return mention for username', () => {
     assert.deepEqual(
@@ -34,7 +35,7 @@ describe('getMentionFromUseridOrUsername', () => {
   it('should return mention for userid', () => {
     const userid = 'userid';
     const nickname = 'nickname';
-    td.when(getNickname(), { ignoreExtraArgs: true }).thenReturn('nickname');
+    when(getNickname(), { ignoreExtraArgs: true }).thenReturn('nickname');
     assert.deepEqual(
       getMentionFromUseridOrUsername(userid, null),
       new Format.FmtString(

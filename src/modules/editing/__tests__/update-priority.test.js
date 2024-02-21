@@ -1,10 +1,10 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
-import ItemPriorityPattern from '../constants/item-priority-pattern.const.js';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import Events from '@tmible/wishlist-bot/store/events';
+import ItemPriorityPattern from '../constants/item-priority-pattern.const.js';
 
 describe('editing/update-priority module', () => {
   let initiateUpdate;
@@ -13,39 +13,36 @@ describe('editing/update-priority module', () => {
 
   beforeEach(async () => {
     [ initiateUpdate, updateValue ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm('../helpers/template-functions/initiate-update.js')).default
-      )(),
-      (async () =>
-        (await td.replaceEsm('../helpers/template-functions/update-value.js')).default
-      )(),
+      replaceEsm('../helpers/template-functions/initiate-update.js')
+        .then((module) => module.default),
+      replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
     ]);
-    UpdatePriorityModule = (await import('../update-priority.js')).default;
+    UpdatePriorityModule = await import('../update-priority.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register update_priority action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     UpdatePriorityModule.configure(bot);
-    td.verify(bot.action(/^update_priority ([\-\d]+)$/, td.matchers.isA(Function)));
+    verify(bot.action(/^update_priority (\d+)$/, matchers.isA(Function)));
   });
 
   describe('update_priority action handler', () => {
     it('should initiate update', async () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       const ctx = {};
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       UpdatePriorityModule.configure(bot);
-      td.verify(bot.action(/^update_priority ([\-\d]+)$/, captor.capture()));
+      verify(bot.action(/^update_priority (\d+)$/, captor.capture()));
       await captor.value(ctx);
-      td.verify(initiateUpdate(
+      verify(initiateUpdate(
         ctx,
         MessagePurposeType.UpdatePriority,
         [
-          td.matchers.isA(String),
+          matchers.isA(String),
           Markup.inlineKeyboard([
-            Markup.button.callback(td.matchers.isA(String), 'cancel_update_priority'),
+            Markup.button.callback(matchers.isA(String), 'cancel_update_priority'),
           ]),
         ],
       ));
@@ -53,9 +50,9 @@ describe('editing/update-priority module', () => {
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     UpdatePriorityModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
@@ -64,25 +61,30 @@ describe('editing/update-priority module', () => {
     let captor;
 
     beforeEach(async () => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
       ctx = {};
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       UpdatePriorityModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
       await captor.value(ctx, next);
     });
 
     afterEach(() => mock.reset());
 
     it('should update value', () => {
-      td.verify(updateValue(
+      verify(updateValue(
         ctx,
         MessagePurposeType.UpdatePriority,
+        /* eslint-disable-next-line
+          security/detect-non-literal-regexp,
+          security-node/non-literal-reg-expr --
+          Регулярное выражение из константы, так что тут нет уязвимости
+        */
         new RegExp(`^${ItemPriorityPattern}$`),
-        td.matchers.isA(String),
+        matchers.isA(String),
         Events.Editing.UpdateItemPriority,
-        td.matchers.isA(String),
+        matchers.isA(String),
       ));
     });
 

@@ -1,27 +1,28 @@
+/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import { db } from '@tmible/wishlist-bot/store';
 import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-mapper';
 
+/* eslint-enable import/no-cycle */
+
 /**
- * Обязательная часть элемента разметки текста
- * @typedef {Object} EntityBase
- * @property {string} type Тип элемента
- * @property {number} offset Отступ от начала строки
- * @property {number} length Длина
- *
- * Элемент разметки текста
- * @typedef {EntityBase & Record<string, unknown>} Entity
- *
+ * @typedef {import('better-sqlite3').Statement} Statement
+ * @typedef {import('@tmible/wishlist-bot/constants/list-item-state').default} ListItemState
+ * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
+ */
+/**
  * Элемент списка желаний пользователя
  * во варианте отображения для других пользователей
- * @typedef {Object} ListItem
+ * @typedef {object} ListItem
  * @property {number} id Идентификатор элемента
  * @property {number} priority Приоритет элемента
  * @property {string} name Название подарка
  * @property {string} description Описание подарка
  * @property {ListItemState} state Состояние подарка
- * @property {string[]} participants Имена пользователей -- участников кооперации по подарку или имя забронировавшего пользователя
- * @property {number[]} participantsIds Идентификаторы пользователей -- участников кооперации по подарку или идентификатор забронировавшего пользователя
+ * @property {string[]} participants Имена пользователей -- участников кооперации по подарку
+ *   или имя забронировавшего пользователя
+ * @property {number[]} participantsIds Идентификаторы пользователей -- участников кооперации
+ *   по подарку или идентификатор забронировавшего пользователя
  * @property {Entity[]} descriptionEntities Элементы разметки текста описания подарка
  */
 
@@ -34,6 +35,7 @@ let statement;
 /**
  * Подготовка [выражения]{@link statement}
  * @function prepare
+ * @returns {void}
  */
 const prepare = () => statement = db.prepare(`
   SELECT
@@ -67,11 +69,16 @@ const prepare = () => statement = db.prepare(`
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {ListItem[]} Список желаний пользователя, отсортированный по убыванию приоритета
  */
-const eventHandler = (userid) => {
-  return statement.all(userid)
+const eventHandler = (userid) => statement
+  .all(userid)
+  /* eslint-disable-next-line unicorn/no-array-callback-reference --
+    descriptionEntitiesReducer -- специально написанная для использования в reduce() функция
+  */
   .reduce(descriptionEntitiesReducer, [])
+  /* eslint-disable-next-line unicorn/no-array-callback-reference --
+    participantsMapper -- специально написанная для использования в map() функция
+  */
   .map(participantsMapper)
   .sort((a, b) => a.priority - b.priority);
-};
 
 export default { eventHandler, prepare };

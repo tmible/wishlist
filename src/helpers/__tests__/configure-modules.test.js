@@ -8,9 +8,13 @@ describe('configureModules', () => {
   beforeEach(() => modules = [{
     configure: mock.fn(),
     messageHandler: mock.fn(),
+  /* eslint-disable @stylistic/js/object-curly-newline --
+    Переносы строк для консистентности с другими элементами массива
+  */
   }, {
     configure: mock.fn(),
   }]);
+  /* eslint-enable @stylistic/js/object-curly-newline */
 
   afterEach(() => mock.reset());
 
@@ -26,9 +30,9 @@ describe('configureModules', () => {
     configureModules({}, modules)();
     assert.deepEqual(
       modules.filter(
-        ({ messageHandler }) => !!messageHandler
+        ({ messageHandler }) => !!messageHandler,
       ).map(
-        ({ messageHandler }) => messageHandler.mock.calls.length
+        ({ messageHandler }) => messageHandler.mock.calls.length,
       ),
       modules.filter(({ messageHandler }) => !!messageHandler).map(() => 1),
     );
@@ -37,23 +41,23 @@ describe('configureModules', () => {
   it('should register all message handlers after all modules configured', (testContext) => {
     let isLastConfigureCalled = false;
     modules = [{
-      configure: testContext.mock.fn(() => {
-        return configureModules({}, [{
-          configure: testContext.mock.fn(),
-          messageHandler: testContext.mock.fn(() => {
-            if (!isLastConfigureCalled) {
-              throw new Error('message handler is registered before last module was configured');
-            }
-          }),
-        }]);
-      }),
+      configure: testContext.mock.fn(() => configureModules({}, [{
+        configure: testContext.mock.fn(),
+        messageHandler: testContext.mock.fn(() => {
+          if (!isLastConfigureCalled) {
+            throw new Error('message handler is registered before last module was configured');
+          }
+        }),
+      }])),
       messageHandler: testContext.mock.fn(() => {
         if (!isLastConfigureCalled) {
           throw new Error('message handler is registered before last module was configured');
         }
       }),
     }, {
-      configure: testContext.mock.fn(() => { isLastConfigureCalled = true; }),
+      configure: testContext.mock.fn(() => {
+        isLastConfigureCalled = true;
+      }),
     }];
     assert.doesNotThrow(() => configureModules({}, modules)());
   });

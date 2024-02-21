@@ -27,13 +27,13 @@ describe('deleteMessagePurposeMiddleware', () => {
   );
 
   it('should not delete message purpose from session if it changes after next call', async () => {
-    next = async () => ctx.session.messagePurpose.type = 'messagePurpose 2',
+    next = () => ctx.session.messagePurpose.type = 'messagePurpose 2';
     await deleteMessagePurposeMiddleware(ctx, next);
     assert.deepEqual(ctx.session.messagePurpose, { type: 'messagePurpose 2' });
   });
 
   it('should delete message purpose from session if next throws error', async (testContext) => {
-    next = testContext.mock.fn(async () => Promise.reject());
+    next = testContext.mock.fn(() => Promise.reject());
     try {
       await deleteMessagePurposeMiddleware(ctx, next);
     } catch {

@@ -1,10 +1,15 @@
+/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import { db } from '@tmible/wishlist-bot/store';
 import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 
 /**
+ * @typedef {import('better-sqlite3').Statement} Statement
+ * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
+ */
+/**
  * Элемент списка желаний пользователя
  * во варианте отображения для владельца
- * @typedef {Object} OwnListItem
+ * @typedef {object} OwnListItem
  * @property {number} id Идентификатор элемента
  * @property {number} priority Приоритет элемента
  * @property {string} name Название подарка
@@ -21,6 +26,7 @@ let statement;
 /**
  * Подготовка [выражения]{@link statement}
  * @function prepare
+ * @returns {void}
  */
 const prepare = () => statement = db.prepare(`
   SELECT id, priority, name, description, type, offset, length, additional
@@ -33,12 +39,15 @@ const prepare = () => statement = db.prepare(`
  * Получение пользователем своего списка желаний
  * @function eventHandler
  * @param {number} userid Идентификатор пользователя -- владельца списка
- * @returns {OwnListItem[]} Список желаний пользователя, отсортированный по возрастанию идентификаторов
+ * @returns {OwnListItem[]} Список желаний пользователя,
+ *   отсортированный по возрастанию идентификаторов
  */
-const eventHandler = (userid) => {
-  return statement.all(userid)
+const eventHandler = (userid) => statement
+  .all(userid)
+  /* eslint-disable-next-line unicorn/no-array-callback-reference --
+    descriptionEntitiesReducer -- специально написанная для использования в reduce() функция
+  */
   .reduce(descriptionEntitiesReducer, [])
   .sort((a, b) => a.id - b.id);
-};
 
 export default { eventHandler, prepare };

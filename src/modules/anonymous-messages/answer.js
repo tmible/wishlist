@@ -1,20 +1,28 @@
 import { Markup } from 'telegraf';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import {
-  sendMessageAndMarkItForMarkupRemove,
-} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
 /**
- * При вызове действия ответа на анонимное сообщение бот отправляет
- * сообщение-приглашение для отправки сообщения-ответа
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ * } ModuleMessageHandler
  */
+
+/** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
-  bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, (ctx) => {
+  /**
+   * При вызове действия ответа на анонимное сообщение бот отправляет
+   * сообщение-приглашение для отправки сообщения-ответа
+   */
+  bot.action(/^answer ([\d-]+) ([\d-]+)$/, (ctx) => {
     ctx.session.messagePurpose = {
       type: MessagePurposeType.AnonymousMessageAnswer,
       payload: {
-        answerChatId: parseInt(ctx.match[1]),
-        answerToMessageId: parseInt(ctx.match[2]),
+        answerChatId: Number.parseInt(ctx.match[1]),
+        answerToMessageId: Number.parseInt(ctx.match[2]),
       },
     };
     return sendMessageAndMarkItForMarkupRemove(
@@ -26,11 +34,12 @@ const configure = (bot) => {
   });
 };
 
-/**
- * При получении сообщения от пользователя, если ожидается сообщение для отправки
- * ответа на анонимное сообщение, полученного сообщение пересылается в исходный чат
- */
+/** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  /**
+   * При получении сообщения от пользователя, если ожидается сообщение для отправки
+   * ответа на анонимное сообщение, полученного сообщение пересылается в исходный чат
+   */
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageAnswer) {
       const { answerChatId, answerToMessageId } = ctx.session.messagePurpose.payload;

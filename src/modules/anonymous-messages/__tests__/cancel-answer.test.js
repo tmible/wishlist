@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('anonymous-messages/cancel-answer module', () => {
@@ -7,29 +7,29 @@ describe('anonymous-messages/cancel-answer module', () => {
   let CancelAnswerModule;
 
   beforeEach(async () => {
-    cancelActionHandler = (await td.replaceEsm(await resolveModule(
-      '@tmible/wishlist-bot/helpers/cancel-action-handler',
-    ))).default;
-    CancelAnswerModule = (await import('../cancel-answer.js')).default;
+    cancelActionHandler = await resolveModule('@tmible/wishlist-bot/helpers/cancel-action-handler')
+      .then((path) => replaceEsm(path))
+      .then((module) => module.default);
+    CancelAnswerModule = await import('../cancel-answer.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register cancel_answer action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     CancelAnswerModule.configure(bot);
-    td.verify(bot.action('cancel_answer', td.matchers.isA(Function)));
+    verify(bot.action('cancel_answer', matchers.isA(Function)));
   });
 
   describe('cancel_answer action handler', () => {
     it('should call cancelActionHandler', () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       const ctx = {};
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       CancelAnswerModule.configure(bot);
-      td.verify(bot.action('cancel_answer', captor.capture()));
+      verify(bot.action('cancel_answer', captor.capture()));
       captor.value(ctx);
-      td.verify(cancelActionHandler(ctx));
+      verify(cancelActionHandler(ctx));
     });
   });
 });

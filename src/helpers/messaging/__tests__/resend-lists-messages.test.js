@@ -3,6 +3,11 @@ import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
 import resendListsMessages from '../resend-lists-messages.js';
 
+const sessionInitializer = () => ({
+  pinnedMessageId: 'pinnedMessageId',
+  messagesToEdit: [{ id: 1 }, { id: 2 }],
+});
+
 describe('resendListsMessages', () => {
   let ctx;
   let reply;
@@ -11,11 +16,6 @@ describe('resendListsMessages', () => {
   let editMessageText;
   let editMessageReplyMarkup;
   let messageId;
-
-  const sessionInitializer = () => ({
-    pinnedMessageId: 'pinnedMessageId',
-    messagesToEdit: [{ id: 1 }, { id: 2 }],
-  });
 
   beforeEach(() => {
     reply = mock.fn((text) => Promise.resolve({
@@ -78,7 +78,7 @@ describe('resendListsMessages', () => {
         'outdatedTitleMessageText',
         Markup.inlineKeyboard([
           Markup.button.callback('🔄 Обновить', 'manual_update userid'),
-        ])
+        ]),
       ],
     );
   });

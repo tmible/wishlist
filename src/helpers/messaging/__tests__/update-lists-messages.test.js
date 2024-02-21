@@ -10,9 +10,9 @@ describe('updateListsMessages', () => {
   let deleteMessage;
 
   beforeEach(() => {
-    reply = mock.fn((text) => new Promise(
-      (resolve) => resolve({ message_id: 'messageId', chat: { id: 'chatId' }, text })),
-    );
+    reply = mock.fn((text) => Promise.resolve(
+      { message_id: 'messageId', chat: { id: 'chatId' }, text },
+    ));
     pinChatMessage = mock.fn(async () => {});
     editMessageText = mock.fn(async () => {});
     deleteMessage = mock.fn(async () => {});

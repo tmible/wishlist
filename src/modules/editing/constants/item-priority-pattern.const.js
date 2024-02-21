@@ -1,7 +1,7 @@
 /**
  * Регулярное выражение для приоритета подарка
-  * @constant {string}
+ * @constant {string}
  */
-const ItemPriorityPattern = '[\\d]+';
+const ItemPriorityPattern = '\\d+';
 
 export default ItemPriorityPattern;

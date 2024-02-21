@@ -1,6 +1,5 @@
-import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 
 describe('store', () => {
   let Database;
@@ -11,14 +10,17 @@ describe('store', () => {
   let destroyStore;
 
   beforeEach(async () => {
-    modules = new Array(3).fill(null).map(() => td.object([ 'configure' ]));
+    modules = new Array(3).fill(null).map(() => object([ 'configure' ]));
 
+    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+      Пробелы для консистентности с другими элементами массива
+    */
     [ Database, { readdir, readFile } ] = await Promise.all([
-      (async () => (await td.replaceEsm('better-sqlite3')).default)(),
-      td.replaceEsm('node:fs/promises'),
-      td.replaceEsm('../wishlist/index.js', {}, modules[0]),
-      td.replaceEsm('../editing/index.js', {}, modules[1]),
-      td.replaceEsm('../usernames/index.js', {}, modules[2]),
+      replaceEsm('better-sqlite3').then((module) => module.default),
+      replaceEsm('node:fs/promises'),
+      replaceEsm('../wishlist/index.js', {}, modules[0]),
+      replaceEsm('../editing/index.js', {}, modules[1]),
+      replaceEsm('../usernames/index.js', {}, modules[2]),
     ]);
 
     ({ initStore, destroyStore } = await import('../index.js'));
@@ -27,27 +29,27 @@ describe('store', () => {
     process.env.WISHLIST_DB_MIGRATIONS_PATH = 'WISHLIST_DB_MIGRATIONS_PATH';
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   describe('on init', () => {
     it('should open DB connection', async () => {
-      td.when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
+      when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
 
       await initStore();
 
-      td.verify(new Database('WISHLIST_DB_FILE_PATH'));
+      verify(new Database('WISHLIST_DB_FILE_PATH'));
     });
 
     it('should migrate DB', async () => {
-      td.when(Database.prototype.pragma('user_version', { simple: true })).thenReturn(0);
-      td.when(
-        Database.prototype.transaction(td.matchers.isA(Function)),
+      when(Database.prototype.pragma('user_version', { simple: true })).thenReturn(0);
+      when(
+        Database.prototype.transaction(matchers.isA(Function)),
       ).thenDo(
-        (transaction) => async (...args) => transaction(...args),
+        (transaction) => (...args) => transaction(...args),
       );
-      td.when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve(new Array(1).fill('migration'));
-      td.when(
-        readFile(td.matchers.isA(String)),
+      when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([ 'migration' ]);
+      when(
+        readFile(matchers.isA(String)),
         { ignoreExtraArgs: true },
       ).thenResolve(
         'sql script',
@@ -55,19 +57,19 @@ describe('store', () => {
 
       await initStore();
 
-      td.verify(Database.prototype.exec('sql script'));
+      verify(Database.prototype.exec('sql script'));
     });
 
     it('should update DB user_version', async () => {
-      td.when(Database.prototype.pragma('user_version', { simple: true })).thenReturn(0);
-      td.when(
-        Database.prototype.transaction(td.matchers.isA(Function)),
+      when(Database.prototype.pragma('user_version', { simple: true })).thenReturn(0);
+      when(
+        Database.prototype.transaction(matchers.isA(Function)),
       ).thenDo(
-        (transaction) => async (...args) => transaction(...args),
+        (transaction) => (...args) => transaction(...args),
       );
-      td.when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve(new Array(1).fill('migration'));
-      td.when(
-        readFile(td.matchers.isA(String)),
+      when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([ 'migration' ]);
+      when(
+        readFile(matchers.isA(String)),
         { ignoreExtraArgs: true },
       ).thenResolve(
         'sql script',
@@ -75,26 +77,26 @@ describe('store', () => {
 
       await initStore();
 
-      td.verify(Database.prototype.pragma('user_version = 1'));
+      verify(Database.prototype.pragma('user_version = 1'));
     });
 
     it('should configure modules', async () => {
-      td.when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
+      when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
 
       await initStore();
 
-      td.verify(modules.forEach(({ configure }) => configure()));
+      verify(modules.forEach(({ configure }) => configure()));
     });
   });
 
   describe('on destroy', () => {
     it('should close DB connection', async () => {
-      td.when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
+      when(readdir('WISHLIST_DB_MIGRATIONS_PATH')).thenResolve([]);
 
       await initStore();
       await destroyStore();
 
-      td.verify(Database.prototype.close());
+      verify(Database.prototype.close());
     });
   });
 });

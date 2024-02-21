@@ -6,14 +6,14 @@ import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
  * @function getMentionFromUseridOrUsername
  * @param {number} userid Идентификатор пользователя
  * @param {string} username Имя пользователя
- * @returns {FmtString} Строка формата с упоминанием пользователя
+ * @returns {Format.FmtString} Строка формата с упоминанием пользователя
  */
 const getMentionFromUseridOrUsername = (userid, username) => {
-  const mention = !!username ? `@${username}` : getNickname(userid);
+  const mention = username ? `@${username}` : getNickname(userid);
 
   return new Format.FmtString(
     mention,
-    !!username ?
+    username ?
       [{
         type: 'mention',
         offset: 0,

@@ -1,18 +1,26 @@
 import { Markup } from 'telegraf';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
-import {
-  sendMessageAndMarkItForMarkupRemove,
-} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
 
 /**
- * При получении комманды /clear_list, если чат не групповой, бот отправляет сообщение-приглашение
- * для отправки сообщения с идентификаторами подарков к удалению из списка желаний
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ * } ModuleConfigureFunction
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ * } ModuleMessageHandler
  */
+
+/** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
+  /**
+   * При получении комманды /clear_list, если чат не групповой, бот отправляет сообщение-приглашение
+   * для отправки сообщения с идентификаторами подарков к удалению из списка желаний
+   */
   bot.command('clear_list', async (ctx) => {
     if (isChatGroup(ctx)) {
       return;
@@ -30,18 +38,23 @@ const configure = (bot) => {
   });
 };
 
-/**
- * При получении сообщения от пользователя, если ожидаются идентификаторы подарков
- * к удалению из списка желаний, бот вычленяет их из текста полученного сообщения.
- * При невозможности вычленить ни один идентификатор бот отправляет сообщение-уведомления об ошибке.
- * При успехе вычленения бот [выпускает]{@link emit} соответствующее событие,
- * отправляет сообщение-уведомление об успехе очищения списка
- * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
- */
+/** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  /**
+   * При получении сообщения от пользователя, если ожидаются идентификаторы подарков
+   * к удалению из списка желаний, бот вычленяет их из текста полученного сообщения.
+   * При невозможности вычленить ни один идентификатор
+   * бот отправляет сообщение-уведомления об ошибке.
+   * При успехе вычленения бот [выпускает]{@link emit} соответствующее событие,
+   * отправляет сообщение-уведомление об успехе очищения списка
+   * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+   */
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.ClearList) {
-      const ids = ctx.message.text.split(/[^\d]+/).filter((id) => !!id).map((id) => parseInt(id));
+      const ids = ctx.message.text
+        .split(/\D+/)
+        .filter((id) => !!id)
+        .map((id) => Number.parseInt(id));
       delete ctx.session.messagePurpose;
 
       if (ids.length === 0) {
@@ -51,8 +64,7 @@ const messageHandler = (bot) => {
       emit(Events.Editing.DeleteItems, ids);
 
       await ctx.reply('Список очищен!');
-      await sendList(ctx);
-      return;
+      return sendList(ctx);
     }
 
     return next();

@@ -3,7 +3,7 @@
 /**
  * Отображение событий в их обработчики
  * @type {Map<Event, Function>}
- * @see {@link Events}
+ * @see {@link import('./events.js')} Events
  */
 const subscribers = new Map();
 
@@ -12,7 +12,7 @@ const subscribers = new Map();
  * @function subscribe
  * @param {Event} event Событие
  * @param {Function} handler Обработчик
- * @see {@link Events}
+ * @see {@link import('./events.js')} Events
  */
 export const subscribe = (event, handler) => {
   subscribers.set(event, handler);
@@ -24,8 +24,6 @@ export const subscribe = (event, handler) => {
  * @param {Event} event Событие
  * @param {unknown[]} args Аргументы для обработчика
  * @returns {unknown} Результат вызова обработчика
- * @see {@link Events}
+ * @see {@link import('./events.js')} Events
  */
-export const emit = (event, ...args) => {
-  return subscribers.get(event)?.(...args);
-};
+export const emit = (event, ...args) => subscribers.get(event)?.(...args);

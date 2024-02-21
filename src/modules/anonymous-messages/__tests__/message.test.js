@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
@@ -13,29 +13,31 @@ describe('anonymous-messages/message module', () => {
   let captor;
 
   beforeEach(async () => {
+    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+      Пробелы для консистентности с другими элементами массива
+    */
     [ getUseridFromInput, { sendMessageAndMarkItForMarkupRemove } ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/get-userid-from-input',
-        ))).default
-      )(),
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')),
+      resolveModule('@tmible/wishlist-bot/helpers/get-userid-from-input')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup')
+        .then((path) => replaceEsm(path)),
     ]);
-    MessageModule = (await import('../message.js')).default;
+    MessageModule = await import('../message.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register message command handler', () => {
-    const bot = td.object([ 'command' ]);
+    const bot = object([ 'command' ]);
     MessageModule.configure(bot);
-    td.verify(bot.command('message', td.matchers.isA(Function)));
+    verify(bot.command('message', matchers.isA(Function)));
   });
 
   const handleAnonymousMessageTestCases = [{
     name: 'should send notification message if there is no chat id',
     test: async (testContext) => {
-      td.when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
+      when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
       const sendMessage = testContext.mock.fn(async () => {});
       ctx.sendMessage = sendMessage;
       await captor.value(ctx);
@@ -47,7 +49,7 @@ describe('anonymous-messages/message module', () => {
   }, {
     name: 'should save message purpose in session',
     test: async () => {
-      td.when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ 'chatId' ]);
+      when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ 'chatId' ]);
       await captor.value(ctx);
       assert.deepEqual(
         ctx.session,
@@ -62,25 +64,25 @@ describe('anonymous-messages/message module', () => {
   }, {
     name: 'should reply',
     test: async () => {
-      td.when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ 'chatId' ]);
+      when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ 'chatId' ]);
       await captor.value(ctx);
-      td.verify(sendMessageAndMarkItForMarkupRemove(
+      verify(sendMessageAndMarkItForMarkupRemove(
         ctx,
         'reply',
-        td.matchers.isA(String),
+        matchers.isA(String),
         Markup.inlineKeyboard([
-          Markup.button.callback(td.matchers.isA(String), 'cancel_message'),
+          Markup.button.callback(matchers.isA(String), 'cancel_message'),
         ]),
       ));
     },
   }];
 
   describe('message command handler', () => {
-    beforeEach(async () => {
-      const bot = td.object([ 'command' ]);
-      captor = td.matchers.captor();
+    beforeEach(() => {
+      const bot = object([ 'command' ]);
+      captor = matchers.captor();
       MessageModule.configure(bot);
-      td.verify(bot.command('message', captor.capture()));
+      verify(bot.command('message', captor.capture()));
     });
 
     describe('if there is no payload', () => {
@@ -97,12 +99,12 @@ describe('anonymous-messages/message module', () => {
       });
 
       it('should reply', () => {
-        td.verify(sendMessageAndMarkItForMarkupRemove(
+        verify(sendMessageAndMarkItForMarkupRemove(
           ctx,
           'reply',
-          td.matchers.isA(String),
+          matchers.isA(String),
           Markup.inlineKeyboard([
-            Markup.button.callback(td.matchers.isA(String), 'cancel_message'),
+            Markup.button.callback(matchers.isA(String), 'cancel_message'),
           ]),
         ));
       });
@@ -120,20 +122,20 @@ describe('anonymous-messages/message module', () => {
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     MessageModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
     let next;
 
     beforeEach(() => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       MessageModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
     });
 
     afterEach(() => mock.reset());
@@ -149,24 +151,26 @@ describe('anonymous-messages/message module', () => {
           chat: {},
           message: { text: 'text' },
           sendMessage: mock.fn(async () => {}),
+          /* eslint-disable @stylistic/js/object-curly-newline -- Переносы строк для читаемости */
           session: {
             messagePurpose: {
               type: MessagePurposeType.AnonymousMessageRecieverUsername,
             },
           },
+          /* eslint-enable @stylistic/js/object-curly-newline */
         };
       });
 
       afterEach(() => mock.reset());
 
       it('should not pass', async () => {
-        td.when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
+        when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
         await captor.value(ctx, next);
         assert.equal(next.mock.calls.length, 0);
       });
 
       it('should remove message purpose from session', async () => {
-        td.when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
+        when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
         await captor.value(ctx, next);
         assert.deepEqual(ctx.session, {});
       });
@@ -178,7 +182,7 @@ describe('anonymous-messages/message module', () => {
 
     describe('if there is AnonymousMessage message purpose in session', () => {
       beforeEach(async () => {
-        ctx = td.object({
+        ctx = object({
           chat: { id: 'chatId' },
           message: { message_id: 'messageId' },
           reply: () => {},
@@ -186,7 +190,7 @@ describe('anonymous-messages/message module', () => {
           session: {
             messagePurpose: {
               type: MessagePurposeType.AnonymousMessage,
-              payload: '123',
+              payload: 123,
             },
           },
         });
@@ -198,10 +202,12 @@ describe('anonymous-messages/message module', () => {
       });
 
       it('should send message copy', () => {
-        td.verify(ctx.telegram.sendCopy(
+        verify(ctx.telegram.sendCopy(
           123,
           ctx.message,
-          Markup.inlineKeyboard([ Markup.button.callback(td.matchers.isA(String), 'answer chatId messageId') ]),
+          Markup.inlineKeyboard([
+            Markup.button.callback(matchers.isA(String), 'answer chatId messageId'),
+          ]),
         ));
       });
 
@@ -210,7 +216,7 @@ describe('anonymous-messages/message module', () => {
       });
 
       it('should reply', () => {
-        td.verify(ctx.reply(td.matchers.isA(String)));
+        verify(ctx.reply(matchers.isA(String)));
       });
     });
   });

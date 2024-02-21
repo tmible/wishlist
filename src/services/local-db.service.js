@@ -24,7 +24,7 @@ export const getLocalDB = (sublevelName) => {
 
 /**
  * Закрытие [подключения к БД]{@link db}
- * @async
  * @function closeLocalDB
+ * @returns {Promise<void>}
  */
 export const closeLocalDB = () => db.close();

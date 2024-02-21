@@ -6,21 +6,21 @@ import tryPinning from '../try-pinning.js';
 describe('tryPinning', () => {
   it('should call editing method', async (testContext) => {
     const pinChatMessage = testContext.mock.fn(async () => {});
-    await tryPinning({ pinChatMessage }, 'pinChatMessage');
+    await tryPinning({ pinChatMessage });
     assert(pinChatMessage.mock.calls.length > 0);
   });
 
   it('should catch not changed error', async (testContext) => {
     const pinChatMessage = testContext.mock.fn(
-      () => new Promise((_, reject) => reject(new Error(PinMessageErrorMessage))),
+      () => Promise.reject(new Error(PinMessageErrorMessage)),
     );
-    await assert.doesNotReject(() => tryPinning({ pinChatMessage }, 'pinChatMessage'));
+    await assert.doesNotReject(() => tryPinning({ pinChatMessage }));
   });
 
   it('should throw other errors', async (testContext) => {
     const pinChatMessage = testContext.mock.fn(
-      () => new Promise((_, reject) => reject(new Error('other error'))),
+      () => Promise.reject(new Error('other error')),
     );
-    await assert.rejects(() => tryPinning({ pinChatMessage }, 'pinChatMessage'));
+    await assert.rejects(() => tryPinning({ pinChatMessage }));
   });
 });

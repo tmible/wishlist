@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('saveItemDescriptionEntities', () => {
@@ -20,50 +20,51 @@ describe('saveItemDescriptionEntities', () => {
   }];
 
   beforeEach(async () => {
-    db = td.object([ 'prepare', 'pragma' ]);
-    await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store'), { db });
-    saveItemDescriptionEntities = (await import('../save-item-description-entities.js')).default;
+    db = object([ 'prepare', 'pragma' ]);
+    await resolveModule('@tmible/wishlist-bot/store').then((path) => replaceEsm(path, { db }));
+    saveItemDescriptionEntities = await import('../save-item-description-entities.js')
+      .then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should return if entities is not array', () => {
     saveItemDescriptionEntities();
-    td.verify(db.prepare(), { times: 0 });
+    verify(db.prepare(), { times: 0 });
   });
 
   it('should return if entities is empty array', () => {
     saveItemDescriptionEntities(itemId, []);
-    td.verify(db.prepare(), { times: 0 });
+    verify(db.prepare(), { times: 0 });
   });
 
   it('should construct prepared statement', () => {
-    td.when(
-      db.prepare(td.matchers.anything()),
+    when(
+      db.prepare(matchers.anything()),
     ).thenDo((statement) => {
       assert.equal(
         statement,
-        'INSERT INTO description_entities VALUES ($itemId, ?, ?, ?, NULL), ($itemId, ?, ?, ?, ?)',
+        'INSERT INTO description_entities VALUES ($itemId, ?, ?, ?, NULL),($itemId, ?, ?, ?, ?)',
       );
-      return td.object([ 'run' ]);
+      return object([ 'run' ]);
     });
     saveItemDescriptionEntities(itemId, entities, 0);
   });
 
   it('should run filter entities', () => {
-    const statementMock = td.object([ 'run' ]);
-    td.when(db.prepare(td.matchers.anything())).thenReturn(statementMock);
+    const statementMock = object([ 'run' ]);
+    when(db.prepare(matchers.anything())).thenReturn(statementMock);
     saveItemDescriptionEntities(itemId, entities, 1);
-    td.verify(
+    verify(
       statementMock.run('type 2', 0, 2, '{"additional":"property"}', { itemId }),
     );
   });
 
   it('should run prepared statement', () => {
-    const statementMock = td.object([ 'run' ]);
-    td.when(db.prepare(td.matchers.anything())).thenReturn(statementMock);
+    const statementMock = object([ 'run' ]);
+    when(db.prepare(matchers.anything())).thenReturn(statementMock);
     saveItemDescriptionEntities(itemId, entities, 0);
-    td.verify(
+    verify(
       statementMock.run('type 1', 0, 1, 'type 2', 1, 2, '{"additional":"property"}', { itemId }),
     );
   });

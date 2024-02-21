@@ -1,5 +1,10 @@
+/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import { db } from '@tmible/wishlist-bot/store';
 import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/store/constants/description-entity-base-keys';
+
+/**
+ * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
+ */
 
 /**
  * Сохранение в БД элементов разметки текста описания подарка
@@ -7,6 +12,7 @@ import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/store/constants/desc
  * @param {number} itemId Идентификатор подарка
  * @param {Entity[]} entities Элементы разметки
  * @param {number} descriptionOffset Отступ начала описания от начала текста сообщения
+ * @returns {void}
  */
 const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
   if (!Array.isArray(entities) || entities?.length === 0) {
@@ -22,15 +28,15 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
   db.prepare(
     `INSERT INTO description_entities VALUES ${
       descriptionEntities.map((entity) => `($itemId, ?, ?, ?, ${
-        !!Object.entries(entity).find(([ key ]) => !DescriptionEntityBaseKeys.has(key)) ?
+        Object.entries(entity).some(([ key ]) => !DescriptionEntityBaseKeys.has(key)) ?
           '?' :
           'NULL'
-      })`).join(', ')
+      })`).join(',')
     }`,
   ).run(
     ...descriptionEntities.flatMap((entity) => {
-      const additionalProperties = Object.entries(entity).filter(([ key ]) =>
-        !DescriptionEntityBaseKeys.has(key)
+      const additionalProperties = Object.entries(entity).filter(
+        ([ key ]) => !DescriptionEntityBaseKeys.has(key),
       );
       return [
         entity.type,

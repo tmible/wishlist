@@ -2,12 +2,34 @@ import resendListsMessages from '@tmible/wishlist-bot/helpers/messaging/resend-l
 import updateListsMessages from '@tmible/wishlist-bot/helpers/messaging/update-lists-messages';
 
 /**
+ * @typedef {import('telegraf').Context} Context
+ * @typedef {import('telegraf').Format} Format
+ * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
+ * @typedef {import('telegraf').Markup} Markup
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages').Message
+ * } Message
+ * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
+ */
+/**
+ * Сохраняемая в персистентной сессии информация об отправленном сообщении с элементом списка
+ * @typedef {object} MessageToEdit
+ * @property {number} id Идентификатор сообщения
+ * @property {number} itemId Идентификатор ассоциированного элемента списка
+ * @property {string} text Текст сообщения
+ * @property {Entity[]} entities Элементы разметки текста сообщения
+ * @property {Markup<InlineKeyboardMarkup>['reply_markup']} reply_markup Встроенная клавиатура
+ *   сообщения
+ */
+/**
  * Параметры отправки списка
- * @typedef {Object} SendListOptions
+ * @typedef {object} SendListOptions
  * @property {boolean} shouldForceNewMessages Признак необходимости отправки новых сообщений
- * @property {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
+ * @property {boolean} shouldSendNotification Признак необходимости отправки
+ *   сообщения-уведомления об обновлении
  * @property {boolean} isAutoUpdate Признак автоматического обновления списка при внешних изменениях
- * @property {boolean} isManualUpdate Признак ручного обновления списка после внешних изменений при невозможности автоматического
+ * @property {boolean} isManualUpdate Признак ручного обновления списка после внешних изменений
+ *   при невозможности автоматического
  */
 
 /**
@@ -25,14 +47,15 @@ const defaultOptions = {
  * Обновление списка. По умолчанию -- обновление отправленных ранее сообщений.
  * При отсутствии возможности обновления или явном указании
  * необходимости отправки новых сообщений -- отправка новых сообщений
- * @async
  * @function manageListsMessages
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
- * @param {FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
- * @param {FmtString | string} outdatedTitleMessageText Текст заглавного сообщения неактуального списка
- * @param {SendListOptions} [passedOptions={}] Параметры отправки списка
+ * @param {Format.FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
+ * @param {Format.FmtString | string} outdatedTitleMessageText Текст заглавного сообщения
+ *   неактуального списка
+ * @param {SendListOptions} passedOptions Параметры отправки списка
+ * @async
  */
 const manageListsMessages = async (
   ctx,
@@ -49,9 +72,7 @@ const manageListsMessages = async (
 
   if (!options.isAutoUpdate && !options.isManualUpdate && !options.shouldForceNewMessages) {
     ctx.state.autoUpdate = { userid };
-  }
-
-  if (options.isManualUpdate) {
+  } else if (options.isManualUpdate) {
     ctx.state.autoUpdate = { shouldAddChat: userid };
   }
 
@@ -73,6 +94,9 @@ const manageListsMessages = async (
   );
 
   if (options.isAutoUpdate) {
+    /* eslint-disable-next-line require-atomic-updates --
+      Даже после обнвления/отправки сообщений персистентная сессия определена в контексте
+    */
     ctx.state.autoUpdate = { shouldRemoveChat: true };
   }
 };

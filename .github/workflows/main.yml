@@ -4,6 +4,25 @@ on:
     - master
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install node
+      uses: actions/setup-node@v4
+    - name: install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    - name: install dependencies
+      run: |
+        pnpm pkg delete scripts.prepare
+        pnpm install
+    - name: run lint
+      run: |
+        pnpm lint
+        pnpm lint:tests
+
   tests:
     runs-on: ubuntu-latest
     steps:
@@ -22,12 +41,14 @@ jobs:
       run: pnpm test:prod
 
   deploy:
-    needs: tests
+    needs: [lint, tests]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: remove tests
-      run: find ./src/ -type d -name __tests__ -delete
+      run: |
+        find ./src/ -type d -name __tests__ -delete
+        rm ./src/helpers/resolve-module.js
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:

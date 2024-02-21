@@ -1,6 +1,6 @@
 /**
- * Набор событий для [подписки на них]{@link subscribe}
- * и [их выпуска]{@link emit} через шину событий
+ * Набор событий для [подписки на них]{@link import('./event-bus.js').subscribe}
+ * и [их выпуска]{@link import('./event-bus.js').emit} через шину событий
  */
 const Events = Object.freeze({
   Wishlist: {

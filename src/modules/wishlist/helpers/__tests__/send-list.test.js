@@ -1,10 +1,7 @@
 import { strict as assert } from 'node:assert';
-import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import assertSnapshot from 'snapshot-assertion';
 import { Format } from 'telegraf';
-import * as td from 'testdouble';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
+import { replaceEsm, reset, verify, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('wishlist/send-list', () => {
@@ -19,31 +16,25 @@ describe('wishlist/send-list', () => {
       getMentionFromUseridOrUsername,
       manageListsMessages,
     ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages',
-        ))).default
-      )(),
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username',
-        ))).default
-      )(),
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages',
-        ))).default
-      )(),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
     ]);
-    sendList = (await import('../send-list.js')).default;
+    sendList = await import('../send-list.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should send notification message if list is empty', async (testContext) => {
-    td.when(formMessages(), { ignoreExtraArgs: true }).thenReturn([]);
+    when(formMessages(), { ignoreExtraArgs: true }).thenReturn([]);
 
-    td.when(
+    when(
       getMentionFromUseridOrUsername(),
       { ignoreExtraArgs: true },
     ).thenReturn(
@@ -64,8 +55,8 @@ describe('wishlist/send-list', () => {
   });
 
   it('should send list if it is not empty', async () => {
-    td.when(formMessages(), { ignoreExtraArgs: true }).thenReturn([ 'message 1', 'message 2' ]);
-    td.when(
+    when(formMessages(), { ignoreExtraArgs: true }).thenReturn([ 'message 1', 'message 2' ]);
+    when(
       getMentionFromUseridOrUsername(),
       { ignoreExtraArgs: true },
     ).thenDo(
@@ -76,7 +67,7 @@ describe('wishlist/send-list', () => {
 
     await sendList(ctx, 'userid', 'username', { shouldSendNotification: true });
 
-    td.verify(manageListsMessages(
+    verify(manageListsMessages(
       ctx,
       'userid',
       [ 'message 1', 'message 2' ],

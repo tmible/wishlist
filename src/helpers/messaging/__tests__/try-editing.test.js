@@ -12,14 +12,14 @@ describe('tryEditing', () => {
 
   it('should catch not changed error', async (testContext) => {
     const editMessageText = testContext.mock.fn(
-      () => new Promise((_, reject) => reject(new Error(EditMessageErrorMessage))),
+      () => Promise.reject(new Error(EditMessageErrorMessage)),
     );
     await assert.doesNotReject(() => tryEditing({ telegram: { editMessageText } }));
   });
 
   it('should throw other errors', async (testContext) => {
     const editMessageText = testContext.mock.fn(
-      () => new Promise((_, reject) => reject(new Error('other error'))),
+      () => Promise.reject(new Error('other error')),
     );
     await assert.rejects(() => tryEditing({ telegram: { editMessageText } }));
   });

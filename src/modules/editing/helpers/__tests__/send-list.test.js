@@ -2,7 +2,7 @@ import { strict as assert } from 'node:assert';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
-import * as td from 'testdouble';
+import { matchers, replaceEsm, reset, verify, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('editing/send-list if chat isn\'t group', () => {
@@ -18,25 +18,23 @@ describe('editing/send-list if chat isn\'t group', () => {
       isChatGroup,
       manageListsMessages,
     ] = await Promise.all([
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/store/event-bus')),
-      (async () =>
-        (await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/is-chat-group'))).default
-      )(),
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages',
-        ))).default
-      )(),
+      resolveModule('@tmible/wishlist-bot/store/event-bus').then((path) => replaceEsm(path)),
+      resolveModule('@tmible/wishlist-bot/helpers/is-chat-group')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
     ]);
-    sendList = (await import('../send-list.js')).default;
-    td.when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
+    sendList = await import('../send-list.js').then((module) => module.default);
+    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
     ctx = { chat: { id: 'userid' } };
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should send notification message if list is empty', async (testContext) => {
-    td.when(emit(), { ignoreExtraArgs: true }).thenReturn([]);
+    when(emit(), { ignoreExtraArgs: true }).thenReturn([]);
 
     ctx.reply = testContext.mock.fn(async () => {});
 
@@ -63,12 +61,12 @@ describe('editing/send-list if chat isn\'t group', () => {
   }];
 
   it('should send list if it is not empty', async () => {
-    td.when(emit(), { ignoreExtraArgs: true }).thenReturn(list);
-    const captors = new Array(5).fill(null).map(() => td.matchers.captor());
+    when(emit(), { ignoreExtraArgs: true }).thenReturn(list);
+    const captors = new Array(5).fill(null).map(() => matchers.captor());
 
     await sendList(ctx);
 
-    td.verify(
+    verify(
       manageListsMessages(...captors.map(({ capture }) => capture())),
       { ignoreExtraArgs: true },
     );

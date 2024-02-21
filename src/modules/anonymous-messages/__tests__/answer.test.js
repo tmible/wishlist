@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import * as td from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
@@ -10,29 +10,29 @@ describe('anonymous-messages/answer module', () => {
   let AnswerModule;
 
   beforeEach(async () => {
-    ({ sendMessageAndMarkItForMarkupRemove } =
-      await td.replaceEsm(await resolveModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'))
-    );
-    AnswerModule = (await import('../answer.js')).default;
+    ({ sendMessageAndMarkItForMarkupRemove } = await resolveModule(
+      '@tmible/wishlist-bot/helpers/middlewares/remove-markup',
+    ).then((path) => replaceEsm(path)));
+    AnswerModule = await import('../answer.js').then((module) => module.default);
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   it('should register answer action handler', () => {
-    const bot = td.object([ 'action' ]);
+    const bot = object([ 'action' ]);
     AnswerModule.configure(bot);
-    td.verify(bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, td.matchers.isA(Function)));
+    verify(bot.action(/^answer ([\d-]+) ([\d-]+)$/, matchers.isA(Function)));
   });
 
   describe('answer action handler', () => {
     let ctx;
 
     beforeEach(async () => {
-      const bot = td.object([ 'action' ]);
+      const bot = object([ 'action' ]);
       ctx = { session: {}, match: [ null, '1', '2' ] };
-      const captor = td.matchers.captor();
+      const captor = matchers.captor();
       AnswerModule.configure(bot);
-      td.verify(bot.action(/^answer ([\-\d]+) ([\-\d]+)$/, captor.capture()));
+      verify(bot.action(/^answer ([\d-]+) ([\d-]+)$/, captor.capture()));
       await captor.value(ctx);
     });
 
@@ -50,19 +50,19 @@ describe('anonymous-messages/answer module', () => {
     });
 
     it('should reply', () => {
-      td.verify(sendMessageAndMarkItForMarkupRemove(
+      verify(sendMessageAndMarkItForMarkupRemove(
         ctx,
         'reply',
-        td.matchers.isA(String),
-        Markup.inlineKeyboard([ Markup.button.callback(td.matchers.isA(String), 'cancel_answer') ]),
+        matchers.isA(String),
+        Markup.inlineKeyboard([ Markup.button.callback(matchers.isA(String), 'cancel_answer') ]),
       ));
     });
   });
 
   it('should register message handler', () => {
-    const bot = td.object([ 'on' ]);
+    const bot = object([ 'on' ]);
     AnswerModule.messageHandler(bot);
-    td.verify(bot.on('message', td.matchers.isA(Function)));
+    verify(bot.on('message', matchers.isA(Function)));
   });
 
   describe('message handler', () => {
@@ -71,11 +71,11 @@ describe('anonymous-messages/answer module', () => {
     let captor;
 
     beforeEach(() => {
-      const bot = td.object([ 'on' ]);
+      const bot = object([ 'on' ]);
       next = mock.fn(async () => {});
-      captor = td.matchers.captor();
+      captor = matchers.captor();
       AnswerModule.messageHandler(bot);
-      td.verify(bot.on('message', captor.capture()));
+      verify(bot.on('message', captor.capture()));
     });
 
     afterEach(() => mock.reset());
@@ -87,7 +87,7 @@ describe('anonymous-messages/answer module', () => {
 
     describe('if there is message purpose in session', () => {
       beforeEach(async () => {
-        ctx = td.object({
+        ctx = object({
           chat: { id: 'chatId' },
           message: { message_id: 'messageId' },
           forwardMessage: () => {},
@@ -111,15 +111,15 @@ describe('anonymous-messages/answer module', () => {
       });
 
       it('should send notification message', () => {
-        td.verify(ctx.telegram.sendMessage(
+        verify(ctx.telegram.sendMessage(
           'answerChatId',
-          td.matchers.isA(String),
+          matchers.isA(String),
           { reply_to_message_id: 'answerToMessageId' },
         ));
       });
 
       it('should forward answer', () => {
-        td.verify(ctx.forwardMessage('answerChatId', 'chatId', 'messageId'));
+        verify(ctx.forwardMessage('answerChatId', 'chatId', 'messageId'));
       });
 
       it('should remove message purpose from session', () => {
@@ -127,7 +127,7 @@ describe('anonymous-messages/answer module', () => {
       });
 
       it('should reply', () => {
-        td.verify(ctx.reply(td.matchers.isA(String)));
+        verify(ctx.reply(matchers.isA(String)));
       });
     });
   });

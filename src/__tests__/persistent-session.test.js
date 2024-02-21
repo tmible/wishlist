@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import * as td from 'testdouble';
+import { object, replaceEsm, reset, verify, when } from 'testdouble';
 import resolveModule from '@tmible/wishlist-bot/helpers/resolve-module';
 
 describe('persistent session', () => {
@@ -9,36 +9,35 @@ describe('persistent session', () => {
   let getLocalDB;
   let initPersistentSession;
   let dropPersistentSession;
-  let destroyPersistentSession;
 
   const sessionKey = 'sessionKey';
 
   beforeEach(async () => {
+    /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
+      Пробелы для консистентности с другими элементами массива
+    */
     [ getSessionKey, { getLocalDB } ] = await Promise.all([
-      (async () =>
-        (await td.replaceEsm(await resolveModule(
-          '@tmible/wishlist-bot/helpers/get-session-key',
-        ))).default
-      )(),
-      td.replaceEsm(await resolveModule('@tmible/wishlist-bot/services/local-db')),
+      resolveModule('@tmible/wishlist-bot/helpers/get-session-key')
+        .then((path) => replaceEsm(path))
+        .then((module) => module.default),
+      resolveModule('@tmible/wishlist-bot/services/local-db').then((path) => replaceEsm(path)),
     ]);
 
-    db = td.object([ 'get', 'put' ]);
-    td.when(getSessionKey(), { ignoreExtraArgs: true }).thenReturn(sessionKey);
+    db = object([ 'get', 'put' ]);
+    when(getSessionKey(), { ignoreExtraArgs: true }).thenReturn(sessionKey);
 
     ({
       initPersistentSession,
       dropPersistentSession,
-      destroyPersistentSession,
     } = await import('../persistent-session.js'));
   });
 
-  afterEach(() => td.reset());
+  afterEach(reset);
 
   describe('on init', () => {
     it('should get DB', () => {
       initPersistentSession();
-      td.verify(getLocalDB('persistent-session'));
+      verify(getLocalDB('persistent-session'));
     });
 
     describe('session middleware', () => {
@@ -47,7 +46,7 @@ describe('persistent session', () => {
       let next;
 
       beforeEach(() => {
-        td.when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
+        when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
         middleware = initPersistentSession();
         ctx = { session: {} };
         next = async () => {};
@@ -55,7 +54,7 @@ describe('persistent session', () => {
 
       it('should get session from DB', async () => {
         await middleware(ctx, next);
-        td.verify(db.get(sessionKey));
+        verify(db.get(sessionKey));
       });
 
       describe('on not found error', () => {
@@ -63,65 +62,65 @@ describe('persistent session', () => {
 
         beforeEach(async () => {
           ctx = { session: {} };
-          td.when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
+          when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
           await middleware(ctx, next);
         });
 
         it('should set default value', () => {
-          td.verify(dropPersistentSession(ctx));
+          verify(dropPersistentSession(ctx));
         });
 
         it('should get default value', () => {
-          td.verify(db.get(sessionKey), { times: 2 });
+          verify(db.get(sessionKey), { times: 2 });
         });
       });
 
       it('should throw other errors', async () => {
-        td.when(db.get(sessionKey)).thenReject(new Error('other error'));
-        await assert.rejects(async () => middleware(ctx, next), new Error('other error'));
+        when(db.get(sessionKey)).thenReject(new Error('other error'));
+        await assert.rejects(() => middleware(ctx, next), new Error('other error'));
       });
 
       it('should define \'persistent\' property', async () => {
-        await middleware(ctx, async () => {
+        await middleware(ctx, () => {
           assert(Object.hasOwn(ctx.session, 'persistent'));
         });
       });
 
       it('should provide access to value from DB via \'persistent\' property', async () => {
-        td.when(db.get(sessionKey)).thenResolve({ key: 'value' });
-        await middleware(ctx, async () => {
+        when(db.get(sessionKey)).thenResolve({ key: 'value' });
+        await middleware(ctx, () => {
           assert.deepEqual(ctx.session.persistent, { key: 'value' });
         });
       });
 
       it('should put session to DB if touched after next()', async () => {
-        td.when(db.get(sessionKey)).thenResolve({});
-        await middleware(ctx, async () => ctx.session.persistent = { key: 'value' });
-        td.verify(db.put(sessionKey, { key: 'value' }));
+        when(db.get(sessionKey)).thenResolve({});
+        await middleware(ctx, () => ctx.session.persistent = { key: 'value' });
+        verify(db.put(sessionKey, { key: 'value' }));
       });
 
       it('should not put session to DB if not touched after next()', async () => {
         await middleware(ctx, next);
-        td.verify(db.put(), { times: 0, ignoreExtraArgs: true });
+        verify(db.put(), { times: 0, ignoreExtraArgs: true });
       });
 
       it('should put session to DB if touched after next() error', async () => {
-        td.when(db.get(sessionKey)).thenResolve({});
+        when(db.get(sessionKey)).thenResolve({});
         try {
-          await middleware(ctx, async () => {
+          await middleware(ctx, () => {
             ctx.session.persistent.key = 'value';
             throw new Error();
           });
-        } catch {} finally {
-          td.verify(db.put(sessionKey, { key: 'value' }));
+        } catch {
+          verify(db.put(sessionKey, { key: 'value' }));
         }
       });
 
       it('should not put session to DB if not touched after next() error', async () => {
         try {
-          await middleware(ctx, async () => { throw new Error(); });
-        } catch {} finally {
-          td.verify(db.put(), { times: 0, ignoreExtraArgs: true });
+          await middleware(ctx, () => Promise.reject());
+        } catch {
+          verify(db.put(), { times: 0, ignoreExtraArgs: true });
         }
       });
     });
@@ -131,7 +130,7 @@ describe('persistent session', () => {
     let ctx;
 
     beforeEach(() => {
-      td.when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
+      when(getLocalDB(), { ignoreExtraArgs: true }).thenReturn(db);
       initPersistentSession();
       ctx = { session: { persistent: 'persistent' } };
     });
@@ -149,7 +148,7 @@ describe('persistent session', () => {
 
     it('should set default value to DB', async () => {
       await dropPersistentSession(ctx);
-      td.verify(db.put(sessionKey, { lists: {} }));
+      verify(db.put(sessionKey, { lists: {} }));
     });
   });
 });

@@ -2,28 +2,31 @@ import { strict as assert } from 'node:assert';
 import { nwAlign } from 'seal-wasm';
 import { Markup } from 'telegraf';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
-import {
-  sendMessageAndMarkItForMarkupRemove,
-} from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+
+/**
+ * @typedef {import('telegraf').Context} Context
+ * @typedef {import('seal-wasm').Options} Options
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages').Message
+ * } Message
+ * @typedef {
+ *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').MessageToEdit
+ * } MessageToEdit
+ */
 
 /**
  * Параметры для [алгоритма Нидлмана-Вунша]{@link nwAlign}: тип алгоритма выравнивания,
  * похожесть равных символов, штраф за различающиеся символы,
  * штраф за пропуск во второй последовательности, штраф за пропуск в первой последовательности
- * @constant {Partial<{
- *   alignment: 'local' | 'global';
- *   equal: number;
- *   align: number;
- *   insert: number;
- *   delete: number;
- * }>}
+ * @constant {Options}
  */
 const NWAlignOptions = { alignment: 'global', equal: 1, align: 0, insert: -2, delete: -3 };
 
 /**
  * Проверка отправляемого сообщения на наличие изменений относительно отправленной ранее версии
  * @function checkIfMessageChanged
- * @param {Object} messageToEdit Отправленное ранее сообщение
+ * @param {MessageToEdit} messageToEdit Отправленное ранее сообщение
  * @param {Message} message Отправляемое сообщение
  * @returns {boolean} Признак наличия изменений в сообщении
  */
@@ -45,54 +48,52 @@ const checkIfMessageChanged = (messageToEdit, message) => {
   }
 
   /**
-   * Проверка на равенство встроенной клавиатуры, в частности текстов и названий действий кнопок,
-   * так как остальные свойства не используются, получают значения по умолчанию и опускаются Телеграмом
+   * Проверка на равенство встроенной клавиатуры, в частности текстов
+   * и названий действий кнопок, так как остальные свойства не используются,
+   * получают значения по умолчанию и опускаются Телеграмом
    */
   try {
     assert.deepEqual(
-      messageToEdit.reply_markup?.inline_keyboard.map((row) =>
-        row.map((button) => ({ text: button.text, callback_data: button.callback_data }))
+      messageToEdit.reply_markup?.inline_keyboard.map(
+        (row) => row.map((button) => ({ text: button.text, callback_data: button.callback_data })),
       ),
-      message[1]?.reply_markup.inline_keyboard.map((row) =>
-        row.map((button) => ({ text: button.text, callback_data: button.callback_data }))
+      message[1]?.reply_markup.inline_keyboard.map(
+        (row) => row.map((button) => ({ text: button.text, callback_data: button.callback_data })),
       ),
     );
   } catch {
     areReplyMarkupsEqual = false;
   }
 
-  if (messageToEdit.text !== message[0].text || !areEntitiesEqual || !areReplyMarkupsEqual) {
-    return true;
-  }
-
-  return false;
+  return messageToEdit.text !== message[0].text || !areEntitiesEqual || !areReplyMarkupsEqual;
 };
 
 /**
  * Построение выравнивания последовательностей идентификаторов подарков в отправленных ранее
  * сообщениях и в отправляемых с помощью алгоритма [Нидлмана-Вунша]{@link nwAlign}
- * с такими [параметрами]{@link NWAlignOptions}, чтобы в первой последовательности не было пропусков,
- * так как в отправленные ранее сообщения невозможно вклинить новые.
+ * с такими [параметрами]{@link NWAlignOptions}, чтобы в первой последовательности не было
+ * пропусков, так как в отправленные ранее сообщения невозможно вклинить новые.
  * Оба массива сообщений приводятся к строкам, где каждому идентификатору подарка
  * ставится в соответствие уникальный символ
- * @async
  * @function alignItemsIds
- * @param {Object[]} messagesToEdit Отправленные ранее сообщения
+ * @param {object[]} messagesToEdit Отправленные ранее сообщения
  * @param {Message[]} messages Отправляемые сообщения
- * @returns {stirng} Строка выравнивания. Содержит символы `=`, `!`, `-`.
+ * @returns {string} Строка выравнивания. Содержит символы `=`, `!`, `-`.
  * `=` обозначает равенство идентификаторов, `!` -- различие,
  * `-` -- пропуск очередного идентификатора из уже отправленных сообщений.
  * Возможен ещё `+`, обозначающий пропуск очередного идентификатора из отправляемых сообщений,
  * но в этом контексте его появление -- баг
+ * @async
  */
 const alignItemsIds = async (messagesToEdit, messages) => {
   const itemsIdsMap = new Map(messagesToEdit.map(({ itemId }, i) => [ itemId, i ]));
-  messages.forEach(({ itemId }) => {
+
+  for (const { itemId } of messages) {
     if (itemsIdsMap.has(itemId)) {
-      return;
+      continue;
     }
     itemsIdsMap.set(itemId, itemsIdsMap.size);
-  });
+  }
 
   const { representation } = await nwAlign(
     messagesToEdit.map(({ itemId }) => String.fromCharCode(itemsIdsMap.get(itemId))).join(''),
@@ -110,19 +111,19 @@ const alignItemsIds = async (messagesToEdit, messages) => {
  * [используется алгоритм Нидлмана-Вушна]{@link alignItemsIds}.
  * 2. На основании выравнивания редактирование или удаление сообщений с обновалением онформации
  * в персистентной сессии.
- * 3. Если необходимо, отправка сообщения-уведомления об обновлении.
- * @async
  * @function editMessages
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
- * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
+ * @async
  */
-const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
+const editMessages = async (ctx, userid, messages) => {
   const { messagesToEdit } = ctx.session.persistent.lists[userid];
 
   const alignmentRepresentation = messagesToEdit.length === messages.length ?
-    messagesToEdit.map(({ itemId }, i) => itemId === messages[i].itemId ? '=' : '!').join('') :
+    messagesToEdit.map(
+      ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
+    ).join('') :
     await alignItemsIds(messagesToEdit, messages);
 
   const sessionPatch = [];
@@ -131,11 +132,11 @@ const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
   await Promise.all(
     alignmentRepresentation.split('').reduce((promises, char, i) => {
       const messageToEdit = messagesToEdit[i];
-      const { itemId, message } = messages[messagesIndex];
 
       if (char === '-') {
         promises.push(ctx.deleteMessage(messageToEdit.id));
       } else if (char === '!' || char === '=') {
+        const { itemId, message } = messages[messagesIndex];
         messagesIndex += 1;
 
         sessionPatch.push({
@@ -160,7 +161,28 @@ const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
     }, []),
   );
 
+  /* eslint-disable-next-line require-atomic-updates --
+    Даже после редактирования сообщений персистентная сессия определена в контексте
+  */
   ctx.session.persistent.lists[userid].messagesToEdit = sessionPatch;
+};
+
+/**
+ * Обновление списка. Перезакрепление заглавного сообщения,
+ * [обновление отправленных ранее сообщений]{@link editMessages},
+ * если необходимо, отправка сообщения-уведомления об обновлении.
+ * @function updateListsMessages
+ * @param {Context} ctx Контекст
+ * @param {number} userid Идентификатор пользователя -- владельца списка
+ * @param {Message[]} messages Новые сообщения со списком
+ * @param {boolean} shouldSendNotification Признак необходимости отправки
+ *   сообщения-уведомления об обновлении
+ * @async
+ */
+const updateListsMessages = async (ctx, userid, messages, shouldSendNotification) => {
+  await tryPinning(ctx, true, ctx.session.persistent.lists[userid].pinnedMessageId);
+
+  await editMessages(ctx, userid, messages);
 
   if (shouldSendNotification) {
     await sendMessageAndMarkItForMarkupRemove(
@@ -171,32 +193,13 @@ const editMessages = async (ctx, userid, messages, shouldSendNotification) => {
         ...Markup.inlineKeyboard([
           Markup.button.callback(
             '💬 Отправить новые сообщения',
-            `force_${
-              userid === ctx.chat.id ? 'own_' : ''
-            }list${
-              userid === ctx.chat.id ? '' : ` ${userid}`
-            }`,
+            userid === ctx.chat.id ? 'force_own_list' : `force_list ${userid}`,
           ),
         ]),
         reply_to_message_id: ctx.session.persistent.lists[userid].pinnedMessageId,
       },
     );
   }
-};
-
-/**
- * Обновление списка. Перезакрепление заглавного сообщения,
- * [обновление отправленных ранее сообщений]{@link editMessages}.
- * @async
- * @function updateListsMessages
- * @param {Context} ctx Контекст
- * @param {number} userid Идентификатор пользователя -- владельца списка
- * @param {Message[]} messages Новые сообщения со списком
- * @param {boolean} shouldSendNotification Признак необходимости отправки сообщения-уведомления об обновлении
- */
-const updateListsMessages = async (ctx, userid, messages, shouldSendNotification) => {
-  await tryPinning(ctx, 'pinChatMessage', ctx.session.persistent.lists[userid].pinnedMessageId);
-  await editMessages(ctx, userid, messages, shouldSendNotification);
 };
 
 export default updateListsMessages;

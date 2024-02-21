@@ -1,3 +1,5 @@
+/** @typedef {import('telegraf').Context} Context */
+
 /**
  * Получение ключа для хранения сессии конкретного чата среди остальных сессий
  * @function getSessionKey

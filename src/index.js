@@ -1,5 +1,5 @@
-import 'dotenv/config';
-import { Telegraf, session } from 'telegraf';
+import 'dotenv/config.js';
+import { session, Telegraf } from 'telegraf';
 import DefaultCommandSet from '@tmible/wishlist-bot/constants/default-command-set';
 import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
 import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
@@ -49,14 +49,14 @@ bot.on('message', autoUpdateMiddleware);
 bot.action(/.*/, autoUpdateMiddleware);
 
 bot.start(async (ctx) => {
-  await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' }});
-  await ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' }});
+  await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' } });
+  await ctx.telegram.setMyCommands(GroupCommandSet, { scope: { type: 'all_group_chats' } });
 
   if (!isChatGroup(ctx)) {
     emit(Events.Usernames.StoreUsername, ctx.from.id, ctx.from.username ?? null);
   }
 
-  if (!!ctx.startPayload) {
+  if (ctx.startPayload) {
     return emit(Events.Wishlist.HandleListLink, ctx, ctx.startPayload);
   }
 
@@ -70,7 +70,7 @@ bot.start(async (ctx) => {
   return ctx.reply('Рекомендую изучить полную справку, введя команду /help');
 });
 
-bot.command('my_nickname', async (ctx) => ctx.reply(
+bot.command('my_nickname', (ctx) => ctx.reply(
   getNickname(ctx.from.id),
   ...(isChatGroup(ctx) ? [{ reply_to_message_id: ctx.message.message_id }] : []),
 ));
@@ -83,8 +83,15 @@ configureModules(bot, [
   LinkModule,
 ])(bot);
 
+/* eslint-disable-next-line
+  promise/prefer-await-to-callbacks,
+  unicorn/prefer-top-level-await --
+  Это не одноразовая функция обратного вызова, а обработчик
+  для каждой такой ситуации с совпадающей сигнатурой
+  bot -- не промис, просто совпадает название методов catch()
+*/
 bot.catch((err, ctx) => {
-  console.log(`Ooops, encountered an error for ${ctx.updateType}`, err);
+  console.error(`Ooops, encountered an error for ${ctx.updateType}`, err);
 });
 
 bot.launch();
@@ -95,11 +102,9 @@ process.once('SIGINT', async () => {
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGINT');
-  process.exit();
 });
 process.once('SIGTERM', async () => {
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGTERM');
-  process.exit();
 });
