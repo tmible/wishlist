@@ -1,4 +1,4 @@
-import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
 import BookModule from './book.js';
 import CancelListModule from './cancel-list.js';
 import CooperateModule from './cooperate.js';
@@ -7,7 +7,7 @@ import RetireModule from './retire.js';
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

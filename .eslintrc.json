@@ -41,6 +41,7 @@
     "import/resolver": {
       "custom-alias": {
         "alias": {
+          "@tmible/wishlist-bot/architecture": "./src/architecture",
           "@tmible/wishlist-bot/constants": "./src/constants",
           "@tmible/wishlist-bot/helpers": "./src/helpers",
           "@tmible/wishlist-bot/modules": "./src/modules",

@@ -30,7 +30,7 @@ describe('anonymous-messages/message module', () => {
     name: 'should send notification message if there is no chat id',
     test: async (testContext) => {
       when(getUseridFromInput(), { ignoreExtraArgs: true }).thenReturn([ null ]);
-      const sendMessage = testContext.mock.fn(async () => {});
+      const sendMessage = testContext.mock.fn();
       ctx.sendMessage = sendMessage;
       await captor.value(ctx);
       assert.deepEqual(
@@ -124,7 +124,7 @@ describe('anonymous-messages/message module', () => {
 
     beforeEach(() => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       captor = matchers.captor();
       MessageModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));
@@ -142,7 +142,7 @@ describe('anonymous-messages/message module', () => {
         ctx = {
           chat: {},
           message: { text: 'text' },
-          sendMessage: mock.fn(async () => {}),
+          sendMessage: mock.fn(),
           /* eslint-disable @stylistic/js/object-curly-newline -- Переносы строк для читаемости */
           session: {
             messagePurpose: {

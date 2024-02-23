@@ -1,9 +1,10 @@
 import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
 import ItemDescriptionPattern from './constants/item-description-pattern.const.js';
 import ItemNamePattern from './constants/item-name-pattern.const.js';
 import ItemPriorityPattern from './constants/item-priority-pattern.const.js';
@@ -11,10 +12,10 @@ import sendList from './helpers/send-list.js';
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
  */
 
@@ -43,13 +44,14 @@ const configure = (bot) => {
 
 /** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   /**
    * При получении сообщения от пользователя, если ожидается информация о подарке,
    * добавляемом в список желаний, бот валидирует текст полученного сообщения.
    * При провале валидации бот отправляет сообщение-уведомления об ошибке валидации.
-   * При успехе валидации бот [выпускает]{@link emit} соответствующее событие,
-   * отправляет сообщение-уведомление об успехе добавления подарка
-   * и [отправляет обновлённый список]{@link sendList}
+   * При успехе валидации бот выпускает соответствующее событие, отправляет сообщение-уведомление
+   * об успехе добавления подарка и [отправляет обновлённый список]{@link sendList}
    */
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AddItemToWishlist) {
@@ -77,7 +79,7 @@ const messageHandler = (bot) => {
         return;
       }
 
-      emit(
+      eventBus.emit(
         Events.Editing.AddItem,
         [
           ctx.from.id,
@@ -90,7 +92,7 @@ const messageHandler = (bot) => {
       );
 
       await ctx.reply('Добавлено!');
-      await sendList(ctx);
+      await sendList(eventBus, ctx);
       return;
     }
 

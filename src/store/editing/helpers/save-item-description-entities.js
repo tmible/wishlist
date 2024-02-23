@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/store/constants/description-entity-base-keys';
 
 /**
@@ -25,7 +25,7 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
     return;
   }
 
-  db.prepare(
+  inject(InjectionToken.Database).prepare(
     `INSERT INTO description_entities VALUES ${
       descriptionEntities.map((entity) => `($itemId, ?, ?, ?, ${
         Object.entries(entity).some(([ key ]) => !DescriptionEntityBaseKeys.has(key)) ?

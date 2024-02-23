@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 
 /**
@@ -28,12 +28,14 @@ let statement;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statement = db.prepare(`
-  SELECT id, priority, name, description, type, offset, length, additional
-  FROM list
-  LEFT JOIN description_entities ON list.id = description_entities.list_item_id
-  WHERE userid = ?
-`);
+const prepare = () => {
+  statement = inject(InjectionToken.Database).prepare(`
+    SELECT id, priority, name, description, type, offset, length, additional
+    FROM list
+    LEFT JOIN description_entities ON list.id = description_entities.list_item_id
+    WHERE userid = ?
+  `);
+};
 
 /**
  * Получение пользователем своего списка желаний

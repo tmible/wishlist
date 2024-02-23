@@ -5,7 +5,7 @@ import SharedHelpSupportSection from './constants/sections/shared/support.const.
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

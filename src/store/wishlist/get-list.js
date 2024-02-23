@@ -1,9 +1,7 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-mapper';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
@@ -37,7 +35,7 @@ let statement;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statement = db.prepare(`
+const prepare = () => statement = inject(InjectionToken.Database).prepare(`
   SELECT
     id,
     priority,

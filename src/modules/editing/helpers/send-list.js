@@ -1,13 +1,13 @@
 import { Format, Markup } from 'telegraf';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  * @typedef {import('@tmible/wishlist-bot/store/editing/get-list').OwnListItem} OwnListItem
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').SendListOptions
@@ -68,23 +68,26 @@ const defaultOptions = {
  * собственного списка желаний пользователя, при его наличии и при условии, что чат не групповой.
  * При отсутствии желаний пользователя отправляется сообщение об этом
  * @function sendList
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {SendListOptions} passedOptions Параметры отправки списка
  *   (см. аргумент passedOptions {@link manageListsMessages})
  * @returns {Promise<void>} Отправка сообщений
  * @async
  */
-const sendList = async (ctx, passedOptions = {}) => {
+const sendList = async (eventBus, ctx, passedOptions = {}) => {
   if (isChatGroup(ctx)) {
     return;
   }
 
   const userid = ctx.chat.id;
 
-  const messages = emit(Events.Editing.GetList, userid).map((item) => ({
-    itemId: item.id,
-    message: [ formText(item), formReplyMarkup(item) ],
-  }));
+  const messages = eventBus
+    .emit(Events.Editing.GetList, userid)
+    .map((item) => ({
+      itemId: item.id,
+      message: [ formText(item), formReplyMarkup(item) ],
+    }));
 
   if (messages.length === 0) {
     await ctx.reply(

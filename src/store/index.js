@@ -1,12 +1,11 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import Database from 'better-sqlite3';
+import { provide } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import EditingModule from './editing/index.js';
 import UsernamesModule from './usernames/index.js';
 import WishlistModule from './wishlist/index.js';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * Обязательная часть элемента разметки текста
@@ -23,12 +22,6 @@ import WishlistModule from './wishlist/index.js';
 /** @module Хранилище -- абстракция БД */
 
 /**
- * Объект для доступа к БД
- * @type {Database}
- */
-export let db;
-
-/**
  * Модули хранилища
  * @type {{ configure: Function } & Record<string, unknown>}
  */
@@ -41,10 +34,11 @@ const storeModules = [
 /**
  * Миграции БД
  * @function migrate
+ * @param {Database} db Объект для доступа к БД
  * @returns {Promise<void>}
  * @async
  */
-const migrate = async () => {
+const migrate = async (db) => {
   const userVersion = db.pragma('user_version', { simple: true });
   /* eslint-disable-next-line security/detect-non-literal-fs-filename --
     Имя папки хранится в переменной окружения, никакого пользовательского ввода --
@@ -69,18 +63,15 @@ const migrate = async () => {
 /**
  * Создание подключения к БД, [миграции БД]{@link migrate} и настройка модулей хранилища
  * @function initStore
- * @returns {Promise<void>}
+ * @returns {Promise<() => void>} Функция закрытия подключения к БД
  * @async
  */
-export const initStore = async () => {
-  db = new Database(process.env.WISHLIST_DB_FILE_PATH);
-  await migrate();
+const initStore = async () => {
+  const db = new Database(process.env.WISHLIST_DB_FILE_PATH);
+  await migrate(db);
+  provide(InjectionToken.Database, db);
   storeModules.forEach(({ configure }) => configure());
+  return () => db.close();
 };
 
-/**
- * Закрытие подключения к БД
- * @function destroyStore
- * @returns {void}
- */
-export const destroyStore = () => db.close();
+export default initStore;

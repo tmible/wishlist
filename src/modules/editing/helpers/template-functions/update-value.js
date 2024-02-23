@@ -1,8 +1,8 @@
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
 import sendList from '../send-list.js';
 
 /**
  * @typedef {import('telegraf').Context} Context
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  * @typedef {
  *   import('@tmible/wishlist-bot/constants/message-purpose-type').default
  * } MessagePurposeType
@@ -12,10 +12,11 @@ import sendList from '../send-list.js';
  * Обновление информации и подарке
  * Если ожадается сообщение от пользователя, его текст валидируется.
  * При провале валидации бот отправляет сообщение-уведомления об ошибке валидации.
- * При успехе валидации бот [выпускает]{@link emit} соответствующее событие,
- * отправляет сообщение-уведомление об успехе сохранения новой информации о подарке
+ * При успехе валидации бот выпускает соответствующее событие, отправляет сообщение-уведомление
+ * об успехе сохранения новой информации о подарке
  * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
  * @function updateValue
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {MessagePurposeType} messagePurposeType Тип назначения полученного
  *   от пользователя сообщения
@@ -28,6 +29,7 @@ import sendList from '../send-list.js';
  * @async
  */
 const updateValue = async (
+  eventBus,
   ctx,
   messagePurposeType,
   valueRegExp,
@@ -49,10 +51,10 @@ const updateValue = async (
     return;
   }
 
-  emit(event, itemId, match[0]);
+  eventBus.emit(event, itemId, match[0]);
 
   await ctx.reply(successMessage);
-  await sendList(ctx);
+  await sendList(eventBus, ctx);
 };
 
 export default updateValue;

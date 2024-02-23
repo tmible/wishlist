@@ -1,6 +1,13 @@
 /** @module Шина событий */
 
 /**
+ * Шина событий
+ * @typedef {object} EventBus
+ * @property {(event: Event, handler: Function) => void} subscribe Подписка на событие
+ * @property {(event: Event, ...args: unknown[]) => unknown} emit Выпуск события
+ */
+
+/**
  * Отображение событий в их обработчики
  * @type {Map<Event, Function>}
  * @see {@link import('./events.js')} Events

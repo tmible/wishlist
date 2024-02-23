@@ -1,8 +1,6 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
-import { db } from '@tmible/wishlist-bot/store';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
@@ -19,10 +17,19 @@ let statements;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statements = [
-  `INSERT INTO participants SELECT id, ? FROM list WHERE id = ? AND state = ${ListItemState.FREE}`,
-  `UPDATE list SET state = ${ListItemState.BOOKED} WHERE id = ? AND state = ${ListItemState.FREE}`,
-].map((statement) => db.prepare(statement));
+const prepare = () => {
+  const db = inject(InjectionToken.Database);
+  /* eslint-disable @stylistic/js/array-bracket-spacing -- Форматирование по аналогии с {} */
+  statements = [`
+    INSERT INTO participants
+    SELECT id, ? FROM list WHERE id = ? AND state = ${ListItemState.FREE}
+  `, `
+    UPDATE list
+    SET state = ${ListItemState.BOOKED}
+    WHERE id = ? AND state = ${ListItemState.FREE}
+  `].map((statement) => db.prepare(statement));
+  /* eslint-enable @stylistic/js/array-bracket-spacing */
+};
 
 /**
  * Бронирование подарка за пользователем
@@ -33,7 +40,9 @@ const prepare = () => statements = [
  */
 const eventHandler = (itemId, userid) => {
   const parameters = [[ userid, itemId ], itemId ];
-  db.transaction(() => statements.forEach((statement, i) => statement.run(parameters[i])))();
+  inject(InjectionToken.Database).transaction(
+    () => statements.forEach((statement, i) => statement.run(parameters[i])),
+  )();
 };
 
 export default { eventHandler, prepare };

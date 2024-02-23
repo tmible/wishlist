@@ -1,22 +1,29 @@
 import { afterEach, beforeEach, describe, it } from 'node:test';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
+import { func, matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
-import Events from '@tmible/wishlist-bot/store/events';
+
+const emit = func();
+const bot = object([ 'action' ]);
 
 /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-      Пробелы для консистентности с другими элементами массива
-    */
-const [ { emit }, sendList ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  Пробелы для консистентности с другими элементами массива
+*/
+const [ { inject }, sendList ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
 ]);
+
 const DeleteModule = await import('../delete.js').then((module) => module.default);
 
 describe('editing/delete module', () => {
+  beforeEach(() => {
+    when(inject(), { ignoreExtraArgs: true }).thenReturn({ emit });
+  });
+
   afterEach(reset);
 
   it('should register delete action handler', () => {
-    const bot = object([ 'action' ]);
     DeleteModule.configure(bot);
     verify(bot.action(/^delete (\d+)$/, matchers.isA(Function)));
   });
@@ -25,7 +32,6 @@ describe('editing/delete module', () => {
     let ctx;
 
     beforeEach(async () => {
-      const bot = object([ 'action' ]);
       ctx = { match: [ null, 'match 1' ] };
       const captor = matchers.captor();
       DeleteModule.configure(bot);
@@ -38,7 +44,7 @@ describe('editing/delete module', () => {
     });
 
     it('should send list', () => {
-      verify(sendList(ctx, { shouldSendNotification: false }));
+      verify(sendList({ emit }, ctx, { shouldSendNotification: false }));
     });
   });
 });

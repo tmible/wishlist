@@ -5,7 +5,7 @@ import forcePrivacyModeMiddleware from '../force-privacy-mode.js';
 describe('forcePrivacyModeMiddleware', () => {
   let next;
 
-  beforeEach(() => next = mock.fn(async () => {}));
+  beforeEach(() => next = mock.fn());
 
   afterEach(() => mock.reset());
 

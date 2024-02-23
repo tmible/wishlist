@@ -1,36 +1,38 @@
 import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import getUseridFromInput from '@tmible/wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import isUserInChat from '@tmible/wishlist-bot/helpers/is-user-in-chat';
 import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
-import { emit, subscribe } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
 
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  */
 
 /**
  * Проверки возможности отправки списка желаний
  * 1. Список желаний не отправляется в группу, если владелец списка есть в ней;
  * 2. Собственный список желаний отправляется пользователю только не в группе;
- *    эта проверка [выпускает]{@link emit} событие получения
- *    собственного списка и считается проваленной;
+ *    эта проверка выпускает событие получения собственного списка и считается проваленной;
  * @function handleListCommand
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {number} [userid] Идентификатор пользователя, список желаний которого запрашивается
  * @returns {Promise<boolean>} Признак успешного прохождения всех проверок
  * @async
  */
-const handleListCommand = async (ctx, userid) => {
+const handleListCommand = async (eventBus, ctx, userid) => {
   if (await isUserInChat(ctx, userid)) {
     await ctx.reply('Этот пользователь есть в этой группе!');
     return false;
@@ -40,56 +42,89 @@ const handleListCommand = async (ctx, userid) => {
     if (isChatGroup(ctx)) {
       return false;
     }
-    await emit(Events.Wishlist.HandleOwnList, ctx);
+    await eventBus.emit(Events.Wishlist.HandleOwnList, ctx);
     return false;
   }
 
   return true;
 };
 
+/**
+ * Запуск [проверок]{@link handleListCommand} и при их прохождении,
+ * если у команды нет полезной нагрузки, бот отправляет сообщение-приглашение для отправки
+ * идентификатора или имени пользователя, список желаний которого запрашивается,
+ * иначе бот [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ * @function listCommandHandler
+ * @param {EventBus} eventBus Шина событий
+ * @param {Context} ctx Контекст
+ * @returns {Promise<void>}
+ * @async
+ */
+const listCommandHandler = async (eventBus, ctx) => {
+  const [ userid, username ] = getUseridFromInput(eventBus, ctx.payload);
+
+  if (!(await handleListCommand(eventBus, ctx, userid))) {
+    return;
+  }
+
+  if (!ctx.payload) {
+    ctx.session.messagePurpose = { type: MessagePurposeType.WishlistOwnerUsername };
+
+    await sendMessageAndMarkItForMarkupRemove(
+      ctx,
+      'reply',
+      `Чей список вы хотите посмотреть?\nОтправьте мне имя или идентификатор пользователя${
+        isChatGroup(ctx) ? ' ответом на это сообщение' : ''
+      }`,
+      Markup.inlineKeyboard([
+        [ Markup.button.callback('🚫 Не смотреть список', 'cancel_list') ],
+      ]),
+    );
+
+    return;
+  }
+
+  await sendList(eventBus, ctx, userid, username, { shouldSendNotification: true });
+};
+
+/**
+ * При прохождении [проверок]{@link handleListCommand}, бот
+ * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+ * @function listLinkHandler
+ * @param {EventBus} eventBus Шина событий
+ * @param {Context} ctx Контекст
+ * @param {number} userid Идентификатор пользователя -- владельца списка
+ * @returns {Promise<void>}
+ * @async
+ */
+const listLinkHandler = async (eventBus, ctx, userid) => {
+  if (!(await handleListCommand(eventBus, ctx, userid))) {
+    return;
+  }
+  await sendList(
+    eventBus,
+    ctx,
+    ...getUseridFromInput(eventBus, userid),
+    { shouldSendNotification: true },
+  );
+};
+
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
-  /**
-   * При получении команды /list запуск [проверок]{@link handleListCommand} и при их прохождении,
-   * если у команды нет полезной нагрузки, бот отправляет сообщение-приглашение для отправки
-   * идентификатора или имени пользователя, список желаний которого запрашивается,
-   * иначе бот [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
-   */
-  bot.command('list', async (ctx) => {
-    const [ userid, username ] = getUseridFromInput(ctx.payload);
+  const eventBus = inject(InjectionToken.EventBus);
 
-    if (!(await handleListCommand(ctx, userid))) {
-      return;
-    }
-
-    if (!ctx.payload) {
-      ctx.session.messagePurpose = { type: MessagePurposeType.WishlistOwnerUsername };
-
-      await sendMessageAndMarkItForMarkupRemove(
-        ctx,
-        'reply',
-        `Чей список вы хотите посмотреть?\nОтправьте мне имя или идентификатор пользователя${
-          isChatGroup(ctx) ? ' ответом на это сообщение' : ''
-        }`,
-        Markup.inlineKeyboard([
-          [ Markup.button.callback('🚫 Не смотреть список', 'cancel_list') ],
-        ]),
-      );
-
-      return;
-    }
-
-    await sendList(ctx, userid, username, { shouldSendNotification: true });
-  });
+  /** При получении команды /list вызов {@link listCommandHandler} */
+  bot.command('list', async (ctx) => await listCommandHandler(eventBus, ctx));
 
   /**
    * При вызове действия обновления списка желаний бот
    * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
    */
   bot.action(/^update_list (\d+)$/, async (ctx) => await sendList(
+    eventBus,
     ctx,
     Number.parseInt(ctx.match[1]),
-    emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
+    eventBus.emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
     { shouldSendNotification: true },
   ));
 
@@ -98,9 +133,10 @@ const configure = (bot) => {
    * [отправляет список новыми сообщениями (см. параметр shouldForceNewMessages)]{@link sendList}
    */
   bot.action(/^force_list (\d+)$/, async (ctx) => await sendList(
+    eventBus,
     ctx,
     Number.parseInt(ctx.match[1]),
-    emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
+    eventBus.emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
     { shouldForceNewMessages: true },
   ));
 
@@ -111,27 +147,24 @@ const configure = (bot) => {
    * ]{@link sendList}
    */
   bot.action(/^manual_update (\d+)$/, async (ctx) => await sendList(
+    eventBus,
     ctx,
     Number.parseInt(ctx.match[1]),
-    emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
+    eventBus.emit(Events.Usernames.GetUsernameByUserid, Number.parseInt(ctx.match[1])),
     { shouldForceNewMessages: true, isManualUpdate: true },
   ));
 
-  /**
-   * При выпуске действия обработки ссылки на список желаний запуск
-   * [проверок]{@link handleListCommand} и при их прохождении, бот
-   * [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
-   */
-  subscribe(Events.Wishlist.HandleListLink, async (ctx, userid) => {
-    if (!(await handleListCommand(ctx, userid))) {
-      return;
-    }
-    await sendList(ctx, ...getUseridFromInput(userid), { shouldSendNotification: true });
-  });
+  /** При выпуске действия обработки ссылки на список желаний запуск {@link listLinkHandler} */
+  eventBus.subscribe(
+    Events.Wishlist.HandleListLink,
+    async (ctx, userid) => await listLinkHandler(eventBus, ctx, userid),
+  );
 };
 
 /** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   /**
    * При получении сообщения от пользователя, если ожидается идентификатор или имя пользователя,
    * список желаний которого запрашивается, полученный идентификатор или имя
@@ -143,13 +176,13 @@ const messageHandler = (bot) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.WishlistOwnerUsername) {
       delete ctx.session.messagePurpose;
 
-      const [ userid, username ] = getUseridFromInput(ctx.message.text);
+      const [ userid, username ] = getUseridFromInput(eventBus, ctx.message.text);
 
-      if (!(await handleListCommand(ctx, userid))) {
+      if (!(await handleListCommand(eventBus, ctx, userid))) {
         return;
       }
 
-      await sendList(ctx, userid, username, { shouldSendNotification: true });
+      await sendList(eventBus, ctx, userid, username, { shouldSendNotification: true });
       return;
     }
 

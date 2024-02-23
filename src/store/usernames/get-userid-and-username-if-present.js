@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
@@ -16,9 +16,11 @@ let statement;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statement = db.prepare(
-  'SELECT userid, username FROM usernames WHERE userid = ?',
-);
+const prepare = () => {
+  statement = inject(InjectionToken.Database).prepare(
+    'SELECT userid, username FROM usernames WHERE userid = ?',
+  );
+};
 
 /**
  * Проверка наличия идентификатора пользователя в БД

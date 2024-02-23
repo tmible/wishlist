@@ -25,10 +25,10 @@ describe('resendListsMessages', () => {
       entities: `${messageId} entities`,
       reply_markup: `${messageId} reply markup`,
     }));
-    pinChatMessage = mock.fn(async () => {});
-    unpinChatMessage = mock.fn(async () => {});
-    editMessageText = mock.fn(async () => {});
-    editMessageReplyMarkup = mock.fn(async () => {});
+    pinChatMessage = mock.fn();
+    unpinChatMessage = mock.fn();
+    editMessageText = mock.fn();
+    editMessageReplyMarkup = mock.fn();
     ctx = {
       chat: { id: 'chatId' },
       reply,

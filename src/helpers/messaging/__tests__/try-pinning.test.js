@@ -5,7 +5,7 @@ import tryPinning from '../try-pinning.js';
 
 describe('tryPinning', () => {
   it('should call editing method', async (testContext) => {
-    const pinChatMessage = testContext.mock.fn(async () => {});
+    const pinChatMessage = testContext.mock.fn();
     await tryPinning({ pinChatMessage });
     assert(pinChatMessage.mock.calls.length > 0);
   });

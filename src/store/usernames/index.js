@@ -1,12 +1,10 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import GetUseridAndUsernameIfPresent from './get-userid-and-username-if-present.js';
 import GetUseridByUsername from './get-userid-by-username.js';
 import GetUsernameByUserid from './get-username-by-userid.js';
 import StoreUsername from './store-username.js';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * @module Модуль хранилища для работы с идентификаторами
@@ -15,10 +13,12 @@ import StoreUsername from './store-username.js';
 
 /**
  * Настройка модуля хранилища
- * [Подписка]{@link subscribe} на [события]{@link Events} и подготовка выражений запроса БД
+ * Подписка на [события]{@link Events} и подготовка выражений запроса БД
  * @function configure
  */
 const configure = () => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   [
     [ Events.Usernames.GetUseridByUsername, GetUseridByUsername ],
     [ Events.Usernames.GetUsernameByUserid, GetUsernameByUserid ],
@@ -27,7 +27,7 @@ const configure = () => {
   /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
     Пробел нужен для консистентности с другими элементами массива
   */
-  ].forEach(([ event, { eventHandler } ]) => subscribe(event, eventHandler));
+  ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [
     GetUseridByUsername,

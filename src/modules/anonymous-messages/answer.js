@@ -4,10 +4,10 @@ import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helper
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
  */
 

@@ -1,15 +1,17 @@
+import Events from '@tmible/wishlist-bot/architecture/events';
 import UseridOrUsernameRegExp from '@tmible/wishlist-bot/constants/userid-or-username-regexp';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+
+/** @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus */
 
 /**
  * Получение идентификатора и имени пользователя из пользовательского ввода
  * @function getUseridFromInput
+ * @param {EventBus} eventBus Шина событий
  * @param {string} input Пользовательский ввод
  * @returns {[ number | undefined, string | undefined ] | [ null, null ]}
  *   Идентификатор и имя пользователя
  */
-const getUseridFromInput = (input) => {
+const getUseridFromInput = (eventBus, input) => {
   const match = UseridOrUsernameRegExp.exec(input);
 
   if (!match) {
@@ -19,8 +21,8 @@ const getUseridFromInput = (input) => {
   const { userid, username } = match.groups;
 
   return userid ?
-    emit(Events.Usernames.GetUseridAndUsernameIfPresent, userid) :
-    [ emit(Events.Usernames.GetUseridByUsername, username), username ];
+    eventBus.emit(Events.Usernames.GetUseridAndUsernameIfPresent, userid) :
+    [ eventBus.emit(Events.Usernames.GetUseridByUsername, username), username ];
 };
 
 export default getUseridFromInput;

@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
  * Удаление подарков из БД
@@ -7,10 +7,12 @@ import { db } from '@tmible/wishlist-bot/store';
  * @param {number[]} itemsIds Идентификаторы удаляемых подарков
  */
 const eventHandler = (itemsIds) => {
+  const db = inject(InjectionToken.Database);
   const idsPlaceholders = itemsIds.reduce(
     (placeholders) => (placeholders.length > 0 ? `${placeholders},?` : '?'),
     '',
   );
+
   db.transaction(() => [
     `DELETE FROM description_entities WHERE list_item_id IN (${idsPlaceholders})`,
     `DELETE FROM participants WHERE list_item_id IN (${idsPlaceholders})`,

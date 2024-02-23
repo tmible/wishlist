@@ -2,7 +2,7 @@ import cancelActionHandler from '@tmible/wishlist-bot/helpers/cancel-action-hand
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

@@ -27,7 +27,7 @@ describe('help module', () => {
         .then((module) => module.default);
 
       const bot = object([ 'action', 'command' ]);
-      const replyWithMarkdownV2 = testContext.mock.fn(async () => {});
+      const replyWithMarkdownV2 = testContext.mock.fn();
       const captor = matchers.captor();
 
       HelpModule.configure(bot);
@@ -55,7 +55,7 @@ describe('help module', () => {
       ).then((module) => module.default);
 
       const bot = object([ 'action', 'command' ]);
-      const editMessageText = testContext.mock.fn(async () => {});
+      const editMessageText = testContext.mock.fn();
       const captor = matchers.captor();
 
       HelpModule.configure(bot);

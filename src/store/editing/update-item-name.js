@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
@@ -16,7 +16,9 @@ let statement;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statement = db.prepare('UPDATE list SET name = ? WHERE id = ?');
+const prepare = () => {
+  statement = inject(InjectionToken.Database).prepare('UPDATE list SET name = ? WHERE id = ?');
+};
 
 /**
  * Обновление названия подарка в БД

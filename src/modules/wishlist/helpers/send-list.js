@@ -5,6 +5,7 @@ import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-l
 
 /**
  * @typedef {import('telegraf').Context} Context
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').SendListOptions
  * } SendListOptions
@@ -25,6 +26,7 @@ const defaultOptions = {
  * списка желаний пользователя, при его наличии, другим пользователям.
  * При отсутствии желаний пользователя отправляется сообщение об этом
  * @function sendList
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {string} [username] Имя пользователя -- владельца списка
@@ -33,8 +35,8 @@ const defaultOptions = {
  * @returns {Promise<void>}
  * @async
  */
-const sendList = async (ctx, userid, username, passedOptions = {}) => {
-  const messages = formMessages(ctx, userid);
+const sendList = async (eventBus, ctx, userid, username, passedOptions = {}) => {
+  const messages = formMessages(eventBus, ctx, userid);
 
   const userMention = getMentionFromUseridOrUsername(userid, username);
 

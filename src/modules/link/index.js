@@ -4,7 +4,7 @@ import { Format, Markup } from 'telegraf';
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

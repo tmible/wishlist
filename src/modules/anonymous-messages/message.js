@@ -1,4 +1,6 @@
 import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import getUseridFromInput from '@tmible/wishlist-bot/helpers/get-userid-from-input';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
@@ -7,11 +9,12 @@ import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helper
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  */
 
 /**
@@ -19,12 +22,13 @@ import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helper
  * в случае успеха, отправка сообщения-приглашения для отправки сообщения,
  * копия которого будет отправлена адресату
  * @function handleAnonymousMessage
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @returns {Promise<void>}
  * @async
  */
-const handleAnonymousMessage = async (ctx) => {
-  const [ chatId ] = getUseridFromInput(ctx.payload || ctx.message.text);
+const handleAnonymousMessage = async (eventBus, ctx) => {
+  const [ chatId ] = getUseridFromInput(eventBus, ctx.payload || ctx.message.text);
 
   if (!chatId) {
     await ctx.sendMessage('Я не могу отправить сообщение этому адресату ☹️');
@@ -50,6 +54,8 @@ const handleAnonymousMessage = async (ctx) => {
 
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   /**
    * При получении команды /message, запускающей процесс отправки анонимного сообщения:
    * 1. Если у неё нет полезной нагрузки, бот отправляет пользователю сообщение-приглашение
@@ -75,12 +81,14 @@ const configure = (bot) => {
       return;
     }
 
-    await handleAnonymousMessage(ctx);
+    await handleAnonymousMessage(eventBus, ctx);
   });
 };
 
 /** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   /**
    * При получении сообщения от пользователя, если ожидается сообщение для анонимной отправки,
    * копия полученного сообщения отправляется адресату
@@ -88,7 +96,7 @@ const messageHandler = (bot) => {
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageRecieverUsername) {
       delete ctx.session.messagePurpose;
-      return handleAnonymousMessage(ctx);
+      return handleAnonymousMessage(eventBus, ctx);
     }
 
     if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessage) {

@@ -28,9 +28,9 @@ describe('wishlist/send-list', () => {
       new Format.FmtString('@username', [{ type: 'mention', offset: 0, length: 9 }]),
     );
 
-    const ctx = { sendMessage: testContext.mock.fn(async () => {}) };
+    const ctx = { sendMessage: testContext.mock.fn() };
 
-    await sendList(ctx, 'userid', 'username');
+    await sendList({}, ctx, 'userid', 'username');
 
     assert.deepEqual(
       ctx.sendMessage.mock.calls[0].arguments,
@@ -52,7 +52,7 @@ describe('wishlist/send-list', () => {
 
     const ctx = {};
 
-    await sendList(ctx, 'userid', 'username', { shouldSendNotification: true });
+    await sendList({}, ctx, 'userid', 'username', { shouldSendNotification: true });
 
     verify(manageListsMessages(
       ctx,

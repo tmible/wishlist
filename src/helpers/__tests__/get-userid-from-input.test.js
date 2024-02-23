@@ -1,54 +1,61 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, describe, it } from 'node:test';
-import { matchers, reset, verify, when } from 'testdouble';
-import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
-import Events from '@tmible/wishlist-bot/store/events';
+import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import getUseridFromInput from '../get-userid-from-input.js';
 
 const usernames = new Map([
   [ '123', 'username' ],
   [ 'username', '123' ],
 ]);
 
-const { emit } = await replaceModule('@tmible/wishlist-bot/store/event-bus');
-const getUseridFromInput = await import('../get-userid-from-input.js')
-  .then((module) => module.default);
-
 describe('getUseridFromInput', () => {
-  afterEach(reset);
-
   it('should return nulls if no userid or username found', () => {
-    assert.deepEqual(getUseridFromInput(' random string\t'), [ null, null ]);
+    assert.deepEqual(getUseridFromInput({}, ' random string\t'), [ null, null ]);
   });
 
   describe('if userid found', () => {
+    let emit;
+
+    beforeEach(() => {
+      emit = mock.fn(
+        (_, useridOrUsername) => [ useridOrUsername, usernames.get(useridOrUsername) ],
+      );
+    });
+
+    afterEach(() => mock.reset());
+
     it('should request username and check userid', () => {
-      getUseridFromInput('123');
-      verify(emit(Events.Usernames.GetUseridAndUsernameIfPresent, '123'));
+      getUseridFromInput({ emit }, '123');
+      assert.deepEqual(
+        emit.mock.calls[0].arguments,
+        [ Events.Usernames.GetUseridAndUsernameIfPresent, '123' ],
+      );
     });
 
     it('should return userid and username', () => {
-      when(
-        emit(matchers.anything(), matchers.isA(String)),
-      ).thenDo(
-        (_, useridOrUsername) => [ useridOrUsername, usernames.get(useridOrUsername) ],
-      );
-      assert.deepEqual(getUseridFromInput('123'), [ '123', 'username' ]);
+      assert.deepEqual(getUseridFromInput({ emit }, '123'), [ '123', 'username' ]);
     });
   });
 
   describe('if username found', () => {
+    let emit;
+
+    beforeEach(() => {
+      emit = mock.fn((_, useridOrUsername) => usernames.get(useridOrUsername));
+    });
+
+    afterEach(() => mock.reset());
+
     it('should request userid', () => {
-      getUseridFromInput('username');
-      verify(emit(Events.Usernames.GetUseridByUsername, 'username'));
+      getUseridFromInput({ emit }, 'username');
+      assert.deepEqual(
+        emit.mock.calls[0].arguments,
+        [ Events.Usernames.GetUseridByUsername, 'username' ],
+      );
     });
 
     it('should return userid and username', () => {
-      when(
-        emit(matchers.anything(), matchers.isA(String)),
-      ).thenDo(
-        (_, useridOrUsername) => usernames.get(useridOrUsername),
-      );
-      assert.deepEqual(getUseridFromInput('username'), [ '123', 'username' ]);
+      assert.deepEqual(getUseridFromInput({ emit }, 'username'), [ '123', 'username' ]);
     });
   });
 });

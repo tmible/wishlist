@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "2.14.4",
+  "version": "2.14.5",
   "description": "Телеграм-бот со списком желаний",
   "scripts": {
     "start": "node ./src/index.js",
@@ -13,7 +13,7 @@
     "lint:tests:fix": "eslint --config .eslintrc.tests.json --ext .test.js --fix ./src",
     "test": "c8 node --test",
     "test:prod": "c8 -r text-summary -r text node --test",
-    "test:only": "pnpm test -- --test-only",
+    "test:only": "node --test --test-only",
     "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
     "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",
     "prepare": "husky"
@@ -26,6 +26,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.js",
+    "./architecture/*": "./src/architecture/*.js",
     "./constants/*": "./src/constants/*.const.js",
     "./helpers/*": "./src/helpers/*.js",
     "./modules/*": "./src/modules/*/index.js",

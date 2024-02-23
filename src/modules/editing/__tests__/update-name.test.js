@@ -1,25 +1,20 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import Events from '@tmible/wishlist-bot/store/events';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import ItemNamePattern from '../constants/item-name-pattern.const.js';
 
+const [ initiateUpdate, { inject }, updateValue ] = await Promise.all([
+  replaceEsm('../helpers/template-functions/initiate-update.js').then((module) => module.default),
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
+]);
+const UpdateNameModule = await import('../update-name.js').then((module) => module.default);
+
 describe('editing/update-name module', () => {
-  let initiateUpdate;
-  let updateValue;
-  let UpdateNameModule;
-
-  beforeEach(async () => {
-    [ initiateUpdate, updateValue ] = await Promise.all([
-      replaceEsm('../helpers/template-functions/initiate-update.js')
-        .then((module) => module.default),
-      replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
-    ]);
-    UpdateNameModule = await import('../update-name.js').then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should register update_name action handler', () => {
@@ -62,9 +57,10 @@ describe('editing/update-name module', () => {
 
     beforeEach(async () => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       ctx = {};
       captor = matchers.captor();
+      when(inject(), { ignoreExtraArgs: true }).thenReturn('event bus');
       UpdateNameModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));
       await captor.value(ctx, next);
@@ -74,6 +70,7 @@ describe('editing/update-name module', () => {
 
     it('should update value', () => {
       verify(updateValue(
+        'event bus',
         ctx,
         MessagePurposeType.UpdateName,
         /* eslint-disable-next-line

@@ -8,8 +8,8 @@ describe('cancelActionHandler', () => {
   let deleteMessage;
 
   beforeEach(() => {
-    reply = mock.fn(async () => {});
-    deleteMessage = mock.fn(async () => {});
+    reply = mock.fn();
+    deleteMessage = mock.fn();
     ctx = { reply, deleteMessage, session: {} };
   });
 

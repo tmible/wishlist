@@ -1,22 +1,25 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import { func, matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
-import Events from '@tmible/wishlist-bot/store/events';
+
+const emit = func();
 
 const [
   isChatGroup,
   { sendMessageAndMarkItForMarkupRemove },
-  { emit },
+  { inject },
   sendList,
 ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
   replaceModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'),
-  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
 ]);
+
 const AddModule = await import('../add.js').then((module) => module.default);
 
 describe('editing/add module', () => {
@@ -57,6 +60,7 @@ describe('editing/add module', () => {
 
   it('should register message handler', () => {
     const bot = object([ 'on' ]);
+    when(inject(), { ignoreExtraArgs: true }).thenReturn({ emit });
     AddModule.messageHandler(bot);
     verify(bot.on('message', matchers.isA(Function)));
   });
@@ -68,8 +72,9 @@ describe('editing/add module', () => {
 
     beforeEach(() => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       captor = matchers.captor();
+      when(inject(), { ignoreExtraArgs: true }).thenReturn({ emit });
       AddModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));
     });
@@ -127,7 +132,7 @@ describe('editing/add module', () => {
         });
 
         it('should send list', () => {
-          verify(sendList(ctx));
+          verify(sendList({ emit }, ctx));
         });
       });
     });

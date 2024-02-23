@@ -8,7 +8,7 @@ describe('deleteMessagePurposeMiddleware', () => {
 
   beforeEach(() => {
     ctx = { session: { messagePurpose: { type: 'messagePurpose' } } };
-    next = mock.fn(async () => {});
+    next = mock.fn();
   });
 
   afterEach(() => mock.reset());

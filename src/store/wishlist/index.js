@@ -1,21 +1,21 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import BookItem from './book-item.js';
 import CooperateOnItem from './cooperate-on-item.js';
 import GetList from './get-list.js';
 import RetireFromItem from './retire-from-item.js';
 
-/* eslint-enable import/no-cycle */
-
 /** @module Модуль хранилища для работы со списками желаний других пользователей */
 
 /**
  * Настройка модуля хранилища
- * [Подписка]{@link subscribe} на [события]{@link Events} и подготовка выражений запроса БД
+ * Подписка на [события]{@link Events} и подготовка выражений запроса БД
  * @function configure
  */
 const configure = () => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   [
     [ Events.Wishlist.GetList, GetList ],
     [ Events.Wishlist.BookItem, BookItem ],
@@ -24,7 +24,7 @@ const configure = () => {
   /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
     Пробел нужен для консистентности с другими элементами массива
   */
-  ].forEach(([ event, { eventHandler } ]) => subscribe(event, eventHandler));
+  ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [
     GetList,

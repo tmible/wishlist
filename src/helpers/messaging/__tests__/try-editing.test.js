@@ -5,7 +5,7 @@ import tryEditing from '../try-editing.js';
 
 describe('tryEditing', () => {
   it('should call editing method', async (testContext) => {
-    const editMessageText = testContext.mock.fn(async () => {});
+    const editMessageText = testContext.mock.fn();
     await tryEditing({ telegram: { editMessageText } });
     assert(editMessageText.mock.calls.length > 0);
   });

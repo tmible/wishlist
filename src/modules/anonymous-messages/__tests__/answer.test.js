@@ -67,7 +67,7 @@ describe('anonymous-messages/answer module', () => {
 
     beforeEach(() => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       captor = matchers.captor();
       AnswerModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));

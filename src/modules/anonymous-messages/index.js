@@ -1,4 +1,4 @@
-import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
 import AnswerModule from './answer.js';
 import CancelAnswerModule from './cancel-answer.js';
 import CancelMessageModule from './cancel-message.js';
@@ -6,7 +6,7 @@ import MessageModule from './message.js';
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

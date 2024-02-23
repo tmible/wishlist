@@ -5,12 +5,7 @@ import assertSnapshot from 'snapshot-assertion';
 import { matchers, reset, verify, when } from 'testdouble';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
-const [
-  { emit },
-  isChatGroup,
-  manageListsMessages,
-] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/store/event-bus'),
+const [ isChatGroup, manageListsMessages ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
   replaceModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages'),
 ]);
@@ -20,19 +15,15 @@ describe('editing/send-list if chat isn\'t group', () => {
   let ctx;
 
   beforeEach(() => {
-    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
     ctx = { chat: { id: 'userid' } };
+    when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
   });
 
   afterEach(reset);
 
   it('should send notification message if list is empty', async (testContext) => {
-    when(emit(), { ignoreExtraArgs: true }).thenReturn([]);
-
-    ctx.reply = testContext.mock.fn(async () => {});
-
-    await sendList(ctx);
-
+    ctx.reply = testContext.mock.fn();
+    await sendList({ emit: () => [] }, ctx);
     assert.deepEqual(
       ctx.reply.mock.calls[0].arguments,
       [ 'Ваш список пуст. Вы можете добавить в него что-нибудь с помощью команды /add' ],
@@ -54,11 +45,8 @@ describe('editing/send-list if chat isn\'t group', () => {
   }];
 
   it('should send list if it is not empty', async () => {
-    when(emit(), { ignoreExtraArgs: true }).thenReturn(list);
     const captors = new Array(5).fill(null).map(() => matchers.captor());
-
-    await sendList(ctx);
-
+    await sendList({ emit: () => list }, ctx);
     verify(
       manageListsMessages(...captors.map(({ capture }) => capture())),
       { ignoreExtraArgs: true },

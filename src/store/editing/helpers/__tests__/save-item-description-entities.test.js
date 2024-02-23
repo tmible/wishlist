@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import { afterEach, describe, it } from 'node:test';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, reset, verify, when } from 'testdouble';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
@@ -16,11 +16,15 @@ const entities = [{
 }];
 
 const db = object([ 'prepare', 'pragma' ]);
-await replaceModule('@tmible/wishlist-bot/store', { db });
+const { inject } = await replaceModule('@tmible/wishlist-bot/architecture/dependency-injector');
 const saveItemDescriptionEntities = await import('../save-item-description-entities.js')
   .then((module) => module.default);
 
 describe('saveItemDescriptionEntities', () => {
+  beforeEach(() => {
+    when(inject(), { ignoreExtraArgs: true }).thenReturn(db);
+  });
+
   afterEach(reset);
 
   it('should return if entities is not array', () => {

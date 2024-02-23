@@ -1,5 +1,5 @@
-/* eslint-disable-next-line import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { db } from '@tmible/wishlist-bot/store';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import saveItemDescriptionEntities from './helpers/save-item-description-entities.js';
 
 /**
@@ -18,10 +18,13 @@ let statements;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statements = [
-  'UPDATE list SET description = ? WHERE id = ?',
-  'DELETE FROM description_entities WHERE list_item_id = ?',
-].map((statement) => db.prepare(statement));
+const prepare = () => {
+  const db = inject(InjectionToken.Database);
+  statements = [
+    'UPDATE list SET description = ? WHERE id = ?',
+    'DELETE FROM description_entities WHERE list_item_id = ?',
+  ].map((statement) => db.prepare(statement));
+};
 
 /**
  * Обновление описания подарка в БД
@@ -33,7 +36,7 @@ const prepare = () => statements = [
  */
 const eventHandler = (itemId, description, entities) => {
   const parameters = [[ description, itemId ], itemId ];
-  db.transaction(() => {
+  inject(InjectionToken.Database).transaction(() => {
     statements.forEach((statement, i) => statement.run(parameters[i]));
     saveItemDescriptionEntities(itemId, entities, 0);
   })();

@@ -1,25 +1,20 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify } from 'testdouble';
+import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import Events from '@tmible/wishlist-bot/store/events';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import ItemPriorityPattern from '../constants/item-priority-pattern.const.js';
 
+const [ initiateUpdate, { inject }, updateValue ] = await Promise.all([
+  replaceEsm('../helpers/template-functions/initiate-update.js').then((module) => module.default),
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
+]);
+const UpdatePriorityModule = await import('../update-priority.js').then((module) => module.default);
+
 describe('editing/update-priority module', () => {
-  let initiateUpdate;
-  let updateValue;
-  let UpdatePriorityModule;
-
-  beforeEach(async () => {
-    [ initiateUpdate, updateValue ] = await Promise.all([
-      replaceEsm('../helpers/template-functions/initiate-update.js')
-        .then((module) => module.default),
-      replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
-    ]);
-    UpdatePriorityModule = await import('../update-priority.js').then((module) => module.default);
-  });
-
   afterEach(reset);
 
   it('should register update_priority action handler', () => {
@@ -62,9 +57,10 @@ describe('editing/update-priority module', () => {
 
     beforeEach(async () => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       ctx = {};
       captor = matchers.captor();
+      when(inject(), { ignoreExtraArgs: true }).thenReturn('event bus');
       UpdatePriorityModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));
       await captor.value(ctx, next);
@@ -74,6 +70,7 @@ describe('editing/update-priority module', () => {
 
     it('should update value', () => {
       verify(updateValue(
+        'event bus',
         ctx,
         MessagePurposeType.UpdatePriority,
         /* eslint-disable-next-line

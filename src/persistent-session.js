@@ -1,5 +1,6 @@
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
-import { getLocalDB } from '@tmible/wishlist-bot/services/local-db';
 
 /**
  * @typedef {import('telegraf').Context} Context
@@ -8,12 +9,6 @@ import { getLocalDB } from '@tmible/wishlist-bot/services/local-db';
  */
 
 /** @module Персистентная относительно запусков бота сессия */
-
-/**
- * Объект для доступа к БД
- * @type {ClassicLevel}
- */
-let db;
 
 /**
  * Установка оригинала персистентной относительно запусков бота сессии в БД в значение по умолчанию
@@ -25,19 +20,23 @@ export const dropPersistentSession = async (ctx) => {
   if (Object.hasOwn(ctx.session, 'persistent')) {
     ctx.session.persistent = { lists: {} };
   }
-  await db.put(getSessionKey(ctx), { lists: {} });
+  await inject(InjectionToken.LocalDatabase)('persistent-session').put(
+    getSessionKey(ctx),
+    { lists: {} },
+  );
 };
 
 /**
  * Получение по ключу объекта из БД. В случае отсутствия в БД значения по переданному ключу
  * [устанавливается значение по умолчанию]{@link dropPersistentSession}
  * @function getPersistentSessionFromDB
+ * @param {ClassicLevel} db Объект для доступа к БД
  * @param {Context} ctx Контекст
  * @param {number} key Ключ сессии
  * @returns {Promise<unknown>} Значение из БД, полученное по ключу
  * @async
  */
-const getPersistentSessionFromDB = async (ctx, key) => {
+const getPersistentSessionFromDB = async (db, ctx, key) => {
   try {
     return await db.get(key);
   } catch (e) {
@@ -51,19 +50,19 @@ const getPersistentSessionFromDB = async (ctx, key) => {
 };
 
 /**
- * [Получение]{@link getLocalDB} объекта для доступа к БД и создание промежуточного обработчика
+ * Получение объекта для доступа к БД и создание промежуточного обработчика
  * для работы персистентной относительно запусков бота сессии
  * Промежуточный обработчик [получает]{@link getPersistentSessionFromDB}
  * по [ключу]{@link getSessionKey} объект из БД, определяет в сессии свойство persistent,
  * предоставляющее доступ к объекту из БД, вызывает следующие промежуточные обработчики
  * и после завершения их работы, если необходимо, синхронизирует изменённый в процессе работы
  * объект с его оригиналом в БД
- * @function initPersistentSession
+ * @function persistentSession
  * @returns {MiddlewareFn<Context>} Промежуточный обработчик для работы персистентной
  *   относительно запусков бота сессии
  */
-export const initPersistentSession = () => {
-  db = getLocalDB('persistent-session');
+export const persistentSession = () => {
+  const db = inject(InjectionToken.LocalDatabase)('persistent-session');
 
   return async (ctx, next) => {
     let cached;
@@ -71,7 +70,7 @@ export const initPersistentSession = () => {
 
     const key = getSessionKey(ctx);
 
-    cached = await getPersistentSessionFromDB(ctx, key);
+    cached = await getPersistentSessionFromDB(db, ctx, key);
 
     Object.defineProperty(ctx.session, 'persistent', {
       get: () => {

@@ -1,8 +1,12 @@
 import 'dotenv/config.js';
 import { session, Telegraf } from 'telegraf';
+import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
+import { provide } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import { emit, subscribe } from '@tmible/wishlist-bot/architecture/event-bus';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import DefaultCommandSet from '@tmible/wishlist-bot/constants/default-command-set';
 import GroupCommandSet from '@tmible/wishlist-bot/constants/group-command-set';
-import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
 import getSessionKey from '@tmible/wishlist-bot/helpers/get-session-key';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import deleteMessagePurposeMiddleware from '@tmible/wishlist-bot/helpers/middlewares/delete-message-purpose';
@@ -13,40 +17,28 @@ import EditingModule from '@tmible/wishlist-bot/modules/editing';
 import HelpModule from '@tmible/wishlist-bot/modules/help';
 import LinkModule from '@tmible/wishlist-bot/modules/link';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
-import {
-  dropPersistentSession,
-  initPersistentSession,
-} from '@tmible/wishlist-bot/persistent-session';
-import {
-  autoUpdateMiddleware,
-  startAutoUpdateService,
-} from '@tmible/wishlist-bot/services/lists-auto-update';
-import { closeLocalDB } from '@tmible/wishlist-bot/services/local-db';
-import { destroyStore, initStore } from '@tmible/wishlist-bot/store';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+import { dropPersistentSession, persistentSession } from '@tmible/wishlist-bot/persistent-session';
+import autoUpdate from '@tmible/wishlist-bot/services/lists-auto-update';
+import { closeLocalDB, getLocalDB } from '@tmible/wishlist-bot/services/local-db';
+import initStore from '@tmible/wishlist-bot/store';
 import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
 
+provide(InjectionToken.EventBus, { subscribe, emit });
+provide(InjectionToken.LocalDatabase, getLocalDB);
+
 console.log('initializing store');
-await initStore();
+const destroyStore = await initStore();
 
 console.log('creating bot');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 console.log('initializing session');
 bot.use(session({ getSessionKey, defaultSession: () => ({}) }));
-bot.use(initPersistentSession());
-
-console.log('starting auto update service');
-startAutoUpdateService();
+bot.use(persistentSession());
 
 console.log('configuring bot');
-bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware));
-bot.on('message', removeLastMarkupMiddleware);
-bot.action(/.*/, removeLastMarkupMiddleware);
-bot.on('message', deleteMessagePurposeMiddleware);
-bot.on('message', autoUpdateMiddleware);
-bot.action(/.*/, autoUpdateMiddleware);
+bot.on('message', Telegraf.groupChat(forcePrivacyModeMiddleware), deleteMessagePurposeMiddleware);
+bot.on([ 'message', 'callback_query' ], removeLastMarkupMiddleware, autoUpdate());
 
 bot.start(async (ctx) => {
   await ctx.telegram.setMyCommands(DefaultCommandSet, { scope: { type: 'default' } });

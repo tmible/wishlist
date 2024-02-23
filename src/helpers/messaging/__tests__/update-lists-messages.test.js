@@ -13,9 +13,9 @@ describe('updateListsMessages', () => {
     reply = mock.fn((text) => Promise.resolve(
       { message_id: 'messageId', chat: { id: 'chatId' }, text },
     ));
-    pinChatMessage = mock.fn(async () => {});
-    editMessageText = mock.fn(async () => {});
-    deleteMessage = mock.fn(async () => {});
+    pinChatMessage = mock.fn();
+    editMessageText = mock.fn();
+    deleteMessage = mock.fn();
     ctx = {
       chat: { id: 'chatId' },
       reply,

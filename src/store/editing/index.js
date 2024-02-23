@@ -1,14 +1,12 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
-import { subscribe } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import AddItem from './add-item.js';
 import DeleteItems from './delete-items.js';
 import GetList from './get-list.js';
 import UpdateItemDescription from './update-item-description.js';
 import UpdateItemName from './update-item-name.js';
 import UpdateItemPriority from './update-item-priority.js';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * @module Модуль хранилища для обеспечения работы
@@ -17,10 +15,12 @@ import UpdateItemPriority from './update-item-priority.js';
 
 /**
  * Настройка модуля хранилища
- * [Подписка]{@link subscribe} на [события]{@link Events} и подготовка выражений запроса БД
+ * Подписка на [события]{@link Events} и подготовка выражений запроса БД
  * @function configure
  */
 const configure = () => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   [
     [ Events.Editing.AddItem, AddItem ],
     [ Events.Editing.DeleteItems, DeleteItems ],
@@ -31,7 +31,7 @@ const configure = () => {
   /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
     Пробел нужен для консистентности с другими элементами массива
   */
-  ].forEach(([ event, { eventHandler } ]) => subscribe(event, eventHandler));
+  ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [
     AddItem,

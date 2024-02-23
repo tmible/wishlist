@@ -1,25 +1,28 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { Markup } from 'telegraf';
-import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import { func, matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
-import Events from '@tmible/wishlist-bot/store/events';
+
+const emit = func();
+const subscribe = func();
 
 const [
+  { inject },
+  getUseridFromInput,
   isUserInChat,
   isChatGroup,
-  { emit, subscribe },
   { sendMessageAndMarkItForMarkupRemove },
   sendList,
-  getUseridFromInput,
 ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-bot/helpers/get-userid-from-input'),
   replaceModule('@tmible/wishlist-bot/helpers/is-user-in-chat'),
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
-  replaceModule('@tmible/wishlist-bot/store/event-bus'),
   replaceModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
-  replaceModule('@tmible/wishlist-bot/helpers/get-userid-from-input'),
 ]);
 const ListModule = await import('../list.js').then((module) => module.default);
 
@@ -27,6 +30,10 @@ describe('wishlist/list module', () => {
   let ctx;
   let captor;
   let userid;
+
+  beforeEach(() => {
+    when(inject(), { ignoreExtraArgs: true }).thenReturn({ emit, subscribe });
+  });
 
   afterEach(reset);
 
@@ -124,7 +131,13 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx);
-        verify(sendList(ctx, 123, 'username', { shouldSendNotification: true }));
+        verify(sendList(
+          { emit, subscribe },
+          ctx,
+          123,
+          'username',
+          { shouldSendNotification: true },
+        ));
       });
     });
   });
@@ -144,7 +157,7 @@ describe('wishlist/list module', () => {
       ListModule.configure(bot);
       verify(bot.action(/^update_list (\d+)$/, captor.capture()));
       await captor.value(ctx);
-      verify(sendList(ctx, 123, 'username', { shouldSendNotification: true }));
+      verify(sendList({ emit, subscribe }, ctx, 123, 'username', { shouldSendNotification: true }));
     });
   });
 
@@ -163,7 +176,7 @@ describe('wishlist/list module', () => {
       ListModule.configure(bot);
       verify(bot.action(/^force_list (\d+)$/, captor.capture()));
       await captor.value(ctx);
-      verify(sendList(ctx, 123, 'username', { shouldForceNewMessages: true }));
+      verify(sendList({ emit, subscribe }, ctx, 123, 'username', { shouldForceNewMessages: true }));
     });
   });
 
@@ -183,6 +196,7 @@ describe('wishlist/list module', () => {
       verify(bot.action(/^manual_update (\d+)$/, captor.capture()));
       await captor.value(ctx);
       verify(sendList(
+        { emit, subscribe },
         ctx,
         123,
         'username',
@@ -217,7 +231,13 @@ describe('wishlist/list module', () => {
 
     it('should send list', async () => {
       await captor.value(ctx, userid);
-      verify(sendList(ctx, userid, 'username', { shouldSendNotification: true }));
+      verify(sendList(
+        { emit, subscribe },
+        ctx,
+        userid,
+        'username',
+        { shouldSendNotification: true },
+      ));
     });
   });
 
@@ -232,7 +252,7 @@ describe('wishlist/list module', () => {
 
     beforeEach(() => {
       const bot = object([ 'on' ]);
-      next = mock.fn(async () => {});
+      next = mock.fn();
       captor = matchers.captor();
       ListModule.messageHandler(bot);
       verify(bot.on('message', captor.capture()));
@@ -284,7 +304,13 @@ describe('wishlist/list module', () => {
 
       it('should send list', async () => {
         await captor.value(ctx, next);
-        verify(sendList(ctx, 123, 'username', { shouldSendNotification: true }));
+        verify(sendList(
+          { emit, subscribe },
+          ctx,
+          123,
+          'username',
+          { shouldSendNotification: true },
+        ));
       });
     });
   });

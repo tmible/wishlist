@@ -1,16 +1,18 @@
 import { Format } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import formMessages from '@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
 import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
-import { initPersistentSession } from '@tmible/wishlist-bot/persistent-session';
-import { getLocalDB } from '@tmible/wishlist-bot/services/local-db';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
+import { persistentSession } from '@tmible/wishlist-bot/persistent-session';
 
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').Chat} Chat
+ * @typedef {import('telegraf').MiddlewareFn} MiddlewareFn
  * @typedef {import('classic-level').ClassicLevel} ClassicLevel
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  */
 
 /**
@@ -19,27 +21,15 @@ import Events from '@tmible/wishlist-bot/store/events';
  */
 
 /**
- * Объект для доступа к БД
- * @type {ClassicLevel}
- */
-let db;
-
-/**
- * Инициализация [объекта для доступа к БД]{@link db}
- * @function startAutoUpdateService
- * @returns {void}
- */
-export const startAutoUpdateService = () => db = getLocalDB('auto-update');
-
-/**
  * Добавление чата в список автоматического обновления для списка желаний
  * @function addChatToAutoUpdate
+ * @param {ClassicLevel} db Объект для доступа к БД
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {{ id: number, type: string }} chat Добавляемый к автоматическому обновлению чат
  * @returns {Promise<void>}
  * @async
  */
-const addChatToAutoUpdate = async (userid, chat) => {
+const addChatToAutoUpdate = async (db, userid, chat) => {
   let current = [];
   try {
     current = await db.get(userid);
@@ -57,13 +47,14 @@ const addChatToAutoUpdate = async (userid, chat) => {
 /**
  * Удаление чата из списка автоматического обновления для списка желаний
  * @function removeChatFromAutoUpdate
+ * @param {ClassicLevel} db Объект для доступа к БД
  * @param {number[]} userids Идентификаторы пользователей -- владельцев списков,
  *   которые были в удаляемом чате
  * @param {number} chatId Идентификатор удаляемого чата
  * @returns {Promise<void>}
  * @async
  */
-const removeChatFromAutoUpdate = async (userids, chatId) => {
+const removeChatFromAutoUpdate = async (db, userids, chatId) => {
   const current = await db.getMany(userids);
   await db.batch(userids.map((userid, i) => ({
     type: 'put',
@@ -76,17 +67,16 @@ const removeChatFromAutoUpdate = async (userids, chatId) => {
  * Проверка необходимости добавления и добавление чатов в список автоматического обновления.
  * Автоматически при запросе нового списка и вручную при ручном обновлении
  * @function checkChatsToAdd
+ * @param {ClassicLevel} db Объект для доступа к БД
  * @param {Context} ctx Контекст
  * @param {Set<number>} memoizedSet Множество идентификаторов пользователей -- владельцев списков,
- *   списки которых были в чате в начале работы
- *   [промежуточного обработчика]{@link autoUpdateMiddleware}
+ *   списки которых были в чате в начале работы [промежуточного обработчика]{@link autoUpdate}
  * @param {number[]} current Массив идентификаторов пользователей -- владельцев списков,
- *   списки которых были в чате в конце работы
- *   [промежуточного обработчика]{@link autoUpdateMiddleware}
+ *   списки которых были в чате в конце работы [промежуточного обработчика]{@link autoUpdate}
  * @returns {Promise<void>}
  * @async
  */
-const checkChatsToAdd = async (ctx, memoizedSet, current) => {
+const checkChatsToAdd = async (db, ctx, memoizedSet, current) => {
   for (const userid of current) {
     if (memoizedSet.has(userid)) {
       continue;
@@ -95,11 +85,12 @@ const checkChatsToAdd = async (ctx, memoizedSet, current) => {
     if (ctx.from.id === userid) {
       continue;
     }
-    await addChatToAutoUpdate(userid, { id: ctx.chat.id, type: ctx.chat.type });
+    await addChatToAutoUpdate(db, userid, { id: ctx.chat.id, type: ctx.chat.type });
   }
 
   if (ctx.state.autoUpdate?.shouldAddChat) {
     await addChatToAutoUpdate(
+      db,
       ctx.state.autoUpdate.shouldAddChat,
       { id: ctx.chat.id, type: ctx.chat.type },
     );
@@ -109,22 +100,21 @@ const checkChatsToAdd = async (ctx, memoizedSet, current) => {
 /**
  * Проверка необходимости удаления и удаление чатов из списка автоматического обновления
  * @function checkChatsToRemove
+ * @param {ClassicLevel} db Объект для доступа к БД
  * @param {Context} ctx Контекст
  * @param {number[]} memoized Массив идентификаторов пользователей -- владельцев списков,
- *   списки которых были в чате в начале работы
- *   [промежуточного обработчика]{@link autoUpdateMiddleware}
+ *   списки которых были в чате в начале работы [промежуточного обработчика]{@link autoUpdate}
  * @param {Set<number>} currentSet Множество идентификаторов пользователей -- владельцев списков,
- *   списки которых были в чате в конце работы
- *   [промежуточного обработчика]{@link autoUpdateMiddleware}
+ *   списки которых были в чате в конце работы [промежуточного обработчика]{@link autoUpdate}
  * @returns {Promise<void>}
  * @async
  */
-const checkChatsToRemove = async (ctx, memoized, currentSet) => {
+const checkChatsToRemove = async (db, ctx, memoized, currentSet) => {
   for (const userid of memoized) {
     if (currentSet.has(userid)) {
       continue;
     }
-    await removeChatFromAutoUpdate(memoized, ctx.chat.id);
+    await removeChatFromAutoUpdate(db, memoized, ctx.chat.id);
   }
 };
 
@@ -147,22 +137,23 @@ const constructFakeCtx = (chat, ctx) => {
 };
 
 /**
- * [Инициализация персистентной сессии]{@link initPersistentSession} для искусственного контекста и
+ * [Инициализация персистентной сессии]{@link persistentSession} для искусственного контекста и
  * отправка в искуственном контексте сообщений с применением обновлений
  * @function sendUpdates
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {Context} fakeCtx Искусственный контекст для отправки обновлений в другой чат
  * @returns {Promise<void>}
  */
-const sendUpdates = (ctx, fakeCtx) => initPersistentSession()(fakeCtx, async () => {
+const sendUpdates = (eventBus, ctx, fakeCtx) => persistentSession()(fakeCtx, async () => {
   const userMention = getMentionFromUseridOrUsername(
     ctx.state.autoUpdate.userid,
-    emit(Events.Usernames.GetUsernameByUserid, ctx.state.autoUpdate.userid),
+    eventBus.emit(Events.Usernames.GetUsernameByUserid, ctx.state.autoUpdate.userid),
   );
   await manageListsMessages(
     fakeCtx,
     ctx.state.autoUpdate.userid,
-    formMessages(fakeCtx, ctx.state.autoUpdate.userid),
+    formMessages(eventBus, fakeCtx, ctx.state.autoUpdate.userid),
     Format.join([ 'Актуальный список', userMention ], ' '),
     Format.join([ 'Неактуальный список', userMention ], ' '),
     { shouldSendNotification: false, isAutoUpdate: true },
@@ -176,11 +167,13 @@ const sendUpdates = (ctx, fakeCtx) => initPersistentSession()(fakeCtx, async () 
  * 2.2 [Отправка обновлений]{@link sendUpdates};
  * 2.3 Удаление из списка автоматического обновления при необходимости
  * @function selectChatsAndSendUpdates
+ * @param {ClassicLevel} db Объект для доступа к БД
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @returns {Promise<void>}
  * @async
  */
-const selectChatsAndSendUpdates = async (ctx) => {
+const selectChatsAndSendUpdates = async (db, eventBus, ctx) => {
   const chats = await db.get(ctx.state.autoUpdate.userid).then(
     (chats) => chats.filter(({ id }) => id !== ctx.chat.id),
   );
@@ -188,39 +181,51 @@ const selectChatsAndSendUpdates = async (ctx) => {
 
     const fakeCtx = constructFakeCtx(chat, ctx);
 
-    return sendUpdates(ctx, fakeCtx).then(
+    return sendUpdates(eventBus, ctx, fakeCtx).then(
       () => (fakeCtx.state.autoUpdate?.shouldRemoveChat ?
-        removeChatFromAutoUpdate([ ctx.state.autoUpdate.userid ], chat.id) :
+        removeChatFromAutoUpdate(db, [ ctx.state.autoUpdate.userid ], chat.id) :
         Promise.resolve()),
     );
   }));
 };
 
 /**
- * Промежуточный обработчик, выполняющий автоматическое обновление списков желаний в других чатах
- * @function autoUpdateMiddleware
- * @param {Context} ctx Контекст
- * @param {() => Promise<void>} next Функция вызова следующего промежуточного обработчика
- * @returns {Promise<void>}
- * @async
+ * Получение объекта для доступа к БД и создание промежуточного обработчика,
+ * выполняющего автоматическое обновление списков желаний в других чатах
+ * Промежуточный обработчик запоминает, какие списки были в чате до обработки обновления, и после
+ * неё, если обновление не от самого бота, проверяет, какие списки в чате и при различиях
+ * (или явном указании необходимости) [добавляет]{@link checkChatsToAdd} чаты в список
+ * автоматического обновления или [удаляет]{@link checkChatsToRemove} из него. Далее, если
+ * необходимо автоматическое обновление не в текущем чате,
+ * [отправляет обновления]{@link selectChatsAndSendUpdates} во все нужные чаты
+ * @function autoUpdate
+ * @returns {MiddlewareFn<Context>} Промежуточный обработчик, выполняющий автоматическое
+ *   обновление списков желаний в других чатах
  */
-export const autoUpdateMiddleware = async (ctx, next) => {
-  const memoized = Object.keys(ctx.session.persistent?.lists ?? {});
+const autoUpdate = () => {
+  const db = inject(InjectionToken.LocalDatabase)('auto-update');
+  const eventBus = inject(InjectionToken.EventBus);
 
-  await next();
+  return async (ctx, next) => {
+    const memoized = Object.keys(ctx.session.persistent?.lists ?? {});
 
-  if (ctx.from.id === ctx.botInfo.id) {
-    return;
-  }
+    await next();
 
-  const current = Object.keys(ctx.session.persistent?.lists ?? {});
+    if (ctx.from.id === ctx.botInfo.id) {
+      return;
+    }
 
-  await checkChatsToAdd(ctx, new Set(memoized), current);
-  await checkChatsToRemove(ctx, memoized, new Set(current));
+    const current = Object.keys(ctx.session.persistent?.lists ?? {});
 
-  if (!ctx.state.autoUpdate?.userid || ctx.state.autoUpdate.userid === ctx.chat.id || !db) {
-    return;
-  }
+    await checkChatsToAdd(db, ctx, new Set(memoized), current);
+    await checkChatsToRemove(db, ctx, memoized, new Set(current));
 
-  await selectChatsAndSendUpdates(ctx);
+    if (!ctx.state.autoUpdate?.userid || ctx.state.autoUpdate.userid === ctx.chat.id) {
+      return;
+    }
+
+    await selectChatsAndSendUpdates(db, eventBus, ctx);
+  };
 };
+
+export default autoUpdate;

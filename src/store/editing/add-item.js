@@ -1,9 +1,7 @@
-/* eslint-disable import/no-cycle -- Временно, пока нет сервиса инъекции зависимостей */
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
-import { db } from '@tmible/wishlist-bot/store';
 import saveItemDescriptionEntities from './helpers/save-item-description-entities.js';
-
-/* eslint-enable import/no-cycle */
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
@@ -21,11 +19,13 @@ let statement;
  * @function prepare
  * @returns {void}
  */
-const prepare = () => statement = db.prepare(`
-  INSERT INTO list (userid, priority, name, description, state)
-  VALUES (?, ?, ?, ?, ${ListItemState.FREE})
-  RETURNING id
-`);
+const prepare = () => {
+  statement = inject(InjectionToken.Database).prepare(`
+    INSERT INTO list (userid, priority, name, description, state)
+    VALUES (?, ?, ?, ?, ${ListItemState.FREE})
+    RETURNING id
+  `);
+};
 
 /**
  * Сохранение подарка в БД
@@ -40,7 +40,7 @@ const prepare = () => statement = db.prepare(`
  * @returns {void}
  */
 const eventHandler = (item, entities, descriptionOffset) => {
-  db.transaction(
+  inject(InjectionToken.Database).transaction(
     () => saveItemDescriptionEntities(statement.get(item).id, entities, descriptionOffset),
   )();
 };

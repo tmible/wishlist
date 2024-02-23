@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
-import { reset, when } from 'testdouble';
+import { func, reset, when } from 'testdouble';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
@@ -52,12 +52,12 @@ const list = [{
   participantsIds: [ 'anotherUserId' ],
 }];
 
+const emit = func();
+
 const [
-  { emit },
   getMentionFromUseridOrUsername,
   isChatGroup,
 ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/store/event-bus'),
   replaceModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username'),
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
 ]);
@@ -85,7 +85,7 @@ describe('form foreign list messages', () => {
   it('should form in private chat', async () => {
     when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
 
-    const messages = formMessages(ctx, 'userid');
+    const messages = formMessages({ emit }, ctx, 'userid');
 
     await assertSnapshot(
       JSON.stringify(messages),
@@ -96,7 +96,7 @@ describe('form foreign list messages', () => {
   it('should form in group chat', async () => {
     when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(true);
 
-    const messages = formMessages(ctx, 'userid');
+    const messages = formMessages({ emit }, ctx, 'userid');
 
     await assertSnapshot(
       JSON.stringify(messages),

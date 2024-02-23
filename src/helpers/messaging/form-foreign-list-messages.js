@@ -1,15 +1,15 @@
 import { Format, Markup } from 'telegraf';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import ListItemStateToEmojiMap from '@tmible/wishlist-bot/constants/list-item-state-to-emoji-map';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  * @typedef {import('@tmible/wishlist-bot/store/wishlist/get-list').ListItem} ListItem
  */
 /**
@@ -90,35 +90,38 @@ const formReplyMarkup = (ctx, item, userid) => {
  * Получение списка желаний пользователя из БД и формирование сообщений
  * для просмотра списка другими пользователями
  * @function formMessages
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @returns {Message[]} Сформированные сообщения
  */
-const formMessages = (ctx, userid) => emit(Events.Wishlist.GetList, userid).map((item) => {
-  const stateBlock = ListItemStateToEmojiMap.get(item.state);
-  const priorityBlock = digitToEmoji(item.priority);
-  const emojisBlock = `${stateBlock} ${priorityBlock} `;
-  const participantsBlock = formParticipantsBlock(item);
+const formMessages = (eventBus, ctx, userid) => eventBus
+  .emit(Events.Wishlist.GetList, userid)
+  .map((item) => {
+    const stateBlock = ListItemStateToEmojiMap.get(item.state);
+    const priorityBlock = digitToEmoji(item.priority);
+    const emojisBlock = `${stateBlock} ${priorityBlock} `;
+    const participantsBlock = formParticipantsBlock(item);
 
-  return {
-    itemId: item.id,
-    message: [
-      Format.join([
-        new Format.FmtString(
-          `${emojisBlock}${item.name}`,
-          [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
-        ),
-        ...(
-          item.description ?
-            [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
-            []
-        ),
-        participantsBlock,
-      ]),
+    return {
+      itemId: item.id,
+      message: [
+        Format.join([
+          new Format.FmtString(
+            `${emojisBlock}${item.name}`,
+            [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
+          ),
+          ...(
+            item.description ?
+              [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
+              []
+          ),
+          participantsBlock,
+        ]),
 
-      ...formReplyMarkup(ctx, item, userid),
-    ],
-  };
-});
+        ...formReplyMarkup(ctx, item, userid),
+      ],
+    };
+  });
 
 export default formMessages;

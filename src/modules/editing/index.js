@@ -1,4 +1,4 @@
-import configureModules from '@tmible/wishlist-bot/helpers/configure-modules';
+import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
 import AddModule from './add.js';
 import CancelAddModule from './cancel-add.js';
 import CancelClearListModule from './cancel-clear-list.js';
@@ -14,7 +14,7 @@ import UpdatePriorityModule from './update-priority.js';
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
 

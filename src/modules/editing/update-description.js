@@ -1,16 +1,17 @@
 import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import Events from '@tmible/wishlist-bot/architecture/events';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
-import { emit } from '@tmible/wishlist-bot/store/event-bus';
-import Events from '@tmible/wishlist-bot/store/events';
 import sendList from './helpers/send-list.js';
 import initiateUpdate from './helpers/template-functions/initiate-update.js';
 
 /**
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleConfigureFunction
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  * @typedef {
- *   import('@tmible/wishlist-bot/helpers/configure-modules').ModuleMessageHandler
+ *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
  */
 
@@ -36,12 +37,14 @@ const configure = (bot) => {
 
 /** @type {ModuleMessageHandler} */
 const messageHandler = (bot) => {
+  const eventBus = inject(InjectionToken.EventBus);
+
   /**
    * При получении сообщения от пользователя, если ожидается новое описание подарка,
    * текст полученного сообщения валидируется.
    * При провале валидации бот отправляет сообщение-уведомление об ошибке валидации.
-   * При успехе валидации бот [выпускает]{@link emit} соответствующее событие,
-   * отправляет сообщение-уведомление об успехе сохранения нового описания подарка
+   * При успехе валидации бот выпускает соответствующее событие, отправляет сообщение-уведомление
+   *  об успехе сохранения нового описания подарка
    * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
    */
   bot.on('message', async (ctx, next) => {
@@ -50,10 +53,15 @@ const messageHandler = (bot) => {
 
       delete ctx.session.messagePurpose;
 
-      emit(Events.Editing.UpdateItemDescription, itemId, ctx.message.text, ctx.message.entities);
+      eventBus.emit(
+        Events.Editing.UpdateItemDescription,
+        itemId,
+        ctx.message.text,
+        ctx.message.entities,
+      );
 
       await ctx.reply('Описание обновлено!');
-      return sendList(ctx);
+      return sendList(eventBus, ctx);
     }
 
     return next();
