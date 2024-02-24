@@ -1,13 +1,39 @@
+import { Markup } from 'telegraf';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
-import tryEditing from '@tmible/wishlist-bot/helpers/messaging/try-editing';
-import HelpMessageMarkup from './constants/message-markup.const.js';
+import HelpSections from './constants/sections.const.js';
 import SharedHelpSupportSection from './constants/sections/shared/support.const.js';
+import HelpSectionsNamesMap from './constants/sections-names-map.const.js';
 
 /**
+ * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
  * @typedef {
  *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
  */
+
+/**
+ * Формирование встроенной клавиатуры для переключения между разделами справки
+ * @function formHelpMessageMarkup
+ * @param {string} currentSection Активный раздел справки
+ * @returns {Markup<InlineKeyboardMarkup>} Встроенная клавиатура для переключения между разделами
+ *   справки
+ */
+const formHelpMessageMarkup = (currentSection) => Markup.inlineKeyboard(
+  Object.values(HelpSections).reduce((markupRows, section) => {
+    const sectionButton = Markup.button.callback(
+      HelpSectionsNamesMap.get(section),
+      `help ${section} ${currentSection}`,
+    );
+
+    if (markupRows.at(-1).length === 2) {
+      markupRows.push([ sectionButton ]);
+    } else {
+      markupRows.at(-1).push(sectionButton);
+    }
+
+    return markupRows;
+  }, [[]]),
+);
 
 /**
  * Настройка модуля получения справки
@@ -29,17 +55,20 @@ const configure = (bot) => {
       }\n\n${
         SharedHelpSupportSection
       }`,
-      HelpMessageMarkup,
+      formHelpMessageMarkup('general'),
     );
   });
 
   /**
-   * При вызове действия help бот [заменит текст]{@link tryEditing}
-   * сообщения со справкой на запрашиваемый раздел
+   * При вызове действия help бот заменит текст сообщения со справкой на запрашиваемый раздел,
+   * если сообщение содержит текст другого раздела
    */
-  bot.action(/^help ([a-z-]+)$/, async (ctx) => {
-    await tryEditing(
-      ctx,
+  bot.action(/^help ([a-z-]+) ([a-z-]+)$/, async (ctx) => {
+    if (ctx.match[1] === ctx.match[2]) {
+      return;
+    }
+
+    await ctx.telegram.editMessageText(
       ctx.chat.id,
       ctx.callbackQuery.message.message_id,
       undefined,
@@ -51,7 +80,7 @@ const configure = (bot) => {
         SharedHelpSupportSection
       }`,
       {
-        ...HelpMessageMarkup,
+        ...formHelpMessageMarkup(ctx.match[1]),
         parse_mode: 'MarkdownV2',
       },
     );
