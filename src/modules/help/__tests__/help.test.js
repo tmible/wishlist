@@ -7,7 +7,8 @@ import SharedHelpSupportSection from '../constants/sections/shared/support.const
 
 const bot = object([ 'action', 'command' ]);
 
-const [ isChatGroup, generalHelpSection, nicknameHelpSection ] = await Promise.all([
+const [{ inject }, isChatGroup, generalHelpSection, nicknameHelpSection ] = await Promise.all([
+  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
   replaceEsm('../constants/sections/default/general.const.js').then((module) => module.default),
   replaceEsm('../constants/sections/default/nickname.const.js').then((module) => module.default),
@@ -17,6 +18,7 @@ const HelpModule = await import('../index.js').then((module) => module.default);
 
 describe('help module', () => {
   beforeEach(() => {
+    when(inject(), { ignoreExtraArgs: true }).thenReturn({ debug: () => {} });
     when(isChatGroup(), { ignoreExtraArgs: true }).thenReturn(false);
   });
 

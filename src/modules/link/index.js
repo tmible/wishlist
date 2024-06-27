@@ -1,4 +1,6 @@
 import { Format, Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
  * @typedef {import('telegraf').Context} Context
@@ -46,6 +48,8 @@ const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
 
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
+  inject(InjectionToken.Logger).debug('configuring link module');
+
   /**
    * При вызове действия переключения содержимого сообщения на ссылку для групп или на чат с ботом
    * бот [формирует нужную ссылку]{@link formLink} и заменяет её в сообщении, сохраняя текст,

@@ -1,4 +1,6 @@
 import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import HelpSections from './constants/sections.const.js';
 import SharedHelpSupportSection from './constants/sections/shared/support.const.js';
@@ -40,7 +42,7 @@ const formHelpMessageMarkup = (currentSection) => Markup.inlineKeyboard(
  * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
-  console.log('configuring help module');
+  inject(InjectionToken.Logger).debug('configuring help module');
 
   /**
    * При получении команды /help бот отправит сообщение с общим разделом справки

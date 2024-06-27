@@ -1,4 +1,6 @@
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import AnswerModule from './answer.js';
 import CancelAnswerModule from './cancel-answer.js';
 import CancelMessageModule from './cancel-message.js';
@@ -15,7 +17,7 @@ import MessageModule from './message.js';
  * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
-  console.log('configuring anonymous messages module');
+  inject(InjectionToken.Logger).debug('configuring anonymous messages module');
   return configureModules(bot, [
     AnswerModule,
     CancelAnswerModule,

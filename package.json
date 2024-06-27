@@ -1,28 +1,29 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "2.14.6",
-  "description": "Телеграм-бот со списком желаний",
+  "version": "2.15.0",
+  "description": "Телеграм-бот со списками желаний",
   "scripts": {
     "start": "node ./src/index.js",
     "start:bg": "forever start --uid \"wishlist-bot\" ./src/index.js",
     "restart:bg": "forever restart wishlist-bot",
     "stop:bg": "forever stop wishlist-bot",
-    "lint": "eslint --ignore-pattern '**.test.js' --max-warnings 21 ./src",
-    "lint:fix": "eslint --ignore-pattern '**.test.js' --max-warnings 21 --fix ./src",
+    "lint": "eslint --ignore-pattern '**.test.js' ./src",
+    "lint:fix": "eslint --ignore-pattern '**.test.js' --fix ./src",
     "lint:tests": "eslint --config .eslintrc.tests.json --ext .test.js ./src",
     "lint:tests:fix": "eslint --config .eslintrc.tests.json --ext .test.js --fix ./src",
-    "test": "c8 node --test",
-    "test:prod": "c8 -r text-summary -r text node --test",
-    "test:only": "node --test --test-only",
+    "test": "c8 node --test \"./src/**/*.test.js\"",
+    "test:prod": "c8 -r text-summary -r text node --test \"./src/**/*.test.js\"",
+    "test:only": "node --test --test-only \"./src/**/*.test.js\"",
     "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
     "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",
+    "update": "npm-check-updates",
     "prepare": "husky"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tmible/wishlist-bot.git"
   },
-  "private": "true",
+  "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.js",
@@ -42,6 +43,9 @@
     "better-sqlite3": "^9.3.0",
     "classic-level": "^1.4.1",
     "dotenv": "^16.4.1",
+    "pino": "^8.19.0",
+    "pino-abstract-transport": "^1.1.0",
+    "pino-pretty": "^10.3.1",
     "seal-wasm": "^0.0.3",
     "telegraf": "^4.15.3"
   },
@@ -68,6 +72,7 @@
     "eslint-plugin-sonarjs": "^0.24.0",
     "eslint-plugin-unicorn": "^51.0.1",
     "husky": "^9.0.7",
+    "npm-check-updates": "^16.14.20",
     "snapshot-assertion": "^5.0.0",
     "testdouble": "^3.20.1"
   }

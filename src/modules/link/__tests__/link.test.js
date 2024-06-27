@@ -1,9 +1,18 @@
-import { beforeEach, describe, it } from 'node:test';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 import { Format, Markup } from 'telegraf';
-import { matchers, object, verify } from 'testdouble';
-import LinkModule from '../index.js';
+import { matchers, object, reset, verify, when } from 'testdouble';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const { inject } = await replaceModule('@tmible/wishlist-bot/architecture/dependency-injector');
+const LinkModule = await import('../index.js').then((module) => module.default);
 
 describe('link module', () => {
+  beforeEach(() => {
+    when(inject(), { ignoreExtraArgs: true }).thenReturn({ debug: () => {} });
+  });
+
+  afterEach(reset);
+
   it('should register link command handler', () => {
     const bot = object([ 'action', 'command' ]);
     LinkModule.configure(bot);

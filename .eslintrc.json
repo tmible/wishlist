@@ -96,7 +96,6 @@
     "no-iterator": "error",
     "no-lonely-if": "error",
     "no-multi-assign": "error",
-    "no-new": "error",
     "no-new-func": "error",
     "no-new-wrappers": "error",
     "no-param-reassign": "error",

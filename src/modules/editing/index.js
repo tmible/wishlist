@@ -1,4 +1,6 @@
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import AddModule from './add.js';
 import CancelAddModule from './cancel-add.js';
 import CancelClearListModule from './cancel-clear-list.js';
@@ -23,7 +25,7 @@ import UpdatePriorityModule from './update-priority.js';
  * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
-  console.log('configuring editing module');
+  inject(InjectionToken.Logger).debug('configuring editing module');
   return configureModules(bot, [
     OwnListModule,
     UpdatePriorityModule,

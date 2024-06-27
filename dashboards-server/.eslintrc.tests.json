@@ -1,0 +1,16 @@
+{
+  "plugins": [ "no-only-tests" ],
+  "settings": {
+  	"import/ignore": [
+      "vitest",
+      "@testing-library/svelte"
+    ]
+  },
+  "rules": {
+    "max-lines": "off",
+    "max-lines-per-function": "off",
+    "max-statements": "off",
+    "sonarjs/no-duplicate-string": "off",
+    "no-only-tests/no-only-tests": "error"
+  }
+}

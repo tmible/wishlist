@@ -6,6 +6,9 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboards-server
     steps:
     - uses: actions/checkout@v4
     - name: install node
@@ -13,11 +16,9 @@ jobs:
     - name: install pnpm
       uses: pnpm/action-setup@v2
       with:
-        version: 8
+        version: 9
     - name: install dependencies
-      run: |
-        pnpm pkg delete scripts.prepare
-        pnpm install
+      run: pnpm install
     - name: run lint
       run: |
         pnpm lint
@@ -25,6 +26,9 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboards-server
     steps:
     - uses: actions/checkout@v4
     - name: install node
@@ -32,23 +36,24 @@ jobs:
     - name: install pnpm
       uses: pnpm/action-setup@v2
       with:
-        version: 8
+        version: 9
     - name: install dependencies
-      run: |
-        pnpm pkg delete scripts.prepare
-        pnpm install
+      run: pnpm install
     - name: run tests
       run: pnpm test:prod
 
   deploy:
     needs: [lint, tests]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboards-server
     steps:
     - uses: actions/checkout@v4
-    - name: remove tests
-      run: |
-        find ./src/ -type d -name __tests__ -delete
-        rm -rf ./src/helpers/tests
+    - name: build
+      run: pnpm build
+    - name: remove unnecessary files
+      run: find . -not \( -name 'build' -or -name 'package.json' -or -name 'pnpm-lock.yaml' \) -delete
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
@@ -56,9 +61,8 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
-        EXCLUDE: "/.git/, /.github/, /.husky/, /assets/, .c8rc.json, .gitignore, README.md"
         SCRIPT_AFTER: |
-          cd ${{ secrets.REMOTE_TARGET }}
+          cd ${{ secrets.REMOTE_TARGET }}/dashboards-server
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
           [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

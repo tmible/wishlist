@@ -1,4 +1,6 @@
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
+import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import BookModule from './book.js';
 import CancelListModule from './cancel-list.js';
 import CooperateModule from './cooperate.js';
@@ -17,7 +19,7 @@ import RetireModule from './retire.js';
  * @type {ModuleConfigureFunction}
  */
 const configure = (bot) => {
-  console.log('configuring wishlist module');
+  inject(InjectionToken.Logger).debug('configuring wishlist module');
   return configureModules(bot, [
     ListModule,
     CancelListModule,

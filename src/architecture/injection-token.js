@@ -11,6 +11,7 @@ const InjectionToken = Object.freeze({
   EventBus: 'event bus',
   Database: 'database',
   LocalDatabase: 'local database',
+  Logger: 'logger',
 });
 
 export default InjectionToken;
