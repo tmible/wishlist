@@ -38,6 +38,9 @@
     "./store/*": "./src/store/*.js",
     "./utils/*": "./src/utils/*.js"
   },
+  "engines": {
+    "node": "22.3.0"
+  },
   "dependencies": {
     "@faker-js/faker": "^8.4.0",
     "better-sqlite3": "^9.3.0",
