@@ -10,5 +10,5 @@ export let db;
 
 if (!building) {
   db = new Database(LOGS_DB_FILE_PATH);
-  process.on('SIGINT', () => db.close());
+  process.on('sveltekit:shutdown', () => db.close());
 }

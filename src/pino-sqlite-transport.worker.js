@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import build from 'pino-abstract-transport';
+import migrate from '@tmible/wishlist-bot/helpers/db-migrations';
 
 /** @typedef {import('node:stream').Transform} Transform */
 
@@ -8,10 +9,12 @@ import build from 'pino-abstract-transport';
  * создание функции, добавляющей сообщения в БД и закрытие подключения к БД при завершении работы
  * воркера
  * @function
- * @returns {Transform} Поток для записи лога в БД
+ * @returns {Promise<Transform>} Поток для записи лога в БД
+ * @async
  */
-export default () => {
+export default async () => {
   const db = new Database(process.env.LOGS_DB_FILE_PATH);
+  await migrate(db, process.env.LOGS_DB_MIGRATIONS_PATH);
   const statement = db.prepare(`
     INSERT INTO logs (
       level,

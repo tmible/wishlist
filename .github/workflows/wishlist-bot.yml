@@ -20,6 +20,8 @@ jobs:
       run: |
         pnpm pkg delete scripts.prepare
         pnpm install
+    - name: remove dashboards server
+      run: rm -rf ./dashboards-server
     - name: run lint
       run: |
         pnpm lint
@@ -51,8 +53,13 @@ jobs:
     - uses: actions/checkout@v4
     - name: remove tests
       run: |
-        find ./src/ -type d -name __tests__ -delete
+        find ./src/ -type d -name __tests__ -exec rm -rf {} +
         rm -rf ./src/helpers/tests
+    - name: remove unnecessary files
+      run: |
+        find . -mindepth 1 -maxdepth 1 \
+          -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
+          -type d -not \( -name 'src' -or -name 'deploy' -or -name 'db-migrations' -or -name 'logs-db-migrations' \) -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
@@ -60,7 +67,6 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
-        EXCLUDE: "/.git/, /.github/, /.husky/, /assets/, /dashboards-server/, .c8rc.json, .eslintrc.json, .eslintrc.tests.json, .gitignore, README.md"
         SCRIPT_AFTER: |
           cd ${{ secrets.REMOTE_TARGET }}
           export NVM_DIR="$HOME/.nvm"
@@ -73,5 +79,6 @@ jobs:
             *) export PATH="$PNPM_HOME:$PATH" ;;
           esac
           # pnpm end
+          pnpm pkg delete scripts.prepare
           pnpm install --prod
-          pnpm run restart:bg || pnpm start:bg
+          pnpm run start:background

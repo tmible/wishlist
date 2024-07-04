@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { handle } from '../hooks.server.js';
 
 const resolve = vi.fn();
-vi.mock('$env/static/private', () => ({ HMAC_SECRET: 'HMAC secret' }));
+vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('jsonwebtoken', () => ({ default: { verify: vi.fn() } }));
 

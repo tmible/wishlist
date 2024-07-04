@@ -4,9 +4,9 @@
   "description": "Телеграм-бот со списками желаний",
   "scripts": {
     "start": "node ./src/index.js",
-    "start:bg": "forever start --uid \"wishlist-bot\" ./src/index.js",
-    "restart:bg": "forever restart wishlist-bot",
-    "stop:bg": "forever stop wishlist-bot",
+    "start:background": "SERVICE_NAME=\"wishlist-bot\" SERVICE_DESCRIPTION=\"Tmible's wishlist bot\" PATH_TO_EXECUTABLE=\"./src/index.js\" ./deploy/start-systemd-service.sh",
+    "restart:background": "systemctl restart wishlist-bot",
+    "stop:background": "systemctl stop wishlist-bot",
     "lint": "eslint --ignore-pattern '**.test.js' ./src",
     "lint:fix": "eslint --ignore-pattern '**.test.js' --fix ./src",
     "lint:tests": "eslint --config .eslintrc.tests.json --ext .test.js ./src",
@@ -38,12 +38,13 @@
     "./store/*": "./src/store/*.js",
     "./utils/*": "./src/utils/*.js"
   },
+  "bin": "./src/index.js",
   "engines": {
     "node": "22.3.0"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.0",
-    "better-sqlite3": "^9.3.0",
+    "better-sqlite3": "^11.1.1",
     "classic-level": "^1.4.1",
     "dotenv": "^16.4.1",
     "pino": "^8.19.0",

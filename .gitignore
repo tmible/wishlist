@@ -79,6 +79,10 @@ web_modules/
 .env.production.local
 .env.local
 
+# generated for deploy file containing environment variables
+wishlist-bot.service
+wishlist-bot-dashboards-server.service
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

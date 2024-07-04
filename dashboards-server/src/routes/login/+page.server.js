@@ -1,7 +1,7 @@
 import { promisify } from 'node:util';
 import { fail } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
-import { ADMIN_PASSWORD, HMAC_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const.js';
 import { AUTH_TOKEN_COOKIE_OPTIONS } from '$lib/constants/auth-token-cookie-options.const.js';
 import { AUTH_TOKEN_EXPIRATION } from '$lib/constants/auth-token-expiration.const.js';
@@ -33,10 +33,10 @@ export const actions = {
     const login = formData.get('login');
     const password = formData.get('password');
 
-    if (login === 'admin' && await sha256(password) === ADMIN_PASSWORD) {
+    if (login === 'admin' && await sha256(password) === env.ADMIN_PASSWORD) {
       const token = await promisify(jwt.sign)(
         { login: 'admin' },
-        HMAC_SECRET,
+        env.HMAC_SECRET,
         { expiresIn: `${AUTH_TOKEN_EXPIRATION / 60}min` },
       );
       cookies.set(AUTH_TOKEN_COOKIE_NAME, token, AUTH_TOKEN_COOKIE_OPTIONS);

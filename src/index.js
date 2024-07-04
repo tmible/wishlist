@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import 'dotenv/config.js';
 import { resolve } from 'node:path';
 import pino from 'pino';

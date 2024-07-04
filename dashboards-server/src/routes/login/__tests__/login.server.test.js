@@ -8,10 +8,12 @@ import { actions } from '../+page.server.js';
 
 vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock(
-  '$env/static/private',
+  '$env/dynamic/private',
   () => ({
-    ADMIN_PASSWORD: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
-    HMAC_SECRET: 'HMAC secret',
+    env: {
+      ADMIN_PASSWORD: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+      HMAC_SECRET: 'HMAC secret',
+    },
   }),
 );
 vi.mock('jsonwebtoken', () => ({ default: { sign: () => {} } }));

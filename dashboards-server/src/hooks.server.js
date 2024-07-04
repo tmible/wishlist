@@ -1,6 +1,6 @@
 import { promisify } from 'node:util';
 import jwt from 'jsonwebtoken';
-import { HMAC_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const.js';
 
 /**
@@ -15,7 +15,7 @@ export const handle = async ({ event, resolve }) => {
     }
 
     try {
-      await promisify(jwt.verify)(event.cookies.get(AUTH_TOKEN_COOKIE_NAME), HMAC_SECRET);
+      await promisify(jwt.verify)(event.cookies.get(AUTH_TOKEN_COOKIE_NAME), env.HMAC_SECRET);
     } catch {
       return new Response(null, { status: 401 });
     }
