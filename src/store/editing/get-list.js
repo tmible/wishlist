@@ -4,6 +4,7 @@ import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/descr
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
+ * @typedef {import('@tmible/wishlist-bot/constants/list-item-state').default} ListItemState
  * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
  */
 /**
@@ -14,6 +15,7 @@ import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/descr
  * @property {number} priority Приоритет элемента
  * @property {string} name Название подарка
  * @property {string} description Описание подарка
+ * @property {ListItemState} state Состояние подарка
  * @property {Entity[]} descriptionEntities Элементы разметки текста описания подарка
  */
 
@@ -30,7 +32,7 @@ let statement;
  */
 const prepare = () => {
   statement = inject(InjectionToken.Database).prepare(`
-    SELECT id, priority, name, description, type, offset, length, additional
+    SELECT id, priority, name, description, state, type, offset, length, additional
     FROM list
     LEFT JOIN description_entities ON list.id = description_entities.list_item_id
     WHERE userid = ?
@@ -49,7 +51,6 @@ const eventHandler = (userid) => statement
   /* eslint-disable-next-line unicorn/no-array-callback-reference --
     descriptionEntitiesReducer -- специально написанная для использования в reduce() функция
   */
-  .reduce(descriptionEntitiesReducer, [])
-  .sort((a, b) => a.id - b.id);
+  .reduce(descriptionEntitiesReducer, []);
 
 export default { eventHandler, prepare };

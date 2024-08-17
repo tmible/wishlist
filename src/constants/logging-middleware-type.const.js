@@ -1,3 +1,5 @@
+import numericEnum from '@tmible/wishlist-bot/utils/numeric-enum';
+
 /**
  * Тип промежуточного обработчика -- логгера
  * AUXILARY_ACTIVITIES -- добавляет сообщение в лог сразу при получении обновления
@@ -6,9 +8,9 @@
  *   обновления и сразу после ответа пользователю
  * @enum {number}
  */
-const LoggingMiddlewareType = Object.freeze({
-  AUXILARY_ACTIVITIES: 0,
-  UPDATE_PROCESSING: 1,
-});
+const LoggingMiddlewareType = numericEnum([
+  'AUXILARY_ACTIVITIES',
+  'UPDATE_PROCESSING',
+]);
 
 export default LoggingMiddlewareType;

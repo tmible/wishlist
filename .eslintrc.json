@@ -341,5 +341,28 @@
     /* regexp */
     "regexp/prefer-regexp-exec": "error",
     "regexp/prefer-regexp-test": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": "**.test.js",
+      "plugins": [ "no-only-tests" ],
+      "rules": {
+        "max-lines": "off",
+        "max-lines-per-function": "off",
+        "max-statements": "off",
+        "prefer-promise-reject-errors": [ "error", { "allowEmptyReject": true } ],
+        "import/no-unused-modules": "off",
+        "import/no-unresolved": [
+          "error",
+          /* actually works, eslint-plugin-resolver-custom-alias does
+             not parse package.json "exports" property, only "main" */
+          { "ignore": [ "^snapshot-assertion$" ] }
+        ],
+        "sonarjs/no-duplicate-string": "off",
+        "unicorn/error-message": "off",
+        "security-node/detect-insecure-randomness": "off",
+        "no-only-tests/no-only-tests": "error"
+      }
+    }
+  ]
 }

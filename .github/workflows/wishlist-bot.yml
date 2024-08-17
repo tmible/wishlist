@@ -23,9 +23,7 @@ jobs:
     - name: remove dashboards server
       run: rm -rf ./dashboards-server
     - name: run lint
-      run: |
-        pnpm lint
-        pnpm lint:tests
+      run: pnpm lint
 
   tests:
     runs-on: ubuntu-latest

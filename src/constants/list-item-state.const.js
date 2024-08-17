@@ -1,11 +1,13 @@
+import numericEnum from '@tmible/wishlist-bot/utils/numeric-enum';
+
 /**
  * Перечисление состояний подарков как элементов списка
  * @enum {number}
  */
-const ListItemState = Object.freeze({
-  FREE: 0,
-  COOPERATIVE: 1,
-  BOOKED: 2,
-});
+const ListItemState = numericEnum([
+  'FREE',
+  'COOPERATIVE',
+  'BOOKED',
+]);
 
 export default ListItemState;

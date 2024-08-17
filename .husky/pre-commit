@@ -1,7 +1,5 @@
-pnpm run lint
-pnpm run lint:tests
+pnpm lint
 pnpm test:prod
 cd ./dashboards-server
-pnpm run lint
-pnpm run lint:tests
+pnpm lint
 pnpm test:prod

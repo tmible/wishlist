@@ -1,77 +1,155 @@
-import { Markup } from 'telegraf';
+import { Format, Markup } from 'telegraf';
 import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
+import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
-import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
-import sendList from './helpers/send-list.js';
 
 /**
  * @typedef {
  *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
- * @typedef {
- *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
- * } ModuleMessageHandler
  */
+/** @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup */
+/** @typedef {import('@tmible/wishlist-bot/store/editing/get-list').OwnListItem} OwnListItem */
+/** @typedef {import('telegraf').Context} Context */
+/** @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus */
+
+/**
+ * Подмножество состояний элемента списка, обозначающих наличие намерения подарить его
+ * @constant {Set<ListItemState>}
+ */
+const PLANNED_PRESENTS_STATES = new Set([ ListItemState.BOOKED, ListItemState.COOPERATIVE ]);
+
+/**
+ * Встроенная клавиатура для сообщения с названем подарка для очистки списка
+ * @constant {Markup<InlineKeyboardMarkup>}
+ */
+const LIST_CLEARING_MESSAGE_INLINE_KEYBOARD = Markup.inlineKeyboard([[
+  Markup.button.callback('Нет', 'clear_list_no'),
+  Markup.button.callback('Да', 'clear_list_yes'),
+], [
+  Markup.button.callback('🚫 Не очищать список', 'clear_list_end'),
+]]);
+
+/**
+ * Обработчик команды очистки списка
+ * @function clearListCommandHandler
+ * @param {EventBus} eventBus Шина событий
+ * @param {Context} ctx Контекст
+ * @returns {Promise<void>}
+ * @async
+ */
+const clearListCommandHandler = async (eventBus, ctx) => {
+  if (isChatGroup(ctx)) {
+    return;
+  }
+
+  const list = eventBus.emit(Events.Editing.GetList, ctx.from.id).sort((a, b) => {
+    const isAPlanned = PLANNED_PRESENTS_STATES.has(a.state);
+    const isBPlanned = PLANNED_PRESENTS_STATES.has(b.state);
+
+    if (isAPlanned === isBPlanned) {
+      return a.id - b.id;
+    }
+
+    if (isAPlanned) {
+      return -1;
+    }
+
+    return 1;
+  });
+
+  if (list.length === 0) {
+    await ctx.reply('Ваш список пуст');
+    return;
+  }
+
+  const promptMessage = await ctx.reply('Вам подарили');
+
+  const { message_id } = await ctx.reply(
+    new Format.FmtString(
+      list[0].name,
+      [{ offset: 0, length: list[0].name.length, type: 'bold' }],
+    ),
+    LIST_CLEARING_MESSAGE_INLINE_KEYBOARD,
+  );
+
+  /* eslint-disable-next-line require-atomic-updates -- Сессия всегда определена в контексте */
+  ctx.session.listClearing = {
+    list,
+    messageId: message_id,
+    promptMessageId: promptMessage.message_id,
+  };
+};
+
+/**
+ * Обработчик действий очистки списка
+ * @function clearListActionsHandler
+ * @param {EventBus} eventBus Шина событий
+ * @param {Context} ctx Контекст
+ * @returns {Promise<void>}
+ * @async
+ */
+const clearListActionsHandler = async (eventBus, ctx) => {
+  const { id } = ctx.session.listClearing.list.shift();
+
+  if (ctx.match[1] === 'yes') {
+    eventBus.emit(Events.Editing.DeleteItems, [ id ]);
+  }
+
+  if (ctx.match[1] === 'end' || ctx.session.listClearing.list.length === 0) {
+    await ctx.telegram.editMessageText(
+      ctx.chat.id,
+      ctx.session.listClearing.promptMessageId,
+      undefined,
+      'Список очищен',
+    );
+
+    await ctx.telegram.deleteMessage(
+      ctx.chat.id,
+      ctx.session.listClearing.messageId,
+    );
+
+    delete ctx.session.listClearing;
+
+    return;
+  }
+
+  await ctx.telegram.editMessageText(
+    ctx.chat.id,
+    ctx.session.listClearing.messageId,
+    undefined,
+    new Format.FmtString(
+      ctx.session.listClearing.list[0].name,
+      [{ offset: 0, length: ctx.session.listClearing.list[0].name.length, type: 'bold' }],
+    ),
+    LIST_CLEARING_MESSAGE_INLINE_KEYBOARD,
+  );
+};
 
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
-  /**
-   * При получении комманды /clear_list, если чат не групповой, бот отправляет сообщение-приглашение
-   * для отправки сообщения с идентификаторами подарков к удалению из списка желаний
-   */
-  bot.command('clear_list', async (ctx) => {
-    if (isChatGroup(ctx)) {
-      return;
-    }
-
-    ctx.session.messagePurpose = { type: MessagePurposeType.ClearList };
-    await sendMessageAndMarkItForMarkupRemove(
-      ctx,
-      'reply',
-      'Отправьте мне список id позиций, которые нужно удалить',
-      Markup.inlineKeyboard([
-        Markup.button.callback('🚫 Не очищать список', 'cancel_clear_list'),
-      ]),
-    );
-  });
-};
-
-/** @type {ModuleMessageHandler} */
-const messageHandler = (bot) => {
   const eventBus = inject(InjectionToken.EventBus);
 
   /**
-   * При получении сообщения от пользователя, если ожидаются идентификаторы подарков
-   * к удалению из списка желаний, бот вычленяет их из текста полученного сообщения.
-   * При невозможности вычленить ни один идентификатор
-   * бот отправляет сообщение-уведомления об ошибке.
-   * При успехе вычленения бот выпускает соответствующее событие,  отправляет сообщение-уведомление
-   * об успехе очищения списка
-   * и [отправляет обновлённый или обновляет отправленный ранее список]{@link sendList}
+   * При получении комманды /clear_list, если чат не групповой, бот отправляет сообщение-приглашение
+   * и основное сообщение. В основном сообщении последовательно появляются названия элементов
+   * списка, отсортированные по вероятности того, что они выби подарены. Названия сменяются при
+   * выборе пользователем одной из [опций]{@link LIST_CLEARING_MESSAGE_INLINE_KEYBOARD}
+   * на встроенной клавиатуре
    */
-  bot.on('message', async (ctx, next) => {
-    if (ctx.session.messagePurpose?.type === MessagePurposeType.ClearList) {
-      const ids = ctx.message.text
-        .split(/\D+/)
-        .filter((id) => !!id)
-        .map((id) => Number.parseInt(id));
-      delete ctx.session.messagePurpose;
+  bot.command('clear_list', (ctx) => clearListCommandHandler(eventBus, ctx));
 
-      if (ids.length === 0) {
-        return ctx.reply('Не могу найти ни одного id');
-      }
-
-      eventBus.emit(Events.Editing.DeleteItems, ids);
-
-      await ctx.reply('Список очищен!');
-      return sendList(eventBus, ctx);
-    }
-
-    return next();
-  });
+  /**
+   * При вызове действий очистки списка бот удаляет первый элемнет в очереди. Если действие
+   * соответствует утвердительному ответу на вопрос, подарен ли элемент списка, бот выпускает
+   * событие удаления этого элемента списка. Если действие соответствует прерыванию очистки списка
+   * или очередь пуста, бот редактирует сообщение-приглашение, информируя пользователя об успешном
+   * завершении очистки списка, и удаляет сообщение с названиями элементов списка. Иначе бот
+   * редактирует сообщение с названиями элементов списка, подставляя очередное название
+   */
+  bot.action(/^clear_list_(yes|no|end)$/, (ctx) => clearListActionsHandler(eventBus, ctx));
 };
 
-export default { configure, messageHandler };
+export default { configure };

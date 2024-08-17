@@ -22,9 +22,7 @@ jobs:
     - name: install dependencies
       run: pnpm install
     - name: run lint
-      run: |
-        pnpm lint
-        pnpm lint:tests
+      run: pnpm lint
 
   tests:
     runs-on: ubuntu-latest
