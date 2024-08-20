@@ -1,5 +1,9 @@
+cd bot
 pnpm lint
 pnpm test:prod
-cd ./dashboards-server
+cd -
+
+cd dashboards-server
 pnpm lint
 pnpm test:prod
+cd -

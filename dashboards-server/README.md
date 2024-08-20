@@ -1,5 +1,5 @@
-# wishlist-bot-dashboards-server
-Сервер с дашбордами для [телеграм-бота со списками желаний](https://github.com/tmible/wishlist-bot)
+# wishlist-dashboards-server
+Сервер с дашбордами для [телеграм бота со списками желаний](bot/README.md)
 
 # Требования к удалённой машине
 ## Внешние зависимости

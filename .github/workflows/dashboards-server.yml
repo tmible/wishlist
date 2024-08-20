@@ -1,7 +1,15 @@
+name: Dashboards server CI/CD
+
 on:
-  push:
+  workflow_run:
+    workflows:
+    - Common files deploy
+    types:
+    - completed
     branches:
     - master
+    paths:
+    - dashboards-server/**
 
 jobs:
   lint:
@@ -14,11 +22,9 @@ jobs:
     - name: install node
       uses: actions/setup-node@v4
       with:
-        node-version-file: package.json
+        node-version-file: dashboards-server/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: latest
     - name: install dependencies
       run: pnpm install
     - name: run lint
@@ -34,11 +40,9 @@ jobs:
     - name: install node
       uses: actions/setup-node@v4
       with:
-        node-version-file: package.json
+        node-version-file: dashboards-server/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: latest
     - name: install dependencies
       run: pnpm install
     - name: run tests
@@ -55,11 +59,9 @@ jobs:
     - name: install node
       uses: actions/setup-node@v4
       with:
-        node-version-file: package.json
+        node-version-file: dashboards-server/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: latest
     - name: install dependencies
       run: pnpm install
     - name: build
@@ -91,6 +93,5 @@ jobs:
             *) export PATH="$PNPM_HOME:$PATH" ;;
           esac
           # pnpm end
-          pnpm pkg delete scripts.prepare
           pnpm install --prod
           pnpm run start:background

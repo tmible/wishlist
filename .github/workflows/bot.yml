@@ -1,52 +1,59 @@
+name: Bot CI/CD
+
 on:
-  push:
+  workflow_run:
+    workflows:
+    - Common files deploy
+    types:
+    - completed
     branches:
     - master
+    paths:
+    - bot/**
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bot
     steps:
     - uses: actions/checkout@v4
     - name: install node
       uses: actions/setup-node@v4
       with:
-        node-version-file: package.json
+        node-version-file: bot/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: latest
     - name: install dependencies
-      run: |
-        pnpm pkg delete scripts.prepare
-        pnpm install
-    - name: remove dashboards server
-      run: rm -rf ./dashboards-server
+      run: pnpm install
     - name: run lint
       run: pnpm lint
 
   tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bot
     steps:
     - uses: actions/checkout@v4
     - name: install node
       uses: actions/setup-node@v4
       with:
-        node-version-file: package.json
+        node-version-file: bot/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-      with:
-        version: latest
     - name: install dependencies
-      run: |
-        pnpm pkg delete scripts.prepare
-        pnpm install
+      run: pnpm install
     - name: run tests
       run: pnpm test:prod
 
   deploy:
     needs: [lint, tests]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bot
     steps:
     - uses: actions/checkout@v4
     - name: remove tests
@@ -57,16 +64,17 @@ jobs:
       run: |
         find . -mindepth 1 -maxdepth 1 \
           -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
-          -type d -not \( -name 'src' -or -name 'deploy' -or -name 'db-migrations' -or -name 'logs-db-migrations' \) -exec rm -rf {} +
+          -type d -not -name 'src' -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SOURCE: bot
         TARGET: ${{ secrets.REMOTE_TARGET }}
         SCRIPT_AFTER: |
-          cd ${{ secrets.REMOTE_TARGET }}
+          cd ${{ secrets.REMOTE_TARGET }}/bot
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
           [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -77,6 +85,5 @@ jobs:
             *) export PATH="$PNPM_HOME:$PATH" ;;
           esac
           # pnpm end
-          pnpm pkg delete scripts.prepare
           pnpm install --prod
           pnpm run start:background

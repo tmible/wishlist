@@ -1,0 +1,82 @@
+{
+  "name": "@tmible/wishlist-bot",
+  "version": "2.15.0",
+  "private": true,
+  "description": "Телеграм бот со списками желаний",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tmible/wishlist.git",
+    "directory": "bot"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./architecture/*": "./src/architecture/*.js",
+    "./constants/*": "./src/constants/*.const.js",
+    "./helpers/*": "./src/helpers/*.js",
+    "./modules/*": "./src/modules/*/index.js",
+    "./persistent-session": "./src/persistent-session.js",
+    "./services/*": "./src/services/*.service.js",
+    "./store": "./src/store/index.js",
+    "./store/constants/*": "./src/store/constants/*.const.js",
+    "./store/*": "./src/store/*.js",
+    "./utils/*": "./src/utils/*.js"
+  },
+  "bin": "./src/index.js",
+  "scripts": {
+    "start": "node ./src/index.js",
+    "start:background": "SERVICE_NAME=\"wishlist-bot\" SERVICE_DESCRIPTION=\"Tmible's wishlist bot\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
+    "restart:background": "systemctl restart wishlist-bot",
+    "stop:background": "systemctl stop wishlist-bot",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src",
+    "test": "c8 node --test \"./src/**/*.test.js\"",
+    "test:prod": "c8 -r text-summary -r text node --test \"./src/**/*.test.js\"",
+    "test:only": "node --test --test-only \"./src/**/*.test.js\"",
+    "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
+    "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",
+    "update": "npm-check-updates"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.0",
+    "better-sqlite3": "^11.1.1",
+    "classic-level": "^1.4.1",
+    "dotenv": "^16.4.1",
+    "pino": "^8.19.0",
+    "pino-abstract-transport": "^1.1.0",
+    "pino-pretty": "^10.3.1",
+    "seal-wasm": "^0.0.3",
+    "telegraf": "^4.15.3"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin-js": "^1.6.2",
+    "c8": "^9.1.0",
+    "eslint": "^8.56.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-custom-alias": "^1.3.2",
+    "eslint-plugin-array-func": "^4.0.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsdoc": "^48.1.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "eslint-plugin-no-secrets": "^0.8.9",
+    "eslint-plugin-optimize-regex": "^1.2.1",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-regexp": "^2.2.0",
+    "eslint-plugin-security": "^2.1.1",
+    "eslint-plugin-security-node": "^1.1.4",
+    "eslint-plugin-simple-import-sort": "^12.0.0",
+    "eslint-plugin-sonarjs": "^0.24.0",
+    "eslint-plugin-unicorn": "^51.0.1",
+    "npm-check-updates": "^16.14.20",
+    "snapshot-assertion": "^5.0.0",
+    "testdouble": "^3.20.1"
+  },
+  "packageManager": "pnpm@9.4.0",
+  "engines": {
+    "node": "22.3.0",
+    "pnpm": "9.4.0"
+  }
+}
