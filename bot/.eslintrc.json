@@ -37,25 +37,6 @@
     "regexp",
     "optimize-regex"
   ],
-  "settings": {
-    "import/resolver": {
-      "custom-alias": {
-        "alias": {
-          "@tmible/wishlist-bot/architecture": "./src/architecture",
-          "@tmible/wishlist-bot/constants": "./src/constants",
-          "@tmible/wishlist-bot/helpers": "./src/helpers",
-          "@tmible/wishlist-bot/modules": "./src/modules",
-          "@tmible/wishlist-bot/persistent-session": "./src/persistent-session.js",
-          "@tmible/wishlist-bot/services": "./src/services",
-          "^@tmible/wishlist-bot/store$": "./src/store/index.js",
-          "@tmible/wishlist-bot/store/constants": "./src/store/constants",
-          "@tmible/wishlist-bot/store": "./src/store",
-          "@tmible/wishlist-bot/utils": "./src/utils"
-        },
-        "extensions": [ ".js", ".const.js", ".service.js", "/index.js" ]
-      }
-    }
-  },
   "rules": {
     /* Possible problems */
     "array-callback-return": "error",
@@ -236,20 +217,8 @@
     "import/no-extraneous-dependencies": "error",
     "import/no-named-as-default": "warn",
     "import/no-named-as-default-member": "warn",
-    "import/no-unused-modules": [
-      "error",
-      {
-        "missingExports": true,
-        "unusedExports": true,
-        "ignoreExports": [
-          /* entrypoint */
-          "src/index.js",
-          /* dynamicaly imported, just string constants */
-          "src/modules/help/constants/sections/default",
-          "src/modules/help/constants/sections/group"
-        ]
-      }
-    ],
+    /* too many false positive reports because of self importing via package.json exports section */
+    "import/no-unused-modules": "off",
     "import/no-amd": "error",
     "import/no-commonjs": "error",
     "import/no-import-module-exports": "error",
@@ -263,12 +232,8 @@
     /* "import/no-internal-modules": "error", */
     "import/no-relative-packages": "error",
     "import/no-self-import": "error",
-    "import/no-unresolved": [
-      "error",
-      /* actually works, eslint-plugin-resolver-custom-alias does
-         not parse package.json "exports" property, only "main" */
-      { "ignore": [ "^@faker-js/faker/locale/ru$" ] }
-    ],
+    /* too many false positive reports */
+    "import/no-unresolved": "off",
     "import/no-useless-path-segments": "error",
     "import/first": "error",
     "import/newline-after-import": [ "error", { "considerComments": true } ],
@@ -351,13 +316,6 @@
         "max-lines-per-function": "off",
         "max-statements": "off",
         "prefer-promise-reject-errors": [ "error", { "allowEmptyReject": true } ],
-        "import/no-unused-modules": "off",
-        "import/no-unresolved": [
-          "error",
-          /* actually works, eslint-plugin-resolver-custom-alias does
-             not parse package.json "exports" property, only "main" */
-          { "ignore": [ "^snapshot-assertion$" ] }
-        ],
         "sonarjs/no-duplicate-string": "off",
         "unicorn/error-message": "off",
         "security-node/detect-insecure-randomness": "off",

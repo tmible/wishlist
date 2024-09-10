@@ -1,6 +1,6 @@
+import migrate from '@tmible/wishlist-common/db-migrations';
 import Database from 'better-sqlite3';
 import build from 'pino-abstract-transport';
-import migrate from '@tmible/wishlist-bot/helpers/db-migrations';
 
 /** @typedef {import('node:stream').Transform} Transform */
 

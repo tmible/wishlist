@@ -1,4 +1,4 @@
-import numericEnum from '@tmible/wishlist-bot/utils/numeric-enum';
+import numericEnum from '@tmible/wishlist-common/numeric-enum';
 
 /**
  * Перечисление типов назначения ожидаемого от пользователя сообщения

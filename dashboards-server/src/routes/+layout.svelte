@@ -1,14 +1,18 @@
 <!-- Svelte компонент -- общая для всех страниц разметка -->
 <script>
   import '../app.pcss';
+  import { provide } from '@tmible/wishlist-common/dependency-injector';
+  import {
+    isDarkTheme,
+    subscribeToTheme,
+    updateTheme,
+  } from '@tmible/wishlist-common/theme-service';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { provide } from '$lib/architecture/dependency-injector';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { isAuthenticated } from '$lib/store/is-authenticated';
-  import { isDarkTheme, subscribeToTheme, updateTheme } from '$lib/theme-service';
 
   /**
    * Регистрация сервиса управления темой в сервисе внедрения зависмостей

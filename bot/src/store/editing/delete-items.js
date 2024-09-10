@@ -1,4 +1,4 @@
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
@@ -8,10 +8,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
  */
 const eventHandler = (itemsIds) => {
   const db = inject(InjectionToken.Database);
-  const idsPlaceholders = itemsIds.reduce(
-    (placeholders) => (placeholders.length > 0 ? `${placeholders},?` : '?'),
-    '',
-  );
+  const idsPlaceholders = itemsIds.map(() => '?').join(', ');
 
   db.transaction(() => [
     `DELETE FROM description_entities WHERE list_item_id IN (${idsPlaceholders})`,

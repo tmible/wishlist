@@ -16,7 +16,7 @@ const [
   manageListsMessages,
   formMessages,
 ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceModule('@tmible/wishlist-bot/persistent-session'),
   replaceModule('@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username'),
   replaceModule('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages'),

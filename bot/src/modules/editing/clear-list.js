@@ -1,8 +1,8 @@
+import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Format, Markup } from 'telegraf';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 
 /**

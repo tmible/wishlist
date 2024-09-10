@@ -1,0 +1,107 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lineBreaksToBreakpoints > should convert line breaks to breakpoints for single line text 1`] = `
+[
+  {
+    "entity": {
+      "length": 16,
+      "type": "paragraph",
+    },
+    "offset": 0,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 16,
+      "type": "paragraph",
+    },
+    "offset": 16,
+    "type": "closing",
+  },
+]
+`;
+
+exports[`lineBreaksToBreakpoints > should convert line breaks to breakpoints for text with several lines 1`] = `
+[
+  {
+    "entity": {
+      "length": 9,
+      "type": "paragraph",
+    },
+    "offset": 0,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 8,
+      "type": "paragraph",
+    },
+    "offset": 8,
+    "type": "closing",
+  },
+  {
+    "entity": {
+      "length": 1,
+      "type": "paragraph",
+    },
+    "offset": 8,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 1,
+      "type": "paragraph",
+    },
+    "offset": 9,
+    "type": "closing",
+  },
+  {
+    "entity": {
+      "length": 6,
+      "type": "paragraph",
+    },
+    "offset": 9,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 5,
+      "type": "paragraph",
+    },
+    "offset": 14,
+    "type": "closing",
+  },
+  {
+    "entity": {
+      "length": 1,
+      "type": "paragraph",
+    },
+    "offset": 14,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 1,
+      "type": "paragraph",
+    },
+    "offset": 15,
+    "type": "closing",
+  },
+  {
+    "entity": {
+      "length": 5,
+      "type": "paragraph",
+    },
+    "offset": 15,
+    "type": "opening",
+  },
+  {
+    "entity": {
+      "length": 5,
+      "type": "paragraph",
+    },
+    "offset": 20,
+    "type": "closing",
+  },
+]
+`;

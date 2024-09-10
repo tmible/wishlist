@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / mention > add attributes > should add attributes 1`] = `
+{
+  "class": {
+    "default": "cursor-pointer",
+  },
+  "href": {
+    "default": null,
+    "parseHTML": [Function],
+  },
+  "rel": {
+    "default": "noopener noreferrer nofollow",
+  },
+  "target": {
+    "default": "_blank",
+  },
+}
+`;
+
+exports[`text editor / extensions / mention > should add input rules 1`] = `
+[
+  InputRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(@\\[\\^\\\\s@\\]\\+\\)\\\\s\\)\\$/,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / mention > should add paste rules 1`] = `
+[
+  PasteRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(@\\[\\^\\\\s@\\]\\+\\)\\\\s\\)/g,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / mention > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addAttributes": [Function],
+    "addCommands": [Function],
+    "addInputRules": [Function],
+    "addPasteRules": [Function],
+    "defaultOptions": {},
+    "name": "mention",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "mention",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / mention > should parse HTML 1`] = `
+[
+  {
+    "tag": "a[data-entity="mention"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / mention > should render HTML 1`] = `
+[
+  "a",
+  {
+    "from-argument": "attribute",
+    "from-options": "attribute",
+  },
+  0,
+]
+`;

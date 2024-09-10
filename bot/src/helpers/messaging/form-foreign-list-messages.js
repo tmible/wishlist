@@ -1,6 +1,6 @@
+import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
 import { Format, Markup } from 'telegraf';
 import Events from '@tmible/wishlist-bot/architecture/events';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import ListItemStateToEmojiMap from '@tmible/wishlist-bot/constants/list-item-state-to-emoji-map';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
@@ -57,20 +57,24 @@ const formReplyMarkup = (ctx, item, userid) => {
     [];
 
   const cooperateButton =
-    isChatGroup(ctx) ||
-    item.state === ListItemState.FREE ||
     (
-      item.state === ListItemState.COOPERATIVE &&
-      !item.participantsIds.includes(ctx.from.id)
+      isChatGroup(ctx) ||
+        item.state === ListItemState.FREE ||
+        (
+          item.state === ListItemState.COOPERATIVE &&
+          !item.participantsIds.includes(ctx.from.id)
+        )
     ) ?
       [ Markup.button.callback('🤝 Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
       [];
 
   const retireButton =
-    isChatGroup(ctx) ||
     (
-      item.state !== ListItemState.FREE &&
-      item.participantsIds.includes(ctx.from.id)
+      isChatGroup(ctx) ||
+        (
+          item.state !== ListItemState.FREE &&
+          item.participantsIds.includes(ctx.from.id)
+        )
     ) ?
       [ Markup.button.callback('🙅 Отказаться', `retire ${item.id} ${userid}`) ] :
       [];

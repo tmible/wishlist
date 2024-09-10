@@ -6,6 +6,7 @@ on:
     - master
 
 jobs:
+
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -14,7 +15,24 @@ jobs:
       run: |
         find . -mindepth 1 -maxdepth 1 \
           -type f -exec rm -rf {} + -or \
-          -type d -not \( -name 'deploy' -or -name 'logs-db-migrations' -or -name 'wishlist-db-migrations' \) -exec rm -rf {} +
+          -type d -not \( -name 'common' -or -name 'deploy' -or -name 'logs-db-migrations' -or -name 'wishlist-db-migrations' \) -exec rm -rf {} +
+    - name: install node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: common/package.json
+    - name: install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: |
+          cwd: common
+        package_json_file: common/package.json
+    - name: build
+      run: |
+        cd common && \
+        pnpm exec svelte-package && \
+        find . -mindepth 1 -maxdepth 1 \
+          -type f -not -name 'package.json' -exec rm -rf {} + -or \
+          -type d -not -name 'dist' -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:

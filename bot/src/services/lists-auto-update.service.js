@@ -1,5 +1,5 @@
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Format } from 'telegraf';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import formMessages from '@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages';

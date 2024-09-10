@@ -1,5 +1,5 @@
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Markup } from 'telegraf';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import getUseridFromInput from '@tmible/wishlist-bot/helpers/get-userid-from-input';

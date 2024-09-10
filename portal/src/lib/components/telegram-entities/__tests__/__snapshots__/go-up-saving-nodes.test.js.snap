@@ -1,0 +1,89 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`goUpSavingNodes > passing several nodes > should delete all passed nodes that don't have children 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "index": 0,
+          "parent": [Circular],
+          "type": "type 2",
+        },
+      ],
+      "parent": [Circular],
+      "type": "type 1",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "index": 0,
+          "parent": [Circular],
+          "type": "type 2",
+        },
+      ],
+      "index": 1,
+      "parent": [Circular],
+      "type": "type 2",
+    },
+  ],
+  "parent": null,
+}
+`;
+
+exports[`goUpSavingNodes > passing several nodes > should go up until node type won't equal breakpoint entity type and repeat all passed nodes 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "index": 0,
+          "parent": [Circular],
+          "type": "type 2",
+        },
+        {
+          "children": [
+            {
+              "children": [
+                "child",
+              ],
+              "index": 0,
+              "parent": [Circular],
+              "type": "type 2",
+            },
+          ],
+          "index": 1,
+          "parent": [Circular],
+          "type": "type 2",
+        },
+      ],
+      "parent": [Circular],
+      "type": "type 1",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "index": 0,
+          "parent": [Circular],
+          "type": "type 2",
+        },
+      ],
+      "index": 1,
+      "parent": [Circular],
+      "type": "type 2",
+    },
+  ],
+  "parent": null,
+}
+`;
+
+exports[`goUpSavingNodes > should delete node if it has no children 1`] = `
+{
+  "children": [],
+  "parent": null,
+}
+`;

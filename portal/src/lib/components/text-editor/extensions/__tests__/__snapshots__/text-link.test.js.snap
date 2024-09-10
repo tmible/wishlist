@@ -1,0 +1,51 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / text link > add attributes > should add attributes 1`] = `
+{
+  "class": {
+    "default": "cursor-pointer",
+  },
+  "href": {
+    "default": "",
+    "parseHTML": [Function],
+  },
+}
+`;
+
+exports[`text editor / extensions / text link > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addAttributes": [Function],
+    "addCommands": [Function],
+    "defaultOptions": {},
+    "name": "text_link",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "text_link",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / text link > should parse HTML 1`] = `
+[
+  {
+    "tag": "a[data-entity="text_link"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / text link > should render HTML 1`] = `
+[
+  "a",
+  {
+    "from-argument": "attribute",
+    "from-options": "attribute",
+  },
+  0,
+]
+`;

@@ -1,6 +1,6 @@
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import parseAndInsertDescriptionEntities from '@tmible/wishlist-common/parse-and-insert-description-entities';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import DescriptionEntityBaseKeys from '@tmible/wishlist-bot/store/constants/description-entity-base-keys';
 
 /**
  * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
@@ -19,33 +19,10 @@ const saveItemDescriptionEntities = (itemId, entities, descriptionOffset) => {
     return;
   }
 
-  const descriptionEntities = entities.filter(({ offset }) => offset >= descriptionOffset);
-
-  if (descriptionEntities.length === 0) {
-    return;
-  }
-
-  inject(InjectionToken.Database).prepare(
-    `INSERT INTO description_entities VALUES ${
-      descriptionEntities.map((entity) => `($itemId, ?, ?, ?, ${
-        Object.entries(entity).some(([ key ]) => !DescriptionEntityBaseKeys.has(key)) ?
-          '?' :
-          'NULL'
-      })`).join(',')
-    }`,
-  ).run(
-    ...descriptionEntities.flatMap((entity) => {
-      const additionalProperties = Object.entries(entity).filter(
-        ([ key ]) => !DescriptionEntityBaseKeys.has(key),
-      );
-      return [
-        entity.type,
-        entity.offset - descriptionOffset,
-        entity.length,
-        JSON.stringify(Object.fromEntries(additionalProperties)),
-      ].slice(0, additionalProperties.length > 0 ? 4 : 3);
-    }),
-    { itemId },
+  parseAndInsertDescriptionEntities(
+    inject(InjectionToken.Database),
+    itemId,
+    entities.filter(({ offset }) => offset >= descriptionOffset),
   );
 };
 

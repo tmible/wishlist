@@ -1,3 +1,5 @@
 packages:
   - "bot"
   - "dashboards-server"
+  - "portal"
+  - "common"

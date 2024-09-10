@@ -3,7 +3,7 @@ import { Format, Markup } from 'telegraf';
 import { matchers, object, reset, verify, when } from 'testdouble';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
-const { inject } = await replaceModule('@tmible/wishlist-bot/architecture/dependency-injector');
+const { inject } = await replaceModule('@tmible/wishlist-common/dependency-injector');
 const LinkModule = await import('../index.js').then((module) => module.default);
 
 describe('link module', () => {

@@ -1,4 +1,4 @@
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import LoggingMiddlewareType from '@tmible/wishlist-bot/constants/logging-middleware-type';
 

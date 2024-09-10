@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
+import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
 import assertSnapshot from 'snapshot-assertion';
 import { func, reset, when } from 'testdouble';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const list = [{

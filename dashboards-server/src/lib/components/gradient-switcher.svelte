@@ -1,9 +1,9 @@
 <!-- Svelte компонент -- переключатель градиента на фоне страницы -->
 <script>
+  import { isDarkTheme, subscribeToTheme } from '@tmible/wishlist-common/theme-service';
   import { onMount } from 'svelte';
   import { Switch } from '$lib/components/ui/switch';
   import { adjustGradient, generateGradient } from '$lib/gradient-generator';
-  import { isDarkTheme, subscribeToTheme } from '$lib/theme-service';
 
   /** @typedef {import('$lib/gradient-generator').Gradient} Gradient */
 

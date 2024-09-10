@@ -1,0 +1,44 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / spoiler > add keyboard shortcuts > should add keyboard shortcuts 1`] = `
+{
+  "Mod-Shift-p": [Function],
+}
+`;
+
+exports[`text editor / extensions / spoiler > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addCommands": [Function],
+    "addKeyboardShortcuts": [Function],
+    "defaultOptions": {},
+    "name": "spoiler",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "spoiler",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / spoiler > should parse HTML 1`] = `
+[
+  {
+    "tag": "span[data-entity="spoiler"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / spoiler > should render HTML 1`] = `
+[
+  "span",
+  {
+    "class": "spoiler text-transparent hover:text-base-content",
+  },
+  0,
+]
+`;

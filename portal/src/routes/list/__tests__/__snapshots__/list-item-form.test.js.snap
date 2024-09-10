@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`list item form > should be displayed with empty inputs 1`] = `
+<form
+  class="prose"
+  method="POST"
+>
+  <label
+    class="form-control w-full mb-2"
+  >
+    <div
+      class="label"
+    >
+      <span
+        class="label-text"
+      >
+        Название
+      </span>
+    </div>
+     
+    <input
+      class="input input-bordered w-full"
+      name="name"
+      placeholder="Название"
+      required=""
+      type="text"
+    />
+  </label>
+   
+  <label
+    class="form-control w-full mb-2"
+  >
+    <div
+      class="label"
+    >
+      <span
+        class="label-text"
+      >
+        Описание
+      </span>
+    </div>
+     
+     
+    
+
+Mock
+  </label>
+   
+  <label
+    class="form-control w-full mb-6"
+  >
+    <div
+      class="label"
+    >
+      <span
+        class="label-text"
+      >
+        Приоритет
+      </span>
+    </div>
+     
+    <input
+      class="input input-bordered w-full"
+      min="1"
+      name="priority"
+      placeholder="Приоритет"
+      required=""
+      type="number"
+    />
+  </label>
+   
+  <div
+    class="card-actions"
+  >
+    <button
+      class="btn btn-neutral w-full md:flex-1"
+      type="button"
+    >
+      Отмена
+    </button>
+     
+    <button
+      class="btn btn-primary w-full md:flex-1"
+      type="submit"
+    >
+      Добавить
+    </button>
+  </div>
+</form>
+`;
+
+exports[`list item form > should prefill inputs 1`] = `
+[
+  "name",
+  "10",
+]
+`;

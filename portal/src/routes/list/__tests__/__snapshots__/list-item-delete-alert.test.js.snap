@@ -1,0 +1,185 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`list item delete alert > opened > on cancel button click > should close 1`] = `
+<body
+  style=""
+>
+  <div>
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      class="hidden"
+      data-alert-dialog-trigger=""
+      data-melt-dialog-trigger=""
+      type="button"
+    />
+    
+     
+    
+  </div>
+  <div
+    data-alert-dialog-portal=""
+    data-melt-dialog-portalled=""
+    data-portal=""
+  >
+    
+     
+    
+  </div>
+</body>
+`;
+
+exports[`list item delete alert > opened > on confirm button click > should close 1`] = `
+<body
+  style=""
+>
+  <div>
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      class="hidden"
+      data-alert-dialog-trigger=""
+      data-melt-dialog-trigger=""
+      type="button"
+    />
+    
+     
+    
+  </div>
+  <div
+    data-alert-dialog-portal=""
+    data-melt-dialog-portalled=""
+    data-portal=""
+  >
+    
+     
+    
+  </div>
+</body>
+`;
+
+exports[`list item delete alert > opened > should be displayed 1`] = `
+<body
+  data-melt-scroll-lock=""
+  style="overflow: hidden;"
+>
+  <div>
+    <button
+      aria-expanded="true"
+      aria-haspopup="dialog"
+      class="hidden"
+      data-alert-dialog-trigger=""
+      data-melt-dialog-trigger=""
+      type="button"
+    />
+    
+     
+    
+  </div>
+  <div
+    data-alert-dialog-portal=""
+    data-melt-dialog-portalled=""
+    data-portal=""
+  >
+    <div
+      aria-hidden="true"
+      class="modal-overlay"
+      data-alert-dialog-overlay=""
+      data-escapee=""
+      data-melt-dialog-overlay=""
+      data-state="open"
+      style=""
+      tabindex="-1"
+    />
+    
+     
+    <div
+      aria-modal="true"
+      class="modal-box modal-alert"
+      data-alert-dialog-content=""
+      data-escapee=""
+      data-melt-dialog-content=""
+      data-state="open"
+      role="alertdialog"
+      style=""
+      tabindex="-1"
+    >
+      <div
+        class="contents prose"
+      >
+        <h2
+          data-alert-dialog-title=""
+          data-melt-dialog-title=""
+        >
+          Подвердите удаление
+        </h2>
+        
+        
+         
+        <p
+          data-alert-dialog-description=""
+          data-melt-dialog-description=""
+        >
+          Вы уверены, что хотите удалить желание «
+          name
+          » из списка?
+        </p>
+        
+         
+        <div
+          class="card-actions"
+        >
+          <button
+            class="btn btn-neutral flex-1"
+            data-alert-dialog-cancel=""
+            data-melt-dialog-close=""
+            type="button"
+          >
+            Отмена
+          </button>
+          
+           
+          <button
+            class="btn btn-error flex-1"
+            data-alert-dialog-action=""
+            data-alert-dialog-cancel=""
+            data-melt-dialog-close=""
+            type="button"
+          >
+            Удалить
+          </button>
+          
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</body>
+`;
+
+exports[`list item delete alert > should be displayed closed 1`] = `
+<body>
+  <div>
+    <button
+      aria-expanded="false"
+      aria-haspopup="dialog"
+      class="hidden"
+      data-alert-dialog-trigger=""
+      data-melt-dialog-trigger=""
+      type="button"
+    />
+    
+     
+    
+  </div>
+  <div
+    data-alert-dialog-portal=""
+    data-melt-dialog-portalled=""
+    data-portal=""
+  >
+    
+     
+    
+  </div>
+</body>
+`;

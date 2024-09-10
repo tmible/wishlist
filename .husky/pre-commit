@@ -1,4 +1,14 @@
+cd common
+pnpm lint
+pnpm test:prod
+cd -
+
 cd bot
+pnpm lint
+pnpm test:prod
+cd -
+
+cd portal
 pnpm lint
 pnpm test:prod
 cd -

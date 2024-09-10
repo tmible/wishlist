@@ -9,7 +9,7 @@ import ItemNamePattern from '../constants/item-name-pattern.const.js';
 
 const [ initiateUpdate, { inject }, updateValue ] = await Promise.all([
   replaceEsm('../helpers/template-functions/initiate-update.js').then((module) => module.default),
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('../helpers/template-functions/update-value.js').then((module) => module.default),
 ]);
 const UpdateNameModule = await import('../update-name.js').then((module) => module.default);

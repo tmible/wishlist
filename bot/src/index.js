@@ -2,10 +2,10 @@
 
 import 'dotenv/config.js';
 import { resolve } from 'node:path';
+import { provide } from '@tmible/wishlist-common/dependency-injector';
 import pino from 'pino';
 import { session, Telegraf } from 'telegraf';
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
-import { provide } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import { emit, subscribe } from '@tmible/wishlist-bot/architecture/event-bus';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';

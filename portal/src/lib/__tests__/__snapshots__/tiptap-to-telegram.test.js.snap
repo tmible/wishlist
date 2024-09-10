@@ -1,0 +1,124 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`tiptapToTelegram > should convert tiptap tree to string and telegram message entities 1`] = `
+[
+  "ueyrghi erogij woeriugh woerifrjh woeifj woeihjf woeifn woerifj woefij woiefj owiejf weiufn
+oreigjnpoerkglsrgnj
+eporkg erkmg wpoerg wpoef
+@wlkergn #erkbn $KDF /ernm ev@jewpeorij.lnjf example.com +12345678901 ldtkrhnj",
+  [
+    {
+      "length": 7,
+      "offset": 0,
+      "type": "bold",
+    },
+    {
+      "length": 6,
+      "offset": 8,
+      "type": "italic",
+    },
+    {
+      "length": 8,
+      "offset": 15,
+      "type": "underline",
+    },
+    {
+      "length": 9,
+      "offset": 24,
+      "type": "strikethrough",
+    },
+    {
+      "length": 6,
+      "offset": 34,
+      "type": "code",
+    },
+    {
+      "length": 7,
+      "offset": 41,
+      "type": "spoiler",
+    },
+    {
+      "length": 7,
+      "offset": 56,
+      "type": "strikethrough",
+    },
+    {
+      "length": 21,
+      "offset": 49,
+      "type": "bold",
+    },
+    {
+      "length": 13,
+      "offset": 71,
+      "type": "italic",
+    },
+    {
+      "length": 14,
+      "offset": 78,
+      "type": "underline",
+    },
+    {
+      "language": null,
+      "length": 13,
+      "offset": 92,
+      "type": "pre",
+    },
+    {
+      "length": 5,
+      "offset": 119,
+      "type": "strikethrough",
+    },
+    {
+      "length": 14,
+      "offset": 117,
+      "type": "spoiler",
+    },
+    {
+      "length": 33,
+      "offset": 105,
+      "type": "blockquote",
+    },
+    {
+      "length": 8,
+      "offset": 138,
+      "type": "mention",
+    },
+    {
+      "length": 6,
+      "offset": 147,
+      "type": "hashtag",
+    },
+    {
+      "length": 4,
+      "offset": 154,
+      "type": "cashtag",
+    },
+    {
+      "length": 5,
+      "offset": 159,
+      "type": "bot_command",
+    },
+    {
+      "length": 17,
+      "offset": 165,
+      "type": "email",
+    },
+    {
+      "length": 11,
+      "offset": 183,
+      "type": "url",
+    },
+    {
+      "length": 12,
+      "offset": 195,
+      "type": "phone_number",
+    },
+    {
+      "length": 8,
+      "offset": 208,
+      "type": "text_link",
+      "url": "https://example.com",
+    },
+  ],
+]
+`;

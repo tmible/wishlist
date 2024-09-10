@@ -1,5 +1,5 @@
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Markup } from 'telegraf';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import HelpSections from './constants/sections.const.js';

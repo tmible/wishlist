@@ -1,0 +1,77 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / phone > add attributes > should add attributes 1`] = `
+{
+  "class": {
+    "default": "cursor-pointer",
+  },
+  "href": {
+    "default": null,
+    "parseHTML": [Function],
+  },
+  "rel": {
+    "default": "noopener noreferrer nofollow",
+  },
+  "target": {
+    "default": "_blank",
+  },
+}
+`;
+
+exports[`text editor / extensions / phone > should add input rules 1`] = `
+[
+  InputRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(\\\\\\+\\\\d\\{11\\}\\|\\\\d\\{10\\}\\)\\\\s\\)\\$/,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / phone > should add paste rules 1`] = `
+[
+  PasteRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(\\\\\\+\\\\d\\{11\\}\\|\\\\d\\{10\\}\\)\\\\s\\)/g,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / phone > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addAttributes": [Function],
+    "addCommands": [Function],
+    "addInputRules": [Function],
+    "addPasteRules": [Function],
+    "defaultOptions": {},
+    "name": "phone_number",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "phone_number",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / phone > should parse HTML 1`] = `
+[
+  {
+    "tag": "a[data-entity="phone_number"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / phone > should render HTML 1`] = `
+[
+  "a",
+  {
+    "from-argument": "attribute",
+    "from-options": "attribute",
+  },
+  0,
+]
+`;

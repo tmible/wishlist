@@ -25,8 +25,11 @@ jobs:
         node-version-file: bot/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-    - name: install dependencies
-      run: pnpm install
+      with:
+        run_install: true
+    - name: build common
+      run: pnpm package
+      working-directory: common
     - name: run lint
       run: pnpm lint
 
@@ -43,8 +46,11 @@ jobs:
         node-version-file: bot/package.json
     - name: install pnpm
       uses: pnpm/action-setup@v4
-    - name: install dependencies
-      run: pnpm install
+      with:
+        run_install: true
+    - name: build common
+      run: pnpm package
+      working-directory: common
     - name: run tests
       run: pnpm test:prod
 
@@ -85,5 +91,6 @@ jobs:
             *) export PATH="$PNPM_HOME:$PATH" ;;
           esac
           # pnpm end
+          pnpm pkg set dependencies.@tmible/wishlist-common=file:../common
           pnpm install --prod
           pnpm run start:background

@@ -9,7 +9,7 @@ const emit = func();
   Пробелы для консистентности с другими элементами массива
 */
 const [ { inject }, sendList ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
 ]);
 

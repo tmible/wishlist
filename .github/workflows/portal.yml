@@ -1,0 +1,110 @@
+name: Portal CI/CD
+
+on:
+  workflow_run:
+    workflows:
+    - Common files deploy
+    types:
+    - completed
+    branches:
+    - master
+    paths:
+    - portal/**
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+    - uses: actions/checkout@v4
+    - name: install node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: portal/package.json
+    - name: install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: true
+    - name: build common
+      run: pnpm package
+      working-directory: common
+    - name: run lint
+      run: pnpm lint
+
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+    - uses: actions/checkout@v4
+    - name: install node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: portal/package.json
+    - name: install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: true
+    - name: build common
+      run: pnpm package
+      working-directory: common
+    - name: run tests
+      run: pnpm test:prod
+
+  deploy:
+    needs: [lint, tests]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+    - uses: actions/checkout@v4
+    - name: install node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: portal/package.json
+    - name: install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: true
+    - name: build common
+      run: pnpm package
+      working-directory: common
+    - name: link assets
+      run: ln -s -f $(realpath ..)/assets/* ./static
+    - name: build
+      env:
+        WISHLIST_DB_FILE_PATH: ${{ vars.PORTAL_WISHLIST_DB_FILE_PATH }}
+        WISHLIST_DB_MIGRATIONS_PATH: ${{ vars.PORTAL_WISHLIST_DB_MIGRATIONS_PATH }}
+      run: pnpm build
+    - name: remove unnecessary files
+      run: |
+        find . -mindepth 1 -maxdepth 1 \
+          -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
+          -type d -not -name 'build' -exec rm -rf {} +
+    - name: deploy
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SOURCE: portal
+        TARGET: ${{ secrets.REMOTE_TARGET }}
+        SCRIPT_AFTER: |
+          cd ${{ secrets.REMOTE_TARGET }}/portal
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+          # pnpm
+          export PNPM_HOME="/root/.local/share/pnpm"
+          case ":$PATH:" in
+            *":$PNPM_HOME:"*) ;;
+            *) export PATH="$PNPM_HOME:$PATH" ;;
+          esac
+          # pnpm end
+          pnpm pkg set dependencies.@tmible/wishlist-common=file:../common
+          pnpm install --prod
+          pnpm run start:background

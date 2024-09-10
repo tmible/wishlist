@@ -1,15 +1,18 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/svelte';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
+import { subscribeToTheme } from '@tmible/wishlist-common/theme-service';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { adjustGradient, generateGradient } from '$lib/gradient-generator';
-import { subscribeToTheme } from '$lib/theme-service';
 import GradientSwitcher from '../gradient-switcher.svelte';
 
 const localStorageStub = { getItem: vi.fn(() => null), setItem: vi.fn(), removeItem: vi.fn() };
 
 vi.stubGlobal('localStorage', localStorageStub);
-vi.mock('$lib/theme-service', () => ({ isDarkTheme: vi.fn(), subscribeToTheme: vi.fn() }));
+vi.mock(
+  '@tmible/wishlist-common/theme-service',
+  () => ({ isDarkTheme: vi.fn(), subscribeToTheme: vi.fn() }),
+);
 vi.mock('$lib/gradient-generator', () => ({ adjustGradient: vi.fn(), generateGradient: vi.fn() }));
 
 describe('gradient switcher', () => {

@@ -1,14 +1,12 @@
 <!-- Svelte компонент -- страница с дашбордами -->
 <script>
+  import { post } from '@tmible/wishlist-common/post';
   import { goto } from '$app/navigation';
   import GradientSwitcher from '$lib/components/gradient-switcher.svelte';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
-  /* eslint-disable-next-line import/default, import/no-named-as-default,
-    import/no-named-as-default-member -- Понятия не имею, в чём проблема */
   import UserSessionsTable from '$lib/components/user-sessions-table';
-  import { post } from '$lib/post';
   import { isAuthenticated } from '$lib/store/is-authenticated';
   import ActiveUsersDashboard from './active-users-dashboard.svelte';
   import SuccessRateDashboard from './success-rate-dashboard.svelte';

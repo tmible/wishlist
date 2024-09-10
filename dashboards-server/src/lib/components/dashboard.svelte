@@ -1,11 +1,11 @@
 <!-- Svelte компонент -- шаблонный дашборд с любым типом графика -->
 <script>
+  import { subscribeToTheme } from '@tmible/wishlist-common/theme-service';
   import { Chart } from 'chart.js/auto';
   import { onMount, tick } from 'svelte';
   import { Label } from '$lib/components/ui/label';
   import * as Select from '$lib/components/ui/select';
   import { PERIOD } from '$lib/constants/period.const.js';
-  import { subscribeToTheme } from '$lib/theme-service.js';
 
   /** @typedef {import('chart.js').ChartConfiguration} ChartConfiguration */
   /** @typedef {import('svelte/store').Writable} Writable */

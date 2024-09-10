@@ -1,5 +1,5 @@
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import AddModule from './add.js';
 import CancelAddModule from './cancel-add.js';

@@ -1,6 +1,6 @@
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement

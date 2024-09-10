@@ -16,7 +16,7 @@ const [
 ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
   replaceModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'),
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
 ]);
 

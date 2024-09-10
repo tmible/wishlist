@@ -1,5 +1,5 @@
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import BookModule from './book.js';
 import CancelListModule from './cancel-list.js';

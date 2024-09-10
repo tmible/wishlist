@@ -1,7 +1,7 @@
+import migrate from '@tmible/wishlist-common/db-migrations';
+import { provide } from '@tmible/wishlist-common/dependency-injector';
 import Database from 'better-sqlite3';
-import { provide } from '@tmible/wishlist-bot/architecture/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import migrate from '@tmible/wishlist-bot/helpers/db-migrations';
 import EditingModule from './editing/index.js';
 import UsernamesModule from './usernames/index.js';
 import WishlistModule from './wishlist/index.js';

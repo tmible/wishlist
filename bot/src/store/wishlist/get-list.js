@@ -1,11 +1,11 @@
-import { inject } from '@tmible/wishlist-bot/architecture/dependency-injector';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import descriptionEntitiesReducer from '@tmible/wishlist-common/description-entities-reducer';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import descriptionEntitiesReducer from '@tmible/wishlist-bot/store/helpers/description-entities-reducer';
 import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-mapper';
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement
- * @typedef {import('@tmible/wishlist-bot/constants/list-item-state').default} ListItemState
+ * @typedef {import('@tmible/wishlist-common/constants/list-item-state').default} ListItemState
  * @typedef {import('@tmible/wishlist-bot/store').Entity} Entity
  */
 /**

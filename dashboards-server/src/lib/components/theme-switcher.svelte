@@ -1,6 +1,6 @@
 <!-- Svelte компонент -- переключатель цветовой темы -->
 <script>
-  import { inject } from '$lib/architecture/dependency-injector';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { Switch } from '$lib/components/ui/switch';
 

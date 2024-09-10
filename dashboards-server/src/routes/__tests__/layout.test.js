@@ -1,13 +1,13 @@
 // @vitest-environment jsdom
 import { render } from '@testing-library/svelte';
+import { provide } from '@tmible/wishlist-common/dependency-injector';
+import { isDarkTheme, subscribeToTheme, updateTheme } from '@tmible/wishlist-common/theme-service';
 import { get } from 'svelte/store';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
-import { provide } from '$lib/architecture/dependency-injector';
 import { InjectionToken } from '$lib/architecture/injection-token';
 import { isAuthenticated } from '$lib/store/is-authenticated.js';
-import { isDarkTheme, subscribeToTheme, updateTheme } from '$lib/theme-service';
 import Layout from '../+layout.svelte';
 
 const fetchMock = vi.fn(() => Promise.resolve({ status: 200, json: () => {} }));
@@ -18,9 +18,9 @@ vi.mock('$app/stores', async () => {
   return { page: writable({ url: { pathname: 'path' } }) };
 });
 vi.mock('$app/navigation');
-vi.mock('$lib/architecture/dependency-injector');
+vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock(
-  '$lib/theme-service',
+  '@tmible/wishlist-common/theme-service',
   () => ({ isDarkTheme: vi.fn(), subscribeToTheme: vi.fn(), updateTheme: vi.fn() }),
 );
 

@@ -17,7 +17,7 @@ const [
   { sendMessageAndMarkItForMarkupRemove },
   sendList,
 ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceModule('@tmible/wishlist-bot/helpers/get-userid-from-input'),
   replaceModule('@tmible/wishlist-bot/helpers/is-user-in-chat'),
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),

@@ -10,7 +10,7 @@ const emit = func();
 
 const [ initiateUpdate, { inject }, sendList ] = await Promise.all([
   replaceEsm('../helpers/template-functions/initiate-update.js').then((module) => module.default),
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),
 ]);
 

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/svelte';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ThemeSwitcher from '../theme-switcher.svelte';
 
@@ -8,7 +8,7 @@ const isDarkTheme = vi.fn();
 const updateTheme = vi.fn();
 
 vi.mock(
-  '$lib/architecture/dependency-injector',
+  '@tmible/wishlist-common/dependency-injector',
   () => ({ inject: () => ({ isDarkTheme, updateTheme }) }),
 );
 

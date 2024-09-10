@@ -8,7 +8,7 @@ const statement = object([ 'run' ]);
 const [ Database, build, migrate ] = await Promise.all([
   replaceEsm('better-sqlite3').then((module) => module.default),
   replaceEsm('pino-abstract-transport').then((module) => module.default),
-  replaceModule('@tmible/wishlist-bot/helpers/db-migrations'),
+  replaceModule('@tmible/wishlist-common/db-migrations'),
 ]);
 
 const transport = await import('../pino-sqlite-transport.worker.js')

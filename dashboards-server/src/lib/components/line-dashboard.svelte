@@ -1,11 +1,14 @@
 <!-- Svelte компонент -- шаблонный дашборд с графиками-линиями -->
 <script>
   import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
+  import { isDarkTheme } from '@tmible/wishlist-common/theme-service';
   import { Chart } from 'chart.js/auto';
+  /* eslint-disable-next-line
+     import/default, import/no-named-as-default, import/no-named-as-default-member --
+     Ошибка из-за версии eslint */
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { PERIOD } from '$lib/constants/period.const.js';
   import { getData } from '$lib/get-data.js';
-  import { isDarkTheme } from '$lib/theme-service.js';
   import Dashboard from './dashboard.svelte';
 
   /** @typedef {import('chart.js').ChartConfiguration} ChartConfiguration */

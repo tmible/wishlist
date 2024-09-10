@@ -10,7 +10,7 @@ const db = object([ 'get', 'put' ]);
   Пробелы для консистентности с другими элементами массива
 */
 const [ { inject }, getSessionKey ] = await Promise.all([
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceModule('@tmible/wishlist-bot/helpers/get-session-key'),
 ]);
 

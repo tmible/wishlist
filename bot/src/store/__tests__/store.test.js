@@ -6,7 +6,7 @@ const modules = new Array(3).fill(null).map(() => object([ 'configure' ]));
 
 const [ Database, migrate ] = await Promise.all([
   replaceEsm('better-sqlite3').then((module) => module.default),
-  replaceModule('@tmible/wishlist-bot/helpers/db-migrations'),
+  replaceModule('@tmible/wishlist-common/db-migrations'),
   replaceEsm('../wishlist/index.js', {}, modules[0]),
   replaceEsm('../editing/index.js', {}, modules[1]),
   replaceEsm('../usernames/index.js', {}, modules[2]),

@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / hashtag > should add input rules 1`] = `
+[
+  InputRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(#\\[\\^\\\\s#\\]\\+\\)\\\\s\\)\\$/,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / hashtag > should add paste rules 1`] = `
+[
+  PasteRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(#\\[\\^\\\\s#\\]\\+\\)\\\\s\\)/g,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / hashtag > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addCommands": [Function],
+    "addInputRules": [Function],
+    "addPasteRules": [Function],
+    "defaultOptions": {},
+    "name": "hashtag",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "hashtag",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / hashtag > should parse HTML 1`] = `
+[
+  {
+    "tag": "span[data-entity="hashtag"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / hashtag > should render HTML 1`] = `
+[
+  "span",
+  {
+    "class": "link cursor-text",
+  },
+  0,
+]
+`;

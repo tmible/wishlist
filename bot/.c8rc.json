@@ -2,8 +2,7 @@
   "include": "src",
   "exclude": [
     "**/__tests__/**",
-    "src/constants",
-    "src/helpers/tests"
+    "src/constants"
   ],
    "reporter": [
     "text-summary",

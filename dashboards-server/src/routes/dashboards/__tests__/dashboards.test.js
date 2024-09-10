@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/svelte';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
+import { post } from '@tmible/wishlist-common/post';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
-import { post } from '$lib/post';
 import { isAuthenticated } from '$lib/store/is-authenticated';
 import Dashboards from '../+page.svelte';
 
 vi.mock('$app/navigation');
-vi.mock('$lib/post');
+vi.mock('@tmible/wishlist-common/post');
 vi.mock('$lib/components/gradient-switcher.svelte', async () => ({
   default: await import('./mock.svelte').then((module) => module.default),
 }));

@@ -34,14 +34,7 @@
     "optimize-regex"
 	],
   "settings": {
-  	"import/ignore": [ "^\\$lib/components/user-sessions-table$" ],
-    "import/resolver": {
-      "custom-alias": {
-        "alias": {
-          "$lib": "./src/lib"
-        }
-      }
-    }
+  	"import/ignore": [ "^\\$lib/components/user-sessions-table$" ]
   },
 	"env": {
 		"browser": true,
@@ -345,24 +338,8 @@
 		],
     "import/no-relative-packages": "error",
     "import/no-self-import": "error",
-    "import/no-unresolved": [
-      "error",
-      {
-				"ignore": [
-					/* svelte specific aliases */
-					"^\\$env",
-					"^\\$app",
-		      /* actually works, eslint-plugin-resolver-custom-alias does
-		         not parse package.json "exports" property, only "main" */
-					"^svelte/store$",
-					"^@sveltejs/kit$",
-					"^svelte-radix/\\w+.svelte$",
-					/* no idea why theese are reported */
-					"svelte-headless-table",
-					"svelte-headless-table/plugins"
-				]
-			}
-    ],
+    /* too many false positive reports */
+    "import/no-unresolved": "off",
     "import/no-useless-path-segments": "error",
     "import/first": "error",
     "import/newline-after-import": [ "error", { "considerComments": true } ],

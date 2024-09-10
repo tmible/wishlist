@@ -1,9 +1,9 @@
 import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
+import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
 import { Format, Markup } from 'telegraf';
 import { func, matchers, object, reset, verify, when } from 'testdouble';
 import Events from '@tmible/wishlist-bot/architecture/events';
-import ListItemState from '@tmible/wishlist-bot/constants/list-item-state';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const emit = func();
@@ -14,7 +14,7 @@ const bot = object([ 'command', 'action' ]);
 */
 const [ isChatGroup, { inject } ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
-  replaceModule('@tmible/wishlist-bot/architecture/dependency-injector'),
+  replaceModule('@tmible/wishlist-common/dependency-injector'),
 ]);
 
 const ClearListModule = await import('../clear-list.js').then((module) => module.default);

@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`text editor / extensions / cashtag > should add input rules 1`] = `
+[
+  InputRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(\\\\\\$\\[A-Z\\]\\{3,8\\}\\)\\\\s\\)\\$/,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / cashtag > should add paste rules 1`] = `
+[
+  PasteRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\(\\\\\\$\\[A-Z\\]\\{3,8\\}\\)\\\\s\\)/g,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / cashtag > should be defined 1`] = `
+Mark {
+  "child": null,
+  "config": {
+    "addCommands": [Function],
+    "addInputRules": [Function],
+    "addPasteRules": [Function],
+    "defaultOptions": {},
+    "name": "cashtag",
+    "parseHTML": [Function],
+    "renderHTML": [Function],
+  },
+  "name": "cashtag",
+  "options": {},
+  "parent": null,
+  "storage": {},
+  "type": "mark",
+}
+`;
+
+exports[`text editor / extensions / cashtag > should parse HTML 1`] = `
+[
+  {
+    "tag": "span[data-entity="cashtag"]",
+  },
+]
+`;
+
+exports[`text editor / extensions / cashtag > should render HTML 1`] = `
+[
+  "span",
+  {
+    "class": "link cursor-text",
+  },
+  0,
+]
+`;

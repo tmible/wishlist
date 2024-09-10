@@ -6,7 +6,7 @@ import LoggingMiddlewareType from '@tmible/wishlist-bot/constants/logging-middle
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const info = func();
-const { inject } = await replaceModule('@tmible/wishlist-bot/architecture/dependency-injector');
+const { inject } = await replaceModule('@tmible/wishlist-common/dependency-injector');
 const logging = await import('../logging.js').then((module) => module.default);
 
 describe('logging middleware', () => {
