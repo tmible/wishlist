@@ -27,13 +27,6 @@
   export let isSkeleton = false;
 
   /**
-   * Форма из родительского компонента для использования form actions
-   * @type {import('./$types').ActionData}
-   * @see {@link https://kit.svelte.dev/docs/form-actions}
-   */
-  export let form = null;
-
-  /**
    * Признак отображения карточки в режиме редактирования элемента (с формой вместо контента)
    * @type {boolean}
    */
@@ -114,7 +107,6 @@
     <div class="card-body prose">
       {#if isEditingModeOn}
         <ListItemForm
-          {form}
           {values}
           on:cancel={cancelEditItem}
           on:success={finishEditItem}

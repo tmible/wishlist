@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-portal",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"private": true,
 	"description": "Портал со списками желаний",
 	"repository": {
@@ -16,7 +16,7 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
 		"start:background": "SERVICE_NAME=\"wishlist-portal\" SERVICE_DESCRIPTION=\"Tmible's wishlist portal\" PATH_TO_EXECUTABLE=\"./build\" ../deploy/start-systemd-service.sh",
-		"restart:background": "systemctl restart wishlist-postal",
+		"restart:background": "systemctl restart wishlist-portal",
 		"stop:background": "systemctl stop wishlist-portal",
 		"lint": "eslint ./src",
 		"lint:fix": "eslint --fix ./src",

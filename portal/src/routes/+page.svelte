@@ -8,8 +8,7 @@
   import { waitForElement } from '$lib/wait-for-element.js';
 
   onMount(async () => {
-    document.querySelector('[id="telegram-login-widget-container"]').insertAdjacentElement(
-      'beforeend',
+    document.querySelector('[id="telegram-login-widget-container"]').append(
       await waitForElement('[id="telegram-login-tmible_wishlist_bot"]', document.head),
     );
   });

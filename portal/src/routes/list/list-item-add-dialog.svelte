@@ -18,13 +18,6 @@
   export let open = false;
 
   /**
-   * Форма из родительского компонента для использования form actions
-   * @type {import('./$types').ActionData}
-   * @see {@link https://kit.svelte.dev/docs/form-actions}
-   */
-  export let form;
-
-  /**
    * Закрытие диалога
    * @function close
    * @returns {void}
@@ -54,7 +47,7 @@
             <X />
           </Dialog.Close>
         </div>
-        <ListItemForm {form} on:cancel={close} on:success={dispatchAndClose} />
+        <ListItemForm on:cancel={close} on:success={dispatchAndClose} />
       </div>
     </Dialog.Content>
   </Dialog.Portal>

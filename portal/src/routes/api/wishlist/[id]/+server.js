@@ -39,7 +39,7 @@ export const PUT = async ({ params, request }) => {
 
     db.prepare('DELETE FROM description_entities WHERE list_item_id = ?').run(params.id);
 
-    parseAndInsertDescriptionEntities(db, params.id, JSON.parse(body.descriptionEntities) ?? []);
+    parseAndInsertDescriptionEntities(db, params.id, JSON.parse(body.descriptionEntities ?? '[]'));
   })();
 
   return new Response(null, { status: 200 });

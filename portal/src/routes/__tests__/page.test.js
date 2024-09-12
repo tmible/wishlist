@@ -48,10 +48,10 @@ describe('landing', () => {
   describe('on mount', () => {
     let mountHandler;
     const mockElement = document.createElement('div');
-    const insertAdjacentElement = vi.fn();
+    const append = vi.fn();
 
     beforeEach(async () => {
-      vi.spyOn(document, 'querySelector').mockReturnValue({ insertAdjacentElement });
+      vi.spyOn(document, 'querySelector').mockReturnValue({ append });
       vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       vi.mocked(waitForElement).mockResolvedValue(mockElement);
       render(await import('../+page.svelte').then((module) => module.default));
@@ -68,7 +68,7 @@ describe('landing', () => {
     });
 
     it('should replace telegram login widget', () => {
-      expect(insertAdjacentElement).toHaveBeenCalledWith('beforeend', mockElement);
+      expect(append).toHaveBeenCalledWith(mockElement);
     });
   });
 });

@@ -12,12 +12,6 @@
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
 
   /**
-   * Форма создания или изменения элемента списка
-   * @type {import('./$types').ActionData}
-   */
-  export let form;
-
-  /**
    * Признак открытости диалога добавления нового элемента списка
    * @type {boolean}
    */
@@ -109,7 +103,6 @@
           {:else}
             {#each $list as listItem (listItem.id)}
               <ListItemCard
-                {form}
                 {listItem}
                 on:delete={deleteListItem}
                 on:refreshlist={requestList}
@@ -123,7 +116,6 @@
   </div>
 
   <ListItemAddDialog
-    {form}
     bind:open={isAddDialogOpen}
     on:add={requestList}
   />

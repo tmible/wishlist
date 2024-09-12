@@ -1,7 +1,6 @@
 <!-- Svelte компонент -- форма создания или изменения элемента списка -->
 <script>
   import { createEventDispatcher } from 'svelte';
-  import { enhance } from '$app/forms';
   import TextEditor from '$lib/components/text-editor';
   import { list } from '$lib/store/list';
   import { user } from '$lib/store/user';
@@ -16,24 +15,10 @@
   const dispatch = createEventDispatcher();
 
   /**
-   * Форма из родительского компонента для использования form actions
-   * @type {import('./$types').ActionData}
-   * @see {@link https://kit.svelte.dev/docs/form-actions}
-   */
-  export let form;
-
-  /**
    * Текущие значения свойств элемента списка для подстановку в форму в режиме редактирования
    * @type {OwnListItem | null}
    */
   export let values = null;
-
-  /**
-   * Выпуск события успеха при успешной обработке формы сервером
-   */
-  $: if (form?.success) {
-    dispatch('success');
-  }
 
   /**
    * Парсинг и подстановка в форму описания элемента списка. Парсинг нужен
@@ -76,30 +61,38 @@
   };
 
   /**
-   * Обработка формы после подтверждения и перед отправкой на сервер
+   * Обработка и отправка на сервер формы после подтверждения
    * @function handleFormSubmit
-   * @param {Parameters<import('@sveltejs/kit').SubmitFunction>[0]} input Входные данные для
-   * SubmitFunction
-   * @param {() => void} input.cancel Функция отмены отправки формы на сервер
-   * @param {FormData} input.formData Данные формы
-   * @returns {void}
+   * @param {Event} event Событие подтверждения формы
+   * @returns {Promise<void>}
+   * @async
    */
-  const handleFormSubmit = ({ cancel, formData }) => {
+  const handleFormSubmit = async (event) => {
+    const formData = new FormData(event.target);
     setDescription(formData);
 
     if (values) {
       filterNotModifiedProperties(formData);
 
       if (Array.from(formData.entries()).length === 0) {
-        cancel();
         dispatch('cancel');
+        return;
       }
-
-      formData.append('listItemId', values.id);
     }
 
     formData.append('userid', $user.id);
-    formData.append('method', values ? 'PUT' : 'POST');
+
+    const response = await fetch(
+      values ? `/api/wishlist/${values.id}` : '/api/wishlist',
+      {
+        method: values ? 'PUT' : 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+      },
+    );
+
+    if (response.ok) {
+      dispatch('success');
+    }
   };
 
   /**
@@ -110,7 +103,7 @@
   const cancel = () => dispatch('cancel');
 </script>
 
-<form class="prose" method="POST" use:enhance={handleFormSubmit}>
+<form class="prose" method="POST" on:submit|preventDefault={handleFormSubmit}>
   <label class="form-control w-full mb-2">
     <div class="label">
       <span class="label-text">Название</span>
