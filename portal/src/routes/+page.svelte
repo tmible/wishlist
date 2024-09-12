@@ -15,14 +15,16 @@
 </script>
 
 <svelte:head>
-  <script
-    async
-    src="https://telegram.org/js/telegram-widget.js?22"
-    data-telegram-login="tmible_wishlist_bot"
-    data-size="large"
-    data-auth-url="/api/authSuccess"
-    data-request-access="write"
-  />
+  {#if browser && !$user.isAuthenticated}
+    <script
+      async
+      src="https://telegram.org/js/telegram-widget.js?22"
+      data-telegram-login="tmible_wishlist_bot"
+      data-size="large"
+      data-auth-url="/api/authSuccess"
+      data-request-access="write"
+    />
+  {/if}
 </svelte:head>
 
 {#if browser && !$user.isAuthenticated}

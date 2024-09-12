@@ -1,7 +1,13 @@
+/* eslint-disable no-undef -- jsdom -- глобальная переменная тестового окружения */
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
 import { provide } from '@tmible/wishlist-common/dependency-injector';
-import { isDarkTheme, subscribeToTheme, updateTheme } from '@tmible/wishlist-common/theme-service';
+import {
+  initTheme,
+  isDarkTheme,
+  subscribeToTheme,
+  updateTheme,
+} from '@tmible/wishlist-common/theme-service';
 import { onMount } from 'svelte';
 import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -16,6 +22,7 @@ vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock(
   '@tmible/wishlist-common/theme-service',
   () => ({
+    initTheme: vi.fn(),
     isDarkTheme: vi.fn(),
     subscribeToTheme: vi.fn(),
     updateTheme: vi.fn(),
@@ -23,7 +30,19 @@ vi.mock(
 );
 
 describe('layout', () => {
+  beforeEach(() => {
+    Object.defineProperty(
+      jsdom.window,
+      'matchMedia',
+      {
+        value: vi.fn().mockReturnValue(true),
+        configurable: true,
+      },
+    );
+  });
+
   afterEach(() => {
+    delete jsdom.window.matchMedia;
     vi.clearAllMocks();
     cleanup();
   });
@@ -34,7 +53,7 @@ describe('layout', () => {
       vi.mocked(provide),
     ).toHaveBeenCalledWith(
       InjectionToken.ThemeService,
-      { isDarkTheme, subscribeToTheme, updateTheme },
+      { initTheme, isDarkTheme, subscribeToTheme, updateTheme },
     );
   });
 
@@ -56,6 +75,11 @@ describe('layout', () => {
     it('should set user to store', async () => {
       await mountHandler();
       expect(vi.mocked(user.set)).toHaveBeenCalledWith('response');
+    });
+
+    it('should init theme store', async () => {
+      await mountHandler();
+      expect(vi.mocked(initTheme)).toHaveBeenCalled();
     });
   });
 
@@ -93,3 +117,4 @@ describe('layout', () => {
     expect(goto).toHaveBeenCalledWith('/list');
   });
 });
+/* eslint-enable no-undef */

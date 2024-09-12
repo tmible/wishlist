@@ -3,6 +3,7 @@
   import '../app.pcss';
   import { provide } from '@tmible/wishlist-common/dependency-injector';
   import {
+    initTheme,
     isDarkTheme,
     subscribeToTheme,
     updateTheme,
@@ -17,7 +18,7 @@
   /**
    * Регистрация сервиса управления темой в сервисе внедрения зависмостей
    */
-  provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+  provide(InjectionToken.ThemeService, { initTheme, isDarkTheme, subscribeToTheme, updateTheme });
 
   /**
    * В браузере проверка аутентифицированностии пользователя и его
@@ -38,6 +39,7 @@
     user.set(
       await fetch('/api/user').then((response) => response.json()),
     );
+    initTheme();
   });
 </script>
 
@@ -45,12 +47,31 @@
   <!-- eslint-disable svelte/indent -- Всё как должно быть -->
   <script>
     (() => {
-      const theme = localStorage.getItem('theme') ?? (
-        window.matchMedia?.('(prefers-color-scheme: dark)').matches ?
-          'dark' :
-          'light'
+      let fromLocalStorage = localStorage.getItem('theme');
+      // TODO временное решение для поддержки старого формата хранения темы
+      try {
+        fromLocalStorage = JSON.parse(fromLocalStorage);
+      } catch(e) {
+        if (!/Unexpected token '.', ".+" is not valid JSON/.test(e.message)) {
+          throw e;
+        }
+      }
+      const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      let theme;
+
+      if (fromLocalStorage?.windowPrefersDark === fromWindow && fromLocalStorage?.themeName) {
+        theme = fromLocalStorage.themeName;
+      } else {
+        theme = fromWindow ? 'dark' : 'light';
+      }
+
+      localStorage.setItem(
+        'theme',
+        JSON.stringify({
+          windowPrefersDark: fromWindow,
+          themeName: theme,
+        }),
       );
-      localStorage.setItem('theme', theme);
       document.documentElement.dataset.theme = theme;
     })();
   </script>
