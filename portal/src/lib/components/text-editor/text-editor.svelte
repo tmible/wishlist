@@ -66,11 +66,13 @@
       BubbleMenu.configure({
         element: document.querySelector('#text-editor-bubble-menu'),
         tippyOptions: {
-          placement: 'right',
           ...($md ?
-            {} :
+            {
+              placement: 'right',
+            } :
             {
               maxWidth: 'none',
+              appendTo: () => document.body,
               offset: [ 0, 0 ],
               getReferenceClientRect: () => ({
                 left: 0,
