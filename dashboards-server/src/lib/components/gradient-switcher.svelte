@@ -1,11 +1,17 @@
 <!-- Svelte компонент -- переключатель градиента на фоне страницы -->
 <script>
-  import { isDarkTheme, subscribeToTheme } from '@tmible/wishlist-common/theme-service';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { onMount } from 'svelte';
+  import { InjectionToken } from '$lib/architecture/injection-token';
   import { Switch } from '$lib/components/ui/switch';
   import { adjustGradient, generateGradient } from '$lib/gradient-generator';
 
   /** @typedef {import('$lib/gradient-generator').Gradient} Gradient */
+
+  /**
+   * Сервис управления темой
+   */
+  const themeService = inject(InjectionToken.ThemeService);
 
   /**
    * Признак использования градиента
@@ -32,7 +38,7 @@
   /**
    * Затемнение или осветление градиента при смене темы
    */
-  onMount(() => subscribeToTheme((isDark) => {
+  onMount(() => themeService.subscribeToTheme((isDark) => {
     gradient = adjustGradient(gradient, isDark);
 
     if (isGradient) {
@@ -46,7 +52,7 @@
   $: if (isGradient) {
     applyGradient();
   } else {
-    gradient = generateGradient(isDarkTheme());
+    gradient = generateGradient(themeService.isDarkTheme());
     localStorage.removeItem('gradient');
     document.documentElement.style.setProperty('--gradient', undefined);
   }

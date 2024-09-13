@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
-import { subscribeToTheme } from '@tmible/wishlist-common/theme-service';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { adjustGradient, generateGradient } from '$lib/gradient-generator';
 import GradientSwitcher from '../gradient-switcher.svelte';
@@ -9,19 +9,19 @@ import GradientSwitcher from '../gradient-switcher.svelte';
 const localStorageStub = { getItem: vi.fn(() => null), setItem: vi.fn(), removeItem: vi.fn() };
 
 vi.stubGlobal('localStorage', localStorageStub);
-vi.mock(
-  '@tmible/wishlist-common/theme-service',
-  () => ({ isDarkTheme: vi.fn(), subscribeToTheme: vi.fn() }),
-);
+vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('$lib/gradient-generator', () => ({ adjustGradient: vi.fn(), generateGradient: vi.fn() }));
 
 describe('gradient switcher', () => {
   let documentStyleSpy;
+  let subscribeToTheme;
 
   beforeEach(() => {
     documentStyleSpy = vi.spyOn(document.documentElement.style, 'setProperty');
     adjustGradient.mockReturnValue({ style: 'style' });
     generateGradient.mockReturnValue({ style: 'style' });
+    subscribeToTheme = vi.fn();
+    vi.mocked(inject).mockReturnValue({ isDarkTheme: vi.fn(), subscribeToTheme });
   });
 
   afterEach(() => {

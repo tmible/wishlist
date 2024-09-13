@@ -1,8 +1,9 @@
 <!-- Svelte компонент -- шаблонный дашборд с любым типом графика -->
 <script>
-  import { subscribeToTheme } from '@tmible/wishlist-common/theme-service';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Chart } from 'chart.js/auto';
   import { onMount, tick } from 'svelte';
+  import { InjectionToken } from '$lib/architecture/injection-token';
   import { Label } from '$lib/components/ui/label';
   import * as Select from '$lib/components/ui/select';
   import { PERIOD } from '$lib/constants/period.const.js';
@@ -207,7 +208,7 @@
 
     let themeUnsubscriber;
     if (themeSubscriber) {
-      themeUnsubscriber = subscribeToTheme((isDark) => {
+      themeUnsubscriber = inject(InjectionToken.ThemeService).subscribeToTheme((isDark) => {
         if (!dashboard) {
           return;
         }

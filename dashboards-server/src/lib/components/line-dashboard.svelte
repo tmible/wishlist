@@ -1,12 +1,13 @@
 <!-- Svelte компонент -- шаблонный дашборд с графиками-линиями -->
 <script>
   import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
-  import { isDarkTheme } from '@tmible/wishlist-common/theme-service';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Chart } from 'chart.js/auto';
   /* eslint-disable-next-line
      import/default, import/no-named-as-default, import/no-named-as-default-member --
      Ошибка из-за версии eslint */
   import annotationPlugin from 'chartjs-plugin-annotation';
+  import { InjectionToken } from '$lib/architecture/injection-token';
   import { PERIOD } from '$lib/constants/period.const.js';
   import { getData } from '$lib/get-data.js';
   import Dashboard from './dashboard.svelte';
@@ -155,7 +156,7 @@
   const formChartOptions = (data, periodStart) => {
     const gridOptions = {
       grid: {
-        color: isDarkTheme() ?
+        color: inject(InjectionToken.ThemeService).isDarkTheme() ?
           `hsl(${getComputedStyle(document.documentElement).getPropertyValue('--secondary')})` :
           GRID_LIGHT_COLOR,
       },

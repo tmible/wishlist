@@ -53,7 +53,7 @@ describe('layout', () => {
       vi.mocked(provide),
     ).toHaveBeenCalledWith(
       InjectionToken.ThemeService,
-      { initTheme, isDarkTheme, subscribeToTheme, updateTheme },
+      { isDarkTheme, subscribeToTheme, updateTheme },
     );
   });
 

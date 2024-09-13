@@ -18,7 +18,7 @@
   /**
    * Регистрация сервиса управления темой в сервисе внедрения зависмостей
    */
-  provide(InjectionToken.ThemeService, { initTheme, isDarkTheme, subscribeToTheme, updateTheme });
+  provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
 
   /**
    * В браузере проверка аутентифицированностии пользователя и его
@@ -33,7 +33,7 @@
   }
 
   /**
-   * Запрос статуса аутентификации пользователя
+   * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
    */
   onMount(async () => {
     user.set(
