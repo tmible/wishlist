@@ -114,7 +114,19 @@ bot.catch((err, ctx) => {
   );
 });
 
-bot.launch();
+
+bot.launch(
+  ...(
+    process.env.HOST && process.env.PORT ?
+      [{
+        webhook: {
+          domain: process.env.HOST,
+          port: process.env.PORT,
+        },
+      }] :
+      []
+  ),
+);
 
 logger.debug('bot started');
 
