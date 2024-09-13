@@ -13,6 +13,7 @@
 - `ADMIN_PASSWORD` SHA-256 хэш пароля админа
 - `HMAC_SECRET` случайный SHA-256 хэш для генерации jwt-токенов аутентификации
 - `LOGS_DB_FILE_PATH` путь к SQLite БД с логами
+- `LOGS_DB_MIGRATIONS_PATH` путь к папке с SQL скриптами миграций БД для хранения логов
 - `ORIGIN` https://используемый_домен
 - `PORT` порт для Node.js сервера
 

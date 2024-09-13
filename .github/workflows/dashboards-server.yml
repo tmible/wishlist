@@ -76,6 +76,7 @@ jobs:
     - name: build
       env:
         LOGS_DB_FILE_PATH: ${{ vars.DASHBOARDS_SERVER_LOGS_DB_FILE_PATH }}
+        LOGS_DB_MIGRATIONS_PATH: ${{ vars.DASHBOARDS_SERVER_LOGS_DB_MIGRATIONS_PATH }}
       run: pnpm build
     - name: remove unnecessary files
       run: |

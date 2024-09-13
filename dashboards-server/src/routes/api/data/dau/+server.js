@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { dauStatement } from '$lib/server/dau-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики DAU для каждого дня указанного периода
@@ -13,7 +14,7 @@ export const GET = ({ url }) => {
 
   const periodEnd = Date.now();
 
-  return json(dauStatement.all(
+  return json(inject(InjectionToken.DAUStatement).all(
     new Date(periodEnd).setDate(new Date().getDate() - 1),
     { periodStart, periodEnd },
   ));

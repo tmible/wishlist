@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { yauStatement } from '$lib/server/yau-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики YAU для каждого дня указанного периода
@@ -13,7 +14,7 @@ export const GET = ({ url }) => {
 
   const periodEnd = Date.now();
 
-  return json(yauStatement.all(
+  return json(inject(InjectionToken.YAUStatement).all(
     new Date(periodEnd).setFullYear(new Date().getFullYear() - 1),
     { periodStart, periodEnd },
   ));

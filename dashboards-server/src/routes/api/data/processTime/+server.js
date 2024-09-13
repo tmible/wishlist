@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { processTimeStatement } from '$lib/server/process-time-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики времени, потраченного ботом с получения обновления
@@ -11,5 +12,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  return json(processTimeStatement.all(periodStart));
+  return json(inject(InjectionToken.ProcessTimeStatement).all(periodStart));
 };

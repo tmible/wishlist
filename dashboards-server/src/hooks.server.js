@@ -2,6 +2,7 @@ import { promisify } from 'node:util';
 import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const.js';
+import { initDB } from '$lib/server/db.js';
 
 /**
  * Промежуточный обработчик, возвращающий ошибку, если в запросе нет cookie-файла, содержащего
@@ -23,3 +24,8 @@ export const handle = async ({ event, resolve }) => {
 
   return await resolve(event);
 };
+
+/**
+ * Открытие подключения к БД при старте приложения
+ */
+await initDB();

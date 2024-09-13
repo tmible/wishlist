@@ -9,4 +9,15 @@
  * с помощью модуля внедрения зависимостей
  * @enum {string}
  */
-export const InjectionToken = Object.freeze({ ThemeService: 'theme service' });
+export const InjectionToken = Object.freeze({
+  Database: 'database',
+  ResponseTimeStatement: 'response time statement',
+  ProcessTimeStatement: 'process time statement',
+  StartupTimeStatement: 'startup time statement',
+  DAUStatement: 'DAU statement',
+  MAUStatement: 'MAU statement',
+  YAUStatement: 'YAU statement',
+  SuccessRateStatement: 'success rate statement',
+  UserSessionsStatement: 'user sessions statement',
+  ThemeService: 'theme service',
+});

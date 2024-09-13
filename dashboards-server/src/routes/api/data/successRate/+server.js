@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { successRateStatement } from '$lib/server/success-rate-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики доли успешно обработанных
@@ -11,6 +12,6 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  const { successful, total } = successRateStatement.get({ periodStart });
+  const { successful, total } = inject(InjectionToken.SuccessRateStatement).get({ periodStart });
   return json(successful / total);
 };

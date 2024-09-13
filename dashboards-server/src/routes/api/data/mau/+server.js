@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { mauStatement } from '$lib/server/mau-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики MAU для каждого дня указанного периода
@@ -13,7 +14,7 @@ export const GET = ({ url }) => {
 
   const periodEnd = Date.now();
 
-  return json(mauStatement.all(
+  return json(inject(InjectionToken.MAUStatement).all(
     new Date(periodEnd).setMonth(new Date().getMonth() - 1),
     { periodStart, periodEnd },
   ));

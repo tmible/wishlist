@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { startupTimeStatement } from '$lib/server/startup-time-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
  * Получение из БД с логами метрики времени, потраченного ботом с получения обновления
@@ -11,5 +12,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  return json(startupTimeStatement.all(periodStart));
+  return json(inject(InjectionToken.StartupTimeStatement).all(periodStart));
 };

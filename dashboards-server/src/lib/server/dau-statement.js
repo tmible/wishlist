@@ -1,16 +1,15 @@
-import { building } from '$app/environment';
-import { db } from './db.const.js';
-
-/** @typedef {import('better-sqlite3').Statement} Statement */
+import { inject, provide } from '@tmible/wishlist-common/dependency-injector';
+import { InjectionToken } from '$lib/architecture/injection-token';
 
 /**
- * SQL выражение для получения из БД с логами метрики DAU для каждого дня указанного периода
- * @type {Statement}
+ * Создание и регистрация в сервисе внедрения зависмостей
+ * SQL выражения для получения из БД с логами метрики DAU для каждого дня указанного периода
+ * @function initDAUStatement
+ * @returns {void}
  */
-export let dauStatement;
-
-if (!building) {
-  dauStatement = db.prepare(`
+export const initDAUStatement = () => provide(
+  InjectionToken.DAUStatement,
+  inject(InjectionToken.Database).prepare(`
     WITH RECURSIVE days(day_end, day_start, period_end, n, period_start) AS (
       SELECT
         unixepoch($periodEnd / 1000, 'unixepoch', 'start of day', 'utc'),
@@ -35,5 +34,5 @@ if (!building) {
     LEFT JOIN (SELECT time, userid FROM logs WHERE level = 30 AND msg = 'starting up') AS logs
     ON (logs.time / 1000 >= days.day_start AND logs.time / 1000 < days.day_end)
     GROUP BY day_end
-  `);
-}
+  `),
+);

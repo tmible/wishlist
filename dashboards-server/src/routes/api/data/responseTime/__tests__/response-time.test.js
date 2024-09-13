@@ -1,17 +1,20 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { responseTimeStatement } from '$lib/server/response-time-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock(
-  '$lib/server/response-time-statement.const.js',
-  () => ({ responseTimeStatement: { all: vi.fn() } }),
-);
+vi.mock('@tmible/wishlist-common/dependency-injector');
 
 describe('responseTime endpoint', () => {
+  let responseTimeStatement;
+
+  beforeAll(() => {
+    responseTimeStatement = { all: vi.fn() };
+    vi.mocked(inject).mockReturnValue(responseTimeStatement);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should return 400 if there is no periodStart', async () => {

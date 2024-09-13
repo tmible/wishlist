@@ -1,14 +1,20 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { mauStatement } from '$lib/server/mau-statement.const.js';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('$lib/server/mau-statement.const.js', () => ({ mauStatement: { all: vi.fn() } }));
+vi.mock('@tmible/wishlist-common/dependency-injector');
 
 describe('mau endpoint', () => {
+  let mauStatement;
+
+  beforeAll(() => {
+    mauStatement = { all: vi.fn() };
+    vi.mocked(inject).mockReturnValue(mauStatement);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should return 400 if there is no periodStart', async () => {

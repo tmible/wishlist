@@ -1,70 +1,80 @@
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { handle } from '../hooks.server.js';
+import { initDB } from '$lib/server/db';
 
 const resolve = vi.fn();
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('node:util', () => ({ promisify: (original) => original }));
-vi.mock('jsonwebtoken', () => ({ default: { verify: vi.fn() } }));
+vi.mock('jsonwebtoken');
+vi.mock('$lib/server/db');
 
-describe('auth middleware', () => {
-  let event;
-
-  beforeEach(() => {
-    event = {
-      url: { pathname: '' },
-      cookies: { get: () => {} },
-    };
-  });
-
+describe('server hooks', () => {
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
+    vi.resetModules();
   });
 
-  describe('if pathname starts with /api/data', () => {
-    beforeEach(() => {
-      event.url.pathname = '/api/data/';
+  describe('auth middleware', () => {
+    let handle;
+    let event;
+
+    beforeEach(async () => {
+      event = {
+        url: { pathname: '' },
+        cookies: { get: () => {} },
+      };
+      ({ handle } = await import('../hooks.server.js'));
     });
 
-    it('should fail if there is no cookie', async () => {
-      expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
-    });
-
-    describe('if there is cookie', () => {
+    describe('if pathname starts with /api/data', () => {
       beforeEach(() => {
-        event.cookies.get = () => 'token';
+        event.url.pathname = '/api/data/';
       });
 
-      it('should verify it\'s value', async () => {
-        await handle({ event, resolve });
-        expect(jwt.verify).toHaveBeenCalledWith('token', 'HMAC secret');
-      });
-
-      it('should fail if verification fails', async () => {
-        jwt.verify = () => {
-          throw new Error('verification failed');
-        };
+      it('should fail if there is no cookie', async () => {
         expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
       });
+
+      describe('if there is cookie', () => {
+        beforeEach(() => {
+          event.cookies.get = () => 'token';
+        });
+
+        it('should verify it\'s value', async () => {
+          await handle({ event, resolve });
+          expect(jwt.verify).toHaveBeenCalledWith('token', 'HMAC secret');
+        });
+
+        it('should fail if verification fails', async () => {
+          jwt.verify = () => {
+            throw new Error('verification failed');
+          };
+          expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
+        });
+      });
+    });
+
+    const resolveTestCases = [{
+      condition: 'pathname doesn\'t start with /api/data/',
+      setUp: () => {},
+    }, {
+      condition: 'token is valid',
+      setUp: () => {
+        event.url.path = '/api/data';
+      },
+    }];
+
+    for (const { condition, setUp } of resolveTestCases) {
+      it(`should resolve if ${condition}`, async () => {
+        setUp();
+        await handle({ event, resolve });
+        expect(resolve).toHaveBeenCalledWith(event);
+      });
+    }
+
+    it('should init DB', async () => {
+      await import('../hooks.server.js');
+      expect(vi.mocked(initDB)).toHaveBeenCalled();
     });
   });
-
-  const resolveTestCases = [{
-    condition: 'pathname doesn\'t start with /api/data/',
-    setUp: () => {},
-  }, {
-    condition: 'token is valid',
-    setUp: () => {
-      event.url.path = '/api/data';
-    },
-  }];
-
-  for (const { condition, setUp } of resolveTestCases) {
-    it(`should resolve if ${condition}`, async () => {
-      setUp();
-      await handle({ event, resolve });
-      expect(resolve).toHaveBeenCalledWith(event);
-    });
-  }
 });
