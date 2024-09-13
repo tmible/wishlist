@@ -5,7 +5,7 @@ import resendListsMessages from '../resend-lists-messages.js';
 
 const sessionInitializer = () => ({
   pinnedMessageId: 'pinnedMessageId',
-  messagesToEdit: [{ id: 1 }, { id: 2 }],
+  messagesToEdit: [{ id: 1, reply_markup: undefined }, { id: 2, reply_markup: 'reply_markup' }],
 });
 
 describe('resendListsMessages', () => {
@@ -95,7 +95,9 @@ describe('resendListsMessages', () => {
 
     assert.deepEqual(
       editMessageReplyMarkup.mock.calls.map((call) => call.arguments),
-      sessionInitializer().messagesToEdit.map(({ id }) => [ 'chatId', id ]),
+      sessionInitializer().messagesToEdit
+        .filter(({ reply_markup }) => reply_markup)
+        .map(({ id }) => [ 'chatId', id ]),
     );
   });
 

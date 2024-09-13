@@ -48,7 +48,11 @@ const editOutdatedMessages = (ctx, userid, outdatedTitleMessageText, options) =>
     options.isManualUpdate ?
       [] :
       ctx.session.persistent.lists[userid]?.messagesToEdit ?? []
-  ).map(({ id }) => ctx.telegram.editMessageReplyMarkup(ctx.chat.id, id)),
+  ).filter(
+    ({ reply_markup }) => reply_markup,
+  ).map(
+    ({ id }) => ctx.telegram.editMessageReplyMarkup(ctx.chat.id, id),
+  ),
 ]);
 
 /**
