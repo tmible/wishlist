@@ -40,16 +40,16 @@ const sendList = async (eventBus, ctx, userid, username, passedOptions = {}) => 
 
   const userMention = getMentionFromUseridOrUsername(userid, username);
 
-  if (messages.length === 0) {
-    await ctx.sendMessage(Format.join([ 'Список', userMention, 'пуст' ], ' '));
-    return;
-  }
-
   await manageListsMessages(
     ctx,
     userid,
     messages,
-    Format.join([ 'Актуальный список', userMention ], ' '),
+    Format.join(
+      messages.length === 0 ?
+        [ 'Список', userMention, 'пуст' ] :
+        [ 'Актуальный список', userMention ],
+      ' ',
+    ),
     Format.join([ 'Неактуальный список', userMention ], ' '),
     {
       ...defaultOptions,

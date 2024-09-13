@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
+import formTitleMessageMarkup from './form-title-message-markup.js';
 
 /**
  * @typedef {import('telegraf').Context} Context
@@ -67,17 +68,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
 
   const messageToPin = await ctx.reply(
     titleMessageText,
-    Markup.inlineKeyboard([[
-      Markup.button.callback(
-        'Обновить',
-        userid === ctx.chat.id ? 'update_own_list' : `update_list ${userid}`,
-      ),
-    ], [
-      Markup.button.callback(
-        'Отправить новые сообщения',
-        userid === ctx.chat.id ? 'force_own_list' : `force_list ${userid}`,
-      ),
-    ]]),
+    formTitleMessageMarkup(ctx, userid),
   );
 
   await tryPinning(ctx, true, messageToPin.message_id);

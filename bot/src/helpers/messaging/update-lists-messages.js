@@ -3,13 +3,17 @@ import { nwAlign } from 'seal-wasm';
 import { Markup } from 'telegraf';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
+import formTitleMessageMarkup from './form-title-message-markup.js';
 
+/** @typedef {import('telegraf').Context} Context */
+/** @typedef {import('telegraf').Format} Format */
+/** @typedef {import('seal-wasm').Options} Options */
 /**
- * @typedef {import('telegraf').Context} Context
- * @typedef {import('seal-wasm').Options} Options
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/form-foreign-list-messages').Message
  * } Message
+ */
+/**
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').MessageToEdit
  * } MessageToEdit
@@ -120,11 +124,13 @@ const alignItemsIds = async (messagesToEdit, messages) => {
 const editMessages = async (ctx, userid, messages) => {
   const { messagesToEdit } = ctx.session.persistent.lists[userid];
 
-  const alignmentRepresentation = messagesToEdit.length === messages.length ?
-    messagesToEdit.map(
-      ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
-    ).join('') :
-    await alignItemsIds(messagesToEdit, messages);
+  const alignmentRepresentation = messages.length === 0 ?
+    messagesToEdit.map(() => '-').join('') :
+    (messagesToEdit.length === messages.length ?
+      messagesToEdit.map(
+        ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
+      ).join('') :
+      await alignItemsIds(messagesToEdit, messages));
 
   const sessionPatch = [];
   let messagesIndex = 0;
@@ -175,12 +181,29 @@ const editMessages = async (ctx, userid, messages) => {
  * @param {Context} ctx Контекст
  * @param {number} userid Идентификатор пользователя -- владельца списка
  * @param {Message[]} messages Новые сообщения со списком
+ * @param {Format.FmtString | string} titleMessageText Текст заглавного сообщения актуального списка
  * @param {boolean} shouldSendNotification Признак необходимости отправки
  *   сообщения-уведомления об обновлении
  * @async
  */
-const updateListsMessages = async (ctx, userid, messages, shouldSendNotification) => {
+const updateListsMessages = async (
+  ctx,
+  userid,
+  messages,
+  titleMessageText,
+  shouldSendNotification,
+) => {
   await tryPinning(ctx, true, ctx.session.persistent.lists[userid].pinnedMessageId);
+
+  if (messages.length === 0) {
+    await ctx.telegram.editMessageText(
+      ctx.chat.id,
+      ctx.session.persistent.lists[userid].pinnedMessageId,
+      undefined,
+      titleMessageText,
+      formTitleMessageMarkup(ctx, userid),
+    );
+  }
 
   await editMessages(ctx, userid, messages);
 

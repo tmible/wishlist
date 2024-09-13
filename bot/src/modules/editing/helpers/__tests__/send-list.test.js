@@ -1,4 +1,3 @@
-import { strict as assert } from 'node:assert';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
@@ -21,12 +20,16 @@ describe('editing/send-list if chat isn\'t group', () => {
 
   afterEach(reset);
 
-  it('should send notification message if list is empty', async (testContext) => {
-    ctx.reply = testContext.mock.fn();
+  it('should send list if it is empty', async () => {
+    const captors = new Array(5).fill(null).map(() => matchers.captor());
     await sendList({ emit: () => [] }, ctx);
-    assert.deepEqual(
-      ctx.reply.mock.calls[0].arguments,
-      [ 'Ваш список пуст. Вы можете добавить в него что-нибудь с помощью команды /add' ],
+    verify(
+      manageListsMessages(...captors.map(({ capture }) => capture())),
+      { ignoreExtraArgs: true },
+    );
+    await assertSnapshot(
+      JSON.stringify(captors.map(({ value }) => value)),
+      resolve(import.meta.dirname, './__snapshots__/send-empty-list.json'),
     );
   });
 

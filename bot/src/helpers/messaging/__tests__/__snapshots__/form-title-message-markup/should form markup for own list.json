@@ -1,0 +1,1 @@
+{"reply_markup":{"inline_keyboard":[[{"text":"Обновить","callback_data":"update_own_list","hide":false}],[{"text":"Отправить новые сообщения","callback_data":"force_own_list","hide":false}]]}}

@@ -1,5 +1,7 @@
 import { strict as assert } from 'node:assert';
+import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import assertSnapshot from 'snapshot-assertion';
 import updateListsMessages from '../update-lists-messages.js';
 
 describe('updateListsMessages', () => {
@@ -44,8 +46,21 @@ describe('updateListsMessages', () => {
   afterEach(() => mock.reset());
 
   it('should repin title message', async () => {
-    await updateListsMessages(ctx, 'userid', []);
+    await updateListsMessages(ctx, 'userid', [], 'titleMessageText');
     assert.deepEqual(pinChatMessage.mock.calls[0].arguments, [ 'pinnedMessageId' ]);
+  });
+
+  it('should edit pinned message if there are no new messages', async () => {
+    await updateListsMessages(ctx, 'userid', [], 'titleMessageText');
+    await assertSnapshot(
+      JSON.stringify(editMessageText.mock.calls[0].arguments),
+      resolve(
+        import.meta.dirname,
+        '__snapshots__',
+        'update-lists-messages',
+        'should edit pinned message if there are no new messages.json',
+      ),
+    );
   });
 
   describe('if messages numbers are equal', () => {
@@ -235,7 +250,7 @@ describe('updateListsMessages', () => {
 
   describe('if notification is requested', () => {
     it('should send notification for foreign list', async () => {
-      await updateListsMessages(ctx, 'userid', [], true);
+      await updateListsMessages(ctx, 'userid', [], '', true);
 
       assert.deepEqual(
         reply.mock.calls[0].arguments,
@@ -258,7 +273,7 @@ describe('updateListsMessages', () => {
     it('should send notification for own list', async () => {
       ctx.chat.id = 'userid';
 
-      await updateListsMessages(ctx, 'userid', [], true);
+      await updateListsMessages(ctx, 'userid', [], '', true);
 
       assert.deepEqual(
         reply.mock.calls[0].arguments,

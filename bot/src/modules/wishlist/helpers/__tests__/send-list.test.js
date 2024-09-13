@@ -1,4 +1,3 @@
-import { strict as assert } from 'node:assert';
 import { afterEach, describe, it } from 'node:test';
 import { Format } from 'telegraf';
 import { reset, verify, when } from 'testdouble';
@@ -18,27 +17,32 @@ const sendList = await import('../send-list.js').then((module) => module.default
 describe('wishlist/send-list', () => {
   afterEach(reset);
 
-  it('should send notification message if list is empty', async (testContext) => {
+  it('should send list if it is empty', async () => {
     when(formMessages(), { ignoreExtraArgs: true }).thenReturn([]);
 
     when(
       getMentionFromUseridOrUsername(),
       { ignoreExtraArgs: true },
-    ).thenReturn(
-      new Format.FmtString('@username', [{ type: 'mention', offset: 0, length: 9 }]),
+    ).thenDo(
+      (_, username) => `@${username}`,
     );
 
-    const ctx = { sendMessage: testContext.mock.fn() };
+    const ctx = {};
 
     await sendList({}, ctx, 'userid', 'username');
 
-    assert.deepEqual(
-      ctx.sendMessage.mock.calls[0].arguments,
-      [ new Format.FmtString(
-        'Список @username пуст',
-        [{ type: 'mention', offset: 7, length: 9 }],
-      ) ],
-    );
+    verify(manageListsMessages(
+      ctx,
+      'userid',
+      [],
+      new Format.FmtString('Список @username пуст'),
+      new Format.FmtString('Неактуальный список @username'),
+      {
+        shouldForceNewMessages: false,
+        shouldSendNotification: false,
+        isManualUpdate: false,
+      },
+    ));
   });
 
   it('should send list if it is not empty', async () => {

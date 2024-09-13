@@ -1,0 +1,1 @@
+["chatId","pinnedMessageId",null,"titleMessageText",{"reply_markup":{"inline_keyboard":[[{"text":"Обновить","callback_data":"update_list userid","hide":false}],[{"text":"Отправить новые сообщения","callback_data":"force_list userid","hide":false}]]}}]
