@@ -107,4 +107,5 @@ jobs:
           # pnpm end
           pnpm pkg set dependencies.@tmible/wishlist-common=file:../common
           pnpm install --prod
-          pnpm run start:background
+          pnpm start:background
+          pnpm restart:background

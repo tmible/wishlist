@@ -15,7 +15,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
  * @constant {Markup<InlineKeyboardMarkup>}
  */
 const LinkForGroupsMarkup = Markup.inlineKeyboard([
-  Markup.button.callback('👥 Мне нужна ссылка для групп', 'link_for_groups'),
+  Markup.button.callback('Мне нужна ссылка для групп', 'link_for_groups'),
 ]);
 
 /**
@@ -23,7 +23,7 @@ const LinkForGroupsMarkup = Markup.inlineKeyboard([
  * @constant {Markup<InlineKeyboardMarkup>}
  */
 const LinkForPrivateMarkup = Markup.inlineKeyboard([
-  Markup.button.callback('🤖 Мне нужна ссылка на чат с ботом', 'link_for_private'),
+  Markup.button.callback('Мне нужна ссылка на чат с ботом', 'link_for_private'),
 ]);
 
 /**

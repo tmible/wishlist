@@ -48,10 +48,10 @@ const formText = (item) => {
  * @returns {Markup<InlineKeyboardMarkup>[]} Встроенная клавиатура
  */
 const formReplyMarkup = (item) => Markup.inlineKeyboard([
-  [ Markup.button.callback('✍️#️⃣ Изменить приоритет', `update_priority ${item.id}`) ],
-  [ Markup.button.callback('✍️🔤 Изменить название', `update_name ${item.id}`) ],
-  [ Markup.button.callback('✍️ℹ️ Изменить описание', `update_description ${item.id}`) ],
-  [ Markup.button.callback('🗑 Удалить', `delete ${item.id}`) ],
+  [ Markup.button.callback('Изменить приоритет', `update_priority ${item.id}`) ],
+  [ Markup.button.callback('Изменить название', `update_name ${item.id}`) ],
+  [ Markup.button.callback('Изменить описание', `update_description ${item.id}`) ],
+  [ Markup.button.callback('Удалить', `delete ${item.id}`) ],
 ]);
 
 /**

@@ -1,19 +1,35 @@
-cd common
-pnpm lint
-pnpm test:prod
-cd -
+has_changes() {
+  if ! git diff-index --quiet --cached HEAD $1; then
+    return 0;
+  else
+    return 1;
+  fi
+}
 
-cd bot
-pnpm lint
-pnpm test:prod
-cd -
+if $(has_changes common); then
+  cd common
+  pnpm lint
+  pnpm test:prod
+  cd -
+fi
 
-cd portal
-pnpm lint
-pnpm test:prod
-cd -
+if $(has_changes common) || $(has_changes bot); then
+  cd bot
+  pnpm lint
+  pnpm test:prod
+  cd -
+fi
 
-cd dashboards-server
-pnpm lint
-pnpm test:prod
-cd -
+if $(has_changes common) || $(has_changes portal); then
+  cd portal
+  pnpm lint
+  pnpm test:prod
+  cd -
+fi
+
+if $(has_changes common) || $(has_changes dashboards-server); then
+  cd dashboards-server
+  pnpm lint
+  pnpm test:prod
+  cd -
+fi

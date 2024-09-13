@@ -29,7 +29,7 @@ const configure = (bot) => {
       ctx,
       'reply',
       'Отправьте сообщение, и я перешлю его',
-      Markup.inlineKeyboard([ Markup.button.callback('🚫 Не отправлять ответ', 'cancel_answer') ]),
+      Markup.inlineKeyboard([ Markup.button.callback('Не отправлять ответ', 'cancel_answer') ]),
     );
   });
 };

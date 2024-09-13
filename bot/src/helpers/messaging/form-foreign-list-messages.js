@@ -1,7 +1,6 @@
 import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
 import { Format, Markup } from 'telegraf';
 import Events from '@tmible/wishlist-bot/architecture/events';
-import ListItemStateToEmojiMap from '@tmible/wishlist-bot/constants/list-item-state-to-emoji-map';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
 import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
@@ -33,12 +32,12 @@ const formParticipantsBlock = (item) => {
   );
 
   if (item.participants.length === 0) {
-    return new Format.FmtString('');
+    return new Format.FmtString('🟢 свободен');
   }
 
   return item.state === ListItemState.BOOKED ?
-    Format.join([ '\n\nзабронировал', participantsMentions[0] ], ' ') :
-    Format.join([ '\n\nучастники:', Format.join(participantsMentions, ', ') ], ' ');
+    Format.join([ '🔴', 'забронирован', participantsMentions[0] ], ' ') :
+    Format.join([ '🟡', 'участники:', Format.join(participantsMentions, ', ') ], ' ');
 };
 
 /**
@@ -53,7 +52,7 @@ const formParticipantsBlock = (item) => {
  */
 const formReplyMarkup = (ctx, item, userid) => {
   const bookButton = isChatGroup(ctx) || item.state === ListItemState.FREE ?
-    [ Markup.button.callback('🔒 Забронировать', `book ${item.id} ${userid}`) ] :
+    [ Markup.button.callback('Забронировать', `book ${item.id} ${userid}`) ] :
     [];
 
   const cooperateButton =
@@ -65,7 +64,7 @@ const formReplyMarkup = (ctx, item, userid) => {
           !item.participantsIds.includes(ctx.from.id)
         )
     ) ?
-      [ Markup.button.callback('🤝 Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
+      [ Markup.button.callback('Поучаствовать', `cooperate ${item.id} ${userid}`) ] :
       [];
 
   const retireButton =
@@ -76,7 +75,7 @@ const formReplyMarkup = (ctx, item, userid) => {
           item.participantsIds.includes(ctx.from.id)
         )
     ) ?
-      [ Markup.button.callback('🙅 Отказаться', `retire ${item.id} ${userid}`) ] :
+      [ Markup.button.callback('Отказаться', `retire ${item.id} ${userid}`) ] :
       [];
 
   return [ bookButton, cooperateButton, retireButton ].some(({ length }) => length > 0) ?
@@ -101,31 +100,36 @@ const formReplyMarkup = (ctx, item, userid) => {
  */
 const formMessages = (eventBus, ctx, userid) => eventBus
   .emit(Events.Wishlist.GetList, userid)
-  .map((item) => {
-    const stateBlock = ListItemStateToEmojiMap.get(item.state);
-    const priorityBlock = digitToEmoji(item.priority);
-    const emojisBlock = `${stateBlock} ${priorityBlock} `;
-    const participantsBlock = formParticipantsBlock(item);
-
-    return {
-      itemId: item.id,
-      message: [
-        Format.join([
-          new Format.FmtString(
-            `${emojisBlock}${item.name}`,
-            [{ offset: emojisBlock.length, length: item.name.length, type: 'bold' }],
+  .map((item) => ({
+    itemId: item.id,
+    message: [
+      Format.join(
+        [
+          Format.join(
+            [
+              new Format.FmtString(
+                item.name,
+                [{ offset: 0, length: item.name.length, type: 'bold' }],
+              ),
+              ...(
+                item.description ?
+                  [ new Format.FmtString(item.description, item.descriptionEntities) ] :
+                  []
+              ),
+            ],
+            '\n',
           ),
           ...(
-            item.description ?
-              [ new Format.FmtString(`\n${item.description}`, item.descriptionEntities) ] :
+            item.priority ?
+              [ `${digitToEmoji(item.priority)} приоритет` ] :
               []
           ),
-          participantsBlock,
-        ]),
-
-        ...formReplyMarkup(ctx, item, userid),
-      ],
-    };
-  });
+          formParticipantsBlock(item),
+        ],
+        '\n\n',
+      ),
+      ...formReplyMarkup(ctx, item, userid),
+    ],
+  }));
 
 export default formMessages;

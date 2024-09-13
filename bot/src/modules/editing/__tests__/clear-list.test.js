@@ -116,7 +116,7 @@ describe('editing/clear-list module', () => {
             Markup.button.callback('Нет', 'clear_list_no'),
             Markup.button.callback('Да', 'clear_list_yes'),
           ], [
-            Markup.button.callback('🚫 Не очищать список', 'clear_list_end'),
+            Markup.button.callback('Не очищать список', 'clear_list_end'),
           ]]),
         ));
       });
@@ -252,7 +252,7 @@ describe('editing/clear-list module', () => {
             Markup.button.callback('Нет', 'clear_list_no'),
             Markup.button.callback('Да', 'clear_list_yes'),
           ], [
-            Markup.button.callback('🚫 Не очищать список', 'clear_list_end'),
+            Markup.button.callback('Не очищать список', 'clear_list_end'),
           ]]),
         ));
       },

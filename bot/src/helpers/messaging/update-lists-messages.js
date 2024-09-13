@@ -192,7 +192,7 @@ const updateListsMessages = async (ctx, userid, messages, shouldSendNotification
       {
         ...Markup.inlineKeyboard([
           Markup.button.callback(
-            '💬 Отправить новые сообщения',
+            'Отправить новые сообщения',
             userid === ctx.chat.id ? 'force_own_list' : `force_list ${userid}`,
           ),
         ]),

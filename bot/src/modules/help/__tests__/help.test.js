@@ -45,11 +45,11 @@ describe('help module', () => {
         [
           `${generalHelpSection}\n\n${SharedHelpSupportSection}`,
           Markup.inlineKeyboard([[
-            Markup.button.callback('ℹ️ Общее', 'help general general'),
-            Markup.button.callback('✨ Список желаний', 'help foreign-list general'),
+            Markup.button.callback('Общее', 'help general general'),
+            Markup.button.callback('Список желаний', 'help foreign-list general'),
           ], [
-            Markup.button.callback('🥷 Никнейм', 'help nickname general'),
-            Markup.button.callback('🤖 Список команд', 'help command-list general'),
+            Markup.button.callback('Никнейм', 'help nickname general'),
+            Markup.button.callback('Список команд', 'help command-list general'),
           ]]),
         ],
       );
@@ -91,11 +91,11 @@ describe('help module', () => {
           `${nicknameHelpSection}\n\n${SharedHelpSupportSection}`,
           {
             ...Markup.inlineKeyboard([[
-              Markup.button.callback('ℹ️ Общее', 'help general nickname'),
-              Markup.button.callback('✨ Список желаний', 'help foreign-list nickname'),
+              Markup.button.callback('Общее', 'help general nickname'),
+              Markup.button.callback('Список желаний', 'help foreign-list nickname'),
             ], [
-              Markup.button.callback('🥷 Никнейм', 'help nickname nickname'),
-              Markup.button.callback('🤖 Список команд', 'help command-list nickname'),
+              Markup.button.callback('Никнейм', 'help nickname nickname'),
+              Markup.button.callback('Список команд', 'help command-list nickname'),
             ]]),
             parse_mode: 'MarkdownV2',
           },

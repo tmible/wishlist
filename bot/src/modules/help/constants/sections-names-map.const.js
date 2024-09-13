@@ -5,10 +5,10 @@ import HelpSections from './sections.const.js';
  * @constant {Map<HelpSections, string>}
  */
 const HelpSectionsNamesMap = new Map([
-  [ HelpSections.GENERAL, 'ℹ️ Общее' ],
-  [ HelpSections.FOREIGN_LIST, '✨ Список желаний' ],
-  [ HelpSections.NICKNAME, '🥷 Никнейм' ],
-  [ HelpSections.COMMAND_LIST, '🤖 Список команд' ],
+  [ HelpSections.GENERAL, 'Общее' ],
+  [ HelpSections.FOREIGN_LIST, 'Список желаний' ],
+  [ HelpSections.NICKNAME, 'Никнейм' ],
+  [ HelpSections.COMMAND_LIST, 'Список команд' ],
 ]);
 
 export default HelpSectionsNamesMap;

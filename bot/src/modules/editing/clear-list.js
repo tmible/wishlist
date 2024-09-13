@@ -29,7 +29,7 @@ const LIST_CLEARING_MESSAGE_INLINE_KEYBOARD = Markup.inlineKeyboard([[
   Markup.button.callback('Нет', 'clear_list_no'),
   Markup.button.callback('Да', 'clear_list_yes'),
 ], [
-  Markup.button.callback('🚫 Не очищать список', 'clear_list_end'),
+  Markup.button.callback('Не очищать список', 'clear_list_end'),
 ]]);
 
 /**

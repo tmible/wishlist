@@ -77,7 +77,7 @@ const listCommandHandler = async (eventBus, ctx) => {
         isChatGroup(ctx) ? ' ответом на это сообщение' : ''
       }`,
       Markup.inlineKeyboard([
-        [ Markup.button.callback('🚫 Не смотреть список', 'cancel_list') ],
+        [ Markup.button.callback('Не смотреть список', 'cancel_list') ],
       ]),
     );
 
