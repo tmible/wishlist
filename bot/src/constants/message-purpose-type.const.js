@@ -6,10 +6,6 @@ import numericEnum from '@tmible/wishlist-common/numeric-enum';
  */
 const MessagePurposeType = numericEnum([
   'WishlistOwnerUsername',
-  'AddItemToWishlist',
-  'UpdateName',
-  'UpdatePriority',
-  'UpdateDescription',
   'AnonymousMessageRecieverUsername',
   'AnonymousMessage',
   'AnonymousMessageAnswer',

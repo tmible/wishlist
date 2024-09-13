@@ -1,6 +1,6 @@
-import DescriptionEntityBaseKeys from './constants/description-entity-base-keys.const.js';
+import DescriptionEntityBaseKeys from '@tmible/wishlist-common/constants/description-entity-base-keys';
 
-/** @typedef {import('@tmible/wishlist-bot/store').Entity} Entity */
+/** @typedef {import('$lib/components/telegram-entities/parser.svelte').Entity} Entity */
 /** @typedef {import('better-sqlite3').Database} Database */
 
 /**
@@ -9,8 +9,9 @@ import DescriptionEntityBaseKeys from './constants/description-entity-base-keys.
  * @param {Database} db Объект для доступа к БД
  * @param {number | string} itemId Идентификатор элемента списка, к которому относится описание
  * @param {Entity[]} descriptionEntities Элементы разметки описания
+ * @returns {void}
  */
-const parseAndInsertDescriptionEntities = (db, itemId, descriptionEntities) => {
+export const parseAndInsertDescriptionEntities = (db, itemId, descriptionEntities) => {
   if (descriptionEntities.length <= 0) {
     return;
   }
@@ -38,5 +39,3 @@ const parseAndInsertDescriptionEntities = (db, itemId, descriptionEntities) => {
     { itemId },
   );
 };
-
-export default parseAndInsertDescriptionEntities;

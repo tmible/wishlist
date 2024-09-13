@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import parseAndInsertDescriptionEntities from '../parse-and-insert-description-entities.js';
+import { parseAndInsertDescriptionEntities } from '../parse-and-insert-description-entities.js';
 
 const itemId = 'itemId';
 const descriptionEntities = [{

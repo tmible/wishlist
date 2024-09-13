@@ -1,6 +1,6 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import parseAndInsertDescriptionEntities from '@tmible/wishlist-common/parse-and-insert-description-entities';
 import { InjectionToken } from '$lib/architecture/injection-token';
+import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-description-entities.js';
 
 /**
  * Названия атрибутов элемента списка. Используется

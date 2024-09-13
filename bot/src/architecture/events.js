@@ -13,10 +13,6 @@ const Events = Object.freeze({
   },
   Editing: {
     GetList: 'editing | get list',
-    AddItem: 'editing | add item',
-    UpdateItemPriority: 'editing | update item priority',
-    UpdateItemName: 'editing | update item name',
-    UpdateItemDescription: 'editing | update item description',
     DeleteItems: 'editing | delete items',
   },
   Usernames: {

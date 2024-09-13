@@ -7,10 +7,7 @@ const DefaultCommandSet = [{
   description: 'получить список',
 }, {
   command: 'my_list',
-  description: 'получить свой список для редактирования',
-}, {
-  command: 'add',
-  description: 'добавить подарок в свой список',
+  description: 'получить свой список',
 }, {
   command: 'clear_list',
   description: 'частично очистить свой список',

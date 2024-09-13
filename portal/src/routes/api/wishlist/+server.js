@@ -1,8 +1,8 @@
 import { json } from '@sveltejs/kit';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import descriptionEntitiesReducer from '@tmible/wishlist-common/description-entities-reducer';
-import parseAndInsertDescriptionEntities from '@tmible/wishlist-common/parse-and-insert-description-entities';
 import { InjectionToken } from '$lib/architecture/injection-token';
+import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-description-entities.js';
 
 /**
  * Получение списка желаний владельцем

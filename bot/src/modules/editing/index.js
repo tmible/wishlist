@@ -1,18 +1,10 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import AddModule from './add.js';
-import CancelAddModule from './cancel-add.js';
 import CancelClearListModule from './cancel-clear-list.js';
-import CancelUpdateDescriptionModule from './cancel-update-description.js';
-import CancelUpdateNameModule from './cancel-update-name.js';
-import CancelUpdatePriorityModule from './cancel-update-priority.js';
 import ClearListModule from './clear-list.js';
 import DeleteModule from './delete.js';
 import OwnListModule from './own-list.js';
-import UpdateDescriptionModule from './update-description.js';
-import UpdateNameModule from './update-name.js';
-import UpdatePriorityModule from './update-priority.js';
 
 /**
  * @typedef {
@@ -28,15 +20,7 @@ const configure = (bot) => {
   inject(InjectionToken.Logger).debug('configuring editing module');
   return configureModules(bot, [
     OwnListModule,
-    UpdatePriorityModule,
-    CancelUpdatePriorityModule,
-    UpdateNameModule,
-    CancelUpdateNameModule,
-    UpdateDescriptionModule,
-    CancelUpdateDescriptionModule,
     DeleteModule,
-    AddModule,
-    CancelAddModule,
     ClearListModule,
     CancelClearListModule,
   ]);

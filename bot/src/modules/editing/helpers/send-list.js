@@ -21,22 +21,18 @@ import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
  * @returns {Format.FmtString} Текст сообщения
  */
 const formText = (item) => {
-  const idLine = `id: ${item.id}`;
-  const priorityBlock = digitToEmoji(item.priority);
-  const priorityAndNameLine = `${priorityBlock} ${item.name}`;
-  const nameOffset = `${idLine}\n${priorityBlock} `.length;
-  const descriptionOffset = `${idLine}\n${priorityAndNameLine}\n`.length;
+  const priorityBlock = item.priority ? `\n\n${digitToEmoji(item.priority)} приоритет` : '';
+  const descriptionOffset = `${item.name}\n`.length;
   const description = item.description ? `\n${item.description}` : '';
 
   return new Format.FmtString(
-    `${idLine}\n${priorityAndNameLine}${description}`,
+    `${item.name}${description}${priorityBlock}`,
     [
       ...item.descriptionEntities.map((entity) => ({
         ...entity,
         offset: entity.offset + descriptionOffset,
       })),
-      { offset: 0, length: idLine.length, type: 'italic' },
-      { offset: nameOffset, length: item.name.length, type: 'bold' },
+      { offset: 0, length: item.name.length, type: 'bold' },
     ],
   );
 };
@@ -48,10 +44,7 @@ const formText = (item) => {
  * @returns {Markup<InlineKeyboardMarkup>[]} Встроенная клавиатура
  */
 const formReplyMarkup = (item) => Markup.inlineKeyboard([
-  [ Markup.button.callback('Изменить приоритет', `update_priority ${item.id}`) ],
-  [ Markup.button.callback('Изменить название', `update_name ${item.id}`) ],
-  [ Markup.button.callback('Изменить описание', `update_description ${item.id}`) ],
-  [ Markup.button.callback('Удалить', `delete ${item.id}`) ],
+  Markup.button.callback('Удалить', `delete ${item.id}`),
 ]);
 
 /**
@@ -96,11 +89,21 @@ const sendList = async (eventBus, ctx, passedOptions = {}) => {
     return;
   }
 
+
   await manageListsMessages(
     ctx,
     userid,
     messages,
-    'Ваш актуальный список',
+    Format.join(
+      [
+        'Ваш актуальный список',
+        new Format.FmtString(
+          'Полноценное редактирование своего списка доступно на портале',
+          [{ offset: 53, length: 7, type: 'text_link', url: 'https://wishlist.tmible.ru/list' }],
+        ),
+      ],
+      '\n\n',
+    ),
     'Ваш неактуальный список',
     {
       ...defaultOptions,

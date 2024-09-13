@@ -1,7 +1,7 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import descriptionEntitiesReducer from '@tmible/wishlist-common/description-entities-reducer';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
-import participantsMapper from '@tmible/wishlist-bot/store/helpers/participants-mapper';
+import participantsMapper from './helpers/participants-mapper.js';
 
 /**
  * @typedef {import('better-sqlite3').Statement} Statement

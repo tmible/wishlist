@@ -1,15 +1,15 @@
 import { json } from '@sveltejs/kit';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import descriptionEntitiesReducer from '@tmible/wishlist-common/description-entities-reducer';
-import parseAndInsertDescriptionEntities from '@tmible/wishlist-common/parse-and-insert-description-entities';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token';
+import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-description-entities.js';
 import { DELETE, GET, POST } from '../+server.js';
 
 vi.mock('@sveltejs/kit');
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/description-entities-reducer');
-vi.mock('@tmible/wishlist-common/parse-and-insert-description-entities');
+vi.mock('$lib/parse-and-insert-description-entities.js');
 
 describe('wishlist endpoint', () => {
   afterEach(() => {

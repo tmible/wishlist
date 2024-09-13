@@ -3,6 +3,7 @@
 
 # Состав
 - [телеграм бот](bot/README.md)
+- [портал](portal/README.md)
 - [сервер с дашбордами](dashboards-server/README.md)
 
 # Общие файлы
