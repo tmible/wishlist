@@ -97,7 +97,7 @@ describe('IPC hub', () => {
     verify(logger.debug('server started'));
   });
 
-  it('should close server', async () => {
+  it('should close servero on SIGINT', async () => {
     let sigintHandler;
     process.on = (event, handler) => {
       if (event === 'SIGINT') {
@@ -106,6 +106,18 @@ describe('IPC hub', () => {
     };
     await import('../index.js');
     sigintHandler();
+    verify(server.close());
+  });
+
+  it('should close servero on SIGTERM', async () => {
+    let sigtermHandler;
+    process.on = (event, handler) => {
+      if (event === 'SIGTERM') {
+        sigtermHandler = handler;
+      }
+    };
+    await import('../index.js');
+    sigtermHandler();
     verify(server.close());
   });
 });

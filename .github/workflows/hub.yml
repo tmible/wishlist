@@ -81,3 +81,8 @@ jobs:
           pnpm install --prod
           pnpm start:background
           pnpm restart:background
+          # restart bot and portal so they reconnect
+          cd ../bot
+          pnpm restart:background
+          cd ../portal
+          pnpm restart:background

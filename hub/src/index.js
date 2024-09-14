@@ -50,3 +50,4 @@ server.listen(process.env.SOCKET_PATH);
 logger.debug('server started');
 
 process.on('SIGINT', () => server.close());
+process.on('SIGTERM', () => server.close());
