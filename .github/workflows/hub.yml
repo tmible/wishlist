@@ -1,4 +1,4 @@
-name: Common CI/CD
+name: Hub CI/CD
 
 on:
   workflow_call:
@@ -8,7 +8,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      common: ${{ steps.filter.outputs.common }}
+      hub: ${{ steps.filter.outputs.hub }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -20,52 +20,64 @@ jobs:
       with:
         base: ${{ steps.previous-sha.outputs.sha }}
         filters: |
-          common:
-            - 'common/**'
+          hub:
+            - 'hub/**'
 
   lint:
     needs: changes
-    if: ${{ needs.changes.outputs.common == 'true' }}
+    if: ${{ needs.changes.outputs.hub == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/lint
       with:
-        path: common
+        working-directory: hub
 
   tests:
     needs: changes
-    if: ${{ needs.changes.outputs.common == 'true' }}
+    if: ${{ needs.changes.outputs.hub == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - uses: ./.github/actions/test
       with:
-        working-directory: common
+        working-directory: hub
 
   deploy:
     needs: [lint, tests]
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: common
+        working-directory: hub
     steps:
     - uses: actions/checkout@v4
-    - uses: ./.github/actions/setup
-      with:
-        working-directory: common
-    - name: build
-      run: pnpm package
+    - name: remove tests
+      run: find ./src/ -type d -name __tests__ -exec rm -rf {} +
     - name: remove unnecessary files
       run: |
         find . -mindepth 1 -maxdepth 1 \
-          -type f -not -name 'package.json' -exec rm -rf {} + -or \
-          -type d -not -name 'dist' -exec rm -rf {} +
+          -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
+          -type d -not -name 'src' -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
-        SOURCE: common
+        SOURCE: hub
         TARGET: ${{ secrets.REMOTE_TARGET }}
+        SCRIPT_AFTER: |
+          cd ${{ secrets.REMOTE_TARGET }}/hub
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+          # pnpm
+          export PNPM_HOME="/root/.local/share/pnpm"
+          case ":$PATH:" in
+            *":$PNPM_HOME:"*) ;;
+            *) export PATH="$PNPM_HOME:$PATH" ;;
+          esac
+          # pnpm end
+          pnpm install --prod
+          pnpm start:background
+          pnpm restart:background

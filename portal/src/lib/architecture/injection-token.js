@@ -15,4 +15,5 @@ export const InjectionToken = Object.freeze({
   GetUserWishlistStatement: 'get user wishlist statement',
   AddItemStatement: 'add item statement',
   ThemeService: 'theme service',
+  IPCHub: 'IPC hub',
 });

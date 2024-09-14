@@ -42,5 +42,7 @@ export const PUT = async ({ params, request }) => {
     parseAndInsertDescriptionEntities(db, params.id, JSON.parse(body.descriptionEntities ?? '[]'));
   })();
 
+  inject(InjectionToken.IPCHub).sendMessage(`update ${body.userid}`);
+
   return new Response(null, { status: 200 });
 };

@@ -1,58 +1,49 @@
 name: Portal CI/CD
 
 on:
-  workflow_run:
-    workflows:
-    - Common files deploy
-    types:
-    - completed
-    branches:
-    - master
-    paths:
-    - portal/**
+  workflow_call:
 
 jobs:
-  lint:
+
+  changes:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: portal
+    outputs:
+      portal: ${{ steps.filter.outputs.portal }}
     steps:
     - uses: actions/checkout@v4
-    - name: install node
-      uses: actions/setup-node@v4
       with:
-        node-version-file: portal/package.json
-    - name: install pnpm
-      uses: pnpm/action-setup@v4
+        fetch-depth: 2
+    - id: previous-sha
+      run: 'echo "sha=$(git rev-list -n 1 ${{ github.ref }}^)" >> $GITHUB_OUTPUT'
+    - uses: dorny/paths-filter@v3
+      id: filter
       with:
-        run_install: true
-    - name: build common
-      run: pnpm package
-      working-directory: common
-    - name: run lint
-      run: pnpm lint
+        base: ${{ steps.previous-sha.outputs.sha }}
+        filters: |
+          portal:
+            - 'portal/**'
+
+  lint:
+    needs: changes
+    if: ${{ needs.changes.outputs.portal == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/lint
+      with:
+        working-directory: portal
+        requires-common: true
 
   tests:
+    needs: changes
+    if: ${{ needs.changes.outputs.portal == 'true' }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: portal
     steps:
     - uses: actions/checkout@v4
-    - name: install node
-      uses: actions/setup-node@v4
+    - uses: ./.github/actions/test
       with:
-        node-version-file: portal/package.json
-    - name: install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        run_install: true
-    - name: build common
-      run: pnpm package
-      working-directory: common
-    - name: run tests
-      run: pnpm test:prod
+        working-directory: portal
+        requires-common: true
 
   deploy:
     needs: [lint, tests]
@@ -62,14 +53,9 @@ jobs:
         working-directory: portal
     steps:
     - uses: actions/checkout@v4
-    - name: install node
-      uses: actions/setup-node@v4
+    - uses: ./.github/actions/setup
       with:
-        node-version-file: portal/package.json
-    - name: install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        run_install: true
+        working-directory: portal
     - name: build common
       run: pnpm package
       working-directory: common
@@ -79,6 +65,7 @@ jobs:
       env:
         WISHLIST_DB_FILE_PATH: ${{ vars.PORTAL_WISHLIST_DB_FILE_PATH }}
         WISHLIST_DB_MIGRATIONS_PATH: ${{ vars.PORTAL_WISHLIST_DB_MIGRATIONS_PATH }}
+        HUB_SOCKET_PATH: ${{ vars.PORTAL_HUB_SOCKET_PATH }}
       run: pnpm build
     - name: remove unnecessary files
       run: |

@@ -3,3 +3,4 @@ packages:
   - "dashboards-server"
   - "portal"
   - "common"
+  - "hub"

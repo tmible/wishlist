@@ -1,0 +1,26 @@
+name: Template test action
+description: 'Executes pnpm test:prod'
+inputs:
+  working-directory:
+    description: 'directory where test command will be executed'
+    required: true
+  requires-common:
+    description: 'weather "common" package is a dependency'
+    default: 'false'
+    required: false
+
+runs:
+  using: composite
+  steps:
+  - uses: ./.github/actions/setup
+    with:
+      working-directory: ${{ inputs.working-directory }}
+  - name: build common
+    if: ${{ inputs.requires-common == 'true' }}
+    shell: bash
+    run: pnpm package
+    working-directory: common
+  - name: run tests
+    shell: bash
+    run: pnpm test:prod
+    working-directory: ${{ inputs.working-directory }}

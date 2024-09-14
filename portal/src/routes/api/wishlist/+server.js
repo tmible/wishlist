@@ -53,6 +53,8 @@ export const POST = async ({ request }) => {
     parseAndInsertDescriptionEntities(db, itemId, JSON.parse(descriptionEntities));
   })();
 
+  inject(InjectionToken.IPCHub).sendMessage(`update ${userid}`);
+
   return new Response(null, { status: 200 });
 };
 
@@ -94,6 +96,8 @@ export const DELETE = async ({ request }) => {
     }
     return new Response(null, { status: 401 });
   }
+
+  inject(InjectionToken.IPCHub).sendMessage(`update ${userid}`);
 
   return new Response(null, { status: 200 });
 };

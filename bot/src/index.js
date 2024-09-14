@@ -24,7 +24,8 @@ import HelpModule from '@tmible/wishlist-bot/modules/help';
 import LinkModule from '@tmible/wishlist-bot/modules/link';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import { dropPersistentSession, persistentSession } from '@tmible/wishlist-bot/persistent-session';
-import autoUpdate from '@tmible/wishlist-bot/services/lists-auto-update';
+import connectToIPCHub from '@tmible/wishlist-bot/services/ipc-hub-connection';
+import { autoUpdate } from '@tmible/wishlist-bot/services/lists-auto-update';
 import { closeLocalDB, getLocalDB } from '@tmible/wishlist-bot/services/local-db';
 import initStore from '@tmible/wishlist-bot/store';
 import getNickname from '@tmible/wishlist-bot/utils/get-nickname';
@@ -50,6 +51,9 @@ logger.debug('creating bot');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.use(logging(LoggingMiddlewareType.AUXILARY_ACTIVITIES));
+
+logger.debug('connecting to hub');
+const closeIPCHubConnection = connectToIPCHub(bot);
 
 logger.debug('initializing session');
 bot.use(session({ getSessionKey, defaultSession: () => ({}) }));
@@ -114,7 +118,6 @@ bot.catch((err, ctx) => {
   );
 });
 
-
 bot.launch(
   ...(
     process.env.HOST && process.env.PORT ?
@@ -131,11 +134,13 @@ bot.launch(
 logger.debug('bot started');
 
 process.once('SIGINT', async () => {
+  closeIPCHubConnection();
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGINT');
 });
 process.once('SIGTERM', async () => {
+  closeIPCHubConnection();
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGTERM');

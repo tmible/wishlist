@@ -61,6 +61,7 @@ describe('wishlist endpoint', () => {
   describe('POST', () => {
     let request;
     let db;
+    let ipcConnection;
 
     beforeEach(() => {
       request = {
@@ -75,7 +76,10 @@ describe('wishlist endpoint', () => {
       db = {
         transaction: vi.fn(() => vi.fn()),
       };
-      vi.mocked(inject).mockReturnValue(db);
+      ipcConnection = {
+        sendMessage: vi.fn(),
+      };
+      vi.mocked(inject).mockReturnValueOnce(db).mockReturnValueOnce(ipcConnection);
     });
 
     it('should use database', async () => {
@@ -89,18 +93,26 @@ describe('wishlist endpoint', () => {
 
       beforeEach(() => {
         statement = { get: vi.fn(() => ({ id: 'item id' })) };
-        db = {
-          transaction: vi.fn((passedFunction) => {
-            transaction = passedFunction;
-            return () => {};
-          }),
-        };
+        db.transaction = vi.fn((passedFunction) => {
+          transaction = passedFunction;
+          return () => {};
+        });
         vi.mocked(inject).mockImplementation((token) => {
           let injected;
-          if (token === InjectionToken.Database) {
-            injected = db;
-          } else if (token === InjectionToken.AddItemStatement) {
-            injected = statement;
+          switch (token) {
+            case InjectionToken.Database: {
+              injected = db;
+              break;
+            }
+            case InjectionToken.AddItemStatement: {
+              injected = statement;
+              break;
+            }
+            case InjectionToken.IPCHub: {
+              injected = ipcConnection;
+              break;
+            }
+            default:
           }
           return injected;
         });
@@ -125,6 +137,16 @@ describe('wishlist endpoint', () => {
       });
     });
 
+    it('should use IPC connection', async () => {
+      await POST({ request });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
+    });
+
+    it('should send message to IPC hub', async () => {
+      await POST({ request });
+      expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
+    });
+
     it('should return success', async () => {
       const response = await POST({ request });
       expect(response.status).toBe(200);
@@ -136,6 +158,7 @@ describe('wishlist endpoint', () => {
     let request;
     let db;
     let statement;
+    let ipcConnection;
 
     beforeEach(() => {
       request = {
@@ -152,7 +175,10 @@ describe('wishlist endpoint', () => {
         transaction: vi.fn((passedFunction) => passedFunction),
         prepare: vi.fn(() => statement),
       };
-      vi.mocked(inject).mockReturnValue(db);
+      ipcConnection = {
+        sendMessage: vi.fn(),
+      };
+      vi.mocked(inject).mockReturnValueOnce(db).mockReturnValueOnce(ipcConnection);
     });
 
     it('should use database', async () => {
@@ -223,7 +249,17 @@ describe('wishlist endpoint', () => {
       expect(statement.run).toHaveBeenNthCalledWith(3, [ 1, 2, 3 ]);
     });
 
-    it('should success', async () => {
+    it('should use IPC connection', async () => {
+      await DELETE({ request });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
+    });
+
+    it('should send message to IPC hub', async () => {
+      await DELETE({ request });
+      expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
+    });
+
+    it('should return success', async () => {
       const response = await DELETE({ request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();

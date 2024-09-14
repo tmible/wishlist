@@ -1,0 +1,31 @@
+name: Tmible's wishlist CI/CD
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  common-files:
+    uses: ./.github/workflows/common-files.yml
+    secrets: inherit
+  hub:
+    needs: common-files
+    uses: ./.github/workflows/hub.yml
+    secrets: inherit
+  common:
+    needs: common-files
+    uses: ./.github/workflows/common.yml
+    secrets: inherit
+  bot:
+    needs: [hub, common]
+    uses: ./.github/workflows/bot.yml
+    secrets: inherit
+  portal:
+    needs: [hub, common]
+    uses: ./.github/workflows/portal.yml
+    secrets: inherit
+  dashboards-server:
+    needs: common
+    uses: ./.github/workflows/dashboards-server.yml
+    secrets: inherit

@@ -1,0 +1,26 @@
+name: Template lint action
+description: 'Executes pnpm lint'
+inputs:
+  working-directory:
+    description: 'directory where lint command will be executed'
+    required: true
+  requires-common:
+    description: 'weather "common" package is a dependency'
+    default: 'false'
+    required: false
+
+runs:
+  using: composite
+  steps:
+  - uses: ./.github/actions/setup
+    with:
+      working-directory: ${{ inputs.working-directory }}
+  - name: build common
+    if: ${{ inputs.requires-common == 'true' }}
+    shell: bash
+    run: pnpm package
+    working-directory: common
+  - name: run lint
+    shell: bash
+    run: pnpm lint
+    working-directory: ${{ inputs.working-directory }}

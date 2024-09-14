@@ -38,13 +38,17 @@ describe('wishlist/[id] endpoint', () => {
 
   describe('if there are keys to update', () => {
     let db;
+    let ipcConnection;
 
     beforeEach(() => {
-      request = { json: vi.fn(() => ({ name: 'name' })) };
+      request = { json: vi.fn(() => ({ name: 'name', userid: 'userid' })) };
       db = {
         transaction: vi.fn(() => vi.fn()),
       };
-      vi.mocked(inject).mockReturnValue(db);
+      ipcConnection = {
+        sendMessage: vi.fn(),
+      };
+      vi.mocked(inject).mockReturnValueOnce(db).mockReturnValueOnce(ipcConnection);
     });
 
     it('should use database', async () => {
@@ -58,14 +62,11 @@ describe('wishlist/[id] endpoint', () => {
 
       beforeEach(() => {
         statement = { run: vi.fn() };
-        db = {
-          transaction: vi.fn((passedFunction) => {
-            transaction = passedFunction;
-            return () => {};
-          }),
-          prepare: vi.fn(() => statement),
-        };
-        vi.mocked(inject).mockReturnValue(db);
+        db.transaction = vi.fn((passedFunction) => {
+          transaction = passedFunction;
+          return () => {};
+        });
+        db.prepare = vi.fn(() => statement);
       });
 
       it('should prepare update statement', async () => {
@@ -119,6 +120,16 @@ describe('wishlist/[id] endpoint', () => {
           expect(vi.mocked(parseAndInsertDescriptionEntities)).toHaveBeenCalledWith(db, 'id', []);
         });
       });
+    });
+
+    it('should use IPC connection', async () => {
+      await PUT({ params, request });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
+    });
+
+    it('should send message to IPC hub', async () => {
+      await PUT({ params, request });
+      expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
     });
 
     it('should return success', async () => {

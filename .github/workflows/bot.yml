@@ -1,58 +1,49 @@
 name: Bot CI/CD
 
 on:
-  workflow_run:
-    workflows:
-    - Common files deploy
-    types:
-    - completed
-    branches:
-    - master
-    paths:
-    - bot/**
+  workflow_call:
 
 jobs:
-  lint:
+
+  changes:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: bot
+    outputs:
+      bot: ${{ steps.filter.outputs.bot }}
     steps:
     - uses: actions/checkout@v4
-    - name: install node
-      uses: actions/setup-node@v4
       with:
-        node-version-file: bot/package.json
-    - name: install pnpm
-      uses: pnpm/action-setup@v4
+        fetch-depth: 2
+    - id: previous-sha
+      run: 'echo "sha=$(git rev-list -n 1 ${{ github.ref }}^)" >> $GITHUB_OUTPUT'
+    - uses: dorny/paths-filter@v3
+      id: filter
       with:
-        run_install: true
-    - name: build common
-      run: pnpm package
-      working-directory: common
-    - name: run lint
-      run: pnpm lint
+        base: ${{ steps.previous-sha.outputs.sha }}
+        filters: |
+          bot:
+            - 'bot/**'
+
+  lint:
+    needs: changes
+    if: ${{ needs.changes.outputs.bot == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ./.github/actions/lint
+      with:
+        working-directory: bot
+        requires-common: true
 
   tests:
+    needs: changes
+    if: ${{ needs.changes.outputs.bot == 'true' }}
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: bot
     steps:
     - uses: actions/checkout@v4
-    - name: install node
-      uses: actions/setup-node@v4
+    - uses: ./.github/actions/test
       with:
-        node-version-file: bot/package.json
-    - name: install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        run_install: true
-    - name: build common
-      run: pnpm package
-      working-directory: common
-    - name: run tests
-      run: pnpm test:prod
+        working-directory: bot
+        requires-common: true
 
   deploy:
     needs: [lint, tests]

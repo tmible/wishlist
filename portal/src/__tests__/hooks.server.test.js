@@ -1,12 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { initDB } from '$lib/server/db';
+import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
 
 const resolve = vi.fn();
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('jsonwebtoken');
 vi.mock('$lib/server/db');
+vi.mock('$lib/server/ipc-hub-connection');
 
 describe('server hooks', () => {
   afterEach(() => {
@@ -76,5 +78,10 @@ describe('server hooks', () => {
   it('should init DB', async () => {
     await import('../hooks.server.js');
     expect(vi.mocked(initDB)).toHaveBeenCalled();
+  });
+
+  it('should connect to IPC hub', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(connectToIPCHub)).toHaveBeenCalled();
   });
 });

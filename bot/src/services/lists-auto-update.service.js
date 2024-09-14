@@ -8,6 +8,7 @@ import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-l
 import { persistentSession } from '@tmible/wishlist-bot/persistent-session';
 
 /**
+ * @typedef {import('telegraf').Telegram} Telegram
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').Chat} Chat
  * @typedef {import('telegraf').MiddlewareFn} MiddlewareFn
@@ -122,17 +123,29 @@ const checkChatsToRemove = async (db, ctx, memoized, currentSet) => {
  * Создание искусственного контекста для отправки обновлений в другой чат
  * @function constructFakeCtx
  * @param {Chat} chat Целевой чат
- * @param {Context} ctx Текущий контекст
+ * @param {Telegram} telegram Объект -- обёртка над Bot API Телеграма
  * @returns {Context} Искусственный контекст
  */
-const constructFakeCtx = (chat, ctx) => {
-  const fakeCtx = Object.assign(
-    Object.create(Object.getPrototypeOf(ctx)),
-    ctx,
-    { session: {}, state: {} },
-  );
+const constructFakeCtx = (chat, telegram) => {
+  const fakeCtx = { session: {}, state: {} };
   Object.defineProperty(fakeCtx, 'chat', { value: chat });
   Object.defineProperty(fakeCtx, 'from', { value: { id: chat.id } });
+  Object.defineProperty(
+    fakeCtx,
+    'pinChatMessage',
+    { value: (...args) => telegram.pinChatMessage(chat.id, ...args) },
+  );
+  Object.defineProperty(
+    fakeCtx,
+    'unpinChatMessage',
+    { value: (...args) => telegram.unpinChatMessage(chat.id, ...args) },
+  );
+  Object.defineProperty(
+    fakeCtx,
+    'deleteMessage',
+    { value: (...args) => telegram.deleteMessage(chat.id, ...args) },
+  );
+  Object.defineProperty(fakeCtx, 'telegram', { value: telegram });
   return fakeCtx;
 };
 
@@ -141,19 +154,19 @@ const constructFakeCtx = (chat, ctx) => {
  * отправка в искуственном контексте сообщений с применением обновлений
  * @function sendUpdates
  * @param {EventBus} eventBus Шина событий
- * @param {Context} ctx Контекст
+ * @param {number} userid Идентификатор пользователя -- владельца обновлённого списка
  * @param {Context} fakeCtx Искусственный контекст для отправки обновлений в другой чат
  * @returns {Promise<void>}
  */
-const sendUpdates = (eventBus, ctx, fakeCtx) => persistentSession()(fakeCtx, async () => {
+const sendUpdates = (eventBus, userid, fakeCtx) => persistentSession()(fakeCtx, async () => {
   const userMention = getMentionFromUseridOrUsername(
-    ctx.state.autoUpdate.userid,
-    eventBus.emit(Events.Usernames.GetUsernameByUserid, ctx.state.autoUpdate.userid),
+    userid,
+    eventBus.emit(Events.Usernames.GetUsernameByUserid, userid),
   );
   await manageListsMessages(
     fakeCtx,
-    ctx.state.autoUpdate.userid,
-    formMessages(eventBus, fakeCtx, ctx.state.autoUpdate.userid),
+    userid,
+    formMessages(eventBus, fakeCtx, userid),
     Format.join([ 'Актуальный список', userMention ], ' '),
     Format.join([ 'Неактуальный список', userMention ], ' '),
     { shouldSendNotification: false, isAutoUpdate: true },
@@ -179,11 +192,36 @@ const selectChatsAndSendUpdates = async (db, eventBus, ctx) => {
   );
   await Promise.all(chats.map((chat) => {
 
-    const fakeCtx = constructFakeCtx(chat, ctx);
+    const fakeCtx = constructFakeCtx(chat, ctx.telegram);
 
-    return sendUpdates(eventBus, ctx, fakeCtx).then(
+    return sendUpdates(eventBus, ctx.state.autoUpdate.userid, fakeCtx).then(
       () => (fakeCtx.state.autoUpdate?.shouldRemoveChat ?
         removeChatFromAutoUpdate(db, [ ctx.state.autoUpdate.userid ], chat.id) :
+        Promise.resolve()),
+    );
+  }));
+};
+
+/**
+ * Автоматическое обновление списков во всех чатах, в которых есть список
+ * указанного владельца при получении сообщения об обновлении через IPC хаб
+ * @function autoUpdateFromIPCHub
+ * @param {ClassicLevel} db Объект для доступа к БД
+ * @param {EventBus} eventBus Шина событий
+ * @param {Telegram} telegram Объект -- обёртка над Bot API Телеграма
+ * @param {number} userid Идентификатор пользователя -- владельца обновлённого списка
+ * @returns {Promise<void>}
+ * @async
+ */
+export const autoUpdateFromIPCHub = async (db, eventBus, telegram, userid) => {
+  const chats = await db.get(userid);
+  await Promise.all(chats.map((chat) => {
+
+    const fakeCtx = constructFakeCtx(chat, telegram);
+
+    return sendUpdates(eventBus, userid, fakeCtx).then(
+      () => (fakeCtx.state.autoUpdate?.shouldRemoveChat ?
+        removeChatFromAutoUpdate(db, [ userid ], chat.id) :
         Promise.resolve()),
     );
   }));
@@ -202,7 +240,7 @@ const selectChatsAndSendUpdates = async (db, eventBus, ctx) => {
  * @returns {MiddlewareFn<Context>} Промежуточный обработчик, выполняющий автоматическое
  *   обновление списков желаний в других чатах
  */
-const autoUpdate = () => {
+export const autoUpdate = () => {
   const db = inject(InjectionToken.LocalDatabase)('auto-update');
   const eventBus = inject(InjectionToken.EventBus);
 
@@ -227,5 +265,3 @@ const autoUpdate = () => {
     await selectChatsAndSendUpdates(db, eventBus, ctx);
   };
 };
-
-export default autoUpdate;

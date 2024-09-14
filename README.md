@@ -5,6 +5,7 @@
 - [телеграм бот](bot/README.md)
 - [портал](portal/README.md)
 - [сервер с дашбордами](dashboards-server/README.md)
+- [IPC хаб](hub/RADME.md)
 
 # Общие файлы
 - `assets` сопутствующие проекту статические файлы

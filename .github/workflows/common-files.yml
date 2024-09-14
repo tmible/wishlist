@@ -1,0 +1,45 @@
+name: Common files deploy
+
+on:
+  workflow_call:
+
+jobs:
+
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      common-files: ${{ steps.filter.outputs.common-files }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    - id: previous-sha
+      run: 'echo "sha=$(git rev-list -n 1 ${{ github.ref }}^)" >> $GITHUB_OUTPUT'
+    - uses: dorny/paths-filter@v3
+      id: filter
+      with:
+        base: ${{ steps.previous-sha.outputs.sha }}
+        filters: |
+          common-files:
+            - 'deploy/**'
+            - 'logs-db-migrations/**'
+            - 'wishlist-db-migrations/**'
+
+  deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.common-files == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: remove unnecessary files
+      run: |
+        find . -mindepth 1 -maxdepth 1 \
+          -type f -exec rm -rf {} + -or \
+          -type d -not \( -name 'deploy' -or -name 'logs-db-migrations' -or -name 'wishlist-db-migrations' \) -exec rm -rf {} +
+    - name: deploy
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        TARGET: ${{ secrets.REMOTE_TARGET }}

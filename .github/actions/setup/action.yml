@@ -1,0 +1,18 @@
+name: Template setup action
+description: 'Installs node and depencencies using pnpm'
+inputs:
+  working-directory:
+    description: 'directory where package.json is located'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: install node
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ${{ inputs.working-directory }}/package.json
+    - name: install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        run_install: true
