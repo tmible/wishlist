@@ -29,7 +29,7 @@ const LIST_CLEARING_MESSAGE_INLINE_KEYBOARD = Markup.inlineKeyboard([[
   Markup.button.callback('Нет', 'clear_list_no'),
   Markup.button.callback('Да', 'clear_list_yes'),
 ], [
-  Markup.button.callback('Не очищать список', 'clear_list_end'),
+  Markup.button.callback('Отменить очистку списка', 'clear_list_cancel'),
 ]]);
 
 /**
@@ -78,6 +78,7 @@ const clearListCommandHandler = async (eventBus, ctx) => {
   /* eslint-disable-next-line require-atomic-updates -- Сессия всегда определена в контексте */
   ctx.session.listClearing = {
     list,
+    listItemsToDeleteIds: [],
     messageId: message_id,
     promptMessageId: promptMessage.message_id,
   };
@@ -95,15 +96,19 @@ const clearListActionsHandler = async (eventBus, ctx) => {
   const { id } = ctx.session.listClearing.list.shift();
 
   if (ctx.match[1] === 'yes') {
-    eventBus.emit(Events.Editing.DeleteItems, [ id ]);
+    ctx.session.listClearing.listItemsToDeleteIds.push(id);
   }
 
-  if (ctx.match[1] === 'end' || ctx.session.listClearing.list.length === 0) {
+  if (ctx.match[1] === 'cancel' || ctx.session.listClearing.list.length === 0) {
+    if (ctx.session.listClearing.list.length === 0) {
+      eventBus.emit(Events.Editing.DeleteItems, ctx.session.listClearing.listItemsToDeleteIds);
+    }
+
     await ctx.telegram.editMessageText(
       ctx.chat.id,
       ctx.session.listClearing.promptMessageId,
       undefined,
-      'Список очищен',
+      ctx.session.listClearing.list.length === 0 ? 'Список очищен' : 'Очистка списка отменена',
     );
 
     await ctx.telegram.deleteMessage(
@@ -149,7 +154,7 @@ const configure = (bot) => {
    * завершении очистки списка, и удаляет сообщение с названиями элементов списка. Иначе бот
    * редактирует сообщение с названиями элементов списка, подставляя очередное название
    */
-  bot.action(/^clear_list_(yes|no|end)$/, (ctx) => clearListActionsHandler(eventBus, ctx));
+  bot.action(/^clear_list_(yes|no|cancel)$/, (ctx) => clearListActionsHandler(eventBus, ctx));
 };
 
 export default { configure };

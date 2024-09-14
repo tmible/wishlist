@@ -116,7 +116,7 @@ describe('editing/clear-list module', () => {
             Markup.button.callback('Нет', 'clear_list_no'),
             Markup.button.callback('Да', 'clear_list_yes'),
           ], [
-            Markup.button.callback('Не очищать список', 'clear_list_end'),
+            Markup.button.callback('Отменить очистку списка', 'clear_list_cancel'),
           ]]),
         ));
       });
@@ -126,6 +126,7 @@ describe('editing/clear-list module', () => {
           ctx.session.listClearing,
           {
             list: sortedList,
+            listItemsToDeleteIds: [],
             messageId: 2,
             promptMessageId: 1,
           },
@@ -136,7 +137,7 @@ describe('editing/clear-list module', () => {
 
   it('should register action handler', () => {
     ClearListModule.configure(bot);
-    verify(bot.action(/^clear_list_(yes|no|end)$/, matchers.isA(Function)));
+    verify(bot.action(/^clear_list_(yes|no|cancel)$/, matchers.isA(Function)));
   });
 
   describe('action handler', () => {
@@ -149,8 +150,10 @@ describe('editing/clear-list module', () => {
           listClearing: {
             list: {
               shift: () => {},
-              length: 0,
+              length: 1,
+              0: { name: 'name' },
             },
+            listItemsToDeleteIds: [],
             promptMessageId: 'promptMessageId',
             messageId: 'messageId',
           },
@@ -165,7 +168,7 @@ describe('editing/clear-list module', () => {
       when(ctx.session.listClearing.list.shift()).thenReturn({ id: 1 });
       captor = matchers.captor();
       ClearListModule.configure(bot);
-      verify(bot.action(/^clear_list_(yes|no|end)$/, captor.capture()));
+      verify(bot.action(/^clear_list_(yes|no|cancel)$/, captor.capture()));
     });
 
     afterEach(reset);
@@ -180,24 +183,13 @@ describe('editing/clear-list module', () => {
       assert.equal(shiftCalls, 1);
     });
 
-    it('should emit DeleteItems event', async () => {
+    it('should add list item id to deletion list', async () => {
       ctx.match[1] = 'yes';
       await captor.value(ctx);
-      verify(emit(Events.Editing.DeleteItems, [ 1 ]));
+      assert.deepEqual(ctx.session.listClearing.listItemsToDeleteIds, [ 1 ]);
     });
 
     const stopTests = [{
-      name: 'should edit prompt message',
-      test: async (captor, ctx) => {
-        await captor.value(ctx);
-        verify(ctx.telegram.editMessageText(
-          'chatId',
-          'promptMessageId',
-          undefined,
-          'Список очищен',
-        ));
-      },
-    }, {
       name: 'should delete message with list item',
       test: async (captor, ctx) => {
         await captor.value(ctx);
@@ -211,11 +203,21 @@ describe('editing/clear-list module', () => {
       },
     }];
 
-    describe('if user requested stop', () => {
+    describe('if user requested cancel', () => {
       beforeEach(() => {
         ctx.session.listClearing.list.length = 1;
         ctx.session.listClearing.list[0] = { id: 2, name: 'name 2' };
-        ctx.match[1] = 'end';
+        ctx.match[1] = 'cancel';
+      });
+
+      it('should edit prompt message', async () => {
+        await captor.value(ctx);
+        verify(ctx.telegram.editMessageText(
+          'chatId',
+          'promptMessageId',
+          undefined,
+          'Очистка списка отменена',
+        ));
       });
 
       for (const { name, test } of stopTests) {
@@ -226,12 +228,28 @@ describe('editing/clear-list module', () => {
     describe('if list is empty', () => {
       beforeEach(() => {
         ctx.session.listClearing.list.length = 0;
+        ctx.session.listClearing.listItemsToDeleteIds = [ 1, 2, 3 ];
         ctx.match[1] = '';
+      });
+
+      it('should edit prompt message', async () => {
+        await captor.value(ctx);
+        verify(ctx.telegram.editMessageText(
+          'chatId',
+          'promptMessageId',
+          undefined,
+          'Список очищен',
+        ));
       });
 
       for (const { name, test } of stopTests) {
         it(name, async () => await test(captor, ctx));
       }
+
+      it('should emit delete evenet', async () => {
+        await captor.value(ctx);
+        verify(emit(Events.Editing.DeleteItems, [ 1, 2, 3 ]));
+      });
     });
 
     it(
@@ -252,7 +270,7 @@ describe('editing/clear-list module', () => {
             Markup.button.callback('Нет', 'clear_list_no'),
             Markup.button.callback('Да', 'clear_list_yes'),
           ], [
-            Markup.button.callback('Не очищать список', 'clear_list_end'),
+            Markup.button.callback('Отменить очистку списка', 'clear_list_cancel'),
           ]]),
         ));
       },
