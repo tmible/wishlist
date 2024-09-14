@@ -18,7 +18,13 @@ const connectToIPCHub = (bot) => {
   const db = inject(InjectionToken.LocalDatabase)('auto-update');
   const eventBus = inject(InjectionToken.EventBus);
 
-  const socket = connect(process.env.HUB_SOCKET_PATH);
+  const socket = connect(
+    process.env.HUB_SOCKET_PATH,
+  );
+
+  socket.on('error', (e) => {
+    inject(InjectionToken.Logger).warn(`Could not connect to IPC hub with error: ${e}`);
+  });
 
   socket.on('data', async (data) => {
     const userid = /^update (?<userid>.+)$/.exec(data.toString())?.groups.userid;

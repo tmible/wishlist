@@ -9,7 +9,12 @@ import { InjectionToken } from '$lib/architecture/injection-token.js';
  * @returns {void}
  */
 export const connectToIPCHub = () => {
-  const socket = connect(HUB_SOCKET_PATH);
+  const socket = connect(
+    HUB_SOCKET_PATH,
+  ).on(
+    'error',
+    (e) => console.warn(`Could not connect to IPC hub with error: ${e}`),
+  );
   provide(InjectionToken.IPCHub, { sendMessage: (...args) => socket.write(...args) });
   process.on('sveltekit:shutdown', () => socket.destroySoon());
 };

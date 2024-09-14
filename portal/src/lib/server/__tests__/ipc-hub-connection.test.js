@@ -13,9 +13,11 @@ describe('IPC hub connection', () => {
 
   beforeEach(() => {
     socket = {
+      on: vi.fn(),
       write: vi.fn(),
       destroySoon: vi.fn(),
     };
+    socket.on.mockReturnValue(socket);
     vi.mocked(connect).mockReturnValue(socket);
   });
 
@@ -26,6 +28,27 @@ describe('IPC hub connection', () => {
   it('should connect to socket', () => {
     connectToIPCHub();
     expect(vi.mocked(connect)).toHaveBeenCalledWith('HUB_SOCKET_PATH');
+  });
+
+  it('should catch socket errors', () => {
+    connectToIPCHub();
+    expect(socket.on).toHaveBeenCalledWith('error', expect.any(Function));
+  });
+
+  it('should log socket errors', () => {
+    let handler;
+    socket.on.mockImplementation((eventName, eventHandler) => {
+      handler = eventHandler;
+      return socket;
+    });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    connectToIPCHub();
+    handler('error');
+    expect(
+      vi.mocked(console.warn),
+    ).toHaveBeenCalledWith(
+      'Could not connect to IPC hub with error: error',
+    );
   });
 
   it('should provide connection object', () => {

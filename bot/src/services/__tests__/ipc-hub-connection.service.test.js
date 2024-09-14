@@ -46,6 +46,21 @@ describe('IPC hub connection service', () => {
     verify(connect('HUB_SOCKET_PATH'));
   });
 
+  it('should catch socket errors', () => {
+    connectToIPCHub();
+    verify(socket.on('error', matchers.isA(Function)));
+  });
+
+  it('should log socket errors', async () => {
+    const logger = object([ 'warn' ]);
+    when(inject(InjectionToken.Logger)).thenReturn(logger);
+    const captor = matchers.captor();
+    connectToIPCHub();
+    verify(socket.on('error', captor.capture()));
+    await captor.value('error');
+    verify(logger.warn('Could not connect to IPC hub with error: error'));
+  });
+
   it('should listen to messages from hub', () => {
     connectToIPCHub();
     verify(socket.on('data', matchers.isA(Function)));
