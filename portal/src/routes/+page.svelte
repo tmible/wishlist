@@ -1,6 +1,5 @@
 <!-- Svelte компонет -- главная страница неавторизованной зоны (лендинг) -->
 <script>
-  import Sparkles from 'lucide-svelte/icons/sparkles';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
@@ -34,7 +33,7 @@
         <div class="pl-12 md:pl-24 mr-auto relative self-start">
           <a href="https://t.me/tmible" target="_blank">
             <div class="absolute top-[-0.5rem] p-2 bg-[#ffd1dc]" data-theme="light">
-              Сумкинс
+              tmible
             </div>
           </a>
         </div>
@@ -45,8 +44,8 @@
       <div class="hero grow">
         <div class="hero-content flex-col prose md:p-0 h-full md:h-auto justify-end">
           <div class="grow md:grow-0 flex items-center">
-            <h1 class="mb-0 md:mb-16 text-[10vw] text-center main-header whitespace-nowrap">
-              Сумкинс<Sparkles class="inline w-[9vw] h-[9vw]" />Желания
+            <h1 class="mb-0 md:mb-16 text-[22vw] md:text-[11vw] text-center main-header">
+              Tmible's wishlist
             </h1>
           </div>
           <div
@@ -67,7 +66,7 @@
             <div class="card bg-base-100 md:shadow-xl w-full md:w-1/3 md:order-2 main-card-center">
               <div id="telegram-login-widget-container" class="card-body items-center">
                 <p>
-                  Сумкинс Желания&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
+                  Tmible's wishlist&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
                   основная задача&nbsp;— сократить путь от&nbsp;списка до&nbsp;общения между
                   дарителями с&nbsp;максимальным удобством для всех участников процесса. Работайте
                   со&nbsp;своим списком здесь, на&nbsp;портале, со&nbsp;списками друзей&nbsp;—
