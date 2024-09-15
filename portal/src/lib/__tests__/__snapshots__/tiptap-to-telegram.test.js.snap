@@ -58,7 +58,6 @@ eporkg erkmg wpoerg wpoef
       "type": "underline",
     },
     {
-      "language": null,
       "length": 13,
       "offset": 92,
       "type": "pre",
@@ -117,7 +116,7 @@ eporkg erkmg wpoerg wpoef
       "length": 8,
       "offset": 208,
       "type": "text_link",
-      "url": "https://example.com",
+      "url": "https://example.com/",
     },
   ],
 ]

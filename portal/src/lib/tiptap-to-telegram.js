@@ -67,6 +67,22 @@ const flatContent = (content, mixin = []) => content?.flatMap((child) => {
 });
 
 /**
+ * Дополнительные проверки для приведения к соответствию формату Телеграма
+ * @function preAndTextLinksMapper
+ * @param {Entity} entity Элемент разметки текста
+ * @returns {Entity} Обновлённый элемент разметки текста
+ */
+const preAndTextLinksMapper = (entity) => {
+  if (entity.type === 'pre' && entity.language === null) {
+    delete entity.language;
+  }
+  if (entity.type === 'text_link' && !entity.url.endsWith('/')) {
+    entity.url += '/';
+  }
+  return entity;
+};
+
+/**
  * Перевод дерева текстового редактора в набор элементов разметки текста телеграма
  * 1. [Уплощение дерева]{@link flatContent};
  * 2. Перебор получившихся блоков:
@@ -97,11 +113,13 @@ export const tiptapToTelegram = (content) => {
     ));
 
     entities.push(
-      ...finishedMarks.map((finishedMark) => ({
-        ...finishedMark,
-        type: TIPTAP_TO_TELEGRAM_NAMES_MAP.get(finishedMark.type) ?? finishedMark.type,
-        length: text.length - finishedMark.offset,
-      })),
+      ...finishedMarks
+        .map((finishedMark) => ({
+          ...finishedMark,
+          type: TIPTAP_TO_TELEGRAM_NAMES_MAP.get(finishedMark.type) ?? finishedMark.type,
+          length: text.length - finishedMark.offset,
+        }))
+        .map((entity) => preAndTextLinksMapper(entity)),
     );
 
     activeMarks.push(
@@ -114,11 +132,13 @@ export const tiptapToTelegram = (content) => {
   text = text.trimEnd();
 
   entities.push(
-    ...activeMarks.map((activeMark) => ({
-      ...activeMark,
-      type: TIPTAP_TO_TELEGRAM_NAMES_MAP.get(activeMark.type) ?? activeMark.type,
-      length: text.length - activeMark.offset,
-    })),
+    ...activeMarks
+      .map((activeMark) => ({
+        ...activeMark,
+        type: TIPTAP_TO_TELEGRAM_NAMES_MAP.get(activeMark.type) ?? activeMark.type,
+        length: text.length - activeMark.offset,
+      }))
+      .map((entity) => preAndTextLinksMapper(entity)),
   );
 
   return [ text, entities ];

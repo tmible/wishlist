@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
+import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
 import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
@@ -8,6 +9,7 @@ import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
 const dispatch = vi.fn();
 
 vi.stubGlobal('fetch', vi.fn(() => ({ ok: true })));
+vi.mock('@tmible/wishlist-common/array-to-ordered-json');
 vi.mock('$lib/tiptap-to-telegram.js');
 vi.mock(
   '$lib/store/list',
@@ -124,6 +126,7 @@ describe('list item form', () => {
           [ 'property2', 'fromForm2' ],
           [ 'descriptionEntities', '[{"type":0,"offset":0}]' ],
         ]);
+        vi.mocked(arrayToOrderedJSON).mockReturnValue('[]');
       });
 
       it('should filter values', () => {

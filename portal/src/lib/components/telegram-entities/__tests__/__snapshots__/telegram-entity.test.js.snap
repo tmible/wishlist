@@ -2,7 +2,7 @@
 
 exports[`telegram entity > pre > should display pre with language 1`] = `"<pre language="javascript"></pre>"`;
 
-exports[`telegram entity > pre > should display pre without language 1`] = `"<pre language="null"></pre>"`;
+exports[`telegram entity > pre > should display pre without language 1`] = `"<pre></pre>"`;
 
 exports[`telegram entity > should display bank_card 1`] = `"text"`;
 

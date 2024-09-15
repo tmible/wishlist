@@ -1,5 +1,6 @@
 <!-- Svelte компонент -- форма создания или изменения элемента списка -->
 <script>
+  import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
   import { createEventDispatcher } from 'svelte';
   import TextEditor from '$lib/components/text-editor';
   import { list } from '$lib/store/list';
@@ -39,47 +40,7 @@
   };
 
   /**
-   * Сравнение элементов разметки текста по позиции в тексте и по типу
-   * @function descriptionEntitiesComparator
-   * @param {Entity} a Первый сраниваемый элемент разметки
-   * @param {Entity} b Второй сраниваемый элемент разметки
-   * @returns {-1 | 0 | 1} -1, если первый раньше, 1, если второй раньше, иначе -- 0
-   */
-  const descriptionEntitiesComparator = (a, b) => {
-    if (a.offset !== b.offset) {
-      return a.offset - b.offset;
-    }
-    return a.type < b.type ? -1 : (a.type > b.type ? 1 : 0);
-  };
-
-  /**
-   * Сравнение свойств объекта элемента разметки текста для сортировки в лексекографическом порядке
-   * @function entityKeysComparator
-   * @param {string} a Первое сраниваемое свойство
-   * @param {string} b Второе сраниваемое свойство
-   * @returns {-1 | 0 | 1} -1, если первое раньше, 1, если второе раньше, иначе -- 0
-   */
-  const entityKeysComparator = ([ a ], [ b ]) => (a < b ? -1 : (a > b ? 1 : 0));
-
-  /**
-   * Приведение массива элементов разметки текста к единому формату JSON.
-   * [Сортировка свойств объектов в лексекографическом порядке]{@link entityKeysComparator},
-   * [сортировка объектов]{@link descriptionEntitiesComparator}
-   * @param {Entity[]} array Массив элементов разметки текста
-   * @returns {string} отсортированный массив отсортированных объектов в виде JSON строки
-   */
-  const arrayToOrderedJSON = (array) => JSON.stringify(
-    array
-      .sort(descriptionEntitiesComparator)
-      .map((entity) => Object.fromEntries(
-        Object
-          .entries(entity)
-          .sort(entityKeysComparator),
-      )),
-  );
-
-  /**
-   * Удаление из формы не изменых по сравнению с сохранённым
+   * Удаление из формы неизменых по сравнению с сохранённым
    * в [хранилище]{@link list} состоянием свойств элемента
    * @function filterNotModifiedProperties
    * @param {FormData} formData Обрабатываемая форма

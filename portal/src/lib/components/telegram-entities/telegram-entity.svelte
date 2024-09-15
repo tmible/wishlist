@@ -53,7 +53,7 @@
     }
     case 'pre': {
       tag = 'pre';
-      attributes = { language: node.language ?? 'null' };
+      attributes = { language: node.language ?? null };
       break;
     }
     case 'url': {

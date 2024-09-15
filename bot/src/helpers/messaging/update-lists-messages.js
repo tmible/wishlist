@@ -1,4 +1,4 @@
-import { strict as assert } from 'node:assert';
+import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
 import { nwAlign } from 'seal-wasm';
 import { Markup } from 'telegraf';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
@@ -35,41 +35,60 @@ const NWAlignOptions = { alignment: 'global', equal: 1, align: 0, insert: -2, de
  * @returns {boolean} Признак наличия изменений в сообщении
  */
 const checkIfMessageChanged = (messageToEdit, message) => {
-  let areEntitiesEqual = true;
-  let areReplyMarkupsEqual = true;
-
   /**
    * Проверка на равенство всех элементов разметки текста, кроме ссылок, так как они определяются
-   * автоматически и могут отсутствовать в разметке текста отправляемого сообщения
+   * автоматически и могут отсутствовать в разметке текста отправляемого сообщения.
+   * Элемнеты разметки текста в отправленном сообщении предварительно объединяются. На случай,
+   * если будут два таких элемента, один из которых заканчивается на том же символе, на котором
+   * начинается другой
    */
-  try {
-    assert.deepEqual(
-      messageToEdit.entities.filter(({ type }) => type !== 'url'),
-      message[0].entities.filter(({ type }) => type !== 'url'),
-    );
-  } catch {
-    areEntitiesEqual = false;
-  }
+  const areEntitiesEqual = arrayToOrderedJSON(
+    messageToEdit.entities
+      .filter(({ type }) => type !== 'url')
+      .reduce(
+        (accum, current) => {
+          const successor = messageToEdit.entities.find(
+            ({ offset, type }) => (
+              type === current.type &&
+              offset === current.offset + current.length
+            ),
+          );
+          if (successor) {
+            accum.push({ ...current, length: current.length + successor.length });
+          }
+          const predecessor = messageToEdit.entities.find(
+            ({ offset, length, type }) => (
+              type === current.type &&
+              offset + length === current.offset
+            ),
+          );
+          if (!successor && !predecessor) {
+            accum.push(current);
+          }
+          return accum;
+        },
+        [],
+      ),
+  ) === arrayToOrderedJSON(
+    message[0].entities.filter(({ type }) => type !== 'url'),
+  );
 
   /**
    * Проверка на равенство встроенной клавиатуры, в частности текстов
    * и названий действий кнопок, так как остальные свойства не используются,
    * получают значения по умолчанию и опускаются Телеграмом
    */
-  try {
-    assert.deepEqual(
-      messageToEdit.reply_markup?.inline_keyboard.map(
-        (row) => row.map((button) => ({ text: button.text, callback_data: button.callback_data })),
-      ),
-      message[1]?.reply_markup.inline_keyboard.map(
-        (row) => row.map((button) => ({ text: button.text, callback_data: button.callback_data })),
-      ),
-    );
-  } catch {
-    areReplyMarkupsEqual = false;
-  }
+  const areReplyMarkupsEqual = arrayToOrderedJSON(
+    messageToEdit.reply_markup?.inline_keyboard.map(
+      (row) => row.map(({ text, callback_data }) => ({ text, callback_data })),
+    ),
+  ) === arrayToOrderedJSON(
+    message[1]?.reply_markup.inline_keyboard.map(
+      (row) => row.map(({ text, callback_data }) => ({ text, callback_data })),
+    ),
+  );
 
-  return messageToEdit.text !== message[0].text || !areEntitiesEqual || !areReplyMarkupsEqual;
+  return !areEntitiesEqual || !areReplyMarkupsEqual || messageToEdit.text !== message[0].text;
 };
 
 /**

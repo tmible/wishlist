@@ -32,7 +32,9 @@ describe('updateListsMessages', () => {
                 id: i + 1,
                 itemId: i + 1,
                 text: `message ${i + 1}`,
-                entities: [],
+                entities: i === 1 ?
+                  [{ type: 0, offset: 0, length: 2 }] :
+                  [{ type: 0, offset: 0, length: 1 }, { type: 0, offset: 1, length: 1 }],
                 reply_markup: { inline_keyboard: [] },
               })),
               pinnedMessageId: 'pinnedMessageId',
@@ -69,109 +71,32 @@ describe('updateListsMessages', () => {
     beforeEach(() => {
       messages = [{
         itemId: 1,
-        message: [{ text: 'message 1', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
-      }, {
-        itemId: 3,
-        message: [{ text: 'message 3', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
-      }, {
-        itemId: 2,
-        message: [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
-      }, {
-        itemId: 4,
-        message: [{ text: 'message 4', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
-      }, {
-        itemId: 5,
         message: [
-          { text: 'message 5 new', entities: [] },
+          { text: 'message 1', entities: [{ type: 1, offset: 0, length: 2 }] },
           { reply_markup: { inline_keyboard: [] } },
         ],
-      }];
-    });
-
-    it('should edit only changed or moved messages', async () => {
-      await updateListsMessages(ctx, 'userid', messages, false);
-
-      assert.deepEqual(
-        editMessageText.mock.calls.map((call) => call.arguments),
-        [[
-          ctx.chat.id,
-          2,
-          undefined,
-          { text: 'message 3', entities: [] },
-          { reply_markup: { inline_keyboard: [] } },
-        ], [
-          ctx.chat.id,
-          3,
-          undefined,
-          { text: 'message 2', entities: [] },
-          { reply_markup: { inline_keyboard: [] } },
-        ], [
-          ctx.chat.id,
-          5,
-          undefined,
-          { text: 'message 5 new', entities: [] },
-          { reply_markup: { inline_keyboard: [] } },
-        ]],
-      );
-    });
-
-    it('should update messages in session', async () => {
-      await updateListsMessages(ctx, 'userid', messages, false);
-
-      assert.deepEqual(
-        ctx.session.persistent.lists.userid.messagesToEdit,
-        [{
-          id: 1,
-          itemId: 1,
-          text: 'message 1',
-          entities: [],
-          reply_markup: { inline_keyboard: [] },
-        }, {
-          id: 2,
-          itemId: 3,
-          text: 'message 3',
-          entities: [],
-          reply_markup: { inline_keyboard: [] },
-        }, {
-          id: 3,
-          itemId: 2,
-          text: 'message 2',
-          entities: [],
-          reply_markup: { inline_keyboard: [] },
-        }, {
-          id: 4,
-          itemId: 4,
-          text: 'message 4',
-          entities: [],
-          reply_markup: { inline_keyboard: [] },
-        }, {
-          id: 5,
-          itemId: 5,
-          text: 'message 5 new',
-          entities: [],
-          reply_markup: { inline_keyboard: [] },
-        }],
-      );
-    });
-  });
-
-  describe('if there are less new messages than old ones', () => {
-    let messages;
-
-    beforeEach(() => {
-      messages = [{
+      }, {
         itemId: 3,
-        message: [{ text: 'message 3', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        message: [
+          { text: 'message 3', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
       }, {
         itemId: 2,
-        message: [{ text: 'message 2', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        message: [
+          { text: 'message 2', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
       }, {
-        itemId: 6,
-        message: [{ text: 'message 6', entities: [] }, { reply_markup: { inline_keyboard: [] } }],
+        itemId: 4,
+        message: [
+          { text: 'message 4', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
       }, {
         itemId: 5,
         message: [
-          { text: 'message 5 new', entities: [] },
+          { text: 'message 5 new', entities: [{ type: 0, offset: 0, length: 2 }] },
           { reply_markup: { inline_keyboard: [] } },
         ],
       }];
@@ -186,19 +111,123 @@ describe('updateListsMessages', () => {
           ctx.chat.id,
           1,
           undefined,
-          { text: 'message 3', entities: [] },
+          { text: 'message 1', entities: [{ type: 1, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ], [
+          ctx.chat.id,
+          2,
+          undefined,
+          { text: 'message 3', entities: [{ type: 0, offset: 0, length: 2 }] },
           { reply_markup: { inline_keyboard: [] } },
         ], [
           ctx.chat.id,
           3,
           undefined,
-          { text: 'message 6', entities: [] },
+          { text: 'message 2', entities: [{ type: 0, offset: 0, length: 2 }] },
           { reply_markup: { inline_keyboard: [] } },
         ], [
           ctx.chat.id,
           5,
           undefined,
-          { text: 'message 5 new', entities: [] },
+          { text: 'message 5 new', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ]],
+      );
+    });
+
+    it('should update messages in session', async () => {
+      await updateListsMessages(ctx, 'userid', messages, false);
+
+      assert.deepEqual(
+        ctx.session.persistent.lists.userid.messagesToEdit,
+        [{
+          id: 1,
+          itemId: 1,
+          text: 'message 1',
+          entities: [{ type: 1, offset: 0, length: 2 }],
+          reply_markup: { inline_keyboard: [] },
+        }, {
+          id: 2,
+          itemId: 3,
+          text: 'message 3',
+          entities: [{ type: 0, offset: 0, length: 2 }],
+          reply_markup: { inline_keyboard: [] },
+        }, {
+          id: 3,
+          itemId: 2,
+          text: 'message 2',
+          entities: [{ type: 0, offset: 0, length: 2 }],
+          reply_markup: { inline_keyboard: [] },
+        }, {
+          id: 4,
+          itemId: 4,
+          text: 'message 4',
+          entities: [{ type: 0, offset: 0, length: 2 }],
+          reply_markup: { inline_keyboard: [] },
+        }, {
+          id: 5,
+          itemId: 5,
+          text: 'message 5 new',
+          entities: [{ type: 0, offset: 0, length: 2 }],
+          reply_markup: { inline_keyboard: [] },
+        }],
+      );
+    });
+  });
+
+  describe('if there are less new messages than old ones', () => {
+    let messages;
+
+    beforeEach(() => {
+      messages = [{
+        itemId: 3,
+        message: [
+          { text: 'message 3', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
+      }, {
+        itemId: 2,
+        message: [
+          { text: 'message 2', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
+      }, {
+        itemId: 6,
+        message: [
+          { text: 'message 6', entities: [{ type: 1, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
+      }, {
+        itemId: 5,
+        message: [
+          { text: 'message 5 new', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ],
+      }];
+    });
+
+    it('should edit only changed or moved messages', async () => {
+      await updateListsMessages(ctx, 'userid', messages, false);
+
+      assert.deepEqual(
+        editMessageText.mock.calls.map((call) => call.arguments),
+        [[
+          ctx.chat.id,
+          1,
+          undefined,
+          { text: 'message 3', entities: [{ type: 0, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ], [
+          ctx.chat.id,
+          3,
+          undefined,
+          { text: 'message 6', entities: [{ type: 1, offset: 0, length: 2 }] },
+          { reply_markup: { inline_keyboard: [] } },
+        ], [
+          ctx.chat.id,
+          5,
+          undefined,
+          { text: 'message 5 new', entities: [{ type: 0, offset: 0, length: 2 }] },
           { reply_markup: { inline_keyboard: [] } },
         ]],
       );
@@ -218,25 +247,25 @@ describe('updateListsMessages', () => {
           id: 1,
           itemId: 3,
           text: 'message 3',
-          entities: [],
+          entities: [{ type: 0, offset: 0, length: 2 }],
           reply_markup: { inline_keyboard: [] },
         }, {
           id: 2,
           itemId: 2,
           text: 'message 2',
-          entities: [],
+          entities: [{ type: 0, offset: 0, length: 2 }],
           reply_markup: { inline_keyboard: [] },
         }, {
           id: 3,
           itemId: 6,
           text: 'message 6',
-          entities: [],
+          entities: [{ type: 1, offset: 0, length: 2 }],
           reply_markup: { inline_keyboard: [] },
         }, {
           id: 5,
           itemId: 5,
           text: 'message 5 new',
-          entities: [],
+          entities: [{ type: 0, offset: 0, length: 2 }],
           reply_markup: { inline_keyboard: [] },
         }],
       );
