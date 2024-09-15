@@ -15,7 +15,7 @@ vi.mock(
     list: writable([{
       id: 'id',
       description: 'description',
-      descriptionEntities: [],
+      descriptionEntities: [{ offset: 0, type: 0 }],
       property1: 'stored1',
       property2: 'stored2',
     }]),
@@ -122,12 +122,18 @@ describe('list item form', () => {
         formData.entries.mockReturnValueOnce([
           [ 'property1', 'stored1' ],
           [ 'property2', 'fromForm2' ],
+          [ 'descriptionEntities', '[{"type":0,"offset":0}]' ],
         ]);
       });
 
       it('should filter values', () => {
         fireEvent.submit(form);
         expect(formData.delete).toHaveBeenCalledWith('property1');
+      });
+
+      it('should filter description entities', () => {
+        fireEvent.submit(form);
+        expect(formData.delete).toHaveBeenCalledWith('descriptionEntities');
       });
 
       it('should dispatch cancel event if no values left after filter', () => {
@@ -141,7 +147,7 @@ describe('list item form', () => {
           [ 'property1', 'stored1' ],
           [ 'property2', 'fromForm2' ],
         ]);
-        vi.spyOn(Object, 'fromEntries').mockReturnValueOnce({ from: 'entries' });
+        vi.spyOn(Object, 'fromEntries').mockReturnValue({ from: 'entries' });
         fireEvent.submit(form);
         expect(vi.mocked(fetch)).toHaveBeenCalledWith(
           '/api/wishlist/id',
