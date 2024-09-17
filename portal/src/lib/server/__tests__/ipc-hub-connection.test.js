@@ -75,11 +75,20 @@ describe('IPC hub connection', () => {
     expect(process.on).toHaveBeenCalledWith('sveltekit:shutdown', expect.any(Function));
   });
 
-  it('should close db on close listener invocation', () => {
+  it('should close connection on close listener invocation', () => {
     let handler;
     vi.spyOn(process, 'on').mockImplementation((eventName, eventHandler) => handler = eventHandler);
     connectToIPCHub();
     handler();
     expect(socket.destroySoon).toHaveBeenCalled();
+  });
+
+  it('should not close connection on close listener invocation if it is already closed', () => {
+    let handler;
+    vi.spyOn(process, 'on').mockImplementation((eventName, eventHandler) => handler = eventHandler);
+    socket.readyState = 'closed';
+    connectToIPCHub();
+    handler();
+    expect(socket.destroySoon).not.toHaveBeenCalled();
   });
 });

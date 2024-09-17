@@ -1,4 +1,3 @@
-import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
@@ -87,7 +86,17 @@ describe('IPC hub connection service', () => {
     });
   });
 
-  it('should return destroy function', () => {
-    assert.equal(connectToIPCHub(), socket.destroySoon);
+  it('should destroy socket on returned function invocation', () => {
+    const closeConnection = connectToIPCHub();
+    socket.readyState = 'readyState';
+    closeConnection();
+    verify(socket.destroySoon());
+  });
+
+  it('should not destroy socket on returned function invocation if it is already destroyed', () => {
+    const closeConnection = connectToIPCHub();
+    socket.readyState = 'closed';
+    closeConnection();
+    verify(socket.destroySoon(), { times: 0 });
   });
 });

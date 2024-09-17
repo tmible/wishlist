@@ -1,5 +1,5 @@
 import { connect } from 'node:net';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { inject, provide } from '@tmible/wishlist-common/dependency-injector';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import { autoUpdateFromIPCHub } from '@tmible/wishlist-bot/services/lists-auto-update';
 
@@ -34,7 +34,12 @@ const connectToIPCHub = (bot) => {
     await autoUpdateFromIPCHub(db, eventBus, bot.telegram, Number.parseInt(userid));
   });
 
-  return socket.destroySoon;
+  return () => {
+    if (socket.readyState === 'closed') {
+      return;
+    }
+    socket.destroySoon();
+  };
 };
 
 export default connectToIPCHub;

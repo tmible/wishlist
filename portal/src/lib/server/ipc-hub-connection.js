@@ -16,5 +16,10 @@ export const connectToIPCHub = () => {
     (e) => console.warn(`Could not connect to IPC hub with error: ${e}`),
   );
   provide(InjectionToken.IPCHub, { sendMessage: (...args) => socket.write(...args) });
-  process.on('sveltekit:shutdown', () => socket.destroySoon());
+  process.on('sveltekit:shutdown', () => {
+    if (socket.readyState === 'closed') {
+      return;
+    }
+    socket.destroySoon();
+  });
 };
