@@ -85,6 +85,33 @@ describe('IPC hub', () => {
         ));
       });
     });
+
+    describe('disconnecting clients', () => {
+      let sockets;
+      let dataCaptor;
+
+      beforeEach(() => {
+        sockets = new Array(3).fill(null).map(() => object([ 'on', 'write' ]));
+        dataCaptor = matchers.captor();
+        const closeCaptor = matchers.captor();
+        sockets.forEach((socket) => connectionCaptor.value(socket));
+        verify(sockets[0].on('data', dataCaptor.capture()));
+        verify(sockets[0].on('close', closeCaptor.capture()));
+        closeCaptor.value();
+      });
+
+      it('should log disconnection', () => {
+        verify(logger.info(
+          { clientId: matchers.isA(String) },
+          'client disconnected',
+        ));
+      });
+
+      it('should not send messages to disconnected clients', () => {
+        dataCaptor.value('data');
+        verify(sockets[0].write('data'), { times: 0 });
+      });
+    });
   });
 
   it('should start server', async () => {

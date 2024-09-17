@@ -25,24 +25,33 @@ const server = new Server();
 
 /**
  * Подключённые клиенты
- * @type {{ id: string; socket: Socket }[]}
+ * @type {Map<string, Socket>}
  */
-const clients = [];
+const clients = new Map([]);
 
 /**
  * При подключении очередного клиента он сохраненяется в {@link clients}.
  * При получении сообщения от клиента оно транслируется всем другим клиентам
  */
 server.on('connection', (socket) => {
-  const id = Math.random().toString(16);
-  clients.push({ id, socket });
+  const id = Math.random().toString(16).slice(2);
+  clients.set(id, socket);
   logger.info({ clientId: id }, 'client connected');
+
   socket.on('data', (data) => {
     logger.info({ clientId: id, message: data.toString() }, 'message recieved');
-    for (const client of clients.filter((socket) => socket.id !== id)) {
-      client.socket.write(data);
+    for (const [ clientId, clientSocket ] of clients.entries()) {
+      if (clientId === id) {
+        continue;
+      }
+      clientSocket.write(data);
     }
     logger.info({ clientId: id, message: data.toString() }, 'message broadcasted');
+  });
+
+  socket.on('close', () => {
+    clients.delete(id);
+    logger.info({ clientId: id }, 'client disconnected');
   });
 });
 

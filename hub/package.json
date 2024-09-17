@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-hub",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "IPC хаб для телеграм бота и портала со списками желаний",
   "repository": {
