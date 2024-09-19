@@ -34,6 +34,8 @@ const connectToIPCHub = (bot) => {
     await autoUpdateFromIPCHub(db, eventBus, bot.telegram, Number.parseInt(userid));
   });
 
+  provide(InjectionToken.IPCHub, { isConnected: () => socket.readyState === 'open' });
+
   return () => {
     if (socket.readyState === 'closed') {
       return;

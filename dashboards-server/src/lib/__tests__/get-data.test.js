@@ -1,17 +1,18 @@
+// @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { goto } from '$app/navigation';
-import { isAuthenticated } from '$lib/store/is-authenticated.js';
+import { authInterceptor } from '../auth-interceptor.js';
 import { getData } from '../get-data.js';
 
-const fetchMock = vi.fn(() => Promise.resolve({ status: 200, json: () => {} }));
-vi.stubGlobal('fetch', fetchMock);
-vi.mock('$app/navigation', () => ({ goto: vi.fn() }));
-vi.mock('$lib/store/is-authenticated.js', () => ({ isAuthenticated: { set: vi.fn() } }));
+vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: () => 'json' }));
+vi.mock('../auth-interceptor.js');
 
 describe('getData', () => {
+  beforeEach(() => {
+    vi.mocked(authInterceptor).mockImplementation((arg) => arg);
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should fetch', async () => {
@@ -19,40 +20,12 @@ describe('getData', () => {
     expect(fetch).toHaveBeenCalledWith('path');
   });
 
-  describe('if server responds 401', () => {
-    beforeEach(() => {
-      fetchMock.mockReturnValue(Promise.resolve({ status: 401 }));
-    });
-
-    it('should update store', async () => {
-      try {
-        await getData('path');
-      } catch (e) {
-        if (e.message !== 'Got 401 response') {
-          throw e;
-        }
-        expect(isAuthenticated.set).toHaveBeenCalledWith(false);
-      }
-    });
-
-    it('should redirect to /login', async () => {
-      try {
-        await getData('path');
-      } catch (e) {
-        if (e.message !== 'Got 401 response') {
-          throw e;
-        }
-        expect(goto).toHaveBeenCalledWith('/login');
-      }
-    });
-
-    it('should throw error', async () => {
-      await expect(getData('path')).rejects.toEqual(new Error('Got 401 response'));
-    });
+  it('should use auth interceptor', async () => {
+    await getData('path');
+    expect(vi.mocked(authInterceptor)).toHaveBeenCalledWith(await vi.mocked(fetch)());
   });
 
-  it('should return answer if server responds not 401', async () => {
-    fetchMock.mockReturnValue(Promise.resolve({ status: 200, json: () => 'response' }));
-    expect(await getData('path')).toEqual('response');
+  it('should return answer', async () => {
+    expect(await getData('path')).toBe('json');
   });
 });

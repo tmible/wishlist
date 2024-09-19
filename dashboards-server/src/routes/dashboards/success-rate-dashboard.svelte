@@ -1,24 +1,14 @@
 <!-- Svelte компонент -- дашборд с долей успешно обработанных ботом обновлений -->
 <script>
   import Dashboard from '$lib/components/dashboard.svelte';
+  import { ERROR_COLOR } from '$lib/constants/error-color.const.js';
+  import { SUCCESS_COLOR } from '$lib/constants/success-color.const.js';
   import { getData } from '$lib/get-data.js';
   import { SUCCESS_RATE_DASHBOARD_DEFAULT_PERIOD } from './success-rate-dashboard-default-period.const.js';
 
   /** @typedef {import('chart.js/auto').Chart} Chart */
   /** @typedef {import('chart.js').ChartConfiguration} ChartConfiguration */
   /** @typedef {import('$lib/components/dashboard.svelte').DashboardChart} DashboardChart */
-
-  /**
-   * Цвет для обозначения доли успешно обработанных ботом обновлений на графике
-   * @constant {string}
-   */
-  const SUCCESS_COLOR = '#00B594';
-
-  /**
-   * Цвет для обозначения доли ошибок на графике
-   * @constant {string}
-   */
-  const ERROR_COLOR = '#F93C2C';
 
   /**
    * Данные для постороения графиков

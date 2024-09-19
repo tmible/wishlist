@@ -57,8 +57,19 @@ describe('IPC hub connection', () => {
       vi.mocked(provide),
     ).toHaveBeenCalledWith(
       InjectionToken.IPCHub,
-      { sendMessage: expect.any(Function) },
+      {
+        isConnected: expect.any(Function),
+        sendMessage: expect.any(Function),
+      },
     );
+  });
+
+  it('should check socket connection', () => {
+    let isConnected;
+    vi.mocked(provide).mockImplementation((token, value) => ({ isConnected } = value));
+    socket.readyState = 'readyState';
+    connectToIPCHub();
+    expect(isConnected()).toBe(false);
   });
 
   it('should write to socket', () => {

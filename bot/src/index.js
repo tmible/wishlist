@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 import 'dotenv/config.js';
+import { createServer } from 'node:http';
 import { resolve } from 'node:path';
-import { provide } from '@tmible/wishlist-common/dependency-injector';
+import { inject, provide } from '@tmible/wishlist-common/dependency-injector';
 import pino from 'pino';
 import { session, Telegraf } from 'telegraf';
 import configureModules from '@tmible/wishlist-bot/architecture/configure-modules';
@@ -118,18 +119,24 @@ bot.catch((err, ctx) => {
   );
 });
 
-bot.launch(
-  ...(
-    process.env.HOST && process.env.PORT ?
-      [{
-        webhook: {
-          domain: process.env.HOST,
-          port: process.env.PORT,
-        },
-      }] :
-      []
-  ),
-);
+let server;
+if (process.env.HOST && process.env.PORT) {
+  const webhookHandler = await bot.createWebhook({ domain: process.env.HOST });
+  server = createServer((request, response) => {
+    if (request.url === '/health') {
+      response.writeHead(200, { 'Content-Type': 'application/json' });
+      response.end(JSON.stringify({
+        dbConnection: inject(InjectionToken.Database).open,
+        localDBConnection: inject(InjectionToken.LocalDatabase)().status === 'open',
+        hubConnection: inject(InjectionToken.IPCHub).isConnected(),
+      }));
+      return;
+    }
+    webhookHandler(request, response);
+  }).listen(process.env.PORT);
+} else {
+  bot.launch();
+}
 
 logger.debug('bot started');
 
@@ -138,10 +145,12 @@ process.once('SIGINT', async () => {
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGINT');
+  server?.close();
 });
 process.once('SIGTERM', async () => {
   closeIPCHubConnection();
   destroyStore();
   await closeLocalDB();
   bot.stop('SIGTERM');
+  server?.close();
 });

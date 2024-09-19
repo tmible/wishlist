@@ -17,7 +17,7 @@ vi.mock(
   }),
 );
 
-describe('dashboards endpoint', () => {
+describe('dashboards/bot endpoint', () => {
   afterEach(() => {
     vi.clearAllMocks();
     vi.restoreAllMocks();

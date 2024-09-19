@@ -1,3 +1,4 @@
+import { strict as assert } from 'node:assert';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
@@ -5,7 +6,7 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const [
   { connect },
-  { inject },
+  { inject, provide },
   { autoUpdateFromIPCHub },
 ] = await Promise.all([
   replaceEsm('node:net'),
@@ -84,6 +85,19 @@ describe('IPC hub connection service', () => {
       await captor.value('random message');
       verify(autoUpdateFromIPCHub(), { ignoreExtraArgs: true, times: 0 });
     });
+  });
+
+  it('should provide connection object', () => {
+    connectToIPCHub();
+    verify(provide(InjectionToken.IPCHub, { isConnected: matchers.isA(Function) }));
+  });
+
+  it('should check socket connection', () => {
+    const captor = matchers.captor();
+    connectToIPCHub();
+    verify(provide(InjectionToken.IPCHub, captor.capture()));
+    socket.readyState = 'readyState';
+    assert.equal(captor.value.isConnected(), false);
   });
 
   it('should destroy socket on returned function invocation', () => {

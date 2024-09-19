@@ -10,6 +10,7 @@
 # Общие файлы
 - `assets` сопутствующие проекту статические файлы
 - `deploy` скрипт для генерации файла с описанием сервиса для systemd
+- `health-checker` скрипты для health check'ов
 - `local.db` LevelDB БД для горячих данных
 - `logs-db-migrations` SQL скрипты миграций БД для хранения логов
 - `wishlist-db-migrations` SQL скрипты миграций БД со списками желаний

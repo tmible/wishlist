@@ -13,6 +13,7 @@ const InjectionToken = Object.freeze({
   Database: 'database',
   LocalDatabase: 'local database',
   Logger: 'logger',
+  IPCHub: 'IPC hub',
 });
 
 export default InjectionToken;

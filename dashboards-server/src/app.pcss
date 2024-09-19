@@ -76,3 +76,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .dashboards > *:nth-last-child(1):nth-child(odd) {
+    @apply xl:col-start-1;
+    @apply xl:col-end-3;
+  }
+}
+
+@layer base {
+  .success-bg {
+    background-color: var(--success-color);
+  }
+  .warning-bg {
+    background-color: var(--warning-color);
+  }
+  .error-bg {
+    background-color: var(--error-color);
+  }
+  .undefined-bg {
+    background-color: var(--undefined-color);
+  }
+}
