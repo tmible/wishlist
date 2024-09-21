@@ -11,8 +11,8 @@ import { InjectionToken } from '$lib/architecture/injection-token';
 export const initAddItemStatement = () => provide(
   InjectionToken.AddItemStatement,
   inject(InjectionToken.Database).prepare(`
-    INSERT INTO list (userid, priority, name, description, state)
-    VALUES (?, ?, ?, ?, ${ListItemState.FREE})
+    INSERT INTO list (userid, name, description, state, "order", category_id)
+    VALUES (?, ?, ?, ${ListItemState.FREE}, ?, ?)
     RETURNING id
   `),
 );

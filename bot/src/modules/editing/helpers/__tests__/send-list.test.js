@@ -35,13 +35,12 @@ describe('editing/send-list if chat isn\'t group', () => {
 
   const list = [{
     id: 1,
-    priority: 1,
     name: 'name 1',
     description: '',
     descriptionEntities: [],
+    category: 'category',
   }, {
     id: 2,
-    priority: 1,
     name: 'name 2',
     description: 'description 2',
     descriptionEntities: [{ offset: 0, length: 0, type: 'type' }],

@@ -10,9 +10,22 @@ import { InjectionToken } from '$lib/architecture/injection-token';
 export const initGetUserWishlistStatement = () => provide(
   InjectionToken.GetUserWishlistStatement,
   inject(InjectionToken.Database).prepare(`
-    SELECT id, priority, name, description, state, type, offset, length, additional
-    FROM list
+    SELECT
+      list.id,
+      list.name,
+      description,
+      state,
+      "order",
+      categories.id AS categoryId,
+      categories.name AS categoryName,
+      type,
+      offset,
+      length,
+      additional
+    FROM (
+      SELECT id, name, description, state, "order", category_id FROM list WHERE userid = ?
+    ) AS list
     LEFT JOIN description_entities ON list.id = description_entities.list_item_id
-    WHERE userid = ?
+    LEFT JOIN categories ON list.category_id = categories.id
   `),
 );

@@ -6,8 +6,9 @@ import { initDB } from '$lib/server/db';
 import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
 
 /**
- * Промежуточный обработчик, возвращающий ошибку, если в запросе нет cookie-файла,
- * содержащего jwt-токен аутентификации или токен в файле недействителен
+ * Промежуточный обработчик, возвращающий ошибку, если в запросе нет
+ * cookie-файла, содержащего jwt-токен аутентификации или токен в файле
+ * недействителен, и добавляющий userid из jwt-токена в запрос иначе
  * @type {import('@sveltejs/kit').Handle}
  */
 export const handle = async ({ event, resolve }) => {
@@ -17,7 +18,12 @@ export const handle = async ({ event, resolve }) => {
     }
 
     try {
-      await promisify(jwt.verify)(event.cookies.get(AUTH_TOKEN_COOKIE_NAME), env.HMAC_SECRET);
+      await promisify(jwt.verify)(
+        event.cookies.get(AUTH_TOKEN_COOKIE_NAME),
+        env.HMAC_SECRET,
+      ).then(
+        ({ userid }) => event.locals.userid = userid,
+      );
     } catch {
       return new Response(null, { status: 401 });
     }

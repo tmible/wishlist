@@ -118,3 +118,15 @@ span.spoiler {
   @apply max-md:h-full;
   @apply max-md:rounded-none;
 }
+
+body:has(.sortable-fallback) * {
+  @apply cursor-grabbing !important;
+}
+.sortable-drag {
+  @apply shadow-xl;
+  opacity: 1 !important;
+  transform: rotate(7deg);
+}
+.sortable-ghost {
+  @apply opacity-50;
+}

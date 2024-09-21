@@ -3,9 +3,10 @@ import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { post } from '@tmible/wishlist-common/post';
 import { writable } from 'svelte/store';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { user as userStore } from '$lib/store/user';
+import Menu from '../menu.svelte';
 
 vi.mock('$app/navigation');
 vi.mock('$lib/store/list', () => ({ list: writable([{}]) }));
@@ -13,47 +14,17 @@ vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
 vi.mock('@tmible/wishlist-common/post');
 
 describe('menu', () => {
-  let dispatchSpies;
   let user;
   let baseElement;
 
-  beforeAll(() => {
-    dispatchSpies = [];
-    vi.doMock(
-      'svelte',
-      async (importOriginal) => {
-        const original = await importOriginal();
-        return {
-          ...original,
-          createEventDispatcher: () => {
-            const spy = vi.fn(original.createEventDispatcher());
-            dispatchSpies.push(spy);
-            return spy;
-          },
-        };
-      },
-    );
-  });
-
-  beforeEach(async () => {
+  beforeEach(() => {
     user = userEvent.setup();
-    ({ baseElement } = render(await import('../menu.svelte').then((module) => module.default)));
+    ({ baseElement } = render(Menu));
   });
 
   afterEach(() => {
-    dispatchSpies = [];
     vi.clearAllMocks();
     cleanup();
-  });
-
-  it('should dispatch add event on add option click', async () => {
-    await user.click(screen.getByTestId('add'));
-    expect(dispatchSpies[0]).toHaveBeenCalledWith('add');
-  });
-
-  it('should dispatch clear event on clear option click', async () => {
-    await user.click(screen.getByTestId('clear'));
-    expect(dispatchSpies[0]).toHaveBeenCalledWith('clear');
   });
 
   describe('on link to bot option click', () => {

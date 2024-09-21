@@ -7,16 +7,15 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const list = [{
   id: 1,
-  priority: 1,
   name: 'name 1',
   description: 'description 1',
   descriptionEntities: [],
   state: ListItemState.FREE,
+  category: 'category',
   participants: [],
   participantsIds: [],
 }, {
   id: 2,
-  priority: 1,
   name: 'name 2',
   description: 'description 2',
   descriptionEntities: [],
@@ -25,7 +24,6 @@ const list = [{
   participantsIds: [ 'fromId' ],
 }, {
   id: 3,
-  priority: 3,
   name: 'name 3',
   description: 'description 3',
   descriptionEntities: [{ offset: 0, length: 0, type: 'type' }],
@@ -34,7 +32,6 @@ const list = [{
   participantsIds: [ 'anotherUserId' ],
 }, {
   id: 4,
-  priority: 1,
   name: 'name 4',
   description: '',
   descriptionEntities: [],
@@ -43,7 +40,6 @@ const list = [{
   participantsIds: [ 'fromId' ],
 }, {
   id: 5,
-  priority: 3,
   name: 'name 5',
   description: 'description 5',
   descriptionEntities: [],

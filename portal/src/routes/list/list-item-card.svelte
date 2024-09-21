@@ -1,5 +1,7 @@
 <!-- Svelte компонент -- карточка элемента списка -->
 <script>
+  import GripVertical from 'lucide-svelte/icons/grip-vertical';
+  import LayoutGrid from 'lucide-svelte/icons/layout-grid';
   import Pencil from 'lucide-svelte/icons/pencil';
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import { createEventDispatcher } from 'svelte';
@@ -19,6 +21,12 @@
    * @type {OwnListItem}
    */
   export let listItem = null;
+
+  /**
+   * Признак режима переупорядочивания списка
+   * @type {boolean}
+   */
+  export let isReorderModeOn = false;
 
   /**
    * Признак отображения карточки без контента при загрузке
@@ -103,7 +111,12 @@
     </div>
   </div>
 {:else}
-  <div class="card bg-base-100 md:shadow-xl">
+  <div
+    class="card bg-base-100 md:shadow-xl"
+    class:cursor-grab={isReorderModeOn}
+    class:select-none={isReorderModeOn}
+    data-id={listItem.id}
+  >
     <div class="card-body prose">
       {#if isEditingModeOn}
         <ListItemForm
@@ -112,23 +125,36 @@
           on:success={finishEditItem}
         />
       {:else}
-        <h2 class="card-title">{listItem.name}</h2>
-        <div bind:this={description} class="prose">
-          <TelegramEntitiesParser
-            text={listItem.description}
-            entities={listItem.descriptionEntities ?? []}
-          />
-        </div>
-        <div class="card-actions pt-4">
-          <button class="btn btn-outline btn-neutral w-full md:flex-1" on:click={editItem}>
-            <Pencil />
-            Редактировать
-          </button>
-          <button class="btn btn-outline btn-error w-full md:flex-1" on:click={deleteItem}>
-            <Trash2 />
-            Удалить
-          </button>
-        </div>
+        <h3 class="card-title" class:mb-0={isReorderModeOn}>
+          {#if isReorderModeOn}
+            <GripVertical class="text-neutral-content" />
+          {/if}
+          {listItem.name}
+        </h3>
+        {#if !isReorderModeOn}
+          <div bind:this={description} class="prose">
+            <TelegramEntitiesParser
+              text={listItem.description}
+              entities={listItem.descriptionEntities ?? []}
+            />
+          </div>
+          {#if listItem.category.id}
+            <div class="flex items-center">
+              <LayoutGrid class="w-4 h-4 mr-2" />
+              {listItem.category.name}
+            </div>
+          {/if}
+          <div class="card-actions pt-4">
+            <button class="btn btn-outline btn-neutral w-full md:flex-1" on:click={editItem}>
+              <Pencil />
+              Редактировать
+            </button>
+            <button class="btn btn-outline btn-error w-full md:flex-1" on:click={deleteItem}>
+              <Trash2 />
+              Удалить
+            </button>
+          </div>
+        {/if}
       {/if}
     </div>
   </div>

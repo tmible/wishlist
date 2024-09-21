@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-portal",
-	"version": "1.1.6",
+	"version": "1.2.0",
 	"private": true,
 	"description": "Портал со списками желаний",
 	"repository": {
@@ -26,6 +26,7 @@
 		"update": "npm-check-updates"
 	},
 	"dependencies": {
+		"@lucide/lab": "^0.1.2",
 		"@tiptap/core": "^2.6.6",
 		"@tiptap/extension-blockquote": "^2.6.6",
 		"@tiptap/extension-bold": "^2.6.6",
@@ -49,7 +50,8 @@
 		"bits-ui": "^0.21.13",
 		"jsonwebtoken": "^9.0.2",
 		"lucide-svelte": "^0.429.0",
-		"open-color": "^1.9.1"
+		"open-color": "^1.9.1",
+		"sortablejs": "^1.15.3"
 	},
 	"devDependencies": {
 		"@stylistic/eslint-plugin-js": "^1.8.1",

@@ -3,10 +3,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/sv
 import { userEvent } from '@testing-library/user-event';
 import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
 import { writable } from 'svelte/store';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
-
-const dispatch = vi.fn();
 
 vi.stubGlobal('fetch', vi.fn(() => ({ ok: true })));
 vi.mock('@tmible/wishlist-common/array-to-ordered-json');
@@ -18,21 +16,38 @@ vi.mock(
       id: 'id',
       description: 'description',
       descriptionEntities: [{ offset: 0, type: 0 }],
+      category: { id: null },
       property1: 'stored1',
       property2: 'stored2',
     }]),
   }),
 );
 vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
+vi.mock('$lib/store/categories.js', () => ({ categories: writable([]) }));
 
 describe('list item form', () => {
+  let dispatchSpies;
   let ListItemForm;
 
+  beforeAll(() => {
+    dispatchSpies = [];
+    vi.doMock(
+      'svelte',
+      async (importOriginal) => {
+        const original = await importOriginal();
+        return {
+          ...original,
+          createEventDispatcher: () => {
+            const spy = vi.fn(original.createEventDispatcher());
+            dispatchSpies.push(spy);
+            return spy;
+          },
+        };
+      },
+    );
+  });
+
   beforeEach(async () => {
-    vi.doMock('svelte');
-    vi.mocked(
-      await import('svelte').then(({ createEventDispatcher }) => createEventDispatcher),
-    ).mockReturnValue(dispatch);
     vi.doMock(
       '$lib/components/text-editor',
       async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
@@ -41,38 +56,41 @@ describe('list item form', () => {
   });
 
   afterEach(() => {
-    vi.resetModules();
+    dispatchSpies = [];
     vi.clearAllMocks();
     cleanup();
   });
 
   it('should be displayed with empty inputs', () => {
     const { container } = render(ListItemForm);
+
+    // remove random ids to match snapshot
+    const select = screen.getByRole('combobox');
+    select.removeAttribute('id');
+    select.removeAttribute('aria-controls');
+    select.removeAttribute('aria-labelledby');
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('should prefill inputs', () => {
-    render(
+    const { container } = render(
       ListItemForm,
       {
         values: {
           name: 'name',
           description: 'description',
-          priority: 10,
+          category: { id: 'categoryId', name: 'categoryName' },
         },
       },
     );
-    expect([
-      ...screen.getAllByRole('textbox'),
-      ...screen.getAllByRole('spinbutton'),
-    ].map(({ value }) => value)).toMatchSnapshot();
+    expect(Array.from(container.querySelectorAll('input'), ({ value }) => value)).toMatchSnapshot();
   });
 
   it('should dispatch cancel event on cancel button click', async () => {
     const user = userEvent.setup();
     render(ListItemForm);
     await user.click(screen.getByText('Отмена', { selector: 'button' }));
-    expect(dispatch).toHaveBeenCalledWith('cancel');
+    expect(dispatchSpies[0]).toHaveBeenCalledWith('cancel');
   });
 
   describe('on submit button click', () => {
@@ -120,11 +138,12 @@ describe('list item form', () => {
 
     describe('if was prefilled', () => {
       beforeEach(() => {
-        component.$set({ values: { id: 'id' } });
+        component.$set({ values: { id: 'id', category: { id: null } } });
         formData.entries.mockReturnValueOnce([
           [ 'property1', 'stored1' ],
           [ 'property2', 'fromForm2' ],
           [ 'descriptionEntities', '[{"type":0,"offset":0}]' ],
+          [ 'categoryId', 'null' ],
         ]);
         vi.mocked(arrayToOrderedJSON).mockReturnValue('[]');
       });
@@ -139,13 +158,18 @@ describe('list item form', () => {
         expect(formData.delete).toHaveBeenCalledWith('descriptionEntities');
       });
 
+      it('should filter category', () => {
+        fireEvent.submit(form);
+        expect(formData.delete).toHaveBeenCalledWith('categoryId');
+      });
+
       it('should dispatch cancel event if no values left after filter', () => {
         tiptapToTelegram.mockReturnValueOnce([ 'description', []]);
         fireEvent.submit(form);
-        expect(dispatch).toHaveBeenCalledWith('cancel');
+        expect(dispatchSpies[0]).toHaveBeenCalledWith('cancel');
       });
 
-      it('should send form via "PUT"', () => {
+      it('should send form via "PATCH"', () => {
         formData.entries.mockReturnValueOnce([
           [ 'property1', 'stored1' ],
           [ 'property2', 'fromForm2' ],
@@ -155,11 +179,16 @@ describe('list item form', () => {
         expect(vi.mocked(fetch)).toHaveBeenCalledWith(
           '/api/wishlist/id',
           {
-            method: 'PUT',
+            method: 'PATCH',
             body: JSON.stringify({ from: 'entries' }),
           },
         );
       });
+    });
+
+    it('should append order if was not prefilled', () => {
+      fireEvent.submit(form);
+      expect(formData.append).toHaveBeenCalledWith('order', 1);
     });
 
     it('should append userid', () => {
@@ -181,7 +210,7 @@ describe('list item form', () => {
 
     it('should dispatch success event on form success', async () => {
       fireEvent.submit(form);
-      await waitFor(() => expect(dispatch).toHaveBeenCalledWith('success'));
+      await waitFor(() => expect(dispatchSpies[0]).toHaveBeenCalledWith('success'));
     });
   });
 });

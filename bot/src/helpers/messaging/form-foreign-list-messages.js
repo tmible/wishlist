@@ -3,7 +3,6 @@ import { Format, Markup } from 'telegraf';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messaging/get-mention-from-userid-or-username';
-import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * @typedef {import('telegraf').Context} Context
@@ -119,11 +118,7 @@ const formMessages = (eventBus, ctx, userid) => eventBus
             ],
             '\n',
           ),
-          ...(
-            item.priority ?
-              [ `${digitToEmoji(item.priority)} приоритет` ] :
-              []
-          ),
+          ...(item.category ? [ `🔡 ${item.category}` ] : []),
           formParticipantsBlock(item),
         ],
         '\n\n',

@@ -40,14 +40,20 @@ describe('authSuccess endpoint', () => {
     let statement;
 
     beforeEach(() => {
-      url.searchParams.get.mockReturnValue('userid');
+      url.searchParams.get.mockReturnValueOnce('userid');
       statement = { run: vi.fn() };
       vi.mocked(inject).mockReturnValue(statement);
     });
 
     it('should run AddUserStatement', async () => {
       await GET({ cookies, url });
-      expect(statement.run).toHaveBeenCalledWith('userid', 'userid');
+      expect(statement.run).toHaveBeenCalledWith('userid', null);
+    });
+
+    it('should run AddUserStatement with username', async () => {
+      url.searchParams.get.mockReturnValueOnce('username');
+      await GET({ cookies, url });
+      expect(statement.run).toHaveBeenCalledWith('userid', 'username');
     });
 
     it('should create jwt', async () => {

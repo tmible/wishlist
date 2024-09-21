@@ -428,6 +428,9 @@ importers:
 
   portal:
     dependencies:
+      '@lucide/lab':
+        specifier: ^0.1.2
+        version: 0.1.2
       '@tiptap/core':
         specifier: ^2.6.6
         version: 2.6.6(@tiptap/pm@2.6.6)
@@ -500,6 +503,9 @@ importers:
       open-color:
         specifier: ^1.9.1
         version: 1.9.1
+      sortablejs:
+        specifier: ^1.15.3
+        version: 1.15.3
     devDependencies:
       '@stylistic/eslint-plugin-js':
         specifier: ^1.8.1
@@ -890,6 +896,9 @@ packages:
 
   '@kurkle/color@0.3.2':
     resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+
+  '@lucide/lab@0.1.2':
+    resolution: {integrity: sha512-VprF2BJa7ZuTGOhUd5cf8tHJXyL63wdxcGieAiVVoR9hO0YmPsnZO0AGqDiX2/br+/MC6n8BoJcmPilltOXIJA==}
 
   '@melt-ui/svelte@0.76.2':
     resolution: {integrity: sha512-7SbOa11tXUS95T3fReL+dwDs5FyJtCEqrqG3inRziDws346SYLsxOQ6HmX+4BkIsQh1R8U3XNa+EMmdMt38lMA==}
@@ -4064,6 +4073,9 @@ packages:
     resolution: {integrity: sha512-o7npfeJE6wi6J9l0/5LKshFzZ2rMatRiCDwYeDQaOzqdzRJwALhX7mk/A/ecg6wjMu7wdZbmXfD2S/vpOg0bdQ==}
     hasBin: true
 
+  sortablejs@1.15.3:
+    resolution: {integrity: sha512-zdK3/kwwAK1cJgy1rwl1YtNTbRmc8qW/+vgXf75A7NHag5of4pyI6uK86ktmQETyWRH7IGaE73uZOOBcGxgqZg==}
+
   source-map-js@1.2.0:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
@@ -4994,6 +5006,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@kurkle/color@0.3.2': {}
+
+  '@lucide/lab@0.1.2': {}
 
   '@melt-ui/svelte@0.76.2(svelte@4.2.18)':
     dependencies:
@@ -8557,6 +8571,8 @@ snapshots:
       buffer-crc32: 1.0.0
       minimist: 1.2.8
       sander: 0.5.1
+
+  sortablejs@1.15.3: {}
 
   source-map-js@1.2.0: {}
 

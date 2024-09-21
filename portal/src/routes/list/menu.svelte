@@ -1,20 +1,21 @@
 <!-- Svelte компонент -- меню портала -->
 <script>
   import { post } from '@tmible/wishlist-common/post';
-  import { DropdownMenu } from 'bits-ui';
   import Bot from 'lucide-svelte/icons/bot';
-  import Ellipsis from 'lucide-svelte/icons/ellipsis';
   import Eraser from 'lucide-svelte/icons/eraser';
+  import LayoutGrid from 'lucide-svelte/icons/layout-grid';
   import Link from 'lucide-svelte/icons/link';
   import LogOut from 'lucide-svelte/icons/log-out';
   import Plus from 'lucide-svelte/icons/plus';
   import User from 'lucide-svelte/icons/user';
   import Users from 'lucide-svelte/icons/users';
   import { createEventDispatcher } from 'svelte';
-  import { cubicOut } from 'svelte/easing';
   import { goto } from '$app/navigation';
   import { list } from '$lib/store/list';
   import { user } from '$lib/store/user';
+  import DesktopMenu from './desktop-menu.svelte';
+  import LayoutListMove from './layout-list-move.svelte';
+  import MobileMenu from './mobile-menu.svelte';
 
   /** @typedef {import('svelte').ComponentType} ComponentType */
 
@@ -50,16 +51,10 @@
   const dispatch = createEventDispatcher();
 
   /**
-   * Фунция svelte transition
-   * @function flyAndScale
-   * @returns {import('svelte/transition').TransitionConfig} Параметры transition
-   * @see {@link https://svelte.dev/docs/svelte-transition}
+   * Признак необходимости спрятать меню
+   * @type {boolean}
    */
-  const flyAndScale = () => ({
-    duration: 100,
-    easing: cubicOut,
-    css: (t, u) => `opacity: ${t}; transform: translateY(${u * 25}%)`,
-  });
+  export let isMenuHidden = false;
 
   /**
    * Формирование ссылки на список пользователя в диалоге с ботом или для групп, в которых есть бот.
@@ -88,17 +83,28 @@
    * Пункты меню
    * @type {MenuItem[]}
    */
-  $: menu = [{
+  $: options = [{
     icon: Plus,
     label: 'Добавить',
     testId: 'add',
     onClick: () => dispatch('add'),
+  }, {
+    icon: LayoutListMove,
+    label: 'Изменить порядок',
+    testId: 'reorder',
+    onClick: () => dispatch('reorder'),
+    condition: ($list ?? []).length > 0,
   }, {
     icon: Eraser,
     label: 'Быстрая очистка',
     testId: 'clear',
     onClick: () => dispatch('clear'),
     condition: ($list ?? []).length > 0,
+  }, {
+    icon: LayoutGrid,
+    label: 'Управлять категориями',
+    testId: 'categories',
+    onClick: () => dispatch('manageCategories'),
   }, {
     icon: Link,
     label: 'Поделиться',
@@ -133,144 +139,5 @@
   }];
 </script>
 
-<div class="fixed bottom-0 right-0 mr-6 mb-6 md:hidden">
-  <DropdownMenu.Root preventScroll={false}>
-    <DropdownMenu.Trigger class="btn btn-primary btn-circle">
-      <Ellipsis />
-    </DropdownMenu.Trigger>
-    <DropdownMenu.Content
-      class="shadow-xl menu bg-base-300 rounded-box"
-      side="top"
-      sideOffset={16}
-      strategy="fixed"
-      align="end"
-      transition={flyAndScale}
-    >
-      {#each menu as { icon, label, testId, children, onClick, condition = true } (label)}
-        {#if condition}
-          {#if children}
-            <DropdownMenu.Sub>
-              <DropdownMenu.SubTrigger data-testid={testId}>
-                <li>
-                  <span>
-                    <svelte:component this={icon} class="w-5 h-5" />
-                    {label}
-                  </span>
-                </li>
-              </DropdownMenu.SubTrigger>
-              <DropdownMenu.SubContent
-                class="shadow-xl menu bg-base-300 rounded-box"
-                sideOffset={12}
-                strategy="fixed"
-                transition={flyAndScale}
-                side="top"
-              >
-                {#each children as { icon, label, testId, onClick } (label)}
-                  <DropdownMenu.Item data-testid={testId} on:click={onClick}>
-                    <li>
-                      <span>
-                        <svelte:component this={icon} class="w-5 h-5" />
-                        {label}
-                      </span>
-                    </li>
-                  </DropdownMenu.Item>
-                {/each}
-              </DropdownMenu.SubContent>
-            </DropdownMenu.Sub>
-          {:else}
-            <DropdownMenu.Item data-testid={testId} on:click={onClick}>
-              <li>
-                <span>
-                  <svelte:component this={icon} class="w-5 h-5" />
-                  {label}
-                </span>
-              </li>
-            </DropdownMenu.Item>
-          {/if}
-        {/if}
-      {/each}
-    </DropdownMenu.Content>
-  </DropdownMenu.Root>
-</div>
-
-<div class="fixed bottom-0 mb-6 floating-menu hidden md:block">
-  <ul class="shadow-xl menu bg-base-100 rounded-box">
-    {#each menu as { icon, label, testId, children, onClick, condition = true } (label)}
-      {#if condition}
-        {#if children}
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger data-testid={testId}>
-              <li>
-                <span>
-                  <svelte:component this={icon} class="w-5 h-5" />
-                  {label}
-                </span>
-              </li>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content
-              class="shadow-xl menu bg-base-100 rounded-box"
-              sideOffset={16}
-              strategy="fixed"
-              transition={flyAndScale}
-              side="left"
-            >
-              {#each children as { icon, label, testId, onClick } (label)}
-                <DropdownMenu.Item data-testid={testId} on:click={onClick}>
-                  <li>
-                    <span>
-                      <svelte:component this={icon} class="w-5 h-5" />
-                      {label}
-                    </span>
-                  </li>
-                </DropdownMenu.Item>
-              {/each}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-        {:else}
-          <button data-testid={testId} on:click={onClick}>
-            <li>
-              <span>
-                <svelte:component this={icon} class="w-5 h-5" />
-                {label}
-              </span>
-            </li>
-          </button>
-        {/if}
-      {/if}
-    {/each}
-  </ul>
-</div>
-
-<style>
-  @keyframes success {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, -50%);
-    }
-    50% {
-      opacity: 0.75;
-      transform: translate(-50%, -75%);
-      }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -100%);
-    }
-  }
-
-  :global(div[role="menuitem"].clicked)::before {
-    content: 'скопировано';
-    animation: 1s ease-out both success;
-    @apply absolute;
-    @apply top-0;
-    left: 50%;
-    @apply bg-success;
-    @apply text-success-content;
-    @apply py-0.5;
-    @apply px-1;
-    @apply rounded-full;
-  }
-
-  .floating-menu {
-    right: calc(1.5rem + var(--scrollbar-width, 0px));
-  }
-</style>
+<MobileMenu {isMenuHidden} {options} />;
+<DesktopMenu {isMenuHidden} {options} />;

@@ -1,8 +1,11 @@
 <!-- Svelte компонент -- форма создания или изменения элемента списка -->
 <script>
   import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
+  import { Select } from 'bits-ui';
+  import Check from 'lucide-svelte/icons/check';
   import { createEventDispatcher } from 'svelte';
   import TextEditor from '$lib/components/text-editor';
+  import { categories } from '$lib/store/categories.js';
   import { list } from '$lib/store/list';
   import { user } from '$lib/store/user';
   import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
@@ -55,10 +58,39 @@
           key === 'descriptionEntities' &&
           arrayToOrderedJSON(JSON.parse(value)) === arrayToOrderedJSON(storedItem[key])
         ) ||
-        value === storedItem[key].toString()
+        (
+          key === 'categoryId' &&
+          (value === 'null' ? null : value) === (storedItem.category.id?.toString() ?? null)
+        ) ||
+        (
+          key !== 'descriptionEntities' &&
+          key !== 'categoryId' &&
+          value === storedItem[key].toString()
+        )
       ) {
         formData.delete(key);
       }
+    }
+  };
+
+  /**
+   * Отправка формы на сервер
+   * @function sendForm
+   * @param {FormData} formData Данные формы
+   * @returns {Promise<void>}
+   * @async
+   */
+  const sendForm = async (formData) => {
+    const response = await fetch(
+      values ? `/api/wishlist/${values.id}` : '/api/wishlist',
+      {
+        method: values ? 'PATCH' : 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+      },
+    );
+
+    if (response.ok) {
+      dispatch('success');
     }
   };
 
@@ -80,21 +112,13 @@
         dispatch('cancel');
         return;
       }
+    } else {
+      formData.append('order', $list.length);
     }
 
     formData.append('userid', $user.id);
 
-    const response = await fetch(
-      values ? `/api/wishlist/${values.id}` : '/api/wishlist',
-      {
-        method: values ? 'PUT' : 'POST',
-        body: JSON.stringify(Object.fromEntries(formData)),
-      },
-    );
-
-    if (response.ok) {
-      dispatch('success');
-    }
+    await sendForm(formData);
   };
 
   /**
@@ -112,7 +136,7 @@
     </div>
     <input
       name="name"
-      class="input input-bordered w-full"
+      class="input input-bordered w-full bg-base-200"
       required
       type="text"
       value={values?.name ?? ''}
@@ -126,24 +150,62 @@
     </div>
     <TextEditor
       name="description"
-      className="textarea textarea-bordered h-24"
+      className="textarea textarea-bordered h-24 bg-base-200"
       value={values?.description ?? ''}
       placeholder="Описание"
     />
   </label>
+  <!-- eslint-disable-next-line svelte/valid-compile -- input внутри Select -->
   <label class="form-control w-full mb-6">
     <div class="label">
-      <span class="label-text">Приоритет</span>
+      <span class="label-text">Категория</span>
     </div>
-    <input
-      name="priority"
-      class="input input-bordered w-full"
-      required
-      type="number"
-      min="1"
-      value={values?.priority ?? 1}
-      placeholder="Приоритет"
-    />
+    <Select.Root
+      name="categoryId"
+      preventScroll={false}
+      items={$categories}
+      selected={values ?
+        { value: values.category.id, label: values.category.name ?? '⸻' } :
+        { value: null, label: '⸻' }}
+    >
+      <Select.Input />
+      <Select.Trigger class="select select-bordered bg-base-200 items-center">
+        <Select.Value />
+      </Select.Trigger>
+
+      <Select.Content
+        asChild
+        side="bottom"
+        align="center"
+        sameWidth={true}
+        sideOffset={8}
+        let:builder
+      >
+        <ul
+          class="shadow-xl menu bg-base-200 rounded-lg not-prose"
+          use:builder.action
+          {...builder}
+        >
+          <Select.Item asChild value={null} label="⸻" let:builder>
+            <li use:builder.action {...builder}>
+              <span>⸻</span>
+            </li>
+          </Select.Item>
+          {#each $categories as { id, name } (id)}
+            <Select.Item asChild value={id} label={name} let:builder let:isSelected>
+              <li use:builder.action {...builder}>
+                <div class="flex justify-between" class:bg-base-100={isSelected}>
+                  {name}
+                  <Select.ItemIndicator>
+                    <Check />
+                  </Select.ItemIndicator>
+                </div>
+              </li>
+            </Select.Item>
+          {/each}
+        </ul>
+      </Select.Content>
+    </Select.Root>
   </label>
   <div class="card-actions">
     <button class="btn btn-neutral w-full md:flex-1" type="button" on:click={cancel}>

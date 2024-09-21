@@ -4,7 +4,7 @@ import descriptionEntitiesReducer from '@tmible/wishlist-common/description-enti
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token';
 import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-description-entities.js';
-import { DELETE, GET, POST } from '../+server.js';
+import { DELETE, GET, PATCH, POST } from '../+server.js';
 
 vi.mock('@sveltejs/kit');
 vi.mock('@tmible/wishlist-common/dependency-injector');
@@ -33,10 +33,19 @@ describe('wishlist endpoint', () => {
     describe('if there is id parameter', () => {
       let statement;
       let reducable;
+      const statementResult = [{
+        categoryId: 'categoryId2',
+        categoryName: 'category 2',
+        order: 1,
+      }, {
+        categoryId: 'categoryId1',
+        categoryName: 'category 2',
+        order: 0,
+      }];
 
       beforeEach(() => {
         url.searchParams.get.mockReturnValue('userid');
-        reducable = { reduce: vi.fn(() => 'reduced result') };
+        reducable = { reduce: vi.fn(() => statementResult) };
         statement = { all: vi.fn(() => reducable) };
         vi.mocked(inject).mockReturnValue(statement);
       });
@@ -51,9 +60,23 @@ describe('wishlist endpoint', () => {
         expect(reducable.reduce).toHaveBeenCalledWith(descriptionEntitiesReducer, []);
       });
 
-      it('should return redirect', async () => {
+      it('should map categories, sort by order and return statement result', async () => {
         vi.mocked(json).mockImplementation((value) => value);
-        expect(await GET({ url })).toEqual('reduced result');
+        expect(
+          await GET({ url }),
+        ).toEqual([{
+          category: {
+            id: 'categoryId1',
+            name: 'category 2',
+          },
+          order: 0,
+        }, {
+          category: {
+            id: 'categoryId2',
+            name: 'category 2',
+          },
+          order: 1,
+        }]);
       });
     });
   });
@@ -67,10 +90,11 @@ describe('wishlist endpoint', () => {
       request = {
         json: vi.fn(() => ({
           userid: 'userid',
-          priority: 'priority',
           name: 'name',
           description: 'description',
           descriptionEntities: JSON.stringify([]),
+          order: 'order',
+          categoryId: 'categoryId',
         })),
       };
       db = {
@@ -121,7 +145,15 @@ describe('wishlist endpoint', () => {
       it('should run AddItemStatement', async () => {
         await POST({ request });
         transaction();
-        expect(statement.get).toHaveBeenLastCalledWith('userid', 'priority', 'name', 'description');
+        expect(
+          statement.get,
+        ).toHaveBeenLastCalledWith(
+          'userid',
+          'name',
+          'description',
+          'order',
+          'categoryId',
+        );
       });
 
       it('should call parseAndInsertDescriptionEntities', async () => {
@@ -149,6 +181,57 @@ describe('wishlist endpoint', () => {
 
     it('should return success', async () => {
       const response = await POST({ request });
+      expect(response.status).toBe(200);
+      expect(response.body).toBeNull();
+    });
+  });
+
+  describe('PATCH', () => {
+    let request;
+    let db;
+    let statement;
+    let ipcConnection;
+
+    beforeEach(() => {
+      request = {
+        json: vi.fn(() => ({
+          patch: [{ id: 0, order: 1 }, { id: 1, order: 0 }],
+          userid: 'userid',
+        })),
+      };
+      statement = { run: vi.fn() };
+      db = { prepare: vi.fn(() => statement) };
+      ipcConnection = { sendMessage: vi.fn() };
+      vi.mocked(inject).mockReturnValueOnce(db).mockReturnValueOnce(ipcConnection);
+    });
+
+    it('should use database', async () => {
+      await PATCH({ request });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Database);
+    });
+
+    it('should prepare statement', async () => {
+      await PATCH({ request });
+      expect(db.prepare).toHaveBeenCalledWith(expect.any(String));
+    });
+
+    it('should run prepared statement', async () => {
+      await PATCH({ request });
+      expect(statement.run).toHaveBeenCalledWith(0, 1, 1, 0);
+    });
+
+    it('should use IPC connection', async () => {
+      await PATCH({ request });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
+    });
+
+    it('should send message to IPC hub', async () => {
+      await PATCH({ request });
+      expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
+    });
+
+    it('should return success', async () => {
+      const response = await PATCH({ request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();
     });

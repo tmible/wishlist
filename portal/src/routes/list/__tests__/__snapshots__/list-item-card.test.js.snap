@@ -65,11 +65,12 @@ exports[`list item card > should be displayed default 1`] = `
   <div
     class="card-body prose"
   >
-    <h2
+    <h3
       class="card-title"
     >
+       
       name
-    </h2>
+    </h3>
      
     <div
       class="prose"
@@ -79,6 +80,7 @@ exports[`list item card > should be displayed default 1`] = `
 
 Mock
     </div>
+     
      
     <div
       class="card-actions pt-4"
@@ -109,7 +111,7 @@ Mock
           
         </svg>
         
-            Редактировать
+              Редактировать
       </button>
        
       <button
@@ -156,9 +158,79 @@ Mock
           
         </svg>
         
-            Удалить
+              Удалить
       </button>
     </div>
+    
+  </div>
+</div>
+`;
+
+exports[`list item card > should be displayed for reordering 1`] = `
+<div
+  class="card bg-base-100 md:shadow-xl cursor-grab select-none"
+>
+  <div
+    class="card-body prose"
+  >
+    <h3
+      class="card-title mb-0"
+    >
+      <svg
+        class="lucide-icon lucide lucide-grip-vertical text-neutral-content"
+        fill="none"
+        height="24"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle
+          cx="9"
+          cy="12"
+          r="1"
+        />
+        
+        <circle
+          cx="9"
+          cy="5"
+          r="1"
+        />
+        
+        <circle
+          cx="9"
+          cy="19"
+          r="1"
+        />
+        
+        <circle
+          cx="15"
+          cy="12"
+          r="1"
+        />
+        
+        <circle
+          cx="15"
+          cy="5"
+          r="1"
+        />
+        
+        <circle
+          cx="15"
+          cy="19"
+          r="1"
+        />
+        
+        
+      </svg>
+       
+      name
+    </h3>
+     
+    
   </div>
 </div>
 `;

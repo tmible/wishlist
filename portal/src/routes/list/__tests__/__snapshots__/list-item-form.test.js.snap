@@ -19,7 +19,7 @@ exports[`list item form > should be displayed with empty inputs 1`] = `
     </div>
      
     <input
-      class="input input-bordered w-full"
+      class="input input-bordered w-full bg-base-200"
       name="name"
       placeholder="Название"
       required=""
@@ -55,18 +55,40 @@ Mock
       <span
         class="label-text"
       >
-        Приоритет
+        Категория
       </span>
     </div>
      
     <input
-      class="input input-bordered w-full"
-      min="1"
-      name="priority"
-      placeholder="Приоритет"
-      required=""
-      type="number"
+      aria-hidden="true"
+      data-melt-select-hidden-input=""
+      data-select-input=""
+      hidden="true"
+      name="categoryId"
+      style="position: absolute; opacity: 0; pointer-events: none; margin: 0px; transform: translateX(-100%);"
+      tabindex="-1"
     />
+    
+     
+    <button
+      aria-autocomplete="list"
+      aria-expanded="false"
+      class="select select-bordered bg-base-200 items-center"
+      data-melt-select-trigger=""
+      data-select-trigger=""
+      role="combobox"
+      type="button"
+    >
+      <span
+        data-select-value=""
+      >
+        ⸻
+      </span>
+      
+    </button>
+    
+     
+    
   </label>
    
   <div
@@ -92,6 +114,6 @@ Mock
 exports[`list item form > should prefill inputs 1`] = `
 [
   "name",
-  "10",
+  "categoryId",
 ]
 `;

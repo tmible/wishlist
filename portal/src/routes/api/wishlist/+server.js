@@ -21,7 +21,15 @@ export const GET = ({ url }) => {
       /* eslint-disable-next-line unicorn/no-array-callback-reference --
         descriptionEntitiesReducer -- специально написанная для использования в reduce() функция
       */
-      .reduce(descriptionEntitiesReducer, []),
+      .reduce(descriptionEntitiesReducer, [])
+      .map(({ categoryId, categoryName, ...listItem }) => ({
+        category: {
+          id: categoryId,
+          name: categoryName,
+        },
+        ...listItem,
+      }))
+      .sort((a, b) => a.order - b.order),
   );
 };
 
@@ -32,10 +40,11 @@ export const GET = ({ url }) => {
 export const POST = async ({ request }) => {
   const {
     userid,
-    priority,
     name,
     description,
     descriptionEntities,
+    order,
+    categoryId,
   } = await request.json();
 
   const db = inject(InjectionToken.Database);
@@ -45,9 +54,10 @@ export const POST = async ({ request }) => {
       InjectionToken.AddItemStatement,
     ).get(
       userid,
-      priority,
       name,
       description,
+      order,
+      categoryId,
     ).id;
 
     parseAndInsertDescriptionEntities(db, itemId, JSON.parse(descriptionEntities));
@@ -59,7 +69,28 @@ export const POST = async ({ request }) => {
 };
 
 /**
- * Удаление несколькиъ элементов из списка желаний. В рамках оодной транзакции с удалением
+ * Обновление нескольких элементов списка желаний. Используется при изменении порядка элементов
+ * в списке
+ * @type {import('./$types').RequestHandler}
+ */
+export const PATCH = async ({ request }) => {
+  const { patch, userid } = await request.json();
+  const patchPlaceholders = patch.map(() => '(?, ?)').join(', ');
+
+  inject(InjectionToken.Database).prepare(`
+    WITH patch(id, "order") AS (VALUES ${patchPlaceholders})
+    UPDATE list SET "order" = patch."order"
+    FROM patch
+    WHERE list.id = patch.id
+  `).run(...patch.flatMap(({ id, order }) => [ id, order ]));
+
+  inject(InjectionToken.IPCHub).sendMessage(`update ${userid}`);
+
+  return new Response(null, { status: 200 });
+};
+
+/**
+ * Удаление нескольких элементов из списка желаний. В рамках одной транзакции с удалением
  * предварительно происходит подсчёт элементов списка, id которых входят во множество id, полученных
  * в запросе, и userid владельца которых совпадает с userid аутентифицированного пользователя. Если
  * количество таких элементов и количество id в запросе не совпадают, транзакция прерывается с

@@ -13,10 +13,11 @@ import participantsMapper from './helpers/participants-mapper.js';
  * во варианте отображения для других пользователей
  * @typedef {object} ListItem
  * @property {number} id Идентификатор элемента
- * @property {number} priority Приоритет элемента
  * @property {string} name Название подарка
  * @property {string} description Описание подарка
  * @property {ListItemState} state Состояние подарка
+ * @property {number} order Порядковый номер элемента
+ * @property {string | null} category Категория элемента
  * @property {string[]} participants Имена пользователей -- участников кооперации по подарку
  *   или имя забронировавшего пользователя
  * @property {number[]} participantsIds Идентификаторы пользователей -- участников кооперации
@@ -37,18 +38,21 @@ let statement;
  */
 const prepare = () => statement = inject(InjectionToken.Database).prepare(`
   SELECT
-    id,
-    priority,
-    name,
+    list.id,
+    list.name,
     description,
     state,
+    "order",
+    categories.name AS category,
     participants,
     participants_ids,
     type,
     offset,
     length,
     additional
-  FROM (SELECT id, priority, name, description, state FROM list WHERE userid = ?) AS list
+  FROM (
+    SELECT id, name, description, state, "order", category_id FROM list WHERE userid = ?
+  ) AS list
   LEFT JOIN (
     SELECT
       list_item_id,
@@ -59,13 +63,14 @@ const prepare = () => statement = inject(InjectionToken.Database).prepare(`
     GROUP BY list_item_id
   ) as participants ON list.id = participants.list_item_id
   LEFT JOIN description_entities ON list.id = description_entities.list_item_id
+  LEFT JOIN categories ON list.category_id = categories.id
 `);
 
 /**
  * Получение списка желаний пользователя для других пользователей
  * @function eventHandler
  * @param {number} userid Идентификатор пользователя -- владельца списка
- * @returns {ListItem[]} Список желаний пользователя, отсортированный по убыванию приоритета
+ * @returns {ListItem[]} Список желаний пользователя, отсортированный в заданном владельцем порядке
  */
 const eventHandler = (userid) => statement
   .all(userid)
@@ -77,6 +82,6 @@ const eventHandler = (userid) => statement
     participantsMapper -- специально написанная для использования в map() функция
   */
   .map(participantsMapper)
-  .sort((a, b) => a.priority - b.priority);
+  .sort((a, b) => a.order - b.order);
 
 export default { eventHandler, prepare };

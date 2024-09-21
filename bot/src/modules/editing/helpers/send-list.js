@@ -2,7 +2,6 @@ import { Format, Markup } from 'telegraf';
 import Events from '@tmible/wishlist-bot/architecture/events';
 import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-lists-messages';
-import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
 
 /**
  * @typedef {import('telegraf').Context} Context
@@ -21,12 +20,12 @@ import digitToEmoji from '@tmible/wishlist-bot/utils/digit-to-emoji';
  * @returns {Format.FmtString} Текст сообщения
  */
 const formText = (item) => {
-  const priorityBlock = item.priority ? `\n\n${digitToEmoji(item.priority)} приоритет` : '';
+  const categoryBlock = item.category ? `\n\n🔡 ${item.category}` : '';
   const descriptionOffset = `${item.name}\n`.length;
   const description = item.description ? `\n${item.description}` : '';
 
   return new Format.FmtString(
-    `${item.name}${description}${priorityBlock}`,
+    `${item.name}${description}${categoryBlock}`,
     [
       ...item.descriptionEntities.map((entity) => ({
         ...entity,

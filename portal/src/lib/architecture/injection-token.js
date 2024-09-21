@@ -16,4 +16,9 @@ export const InjectionToken = Object.freeze({
   AddItemStatement: 'add item statement',
   ThemeService: 'theme service',
   IPCHub: 'IPC hub',
+  GetUserCategoriesStatement: 'get user categories statement',
+  AddCategoryStatement: 'add category statement',
+  ChangesStatement: 'Changes statement',
+  UpdateCategoryStatement: 'update category statement',
+  DeleteCategoryStatement: 'delete category statement',
 });

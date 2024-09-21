@@ -24,6 +24,7 @@ describe('server hooks', () => {
       event = {
         url: { pathname: '' },
         cookies: { get: () => {} },
+        locals: {},
       };
       ({ handle } = await import('../hooks.server.js'));
     });
@@ -73,6 +74,14 @@ describe('server hooks', () => {
         expect(resolve).toHaveBeenCalledWith(event);
       });
     }
+
+    it('should set userid to locals', async () => {
+      event.url.pathname = '/api/wishlist';
+      event.cookies.get = () => 'token';
+      vi.mocked(jwt.verify).mockResolvedValueOnce({ userid: 'userid' });
+      await handle({ event, resolve });
+      expect(event.locals.userid).toBe('userid');
+    });
   });
 
   it('should init DB', async () => {

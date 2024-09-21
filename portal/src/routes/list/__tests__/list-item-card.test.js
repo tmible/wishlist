@@ -25,12 +25,26 @@ describe('list item card', () => {
   });
 
   it('should be displayed default', () => {
-    const { container } = render(ListItemCard, { listItem: { name: 'name' } });
+    const { container } = render(
+      ListItemCard,
+      { listItem: { name: 'name', category: { id: 0, name: 'category' } } },
+    );
+    expect(container.firstChild).toMatchSnapshot();
+  });
+
+  it('should be displayed for reordering', () => {
+    const { container } = render(
+      ListItemCard,
+      { listItem: { name: 'name' }, isReorderModeOn: true },
+    );
     expect(container.firstChild).toMatchSnapshot();
   });
 
   it('should enable editing mode', async () => {
-    const { container } = render(ListItemCard, { listItem: { name: 'name' } });
+    const { container } = render(
+      ListItemCard,
+      { listItem: { name: 'name', category: { id: 0, name: 'category' } } },
+    );
     const user = userEvent.setup();
     await user.click(screen.getByText(/Редактировать/, { selector: 'button' }));
     expect(container.firstChild).toMatchSnapshot();
@@ -51,12 +65,13 @@ describe('list item card', () => {
     vi.mocked(
       await import('svelte').then(({ createEventDispatcher }) => createEventDispatcher),
     ).mockReturnValue(dispatch);
+    const listItem = { id: 'id', name: 'name', category: { id: 0, name: 'category' } };
     render(
       await import('../list-item-card.svelte').then((module) => module.default),
-      { listItem: { id: 'id', name: 'name' } },
+      { listItem },
     );
     const user = userEvent.setup();
     await user.click(screen.getByText(/Удалить/, { selector: 'button' }));
-    expect(dispatch).toHaveBeenCalledWith('delete', { id: 'id', name: 'name' });
+    expect(dispatch).toHaveBeenCalledWith('delete', listItem);
   });
 });

@@ -3,9 +3,14 @@ import { provide } from '@tmible/wishlist-common/dependency-injector';
 import Database from 'better-sqlite3';
 import { WISHLIST_DB_FILE_PATH, WISHLIST_DB_MIGRATIONS_PATH } from '$env/static/private';
 import { InjectionToken } from '$lib/architecture/injection-token';
+import { initAddCategoryStatement } from './add-category-statement.js';
 import { initAddItemStatement } from './add-item-statement.js';
 import { initAddUserStatement } from './add-user-statement.js';
+import { initChangesStatement } from './changes-statement.js';
+import { initDeleteCategoryStatement } from './delete-category-statement.js';
+import { initGetUserCategoriesStatement } from './get-user-categories-statement.js';
 import { initGetUserWishlistStatement } from './get-user-wishlist-statement.js';
+import { initUpdateCategoryStatement } from './update-category-statement.js';
 
 /**
  * Создание подключения к БД с отложенным закрытием, миграции БД, регистрация БД в сервисе
@@ -14,6 +19,7 @@ import { initGetUserWishlistStatement } from './get-user-wishlist-statement.js';
  * @returns {Promise<void>}
  * @async
  */
+// eslint-disable-next-line max-statements -- Объявления выражений, не масштабируется
 export const initDB = async () => {
   const db = new Database(WISHLIST_DB_FILE_PATH);
   await migrate(db, WISHLIST_DB_MIGRATIONS_PATH);
@@ -23,4 +29,9 @@ export const initDB = async () => {
   initAddUserStatement();
   initGetUserWishlistStatement();
   initAddItemStatement();
+  initGetUserCategoriesStatement();
+  initAddCategoryStatement();
+  initChangesStatement();
+  initUpdateCategoryStatement();
+  initDeleteCategoryStatement();
 };

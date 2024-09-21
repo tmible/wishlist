@@ -7,7 +7,16 @@ import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-descrip
  * для отделения данных от метаданных в теле запроса
  * @constant {Set<string>}
  */
-const LIST_ITEM_PROPERTIES = new Set([ 'name', 'description', 'priority' ]);
+const LIST_ITEM_PROPERTIES = new Set([ 'name', 'description', 'order', 'categoryId' ]);
+
+/**
+ * Отображение названий атрибутов элемента списка из запроса в названия атрибутов в БД.
+ * Не упомянутые совпадают
+ * @constant {Map<string, string>}
+ */
+const LIST_ITEM_PROPERTIES_TO_DB_COLUMNS = new Map([
+  [ 'categoryId', 'category_id' ],
+]);
 
 /**
  * Изменение элемента списка. Обновление свойств элемента списка в БД в соответствии с телом
@@ -15,7 +24,7 @@ const LIST_ITEM_PROPERTIES = new Set([ 'name', 'description', 'priority' ]);
  * с БД происходят в рамках одной транзакции
  * @type {import('./$types').RequestHandler}
  */
-export const PUT = async ({ params, request }) => {
+export const PATCH = async ({ params, request }) => {
   const body = await request.json();
   const keysToUpdate = Object.keys(body).filter((key) => LIST_ITEM_PROPERTIES.has(key));
 
@@ -27,7 +36,9 @@ export const PUT = async ({ params, request }) => {
   db.transaction(() => {
     db.prepare(
       `UPDATE list SET ${
-        keysToUpdate.map((key) => `${key} = '${body[key]}'`).join(', ')
+        keysToUpdate.map(
+          (key) => `${LIST_ITEM_PROPERTIES_TO_DB_COLUMNS.get(key) ?? key} = ${body[key]}`,
+        ).join(', ')
       } WHERE id = ?`,
     ).run(
       params.id,
