@@ -23,15 +23,14 @@ const migrate = async (db, migrationsPath) => {
   const migrations = await readdir(migrationsPath);
 
   for (let i = userVersion + 1; i < migrations.length + 1; ++i) {
-    db.transaction(async (migration) => {
-      /* eslint-disable-next-line security/detect-non-literal-fs-filename --
-        Имя папки хранится в переменной окружения, названия файло читаются из неё же,
-        никакого пользовательского ввода -- должно быть безопасно. Особенно с учётом того,
-        что база данных, к которой применяются миграции, тоже локальная
-      */
-      db.exec(await readFile(join(migrationsPath, migration), 'utf8'));
+    db.transaction((migration) => {
+      db.exec(migration);
       db.pragma(`user_version = ${i}`);
-    })(migrations[i - 1]);
+    /* eslint-disable-next-line security/detect-non-literal-fs-filename --
+      Имя папки хранится в переменной окружения, названия файло читаются из неё же,
+      никакого пользовательского ввода -- должно быть безопасно. Особенно с учётом того,
+      что база данных, к которой применяются миграции, тоже локальная */
+    })(await readFile(join(migrationsPath, migrations[i - 1]), 'utf8'));
   }
 };
 
