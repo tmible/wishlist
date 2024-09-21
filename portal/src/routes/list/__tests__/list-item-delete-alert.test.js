@@ -1,10 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
-import { writable } from 'svelte/store';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-
-vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
 
 describe('list item delete alert', () => {
   let dispatchSpies;
@@ -102,7 +99,7 @@ describe('list item delete alert', () => {
           {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json;charset=utf-8' },
-            body: JSON.stringify({ userid: 'userid', ids: [ 'id' ] }),
+            body: JSON.stringify([ 'id' ]),
           },
         );
       });

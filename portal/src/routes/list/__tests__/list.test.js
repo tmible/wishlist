@@ -55,7 +55,7 @@ describe('list page', () => {
 
     it('should request list on render', () => {
       render(List);
-      expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/wishlist?userid=userid');
+      expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/wishlist');
     });
 
     it('should save list to store', async () => {

@@ -2,7 +2,6 @@
 <script>
   import { AlertDialog } from 'bits-ui';
   import { createEventDispatcher } from 'svelte';
-  import { user } from '$lib/store/user';
 
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
 
@@ -36,7 +35,7 @@
       {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify({ userid: $user.id, ids: [ listItemToDelete.id ] }),
+        body: JSON.stringify([ listItemToDelete.id ]),
       },
     );
     dispatch('delete');

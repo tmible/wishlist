@@ -12,72 +12,62 @@ vi.mock('@tmible/wishlist-common/description-entities-reducer');
 vi.mock('$lib/parse-and-insert-description-entities.js');
 
 describe('wishlist endpoint', () => {
+  let locals;
+
+  beforeEach(() => {
+    locals = { userid: 'userid' };
+  });
+
   afterEach(() => {
     vi.resetAllMocks();
   });
 
   describe('GET', () => {
-    let url;
+    let statement;
+    let reducable;
+    const statementResult = [{
+      categoryId: 'categoryId2',
+      categoryName: 'category 2',
+      order: 1,
+    }, {
+      categoryId: 'categoryId1',
+      categoryName: 'category 2',
+      order: 0,
+    }];
 
     beforeEach(() => {
-      url = { searchParams: { get: vi.fn() } };
+      reducable = { reduce: vi.fn(() => statementResult) };
+      statement = { all: vi.fn(() => reducable) };
+      vi.mocked(inject).mockReturnValue(statement);
     });
 
-    it('should return error if there is no id parameter', async () => {
-      url.searchParams.get.mockReturnValue(null);
-      const response = await GET({ url });
-      expect(response.status).toBe(400);
-      expect(await response.text()).toBe('missing userid parameter');
+    it('should run GetUserWishlistStatement', async () => {
+      await GET({ locals });
+      expect(statement.all).toHaveBeenCalledWith('userid');
     });
 
-    describe('if there is id parameter', () => {
-      let statement;
-      let reducable;
-      const statementResult = [{
-        categoryId: 'categoryId2',
-        categoryName: 'category 2',
-        order: 1,
-      }, {
-        categoryId: 'categoryId1',
-        categoryName: 'category 2',
+    it('should reduce statement result', async () => {
+      await GET({ locals });
+      expect(reducable.reduce).toHaveBeenCalledWith(descriptionEntitiesReducer, []);
+    });
+
+    it('should map categories, sort by order and return statement result', async () => {
+      vi.mocked(json).mockImplementation((value) => value);
+      expect(
+        await GET({ locals }),
+      ).toEqual([{
+        category: {
+          id: 'categoryId1',
+          name: 'category 2',
+        },
         order: 0,
-      }];
-
-      beforeEach(() => {
-        url.searchParams.get.mockReturnValue('userid');
-        reducable = { reduce: vi.fn(() => statementResult) };
-        statement = { all: vi.fn(() => reducable) };
-        vi.mocked(inject).mockReturnValue(statement);
-      });
-
-      it('should run GetUserWishlistStatement', async () => {
-        await GET({ url });
-        expect(statement.all).toHaveBeenCalledWith('userid');
-      });
-
-      it('should reduce statement result', async () => {
-        await GET({ url });
-        expect(reducable.reduce).toHaveBeenCalledWith(descriptionEntitiesReducer, []);
-      });
-
-      it('should map categories, sort by order and return statement result', async () => {
-        vi.mocked(json).mockImplementation((value) => value);
-        expect(
-          await GET({ url }),
-        ).toEqual([{
-          category: {
-            id: 'categoryId1',
-            name: 'category 2',
-          },
-          order: 0,
-        }, {
-          category: {
-            id: 'categoryId2',
-            name: 'category 2',
-          },
-          order: 1,
-        }]);
-      });
+      }, {
+        category: {
+          id: 'categoryId2',
+          name: 'category 2',
+        },
+        order: 1,
+      }]);
     });
   });
 
@@ -89,7 +79,6 @@ describe('wishlist endpoint', () => {
     beforeEach(() => {
       request = {
         json: vi.fn(() => ({
-          userid: 'userid',
           name: 'name',
           description: 'description',
           descriptionEntities: JSON.stringify([]),
@@ -107,7 +96,7 @@ describe('wishlist endpoint', () => {
     });
 
     it('should use database', async () => {
-      await POST({ request });
+      await POST({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Database);
     });
 
@@ -143,7 +132,7 @@ describe('wishlist endpoint', () => {
       });
 
       it('should run AddItemStatement', async () => {
-        await POST({ request });
+        await POST({ locals, request });
         transaction();
         expect(
           statement.get,
@@ -157,7 +146,7 @@ describe('wishlist endpoint', () => {
       });
 
       it('should call parseAndInsertDescriptionEntities', async () => {
-        await POST({ request });
+        await POST({ locals, request });
         transaction();
         expect(
           vi.mocked(parseAndInsertDescriptionEntities),
@@ -170,17 +159,17 @@ describe('wishlist endpoint', () => {
     });
 
     it('should use IPC connection', async () => {
-      await POST({ request });
+      await POST({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
     });
 
     it('should send message to IPC hub', async () => {
-      await POST({ request });
+      await POST({ locals, request });
       expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
     });
 
     it('should return success', async () => {
-      const response = await POST({ request });
+      const response = await POST({ locals, request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();
     });
@@ -193,12 +182,7 @@ describe('wishlist endpoint', () => {
     let ipcConnection;
 
     beforeEach(() => {
-      request = {
-        json: vi.fn(() => ({
-          patch: [{ id: 0, order: 1 }, { id: 1, order: 0 }],
-          userid: 'userid',
-        })),
-      };
+      request = { json: vi.fn(() => [{ id: 0, order: 1 }, { id: 1, order: 0 }]) };
       statement = { run: vi.fn() };
       db = { prepare: vi.fn(() => statement) };
       ipcConnection = { sendMessage: vi.fn() };
@@ -206,32 +190,32 @@ describe('wishlist endpoint', () => {
     });
 
     it('should use database', async () => {
-      await PATCH({ request });
+      await PATCH({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Database);
     });
 
     it('should prepare statement', async () => {
-      await PATCH({ request });
+      await PATCH({ locals, request });
       expect(db.prepare).toHaveBeenCalledWith(expect.any(String));
     });
 
     it('should run prepared statement', async () => {
-      await PATCH({ request });
+      await PATCH({ locals, request });
       expect(statement.run).toHaveBeenCalledWith(0, 1, 1, 0);
     });
 
     it('should use IPC connection', async () => {
-      await PATCH({ request });
+      await PATCH({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
     });
 
     it('should send message to IPC hub', async () => {
-      await PATCH({ request });
+      await PATCH({ locals, request });
       expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
     });
 
     it('should return success', async () => {
-      const response = await PATCH({ request });
+      const response = await PATCH({ locals, request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();
     });
@@ -244,12 +228,7 @@ describe('wishlist endpoint', () => {
     let ipcConnection;
 
     beforeEach(() => {
-      request = {
-        json: vi.fn(() => ({
-          userid: 'userid',
-          ids: [ 1, 2, 3 ],
-        })),
-      };
+      request = { json: vi.fn(() => [ 1, 2, 3 ]) };
       statement = {
         get: vi.fn(() => ({ number: 3 })),
         run: vi.fn(),
@@ -258,19 +237,17 @@ describe('wishlist endpoint', () => {
         transaction: vi.fn((passedFunction) => passedFunction),
         prepare: vi.fn(() => statement),
       };
-      ipcConnection = {
-        sendMessage: vi.fn(),
-      };
+      ipcConnection = { sendMessage: vi.fn() };
       vi.mocked(inject).mockReturnValueOnce(db).mockReturnValueOnce(ipcConnection);
     });
 
     it('should use database', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Database);
     });
 
     it('should prepare count statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(
         db.prepare,
       ).toHaveBeenCalledWith(
@@ -279,19 +256,19 @@ describe('wishlist endpoint', () => {
     });
 
     it('should run count statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(statement.get).toHaveBeenCalledWith(1, 2, 3, 'userid');
     });
 
     it('should return error if count statement fails', async () => {
       statement.get.mockReturnValue(0);
-      const response = await DELETE({ request });
+      const response = await DELETE({ locals, request });
       expect(response.status).toBe(401);
       expect(response.body).toBeNull();
     });
 
     it('should prepare delete from description_entities statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(
         db.prepare,
       ).toHaveBeenCalledWith(
@@ -300,12 +277,12 @@ describe('wishlist endpoint', () => {
     });
 
     it('should run delete from description_entities statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(statement.run).toHaveBeenNthCalledWith(1, [ 1, 2, 3 ]);
     });
 
     it('should prepare delete from participants statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(
         db.prepare,
       ).toHaveBeenCalledWith(
@@ -314,12 +291,12 @@ describe('wishlist endpoint', () => {
     });
 
     it('should run delete from participants statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(statement.run).toHaveBeenNthCalledWith(2, [ 1, 2, 3 ]);
     });
 
     it('should prepare delete from list statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(
         db.prepare,
       ).toHaveBeenCalledWith(
@@ -328,22 +305,22 @@ describe('wishlist endpoint', () => {
     });
 
     it('should run delete from list statement', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(statement.run).toHaveBeenNthCalledWith(3, [ 1, 2, 3 ]);
     });
 
     it('should use IPC connection', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
     });
 
     it('should send message to IPC hub', async () => {
-      await DELETE({ request });
+      await DELETE({ locals, request });
       expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
     });
 
     it('should return success', async () => {
-      const response = await DELETE({ request });
+      const response = await DELETE({ locals, request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();
     });

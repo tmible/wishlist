@@ -4,7 +4,6 @@
   import { goto } from '$app/navigation';
   import { CardSwiper } from '$lib/card-swiper';
   import { list } from '$lib/store/list';
-  import { user } from '$lib/store/user';
 
   /**
    * Массив идентификаторов элементов списка к удалению
@@ -68,7 +67,7 @@
       {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify({ userid: $user.id, ids: toDelete }),
+        body: JSON.stringify(toDelete),
       },
     );
   });

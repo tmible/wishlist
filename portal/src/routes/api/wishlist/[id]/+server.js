@@ -24,7 +24,7 @@ const LIST_ITEM_PROPERTIES_TO_DB_COLUMNS = new Map([
  * с БД происходят в рамках одной транзакции
  * @type {import('./$types').RequestHandler}
  */
-export const PATCH = async ({ params, request }) => {
+export const PATCH = async ({ locals, params, request }) => {
   const body = await request.json();
   const keysToUpdate = Object.keys(body).filter((key) => LIST_ITEM_PROPERTIES.has(key));
 
@@ -37,7 +37,11 @@ export const PATCH = async ({ params, request }) => {
     db.prepare(
       `UPDATE list SET ${
         keysToUpdate.map(
-          (key) => `${LIST_ITEM_PROPERTIES_TO_DB_COLUMNS.get(key) ?? key} = ${body[key]}`,
+          (key) => `${
+            LIST_ITEM_PROPERTIES_TO_DB_COLUMNS.get(key) ?? key
+          } = ${
+            body[key] === null ? body[key] : `'${body[key]}'`
+          }`,
         ).join(', ')
       } WHERE id = ?`,
     ).run(
@@ -53,7 +57,7 @@ export const PATCH = async ({ params, request }) => {
     parseAndInsertDescriptionEntities(db, params.id, JSON.parse(body.descriptionEntities ?? '[]'));
   })();
 
-  inject(InjectionToken.IPCHub).sendMessage(`update ${body.userid}`);
+  inject(InjectionToken.IPCHub).sendMessage(`update ${locals.userid}`);
 
   return new Response(null, { status: 200 });
 };

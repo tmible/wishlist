@@ -22,7 +22,6 @@ vi.mock(
     }]),
   }),
 );
-vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
 vi.mock('$lib/store/categories.js', () => ({ categories: writable([]) }));
 
 describe('list item form', () => {
@@ -189,11 +188,6 @@ describe('list item form', () => {
     it('should append order if was not prefilled', () => {
       fireEvent.submit(form);
       expect(formData.append).toHaveBeenCalledWith('order', 1);
-    });
-
-    it('should append userid', () => {
-      fireEvent.submit(form);
-      expect(formData.append).toHaveBeenCalledWith('userid', 'userid');
     });
 
     it('should send form via "POST"', () => {

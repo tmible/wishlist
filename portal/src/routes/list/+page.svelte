@@ -60,7 +60,7 @@
    * @async
    */
   const requestList = async () => {
-    const response = await fetch(`/api/wishlist?userid=${$user.id}`);
+    const response = await fetch('/api/wishlist');
     list.set(await response.json());
   };
 
@@ -128,7 +128,7 @@
       '/api/wishlist',
       {
         method: 'PATCH',
-        body: JSON.stringify({ patch, userid: $user.id }),
+        body: JSON.stringify(patch),
       },
     );
 

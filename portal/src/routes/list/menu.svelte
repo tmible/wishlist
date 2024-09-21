@@ -139,5 +139,5 @@
   }];
 </script>
 
-<MobileMenu {isMenuHidden} {options} />;
-<DesktopMenu {isMenuHidden} {options} />;
+<MobileMenu {isMenuHidden} {options} />
+<DesktopMenu {isMenuHidden} {options} />

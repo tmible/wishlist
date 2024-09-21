@@ -7,7 +7,6 @@
   import TextEditor from '$lib/components/text-editor';
   import { categories } from '$lib/store/categories.js';
   import { list } from '$lib/store/list';
-  import { user } from '$lib/store/user';
   import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
 
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
@@ -81,11 +80,15 @@
    * @async
    */
   const sendForm = async (formData) => {
+    const body = Object.fromEntries(formData);
+    if (body.categoryId === 'null') {
+      body.categoryId = null;
+    }
     const response = await fetch(
       values ? `/api/wishlist/${values.id}` : '/api/wishlist',
       {
         method: values ? 'PATCH' : 'POST',
-        body: JSON.stringify(Object.fromEntries(formData)),
+        body: JSON.stringify(body),
       },
     );
 
@@ -115,8 +118,6 @@
     } else {
       formData.append('order', $list.length);
     }
-
-    formData.append('userid', $user.id);
 
     await sendForm(formData);
   };

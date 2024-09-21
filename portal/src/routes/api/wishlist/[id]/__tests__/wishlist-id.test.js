@@ -8,10 +8,12 @@ vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('$lib/parse-and-insert-description-entities.js');
 
 describe('wishlist/[id] endpoint', () => {
+  let locals;
   let params;
   let request;
 
   beforeEach(() => {
+    locals = { userid: 'userid' };
     params = { id: 'id' };
   });
 
@@ -25,13 +27,13 @@ describe('wishlist/[id] endpoint', () => {
     });
 
     it('should return error', async () => {
-      const response = await PATCH({ params, request });
+      const response = await PATCH({ locals, params, request });
       expect(response.status).toBe(400);
       expect(response.body).toBeNull();
     });
 
     it('should not use databse', async () => {
-      await PATCH({ params, request });
+      await PATCH({ locals, params, request });
       expect(vi.mocked(inject)).not.toHaveBeenCalledWith(InjectionToken.Database);
     });
   });
@@ -43,7 +45,7 @@ describe('wishlist/[id] endpoint', () => {
     beforeEach(() => {
       request = { json: vi.fn(() => ({
         name: 'name',
-        categoryId: 'categoryId',
+        categoryId: null,
         userid: 'userid',
       })) };
       db = {
@@ -56,7 +58,7 @@ describe('wishlist/[id] endpoint', () => {
     });
 
     it('should use database', async () => {
-      await PATCH({ params, request });
+      await PATCH({ locals, params, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Database);
     });
 
@@ -74,23 +76,23 @@ describe('wishlist/[id] endpoint', () => {
       });
 
       it('should prepare update statement', async () => {
-        await PATCH({ params, request });
+        await PATCH({ locals, params, request });
         transaction();
         expect(
           db.prepare,
         ).toHaveBeenLastCalledWith(
-          'UPDATE list SET name = name, category_id = categoryId WHERE id = ?',
+          'UPDATE list SET name = \'name\', category_id = null WHERE id = ?',
         );
       });
 
       it('should run update statement', async () => {
-        await PATCH({ params, request });
+        await PATCH({ locals, params, request });
         transaction();
         expect(statement.run).toHaveBeenLastCalledWith('id');
       });
 
       it('should return if there is no description in request body', async () => {
-        await PATCH({ params, request });
+        await PATCH({ locals, params, request });
         transaction();
         expect(db.prepare).toHaveBeenCalledTimes(1);
         expect(statement.run).toHaveBeenCalledTimes(1);
@@ -107,7 +109,7 @@ describe('wishlist/[id] endpoint', () => {
         });
 
         it('should prepare delete statement', async () => {
-          await PATCH({ params, request });
+          await PATCH({ locals, params, request });
           transaction();
           expect(
             db.prepare,
@@ -117,13 +119,13 @@ describe('wishlist/[id] endpoint', () => {
         });
 
         it('should run delete statement', async () => {
-          await PATCH({ params, request });
+          await PATCH({ locals, params, request });
           transaction();
           expect(statement.run).toHaveBeenLastCalledWith('id');
         });
 
         it('should call parseAndInsertDescriptionEntities', async () => {
-          await PATCH({ params, request });
+          await PATCH({ locals, params, request });
           transaction();
           expect(vi.mocked(parseAndInsertDescriptionEntities)).toHaveBeenCalledWith(db, 'id', []);
         });
@@ -131,17 +133,17 @@ describe('wishlist/[id] endpoint', () => {
     });
 
     it('should use IPC connection', async () => {
-      await PATCH({ params, request });
+      await PATCH({ locals, params, request });
       expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.IPCHub);
     });
 
     it('should send message to IPC hub', async () => {
-      await PATCH({ params, request });
+      await PATCH({ locals, params, request });
       expect(ipcConnection.sendMessage).toHaveBeenCalledWith('update userid');
     });
 
     it('should return success', async () => {
-      const response = await PATCH({ params, request });
+      const response = await PATCH({ locals, params, request });
       expect(response.status).toBe(200);
       expect(response.body).toBeNull();
     });

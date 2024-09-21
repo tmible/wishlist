@@ -15,7 +15,6 @@ vi.mock(
   }),
 );
 vi.mock('$lib/store/list', () => ({ list: writable(null) }));
-vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
 vi.stubGlobal('fetch', vi.fn());
 
 describe('/list/clear', () => {
@@ -40,7 +39,7 @@ describe('/list/clear', () => {
       {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify({ userid: 'userid', ids: [] }),
+        body: '[]',
       },
     );
   });

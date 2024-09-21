@@ -8,38 +8,29 @@ import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-descrip
  * Получение списка желаний владельцем
  * @type {import('./$types').RequestHandler}
  */
-export const GET = ({ url }) => {
-  const userid = url.searchParams.get('userid');
-
-  if (!userid) {
-    return new Response('missing userid parameter', { status: 400 });
-  }
-
-  return json(
-    inject(InjectionToken.GetUserWishlistStatement)
-      .all(userid)
-      /* eslint-disable-next-line unicorn/no-array-callback-reference --
-        descriptionEntitiesReducer -- специально написанная для использования в reduce() функция
-      */
-      .reduce(descriptionEntitiesReducer, [])
-      .map(({ categoryId, categoryName, ...listItem }) => ({
-        category: {
-          id: categoryId,
-          name: categoryName,
-        },
-        ...listItem,
-      }))
-      .sort((a, b) => a.order - b.order),
-  );
-};
+export const GET = ({ locals }) => json(
+  inject(InjectionToken.GetUserWishlistStatement)
+    .all(locals.userid)
+    /* eslint-disable-next-line unicorn/no-array-callback-reference --
+      descriptionEntitiesReducer -- специально написанная для использования в reduce() функция */
+    .reduce(descriptionEntitiesReducer, [])
+    .map(({ categoryId, categoryName, ...listItem }) => ({
+      category: {
+        id: categoryId,
+        name: categoryName,
+      },
+      ...listItem,
+    }))
+    .sort((a, b) => a.order - b.order),
+);
 
 /**
  * Добавление элемента в список желаний
  * @type {import('./$types').RequestHandler}
  */
-export const POST = async ({ request }) => {
+export const POST = async ({ locals, request }) => {
+  const { userid } = locals;
   const {
-    userid,
     name,
     description,
     descriptionEntities,
@@ -73,8 +64,9 @@ export const POST = async ({ request }) => {
  * в списке
  * @type {import('./$types').RequestHandler}
  */
-export const PATCH = async ({ request }) => {
-  const { patch, userid } = await request.json();
+export const PATCH = async ({ locals, request }) => {
+  const { userid } = locals;
+  const patch = await request.json();
   const patchPlaceholders = patch.map(() => '(?, ?)').join(', ');
 
   inject(InjectionToken.Database).prepare(`
@@ -98,8 +90,9 @@ export const PATCH = async ({ request }) => {
  * элементов своего списка
  * @type {import('./$types').RequestHandler}
  */
-export const DELETE = async ({ request }) => {
-  const { userid, ids } = await request.json();
+export const DELETE = async ({ locals, request }) => {
+  const { userid } = locals;
+  const ids = await request.json();
 
   const db = inject(InjectionToken.Database);
   const idPlaceholders = ids.map(() => '?').join(', ');
