@@ -385,6 +385,16 @@
     /* unicorn */
     "unicorn/catch-error-name": "off",
     "unicorn/consistent-destructuring": "error",
+    "unicorn/import-style": [
+      "error",
+      {
+        "styles": {
+          "path": {
+            "named": true
+          }
+        }
+      }
+    ],
     "unicorn/no-array-for-each": "off",
     "unicorn/no-array-reduce": "off",
     "unicorn/no-new-array": "off",

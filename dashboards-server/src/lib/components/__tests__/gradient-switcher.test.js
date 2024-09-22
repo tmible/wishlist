@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { FAVICON } from '$lib/constants/favicon.const.js';
 import { adjustGradient, generateGradient } from '$lib/gradient-generator';
 import GradientSwitcher from '../gradient-switcher.svelte';
 
@@ -13,13 +14,15 @@ vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('$lib/gradient-generator', () => ({ adjustGradient: vi.fn(), generateGradient: vi.fn() }));
 
 describe('gradient switcher', () => {
+  const link = {};
   let documentStyleSpy;
   let subscribeToTheme;
 
   beforeEach(() => {
     documentStyleSpy = vi.spyOn(document.documentElement.style, 'setProperty');
-    adjustGradient.mockReturnValue({ style: 'style' });
-    generateGradient.mockReturnValue({ style: 'style' });
+    vi.spyOn(document, 'querySelector').mockReturnValue(link);
+    adjustGradient.mockReturnValue({ hue1: 'hue1', saturation: 'saturation', style: 'style' });
+    generateGradient.mockReturnValue({ hue1: 'hue1', saturation: 'saturation', style: 'style' });
     subscribeToTheme = vi.fn();
     vi.mocked(inject).mockReturnValue({ isDarkTheme: vi.fn(), subscribeToTheme });
   });
@@ -86,7 +89,16 @@ describe('gradient switcher', () => {
     it('should adjust gradient', () => {
       render(GradientSwitcher);
       themeChangeHandler(isDark);
-      expect(adjustGradient).toHaveBeenCalledWith({ style: 'style' }, isDark);
+      expect(
+        adjustGradient,
+      ).toHaveBeenCalledWith(
+        {
+          style: 'style',
+          hue1: 'hue1',
+          saturation: 'saturation',
+        },
+        isDark,
+      );
     });
 
     describe('if gradient is active', () => {
@@ -109,6 +121,16 @@ describe('gradient switcher', () => {
       it('should add gradient to css variables', () => {
         expect(documentStyleSpy).toHaveBeenCalledWith('--gradient', 'style');
       });
+
+      it('should update favicon', () => {
+        expect(
+          link.href,
+        ).toBe(
+          `data:image/svg+xml,${
+            FAVICON.replace(/stroke=".*"/, 'stroke="hsl(hue1, saturation%, 77%)"')
+          }`,
+        );
+      });
     });
   });
 
@@ -122,11 +144,30 @@ describe('gradient switcher', () => {
       });
 
       it('should add gradient to local storage', () => {
-        expect(localStorageStub.setItem).toHaveBeenCalledWith('gradient', '{"style":"style"}');
+        expect(
+          localStorageStub.setItem,
+        ).toHaveBeenCalledWith(
+          'gradient',
+          JSON.stringify({
+            hue1: 'hue1',
+            saturation: 'saturation',
+            style: 'style',
+          }),
+        );
       });
 
       it('should add gradient to css variables', () => {
         expect(documentStyleSpy).toHaveBeenCalledWith('--gradient', 'style');
+      });
+
+      it('should update favicon', () => {
+        expect(
+          link.href,
+        ).toBe(
+          `data:image/svg+xml,${
+            FAVICON.replace(/stroke=".*"/, 'stroke="hsl(hue1, saturation%, 77%)"')
+          }`,
+        );
       });
     });
 
@@ -149,6 +190,14 @@ describe('gradient switcher', () => {
 
       it('should remove gradient from css variables', () => {
         expect(documentStyleSpy).toHaveBeenCalledWith('--gradient', undefined);
+      });
+
+      it('should update favicon', () => {
+        expect(
+          link.href,
+        ).toBe(
+          `data:image/svg+xml,${FAVICON.replace(/stroke=".*"/, 'stroke="black"')}`,
+        );
       });
     });
   });

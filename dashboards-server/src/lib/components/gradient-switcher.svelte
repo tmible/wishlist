@@ -4,6 +4,7 @@
   import { onMount } from 'svelte';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { Switch } from '$lib/components/ui/switch';
+  import { FAVICON } from '$lib/constants/favicon.const.js';
   import { adjustGradient, generateGradient } from '$lib/gradient-generator';
 
   /** @typedef {import('$lib/gradient-generator').Gradient} Gradient */
@@ -26,6 +27,12 @@
   let gradient = JSON.parse(localStorage.getItem('gradient'));
 
   /**
+   * Элемент с favicon
+   * @type {HTMLElement}
+   */
+  const link = document.querySelector('link[rel~=\'icon\']');
+
+  /**
    * Кеширование в localStorage и установка градиента
    * @function applyGradient
    * @returns {void}
@@ -33,6 +40,9 @@
   const applyGradient = () => {
     localStorage.setItem('gradient', JSON.stringify(gradient));
     document.documentElement.style.setProperty('--gradient', gradient.style);
+    const faviconColor = `hsl(${gradient.hue1}, ${gradient.saturation}%, 77%)`;
+    const favicon = FAVICON.replace(/stroke=".*"/, `stroke="${faviconColor}"`);
+    link.href = `data:image/svg+xml,${favicon}`;
   };
 
   /**
@@ -55,6 +65,7 @@
     gradient = generateGradient(themeService.isDarkTheme());
     localStorage.removeItem('gradient');
     document.documentElement.style.setProperty('--gradient', undefined);
+    link.href = `data:image/svg+xml,${FAVICON.replace(/stroke=".*"/, 'stroke="black"')}`;
   }
 </script>
 
