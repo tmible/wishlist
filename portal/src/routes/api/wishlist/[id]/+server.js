@@ -7,7 +7,13 @@ import { parseAndInsertDescriptionEntities } from '$lib/parse-and-insert-descrip
  * для отделения данных от метаданных в теле запроса
  * @constant {Set<string>}
  */
-const LIST_ITEM_PROPERTIES = new Set([ 'name', 'description', 'order', 'categoryId' ]);
+const LIST_ITEM_PROPERTIES = new Set([
+  'name',
+  'description',
+  'descriptionEntities',
+  'order',
+  'categoryId',
+]);
 
 /**
  * Отображение названий атрибутов элемента списка из запроса в названия атрибутов в БД.
@@ -36,7 +42,7 @@ export const PATCH = async ({ locals, params, request }) => {
   db.transaction(() => {
     db.prepare(
       `UPDATE list SET ${
-        keysToUpdate.map(
+        keysToUpdate.filter((key) => key !== 'descriptionEntities').map(
           (key) => `${
             LIST_ITEM_PROPERTIES_TO_DB_COLUMNS.get(key) ?? key
           } = ${
@@ -48,7 +54,7 @@ export const PATCH = async ({ locals, params, request }) => {
       params.id,
     );
 
-    if (!keysToUpdate.includes('description')) {
+    if (!keysToUpdate.includes('descriptionEntities')) {
       return;
     }
 

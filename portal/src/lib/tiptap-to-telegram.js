@@ -76,7 +76,11 @@ const preAndTextLinksMapper = (entity) => {
   if (entity.type === 'pre' && entity.language === null) {
     delete entity.language;
   }
-  if (entity.type === 'text_link' && !entity.url.endsWith('/')) {
+  if (
+    entity.type === 'text_link' &&
+    !entity.url.endsWith('/') &&
+    /https:\/\/[^/]+$|\/[^.]+$/.test(entity.url)
+  ) {
     entity.url += '/';
   }
   return entity;

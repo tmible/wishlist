@@ -98,7 +98,7 @@ describe('wishlist/[id] endpoint', () => {
         expect(statement.run).toHaveBeenCalledTimes(1);
       });
 
-      describe('if there is description in request body', () => {
+      describe('if there are description entities in request body', () => {
         beforeEach(() => {
           request = {
             json: vi.fn(() => ({
