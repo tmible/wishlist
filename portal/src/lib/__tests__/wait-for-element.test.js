@@ -28,17 +28,19 @@ describe('waitForElement', () => {
       expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 10000);
     });
 
-    it('should create observer', () => {
+    it('should create observers', () => {
       vi.stubGlobal('MutationObserver', vi.fn(() => ({ observe: vi.fn() })));
-      waitForElement();
-      expect(MutationObserver.prototype.constructor).toHaveBeenCalled();
+      waitForElement('element', [ 'target 1', 'target 2' ]);
+      expect(MutationObserver.prototype.constructor).toHaveBeenCalledTimes(2);
     });
 
     it('should observe', () => {
       const observe = vi.fn();
       vi.stubGlobal('MutationObserver', vi.fn(() => ({ observe })));
-      waitForElement();
-      expect(observe).toHaveBeenCalledWith(document.body, { childList: true, subtree: true });
+      waitForElement('element', [ 'target 1', 'target 2' ]);
+      expect(observe)
+        .toHaveBeenCalledWith('target 1', { childList: true, subtree: true })
+        .toHaveBeenCalledWith('target 2', { childList: true, subtree: true });
     });
 
     describe('on element appearance', () => {
@@ -53,7 +55,7 @@ describe('waitForElement', () => {
           return { observe: vi.fn(), disconnect };
         }));
         vi.stubGlobal('clearTimeout', vi.fn());
-        promise = waitForElement();
+        promise = waitForElement('element', [ 'target 1', 'target 2' ]);
         vi.mocked(document.querySelector).mockReturnValue('element');
         observer();
       });
@@ -67,7 +69,7 @@ describe('waitForElement', () => {
       });
 
       it('should stop observing', () => {
-        expect(disconnect).toHaveBeenCalled();
+        expect(disconnect).toHaveBeenCalledTimes(2);
       });
 
       it('should resolve', async () => {
@@ -75,13 +77,32 @@ describe('waitForElement', () => {
       });
     });
 
-    it('should reject after 10 seconds', async () => {
-      // restore setTimeout implementation
-      vi.useRealTimers();
-      vi.useFakeTimers();
-      const promise = waitForElement();
-      vi.advanceTimersByTime(10000);
-      await expect(promise).rejects.toThrowError();
+    describe('after 10 seconds', () => {
+      let promise;
+      let disconnect;
+
+      beforeEach(() => {
+        disconnect = vi.fn();
+        vi.stubGlobal(
+          'MutationObserver',
+          vi.fn().mockReturnValue({ observe: vi.fn(), disconnect }),
+        );
+
+        // restore setTimeout implementation
+        vi.useRealTimers();
+        vi.useFakeTimers();
+        promise = waitForElement('element', [ 'target 1', 'target 2' ]);
+        vi.advanceTimersByTime(10000);
+      });
+
+      it('should stop observing', async () => {
+        await promise.catch(() => {});
+        expect(disconnect).toHaveBeenCalledTimes(2);
+      });
+
+      it('should reject', async () => {
+        await expect(promise).rejects.toThrowError();
+      });
     });
   });
 });

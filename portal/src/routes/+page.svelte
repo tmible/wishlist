@@ -2,6 +2,7 @@
 <script>
   import { browser } from '$app/environment';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import { md } from '$lib/store/breakpoints.js';
   import { user } from '$lib/store/user';
   import Cards from './cards.svelte';
   import CardsSwiper from './cards-swiper.svelte';
@@ -24,14 +25,14 @@
   <div class="h-dvh bg-[url('/bg.svg')] bg-no-repeat bg-cover bg-base-200 overflow-hidden">
     <div class="w-full h-full flex flex-col dark:backdrop-brightness-75">
       <div class="navbar">
-        <div class="pl-12 md:pl-24 mr-auto relative self-start">
+        <div class="pl-4 md:pl-24 mr-auto relative self-start">
           <a href="https://t.me/tmible" target="_blank">
             <div class="absolute top-[-0.5rem] p-2 bg-[#ffd1dc]" data-theme="light">
               tmible
             </div>
           </a>
         </div>
-        <div class="mr-4">
+        <div class="mr-2 md:mr-4">
           <ThemeSwitcher />
         </div>
       </div>
@@ -43,6 +44,7 @@
                 md:mb-16
                 text-[22vw]
                 md:text-[11vw]
+                2xl:text-[160px]
                 text-center
                 dark:text-gray-300
                 main-header
@@ -52,7 +54,7 @@
             </h1>
           </div>
           <CardsSwiper>
-            <Cards />
+            <Cards isVisible={!$md} />
           </CardsSwiper>
           <div
             class="
@@ -66,7 +68,7 @@
               main-cards
             "
           >
-            <Cards />
+            <Cards isVisible={$md} />
           </div>
         </div>
       </div>

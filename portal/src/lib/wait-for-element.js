@@ -2,35 +2,46 @@
  * Ожидание появления элемента в DOM
  * @function waitForElement
  * @param {string} selector Селектор элемента
- * @param {HTMLElement} [target] Элемент, изменения внутри которого будут отслеживаться
+ * @param {HTMLElement[]} [targets] Элементы, изменения внутри которых будут отслеживаться
  * @returns {Promise<HTMLElement>} Соответствующий селектору элемент
  */
 export const waitForElement = (
   selector,
-  target = document.body,
+  targets = [ document.body ],
 ) => new Promise((resolve, reject) => {
   if (document.querySelector(selector)) {
     resolve(document.querySelector(selector));
   } else {
+    const observers = [];
+
     const rejectTimeout = setTimeout(
-      () => reject(new Error(`Waiting for ${selector} rejected after 10 seconds`)),
+      () => {
+        for (const observer of observers) {
+          observer.disconnect();
+        }
+        reject(new Error(`Waiting for ${selector} rejected after 10 seconds`));
+      },
       10000,
     );
 
-    const observer = new MutationObserver(() => {
+    observers.push(...targets.map(() => new MutationObserver(() => {
       if (document.querySelector(selector)) {
         clearTimeout(rejectTimeout);
-        observer.disconnect();
+        for (const observer of observers) {
+          observer.disconnect();
+        }
         resolve(document.querySelector(selector));
       }
-    });
+    })));
 
-    observer.observe(
-      target,
-      {
-        childList: true,
-        subtree: true,
-      },
-    );
+    for (const [ i, observer ] of observers.entries()) {
+      observer.observe(
+        targets[i],
+        {
+          childList: true,
+          subtree: true,
+        },
+      );
+    }
   }
 });

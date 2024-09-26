@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { user } from '$lib/store/user';
 
 vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
+vi.mock('$lib/store/breakpoints', () => ({ md: writable(true) }));
 
 describe('landing', () => {
   beforeEach(() => {

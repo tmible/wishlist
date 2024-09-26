@@ -1,33 +1,47 @@
 <!-- Svelte компонет -- карточки для главной страницы неавторизованной зоны -->
 <script>
-  import { onMount } from 'svelte';
+  import { beforeUpdate } from 'svelte';
   import { waitForElement } from '$lib/wait-for-element.js';
+
+  /**
+   * Признак того, что карточки отображаются
+   * @type {boolean}
+   */
+  export let isVisible;
 
   /**
    * Элемент, внутрь которого добавится виджет авторизации Телеграма
    * @type {HTMLElement}
    */
-  let telegramloginWidgetContainer;
+  let telegramLoginWidgetContainer;
 
   /**
-   * Ожидание выполнения скрипта Телеграма и подстановка виджета авторизации
+   * Ожидание выполнения скрипта Телеграма и подстановка виджета авторизации либо от скрипта, либо
+   * из карточек, отображаемых для другой ширины экрана, так как виджет должен быть один на странице
    */
-  onMount(async () => {
+  beforeUpdate(async () => {
+    if (!isVisible) {
+      return;
+    }
     /* eslint-disable-next-line svelte/no-dom-manipulating -- по-другому не получается. Скрипт
       Телеграма вставляет виджет после себя, а чтобы скрипт выполнился, он должен быть в <head> */
-    telegramloginWidgetContainer?.append(
+    telegramLoginWidgetContainer?.append(
       await waitForElement(
         '[id="telegram-login-tmible_wishlist_bot"]',
-        document.head,
-      ).then(
-        (node) => node.cloneNode(),
+        [
+          document.head,
+          ...Array.from(document.querySelectorAll('.telegram-login-widget-container')),
+        ],
       ),
     );
   });
 </script>
 
 <div class="card bg-base-100 md:shadow-xl w-full md:w-1/3 md:order-2 main-card-center">
-  <div bind:this={telegramloginWidgetContainer} class="card-body items-center prose text-[0.75rem]">
+  <div
+    bind:this={telegramLoginWidgetContainer}
+    class="card-body items-center prose text-[0.75rem] telegram-login-widget-container"
+  >
     <p>
       Tmible's wishlist&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
       основная задача&nbsp;— сократить путь от&nbsp;списка до&nbsp;общения между
