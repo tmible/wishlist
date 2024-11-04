@@ -1,0 +1,10 @@
+{
+  "type": "GENERATE",
+  "width": 1024,
+  "height": 1024,
+  "numImages": 1,
+  "generateParams": {
+    "query": ""
+  },
+  "style": "DEFAULT"
+}

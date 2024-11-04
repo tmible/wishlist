@@ -36,7 +36,8 @@
 		"lint:fix": "eslint --fix ./src",
 		"test": "vitest run --coverage",
 		"test:watch": "vitest --coverage",
-		"test:prod": "vitest run"
+		"test:prod": "vitest run",
+    "release": "../scripts/release.sh"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",

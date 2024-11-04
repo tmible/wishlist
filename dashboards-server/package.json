@@ -23,7 +23,8 @@
     "test": "vitest run --coverage",
     "test:watch": "vitest --coverage",
     "test:prod": "vitest run",
-    "update": "npm-check-updates"
+    "update": "npm-check-updates",
+    "release": "../scripts/release.sh"
   },
   "dependencies": {
     "@internationalized/date": "^3.5.4",

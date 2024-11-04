@@ -1,20 +1,26 @@
+/* eslint-disable n/no-sync -- В соответствии с тестируемым кодом */
 import { afterEach, beforeEach, describe, it } from 'node:test';
 import { matchers, object, replaceEsm, reset, verify, when } from 'testdouble';
 
 const server = object([ 'on', 'listen', 'close' ]);
 
 describe('IPC hub', () => {
+  let existsSync;
+  let unlinkSync;
   let Server;
   let pino;
   let logger;
 
   beforeEach(async () => {
     ({ Server } = await replaceEsm('node:net'));
+    ({ existsSync, unlinkSync } = await replaceEsm('node:fs'));
     pino = await replaceEsm('pino').then((module) => module.default);
+    when(existsSync(), { ignoreExtraArgs: true }).thenReturn(false);
     when(new Server()).thenReturn(server);
     logger = object([ 'debug', 'info' ]);
     when(pino(), { ignoreExtraArgs: true }).thenReturn(logger);
     process.env.SOCKET_PATH = 'SOCKET_PATH';
+    process.on = () => {};
   });
 
   afterEach(reset);
@@ -114,6 +120,17 @@ describe('IPC hub', () => {
     });
   });
 
+  it('should check if unix socket exists', async () => {
+    await import('../index.js');
+    verify(existsSync('SOCKET_PATH'));
+  });
+
+  it('should delete unix socket if it exists', async () => {
+    when(existsSync('SOCKET_PATH')).thenReturn(true);
+    await import('../index.js');
+    verify(unlinkSync('SOCKET_PATH'));
+  });
+
   it('should start server', async () => {
     await import('../index.js');
     verify(server.listen('SOCKET_PATH'));
@@ -124,27 +141,68 @@ describe('IPC hub', () => {
     verify(logger.debug('server started'));
   });
 
-  it('should close servero on SIGINT', async () => {
+  describe('on SIGINT', () => {
     let sigintHandler;
-    process.on = (event, handler) => {
-      if (event === 'SIGINT') {
-        sigintHandler = handler;
-      }
-    };
-    await import('../index.js');
-    sigintHandler();
-    verify(server.close());
+
+    beforeEach(async () => {
+      process.on = (event, handler) => {
+        if (event === 'SIGINT') {
+          sigintHandler = handler;
+        }
+      };
+      await import('../index.js');
+    });
+
+    it('should close server', () => {
+      sigintHandler();
+      verify(server.close());
+    });
+
+    it('should check if unix socket exists', () => {
+      sigintHandler();
+
+      /* Проверка 2 вызовов, чтобы убедиться, что проверка
+        происходит не только на верхнем уровне при запуске сервера */
+      verify(existsSync('SOCKET_PATH'), { times: 2 });
+    });
+
+    it('should delete unix socket if it exists', () => {
+      when(existsSync('SOCKET_PATH')).thenReturn(true);
+      sigintHandler();
+      verify(unlinkSync('SOCKET_PATH'));
+    });
   });
 
-  it('should close servero on SIGTERM', async () => {
+  describe('on SIGTERM', () => {
     let sigtermHandler;
-    process.on = (event, handler) => {
-      if (event === 'SIGTERM') {
-        sigtermHandler = handler;
-      }
-    };
-    await import('../index.js');
-    sigtermHandler();
-    verify(server.close());
+
+    beforeEach(async () => {
+      process.on = (event, handler) => {
+        if (event === 'SIGTERM') {
+          sigtermHandler = handler;
+        }
+      };
+      await import('../index.js');
+    });
+
+    it('should close server', () => {
+      sigtermHandler();
+      verify(server.close());
+    });
+
+    it('should check if unix socket exists', () => {
+      sigtermHandler();
+
+      /* Проверка 2 вызовов, чтобы убедиться, что проверка
+        происходит не только на верхнем уровне при запуске сервера */
+      verify(existsSync('SOCKET_PATH'), { times: 2 });
+    });
+
+    it('should delete unix socket if it exists', () => {
+      when(existsSync('SOCKET_PATH')).thenReturn(true);
+      sigtermHandler();
+      verify(unlinkSync('SOCKET_PATH'));
+    });
   });
 });
+/* eslint-enable n/no-sync */

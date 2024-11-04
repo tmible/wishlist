@@ -34,7 +34,8 @@
     "test:only": "node --test --test-only \"./src/**/*.test.js\"",
     "test:save-snapshots": "SAVE_SNAPSHOTS=1 pnpm test",
     "test:save-snapshots:only": "SAVE_SNAPSHOTS=1 pnpm run test:only",
-    "update": "npm-check-updates"
+    "update": "npm-check-updates",
+    "release": "../scripts/release.sh"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.0",

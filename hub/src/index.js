@@ -1,10 +1,19 @@
 #!/usr/bin/env node
 
+/* eslint-disable n/no-sync -- Линейный скрипт, нет смысла запрещать синхронные функции.
+  Тем более они используются при остановке процесса */
 import 'dotenv/config.js';
+import { existsSync, unlinkSync } from 'node:fs';
 import { Server } from 'node:net';
 import pino from 'pino';
 
 /** @typedef {import('node:net').Socket} Socket */
+
+const removeSocket = () => {
+  if (existsSync(process.env.SOCKET_PATH)) {
+    unlinkSync(process.env.SOCKET_PATH);
+  }
+};
 
 const logger = pino(
   { level: 'debug' },
@@ -55,8 +64,16 @@ server.on('connection', (socket) => {
   });
 });
 
+removeSocket();
 server.listen(process.env.SOCKET_PATH);
 logger.debug('server started');
 
-process.on('SIGINT', () => server.close());
-process.on('SIGTERM', () => server.close());
+process.on('SIGINT', () => {
+  server.close();
+  removeSocket();
+});
+process.on('SIGTERM', () => {
+  server.close();
+  removeSocket();
+});
+/* eslint-enable n/no-sync */

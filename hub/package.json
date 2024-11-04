@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-hub",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": true,
   "description": "IPC хаб для телеграм бота и портала со списками желаний",
   "repository": {
@@ -20,7 +20,8 @@
     "test": "c8 node --test \"./src/**/*.test.js\"",
     "test:prod": "c8 -r text-summary -r text node --test \"./src/**/*.test.js\"",
     "test:only": "node --test --test-only \"./src/**/*.test.js\"",
-    "update": "npm-check-updates"
+    "update": "npm-check-updates",
+    "release": "../scripts/release.sh"
   },
   "dependencies": {
     "dotenv": "^16.4.1",
