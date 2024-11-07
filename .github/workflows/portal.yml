@@ -92,8 +92,8 @@ jobs:
             *) export PATH="$PNPM_HOME:$PATH" ;;
           esac
           # pnpm end
-          pnpm add -g pnpm@$(pnpm pkg get engines.pnpm | sed -e "s/\"//g")
-          nvm install $(pnpm pkg get engines.node | sed -e "s/\"//g")
+          pnpm add -g pnpm@$(pnpm pkg get engines.pnpm | tr -d "\"")
+          nvm install $(pnpm pkg get engines.node | tr -d "\"")
           pnpm pkg set dependencies.@tmible/wishlist-common=file:../common
           pnpm install --prod
           pnpm start:background

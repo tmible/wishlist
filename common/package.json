@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-common",
-	"version": "1.1.1",
+	"version": "1.1.17",
 	"private": true,
 	"description": "Общие элементы для телеграм бота и портала со списками желаний и сервера с дашбордами для них",
 	"repository": {
@@ -37,7 +37,7 @@
 		"test": "vitest run --coverage",
 		"test:watch": "vitest --coverage",
 		"test:prod": "vitest run",
-    "release": "../scripts/release.sh"
+		"release": "../scripts/release.sh"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.0",

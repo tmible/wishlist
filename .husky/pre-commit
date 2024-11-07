@@ -1,34 +1,14 @@
-has_changes() {
-  if ! git diff-index --quiet --cached HEAD $1; then
-    return 0;
-  else
-    return 1;
-  fi
-}
-
 run_checks() {
   cd $1
   pnpm lint
   pnpm test:prod
-  cd -
+  cd - > /dev/null
 }
 
-if $(has_changes common); then
-  run_checks common
-fi
+directory=$(dirname "${BASH_SOURCE[0]}")
 
-if $(has_changes hub); then
-  run_checks hub
-fi
+IFS="|" read -r -a packages <<< $($directory/changed_packages.sh)
 
-if $(has_changes bot); then
-  run_checks bot
-fi
-
-if $(has_changes portal); then
-  run_checks portal
-fi
-
-if $(has_changes dashboards-server); then
-  run_checks dashboards-server
-fi
+for package in "${packages[@]}"; do
+  run_checks $package
+done

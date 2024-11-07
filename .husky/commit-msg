@@ -1,0 +1,13 @@
+release() {
+  cd $1
+  ../scripts/release.sh "$2"
+  cd - > /dev/null
+}
+
+directory=$(dirname "${BASH_SOURCE[0]}")
+
+IFS="|" read -r -a packages <<< $($directory/changed_packages.sh src)
+
+for package in "${packages[@]}"; do
+  release $package "$(cat $1)"
+done

@@ -4,15 +4,17 @@ release_types=(major minor patch)
 
 export $(cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/.env" | xargs)
 
+package=$(pnpm pkg get name | tr -d "\"")
+
 release_type=""
 IFS="|"
 while ! echo "${IFS}${release_types[*]}${IFS}" | grep "${IFS}${release_type}${IFS}" > /dev/null; do
-  read -p "Укажите тип релиза (${release_types[*]}): " release_type < /dev/tty
+  read -p "Укажите тип релиза $package (${release_types[*]}): " release_type < /dev/tty
 done
 unset IFS
 echo "Обновляю версию в $(pnpm prefix)/package.json"
 index=$( echo ${release_types[*]/$release_type//} | cut -d/ -f1 | wc -w | tr -d " " )
-IFS="." read -r -a version <<< $(pnpm pkg get version | sed -e "s/\"//g")
+IFS="." read -r -a version <<< $(pnpm pkg get version | tr -d "\"")
 version[$index]=$(( version[$index] + 1 ))
 IFS="."
 pnpm pkg set "version=${version[*]}"
@@ -33,7 +35,7 @@ access_token=$(
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json" |
   tr "\n" "\0" |
-  sed "s/\"content\": \"\"/\"content\": \"Описание релиза: $1\"/2" |
+  sed "s/\"content\": \"\"/\"content\": \"Релиз пакета $package. Описание релиза: $1\"/2" |
   tr "\0" "\n"
 )
 release_name=$(
@@ -58,7 +60,7 @@ model_id=$(
 )
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/kandinsky-prompt.json" |
-  sed "s/\"query\": \"\"/\"query\": \"Спокойное изображение для релиза. Название релиза $release_name. Описание релиза: $1. Иллюстрация к названию релиза\"/" |
+  sed "s|\"query\": \"\"|\"query\": \"Спокойное изображение для релиза. Название релиза $release_name. Релиз пакета $package. Описание релиза: $1. Иллюстрация к названию релиза\"|" |
   sed "s/\"/\\\\\"/g"
 )
 task_uuid=$(
@@ -106,7 +108,12 @@ for (( attempts = 10; attempts > 0; attempts-- )); do
 done
 
 echo "Записываю релиз в changelog"
+last_commit=$(git rev-parse --short HEAD)
+origin=$(git remote get-url origin | sed "s|^git@|https://|" | sed "s|.git$||")
 IFS="."
-sed -i "1s@^# Changelog@# Changelog\n\n## ${version[*]} $release_name ($(date +%F))\n<img width=\"128\" height=\"128\" src=\"data:image\/png;base64,$release_image\"\/>\n\n$1\n@" $(pnpm prefix)/CHANGELOG.md
+touch "./release-images/${version[*]}.png"
+base64 -d <<< $release_image > "./release-images/${version[*]}.png"
+sed -i "s|^\($origin/compare/[a-z0-9]\+..\)master|\1$last_commit|1" $(pnpm prefix)/CHANGELOG.md
+sed -i "1s|^# Changelog|# Changelog\n\n## ${version[*]} $release_name ($(date +%F))\n<img width=\"128\" height=\"128\" src=\"release-images/${version[*]}.png\"\/>\n\n$origin/compare/$last_commit..master\n|" $(pnpm prefix)/CHANGELOG.md
 unset IFS
 echo "Changelog обновлён"
