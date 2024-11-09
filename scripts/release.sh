@@ -35,7 +35,7 @@ access_token=$(
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json" |
   tr "\n" "\0" |
-  sed "s/\"content\": \"\"/\"content\": \"Релиз пакета $package. Описание релиза: $1\"/2" |
+  sed "s|\(\"content\": \".\+\)\"|\1. Релиз пакета $package. Описание релиза: $1\"|" |
   tr "\0" "\n"
 )
 release_name=$(
@@ -60,7 +60,7 @@ model_id=$(
 )
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/kandinsky-prompt.json" |
-  sed "s|\"query\": \"\"|\"query\": \"Спокойное изображение для релиза. Название релиза $release_name. Релиз пакета $package. Описание релиза: $1. Иллюстрация к названию релиза\"|" |
+  sed "s|\"query\": \"\"|\"query\": \"Спокойное детализированное изображение высокого качества для релиза. Название релиза $release_name. Релиз пакета $package. Описание релиза: $1. Иллюстрация к названию релиза\"|" |
   sed "s/\"/\\\\\"/g"
 )
 task_uuid=$(

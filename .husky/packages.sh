@@ -16,6 +16,21 @@ IFS="|" read -r -a packages <<< $(
     tr -d "\""
 )
 
+changed_only=false
+while getopts c flag; do
+  case "${flag}" in
+    c) changed_only=true;;
+  esac
+done
+shift $((OPTIND - 1))
+
+if ! $changed_only; then
+  IFS="|"
+  echo -n "${packages[*]}"
+  unset IFS
+  exit 0
+fi
+
 has_changes=()
 for package in "${packages[@]}"; do
   if $(has_changes "$package/$1"); then

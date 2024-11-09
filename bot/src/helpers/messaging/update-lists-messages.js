@@ -1,6 +1,8 @@
 import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { nwAlign } from 'seal-wasm';
 import { Markup } from 'telegraf';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import tryPinning from '@tmible/wishlist-bot/helpers/messaging/try-pinning';
 import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import formTitleMessageMarkup from './form-title-message-markup.js';
@@ -81,11 +83,11 @@ const checkIfMessageChanged = (messageToEdit, message) => {
   const areReplyMarkupsEqual = arrayToOrderedJSON(
     messageToEdit.reply_markup?.inline_keyboard.map(
       (row) => row.map(({ text, callback_data }) => ({ text, callback_data })),
-    ),
+    ) ?? [],
   ) === arrayToOrderedJSON(
     message[1]?.reply_markup.inline_keyboard.map(
       (row) => row.map(({ text, callback_data }) => ({ text, callback_data })),
-    ),
+    ) ?? [],
   );
 
   return !areEntitiesEqual || !areReplyMarkupsEqual || messageToEdit.text !== message[0].text;
@@ -127,6 +129,27 @@ const alignItemsIds = async (messagesToEdit, messages) => {
   return representation;
 };
 
+
+/**
+ * Проверка сообщения на наличие имзенений после отправки телеграму запроса на редатирование
+ * Несмотря на все проверки сообщение всё ещё может быть без изменений
+ * @function handleEditingError
+ * @param {Error} e Полученная ошибка
+ * @param {Record<string, unknown>} messageToEdit Редактируемое сообщение
+ * @param {Record<string, unknown>[]} message Обновлённое сообщение
+ */
+const handleEditingError = (e, messageToEdit, message) => {
+  if (!e.message.startsWith('400: Bad Request: message is not modified')) {
+    throw e;
+  }
+  const logger = inject(InjectionToken.Logger);
+  logger.error(e.message);
+  logger.error(`message to edit text: ${messageToEdit.text}`);
+  logger.error(`message to edit entities: ${messageToEdit.entities}`);
+  logger.error(`message text: ${message[0].text}`);
+  logger.error(`message entities: ${message[0].entities}`);
+};
+
 /**
  * 1. Построение выравнивания последовательностей идентификаторов в отправленных ранее сообщениях
  * и отправляемых сообщениях. Если количество сообщений одинаковое, строка выравнивания
@@ -145,11 +168,13 @@ const editMessages = async (ctx, userid, messages) => {
 
   const alignmentRepresentation = messages.length === 0 ?
     messagesToEdit.map(() => '-').join('') :
-    (messagesToEdit.length === messages.length ?
-      messagesToEdit.map(
-        ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
-      ).join('') :
-      await alignItemsIds(messagesToEdit, messages));
+    (
+      messagesToEdit.length === messages.length ?
+        messagesToEdit.map(
+          ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
+        ).join('') :
+        await alignItemsIds(messagesToEdit, messages)
+    );
 
   const sessionPatch = [];
   let messagesIndex = 0;
@@ -178,7 +203,7 @@ const editMessages = async (ctx, userid, messages) => {
             messageToEdit.id,
             undefined,
             ...message,
-          ));
+          ).catch((e) => handleEditingError(e, messageToEdit, message)));
         }
       }
 

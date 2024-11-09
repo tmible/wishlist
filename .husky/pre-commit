@@ -7,7 +7,7 @@ run_checks() {
 
 directory=$(dirname "${BASH_SOURCE[0]}")
 
-IFS="|" read -r -a packages <<< $($directory/changed_packages.sh)
+IFS="|" read -r -a packages <<< $($directory/packages.sh -c)
 
 for package in "${packages[@]}"; do
   run_checks $package

@@ -6,7 +6,7 @@ release() {
 
 directory=$(dirname "${BASH_SOURCE[0]}")
 
-IFS="|" read -r -a packages <<< $($directory/changed_packages.sh src)
+IFS="|" read -r -a packages <<< $($directory/packages.sh -c src)
 
 for package in "${packages[@]}"; do
   release $package "$(cat $1)"

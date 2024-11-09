@@ -2,7 +2,17 @@ import { strict as assert } from 'node:assert';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import assertSnapshot from 'snapshot-assertion';
-import updateListsMessages from '../update-lists-messages.js';
+import { when } from 'testdouble';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
+import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
+
+const { inject } = await replaceModule('@tmible/wishlist-common/dependency-injector');
+
+const updateListsMessages = await import(
+  '../update-lists-messages.js'
+).then(
+  (module) => module.default,
+);
 
 describe('updateListsMessages', () => {
   let ctx;
@@ -16,7 +26,7 @@ describe('updateListsMessages', () => {
       { message_id: 'messageId', chat: { id: 'chatId' }, text },
     ));
     pinChatMessage = mock.fn();
-    editMessageText = mock.fn();
+    editMessageText = mock.fn(() => Promise.resolve());
     deleteMessage = mock.fn();
     ctx = {
       chat: { id: 'chatId' },
@@ -135,6 +145,23 @@ describe('updateListsMessages', () => {
       );
     });
 
+    it('should log not modified errors', async () => {
+      ctx.telegram.editMessageText = mock.fn(
+        () => Promise.reject(new Error('400: Bad Request: message is not modified')),
+      );
+      const error = mock.fn();
+      when(inject(InjectionToken.Logger)).thenReturn({ error });
+      await updateListsMessages(ctx, 'userid', messages, false);
+      assert(error.mock.calls.length > 0);
+    });
+
+    it('should throw other errors', async () => {
+      ctx.telegram.editMessageText = mock.fn(() => Promise.reject(new Error('error')));
+      const error = mock.fn();
+      when(inject(InjectionToken.Logger)).thenReturn({ error });
+      await assert.rejects(() => updateListsMessages(ctx, 'userid', messages, false));
+    });
+
     it('should update messages in session', async () => {
       await updateListsMessages(ctx, 'userid', messages, false);
 
@@ -236,6 +263,23 @@ describe('updateListsMessages', () => {
     it('should delete excess messages', async () => {
       await updateListsMessages(ctx, 'userid', messages, false);
       assert.deepEqual(deleteMessage.mock.calls.map((call) => call.arguments), [[ 4 ]]);
+    });
+
+    it('should log not modified errors', async () => {
+      ctx.telegram.editMessageText = mock.fn(
+        () => Promise.reject(new Error('400: Bad Request: message is not modified')),
+      );
+      const error = mock.fn();
+      when(inject(InjectionToken.Logger)).thenReturn({ error });
+      await updateListsMessages(ctx, 'userid', messages, false);
+      assert(error.mock.calls.length > 0);
+    });
+
+    it('should throw other errors', async () => {
+      ctx.telegram.editMessageText = mock.fn(() => Promise.reject(new Error('error')));
+      const error = mock.fn();
+      when(inject(InjectionToken.Logger)).thenReturn({ error });
+      await assert.rejects(() => updateListsMessages(ctx, 'userid', messages, false));
     });
 
     it('should update messages in session', async () => {

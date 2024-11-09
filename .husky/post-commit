@@ -1,0 +1,10 @@
+directory=$(dirname "${BASH_SOURCE[0]}")
+
+IFS="|" read -r -a packages <<< $($directory/packages.sh)
+
+for package in "${packages[@]}"; do
+  if [[ $(git diff-index HEAD "$package/package.json" "$package/CHANGELOG.md" "$package/release-images") ]]; then
+    git add "$package/package.json" "$package/CHANGELOG.md" "$package/release-images"
+    git commit --amend -C HEAD --no-verify "$package/package.json" "$package/CHANGELOG.md" "$package/release-images"
+  fi
+done
