@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-portal",
-	"version": "1.2.4",
+	"version": "1.3.0",
 	"private": true,
 	"description": "Портал со списками желаний",
 	"repository": {
@@ -24,7 +24,7 @@
 		"test:watch": "vitest --coverage",
 		"test:prod": "vitest run",
 		"update": "npm-check-updates",
-    "release": "../scripts/release.sh"
+		"release": "../scripts/release.sh"
 	},
 	"dependencies": {
 		"@lucide/lab": "^0.1.2",

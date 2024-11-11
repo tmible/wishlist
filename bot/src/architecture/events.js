@@ -20,6 +20,8 @@ const Events = Object.freeze({
     GetUsernameByUserid: 'usernames | get username by userid',
     GetUseridAndUsernameIfPresent: 'usernames | get userid and username if present',
     StoreUsername: 'usernames | store username',
+    GetUserHash: 'usernames | get user hash',
+    GetUseridAndUsernameByHash: 'usernames | get userid and username by hash',
   },
 });
 

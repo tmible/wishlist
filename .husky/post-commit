@@ -2,9 +2,14 @@ directory=$(dirname "${BASH_SOURCE[0]}")
 
 IFS="|" read -r -a packages <<< $($directory/packages.sh)
 
+has_changes=()
 for package in "${packages[@]}"; do
   if [[ $(git diff-index HEAD "$package/package.json" "$package/CHANGELOG.md" "$package/release-images") ]]; then
     git add "$package/package.json" "$package/CHANGELOG.md" "$package/release-images"
-    git commit --amend -C HEAD --no-verify "$package/package.json" "$package/CHANGELOG.md" "$package/release-images"
+    has_changes+=($package)
   fi
 done
+
+if [[ ${#has_changes[@]} > 0 ]]; then
+  git commit --amend -C HEAD --no-verify $( sed "s|\([^ ]\+\)|\1/package.json \1/CHANGELOG.md \1/release-images|g" <<< "${has_changes[*]}" )
+fi

@@ -18,19 +18,20 @@ let statement;
  */
 const prepare = () => {
   statement = inject(InjectionToken.Database).prepare(
-    'INSERT INTO usernames (userid, username) VALUES (?, ?)',
+    'SELECT userid, username FROM usernames WHERE hash = ?',
   );
 };
 
 /**
- * Сохранение идентификатора и имени пользователя в БД
+ * Проверка наличия хэша пользователя в БД и возврат
+ * соответствующих идентификатора и имени пользователя при успехе
  * @function eventHandler
- * @param {number} userid Идентификатор пользователя
- * @param {string} username Имя пользователя
- * @returns {void}
+ * @param {string} hash Хэш пользователя
+ * @returns {[ number | null, string | null ]} Идентификатор пользователя и имя пользователя из БД
  */
-const eventHandler = (userid, username) => {
-  statement.run(userid, username);
+const eventHandler = (hash) => {
+  const user = statement.get(hash);
+  return [ user?.userid ?? null, user?.username ?? null ];
 };
 
 export default { eventHandler, prepare };

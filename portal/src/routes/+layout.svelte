@@ -36,9 +36,10 @@
    * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
    */
   onMount(async () => {
-    user.set(
-      await fetch('/api/user').then((response) => response.json()),
-    );
+    user.set({
+      ...$user,
+      ...await fetch('/api/user').then((response) => response.json()),
+    });
     initTheme();
   });
 </script>

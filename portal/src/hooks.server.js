@@ -12,7 +12,7 @@ import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
  * @type {import('@sveltejs/kit').Handle}
  */
 export const handle = async ({ event, resolve }) => {
-  if (event.url.pathname.startsWith('/api/wishlist')) {
+  if (event.url.pathname.startsWith('/api/wishlist') || event.url.pathname === '/api/user/hash') {
     if (!event.cookies.get(AUTH_TOKEN_COOKIE_NAME)) {
       return new Response(null, { status: 401 });
     }

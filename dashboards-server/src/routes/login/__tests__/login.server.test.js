@@ -11,11 +11,12 @@ vi.mock(
   '$env/dynamic/private',
   () => ({
     env: {
-      ADMIN_PASSWORD: '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918',
+      ADMIN_PASSWORD: 'hash',
       HMAC_SECRET: 'HMAC secret',
     },
   }),
 );
+vi.mock('@tmible/wishlist-common/sha-256', () => ({ default: () => 'hash' }));
 vi.mock('jsonwebtoken', () => ({ default: { sign: () => {} } }));
 
 describe('login endpoint', () => {

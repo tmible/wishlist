@@ -16,6 +16,9 @@ echo "Обновляю версию в $(pnpm prefix)/package.json"
 index=$( echo ${release_types[*]/$release_type//} | cut -d/ -f1 | wc -w | tr -d " " )
 IFS="." read -r -a version <<< $(pnpm pkg get version | tr -d "\"")
 version[$index]=$(( version[$index] + 1 ))
+for (( i = $index + 1; i < 3; i++ )); do
+  version[$i]="0"
+done
 IFS="."
 pnpm pkg set "version=${version[*]}"
 echo "Версия обновлена до ${version[*]}"
@@ -35,7 +38,7 @@ access_token=$(
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json" |
   tr "\n" "\0" |
-  sed "s|\(\"content\": \".\+\)\"|\1. Релиз пакета $package. Описание релиза: $1\"|" |
+  sed "s|\(\"content\": \"[^\"]\+Релиз пакета \)\([^\"]*Описание релиза: \)\([^\"]*\)\"|\1$package\2$1\3\"|" |
   tr "\0" "\n"
 )
 release_name=$(
@@ -76,7 +79,7 @@ if [[ $task_uuid == null ]]; then
   echo -e "\nИзображение релиза от Kandinsky не получено"
   exit 1
 fi
-for (( attempts = 10; attempts > 0; attempts-- )); do
+for (( attempts = 20; attempts > 0; attempts-- )); do
   spinner[0]="—"
   spinner[1]="\\"
   spinner[2]="|"

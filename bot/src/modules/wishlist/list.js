@@ -93,20 +93,18 @@ const listCommandHandler = async (eventBus, ctx) => {
  * @function listLinkHandler
  * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
- * @param {number} userid Идентификатор пользователя -- владельца списка
+ * @param {string} hash Хэш пользователя -- владельца списка
  * @returns {Promise<void>}
  * @async
  */
-const listLinkHandler = async (eventBus, ctx, userid) => {
+const listLinkHandler = async (eventBus, ctx, hash) => {
+  const [ userid, username ] = eventBus.emit(Events.Usernames.GetUseridAndUsernameByHash, hash);
+
   if (!(await handleListCommand(eventBus, ctx, userid))) {
     return;
   }
-  await sendList(
-    eventBus,
-    ctx,
-    ...getUseridFromInput(eventBus, userid),
-    { shouldSendNotification: true },
-  );
+
+  await sendList(eventBus, ctx, userid, username, { shouldSendNotification: true });
 };
 
 /** @type {ModuleConfigureFunction} */
@@ -157,7 +155,7 @@ const configure = (bot) => {
   /** При выпуске действия обработки ссылки на список желаний запуск {@link listLinkHandler} */
   eventBus.subscribe(
     Events.Wishlist.HandleListLink,
-    async (ctx, userid) => await listLinkHandler(eventBus, ctx, userid),
+    async (ctx, hash) => await listLinkHandler(eventBus, ctx, hash),
   );
 };
 

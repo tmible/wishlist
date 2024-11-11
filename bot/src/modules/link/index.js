@@ -1,5 +1,6 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Format, Markup } from 'telegraf';
+import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 
 /**
@@ -8,6 +9,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
  * @typedef {
  *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
+ * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
  */
 
 /**
@@ -29,14 +31,18 @@ const LinkForPrivateMarkup = Markup.inlineKeyboard([
 /**
  * Формирование ссылки
  * @function formLink
+ * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
  * @param {string} linkText Текст ссылки
  * @param {boolean} isLinkForGroups Признак формирования ссылки для групп
- * @returns {string | Format.FmtString} Ссылка
+ * @returns {Promise<string | Format.FmtString>} Ссылка
+ * @async
  */
-const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
-  const link =
-    `https://t.me/${ctx.botInfo.username}?start${isLinkForGroups ? 'group' : ''}=${ctx.from.id}`;
+const formLink = async (eventBus, ctx, linkText = '', isLinkForGroups = false) => {
+  const hash = await eventBus.emit(Events.Usernames.GetUserHash, ctx.from.id);
+  const link = `https://t.me/${
+    ctx.botInfo.username
+  }?start${isLinkForGroups ? 'group' : ''}=${hash}`;
   if (!!linkText && ctx.callbackQuery?.message.entities[0]?.type !== 'url') {
     return new Format.FmtString(
       linkText,
@@ -49,6 +55,7 @@ const formLink = (ctx, linkText = '', isLinkForGroups = false) => {
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
   inject(InjectionToken.Logger).debug('configuring link module');
+  const eventBus = inject(InjectionToken.EventBus);
 
   /**
    * При вызове действия переключения содержимого сообщения на ссылку для групп или на чат с ботом
@@ -60,7 +67,7 @@ const configure = (bot) => {
       ctx.chat.id,
       ctx.callbackQuery.message.message_id,
       undefined,
-      formLink(ctx, ctx.callbackQuery.message.text, ctx.match[1] === 'groups'),
+      await formLink(eventBus, ctx, ctx.callbackQuery.message.text, ctx.match[1] === 'groups'),
       ctx.match[1] === 'groups' ? LinkForPrivateMarkup : LinkForGroupsMarkup,
     );
   });
@@ -71,7 +78,7 @@ const configure = (bot) => {
    * на ссылку для групп]{@link LinkForGroupsMarkup}
    */
   bot.command('link', async (ctx) => {
-    await ctx.reply(formLink(ctx, ctx.payload), LinkForGroupsMarkup);
+    await ctx.reply(await formLink(eventBus, ctx, ctx.payload), LinkForGroupsMarkup);
   });
 };
 

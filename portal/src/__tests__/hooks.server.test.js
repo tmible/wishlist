@@ -29,36 +29,46 @@ describe('server hooks', () => {
       ({ handle } = await import('../hooks.server.js'));
     });
 
-    describe('if pathname starts with /api/wishlist', () => {
-      beforeEach(() => {
-        event.url.pathname = '/api/wishlist/';
-      });
+    const failTestCases = [{
+      condition: 'starts with /api/wishlist',
+      path: '/api/wishlist/',
+    }, {
+      condition: 'equals /api/user/hash',
+      path: '/api/user/hash',
+    }];
 
-      it('should fail if there is no cookie', async () => {
-        expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
-      });
-
-      describe('if there is cookie', () => {
+    for (const { condition, path } of failTestCases) {
+      describe(`if pathname ${condition}`, () => {
         beforeEach(() => {
-          event.cookies.get = () => 'token';
+          event.url.pathname = path;
         });
 
-        it('should verify it\'s value', async () => {
-          await handle({ event, resolve });
-          expect(jwt.verify).toHaveBeenCalledWith('token', 'HMAC secret');
-        });
-
-        it('should fail if verification fails', async () => {
-          vi.mocked(jwt.verify).mockImplementation(() => {
-            throw new Error('verification failed');
-          });
+        it('should fail if there is no cookie', async () => {
           expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
         });
+
+        describe('if there is cookie', () => {
+          beforeEach(() => {
+            event.cookies.get = () => 'token';
+          });
+
+          it('should verify it\'s value', async () => {
+            await handle({ event, resolve });
+            expect(jwt.verify).toHaveBeenCalledWith('token', 'HMAC secret');
+          });
+
+          it('should fail if verification fails', async () => {
+            vi.mocked(jwt.verify).mockImplementation(() => {
+              throw new Error('verification failed');
+            });
+            expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
+          });
+        });
       });
-    });
+    }
 
     const resolveTestCases = [{
-      condition: 'pathname doesn\'t start with /api/wishlist/',
+      condition: 'pathname doesn\'t start with /api/wishlist/ and is not /api/user/hash',
       setUp: () => {},
     }, {
       condition: 'token is valid',

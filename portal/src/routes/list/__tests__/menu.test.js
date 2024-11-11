@@ -1,21 +1,35 @@
 // @vitest-environment jsdom
+/* eslint-disable no-unused-vars -- импорт для кэширования,
+  иначе тесты не пройдут по времени из-за долгого импорта внутри */
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { post } from '@tmible/wishlist-common/post';
 import { writable } from 'svelte/store';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
-import { user as userStore } from '$lib/store/user';
-import Menu from '../menu.svelte';
+import MenuCache from '../menu.svelte';
+
+/* eslint-enable no-unused-vars */
 
 vi.mock('$app/navigation');
 vi.mock('$lib/store/list', () => ({ list: writable([{}]) }));
-vi.mock('$lib/store/user', () => ({ user: writable({ id: 'userid' }) }));
 vi.mock('@tmible/wishlist-common/post');
 
 describe('menu', () => {
   let user;
+  let userStore;
+  let Menu;
   let baseElement;
+
+  const setUpCommonContext = async () => {
+    userStore = writable({ id: 'userid', hash: 'hash', something: 'other' });
+    vi.doMock('$lib/store/user', () => ({ user: userStore }));
+    Menu = await import('../menu.svelte').then((module) => module.default);
+  };
+
+  beforeAll(async () => {
+    await setUpCommonContext();
+  });
 
   beforeEach(() => {
     user = userEvent.setup();
@@ -32,6 +46,43 @@ describe('menu', () => {
       baseElement.innerHTML = '';
     });
 
+    describe('if hash is null', () => {
+      // set up custom context
+      beforeAll(async () => {
+        vi.resetModules();
+        userStore = writable({ id: 'userid', hash: null, something: 'other' });
+        vi.doMock('$lib/store/user', () => ({ user: userStore }));
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ text: vi.fn(() => 'hash') }));
+        vi.spyOn(userStore, 'set').mockImplementation(vi.fn());
+        Menu = await import('../menu.svelte').then((module) => module.default);
+      });
+
+      beforeEach(async () => {
+        baseElement.innerHTML = '';
+        ({ baseElement } = render(Menu));
+        await user.click(screen.getByTestId('share'));
+        await user.click(screen.getByTestId('share-bot'));
+      });
+
+      // restore common context
+      afterAll(async () => {
+        vi.resetModules();
+        await setUpCommonContext();
+      });
+
+      it('should fetch it', () => {
+        expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/user/hash');
+      });
+
+      it('should patch user store', () => {
+        expect(
+          vi.mocked(userStore.set),
+        ).toHaveBeenCalledWith(
+          { id: 'userid', hash: 'hash', something: 'other' },
+        );
+      });
+    });
+
     it('should share', async () => {
       Object.defineProperty(navigator, 'share', { value: vi.fn(), configurable: true });
       await user.click(screen.getByTestId('share'));
@@ -39,7 +90,7 @@ describe('menu', () => {
       expect(
         vi.mocked(navigator.share),
       ).toHaveBeenCalledWith({
-        url: 'https://t.me/tmible_wishlist_bot?start=userid',
+        url: 'https://t.me/tmible_wishlist_bot?start=hash',
       });
       delete navigator.share;
     });
@@ -51,7 +102,7 @@ describe('menu', () => {
       expect(
         vi.mocked(navigator.clipboard.writeText),
       ).toHaveBeenCalledWith(
-        'https://t.me/tmible_wishlist_bot?start=userid',
+        'https://t.me/tmible_wishlist_bot?start=hash',
       );
     });
 
@@ -83,6 +134,43 @@ describe('menu', () => {
       baseElement.innerHTML = '';
     });
 
+    describe('if hash is null', () => {
+      // set up custom context
+      beforeAll(async () => {
+        vi.resetModules();
+        userStore = writable({ id: 'userid', hash: null, something: 'other' });
+        vi.doMock('$lib/store/user', () => ({ user: userStore }));
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ text: vi.fn(() => 'hash') }));
+        vi.spyOn(userStore, 'set').mockImplementation(vi.fn());
+        Menu = await import('../menu.svelte').then((module) => module.default);
+      });
+
+      beforeEach(async () => {
+        baseElement.innerHTML = '';
+        ({ baseElement } = render(Menu));
+        await user.click(screen.getByTestId('share'));
+        await user.click(screen.getByTestId('share-group'));
+      });
+
+      // restore common context
+      afterAll(async () => {
+        vi.resetModules();
+        await setUpCommonContext();
+      });
+
+      it('should fetch it', () => {
+        expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/user/hash');
+      });
+
+      it('should patch user store', () => {
+        expect(
+          vi.mocked(userStore.set),
+        ).toHaveBeenCalledWith(
+          { id: 'userid', hash: 'hash', something: 'other' },
+        );
+      });
+    });
+
     it('should share', async () => {
       Object.defineProperty(navigator, 'share', { value: vi.fn(), configurable: true });
       await user.click(screen.getByTestId('share'));
@@ -90,7 +178,7 @@ describe('menu', () => {
       expect(
         vi.mocked(navigator.share),
       ).toHaveBeenCalledWith({
-        url: 'https://t.me/tmible_wishlist_bot?startgroup=userid',
+        url: 'https://t.me/tmible_wishlist_bot?startgroup=hash',
       });
       delete navigator.share;
     });
@@ -102,7 +190,7 @@ describe('menu', () => {
       expect(
         vi.mocked(navigator.clipboard.writeText),
       ).toHaveBeenCalledWith(
-        'https://t.me/tmible_wishlist_bot?startgroup=userid',
+        'https://t.me/tmible_wishlist_bot?startgroup=hash',
       );
     });
 
@@ -138,7 +226,7 @@ describe('menu', () => {
   describe('on logout option click', () => {
     beforeEach(async () => {
       vi.mocked(post).mockResolvedValue({ ok: true });
-      vi.spyOn(vi.mocked(userStore), 'set').mockImplementation(vi.fn());
+      vi.spyOn(userStore, 'set').mockImplementation(vi.fn());
       await user.click(screen.getByTestId('logout'));
     });
 
@@ -147,7 +235,11 @@ describe('menu', () => {
     });
 
     it('should reset user store if response is ok', () => {
-      expect(vi.mocked(userStore.set)).toHaveBeenCalledWith({ id: null, isAuthenticated: false });
+      expect(
+        vi.mocked(userStore.set),
+      ).toHaveBeenCalledWith(
+        { id: null, hash: 'hash', isAuthenticated: false, something: 'other' },
+      );
     });
 
     it('should go to landing if response is ok', () => {

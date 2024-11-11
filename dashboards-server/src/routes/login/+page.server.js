@@ -1,5 +1,6 @@
 import { promisify } from 'node:util';
 import { fail } from '@sveltejs/kit';
+import sha256 from '@tmible/wishlist-common/sha-256';
 import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const.js';
@@ -7,21 +8,6 @@ import { AUTH_TOKEN_COOKIE_OPTIONS } from '$lib/constants/auth-token-cookie-opti
 import { AUTH_TOKEN_EXPIRATION } from '$lib/constants/auth-token-expiration.const.js';
 
 /** @typedef {import('./$types').Actions} Actions */
-
-/**
- * Вычисление SHA-256 хеша указанного значения
- * @function sha256
- * @param {string} value Хешируемое значение
- * @returns {Promise<string>} Вычисленный хеш
- * @async
- */
-const sha256 = async (value) => {
-  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
-  return Array.from(
-    new Uint8Array(hashBuffer),
-    (byte) => byte.toString(16).padStart(2, '0'),
-  ).join('');
-};
 
 /**
  * Аутентификация пользователя и создание cookie-файла с jwt-токеном аутентификации

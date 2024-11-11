@@ -21,4 +21,6 @@ export const InjectionToken = Object.freeze({
   ChangesStatement: 'Changes statement',
   UpdateCategoryStatement: 'update category statement',
   DeleteCategoryStatement: 'delete category statement',
+  GetUserHashStatement: 'get user hash statement',
+  SetUserHashStatement: 'set user hash statement',
 });

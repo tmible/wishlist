@@ -67,13 +67,22 @@
    * @async
    */
   const shareLink = async (event, isLinkForGroups) => {
+    if ($user.hash === null) {
+      user.set({
+        ...$user,
+        hash: await fetch('/api/user/hash').then((response) => response.text()),
+      });
+    }
+
     const link = `https://t.me/tmible_wishlist_bot?start${
       isLinkForGroups ? 'group' : ''
-    }=${$user.id}`;
+    }=${$user.hash}`;
+
     if (navigator.share) {
       await navigator.share({ url: link });
       return;
     }
+
     await navigator.clipboard.writeText(link);
     event.detail.currentTarget.classList.add('clicked', 'relative');
     setTimeout(() => event.detail.currentTarget.classList.remove('clicked', 'relative'), 1000);
@@ -132,7 +141,7 @@
     onClick: async () => {
       const response = await post('/api/logout');
       if (response.ok) {
-        user.set({ id: null, isAuthenticated: false });
+        user.set({ ...$user, id: null, isAuthenticated: false });
         goto('/');
       }
     },

@@ -62,7 +62,10 @@ describe('layout', () => {
 
     beforeEach(() => {
       vi.mocked(onMount).mockImplementation((handler) => mountHandler = handler);
-      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn(() => 'response') }));
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue({ json: vi.fn(() => ({ response: 'response' })) }),
+      );
       vi.spyOn(vi.mocked(user), 'set').mockImplementation(vi.fn());
       render(Layout);
     });
@@ -74,7 +77,12 @@ describe('layout', () => {
 
     it('should set user to store', async () => {
       await mountHandler();
-      expect(vi.mocked(user.set)).toHaveBeenCalledWith('response');
+      expect(vi.mocked(user.set)).toHaveBeenCalledWith({
+        response: 'response',
+        id: null,
+        hash: null,
+        isAuthenticated: null,
+      });
     });
 
     it('should init theme store', async () => {

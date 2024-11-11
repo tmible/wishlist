@@ -14,6 +14,10 @@ describe('store/user', () => {
   });
 
   it('should init user as writable store', () => {
-    expect(vi.mocked(writable)).toHaveBeenCalledWith({ id: null, isAuthenticated: null });
+    expect(
+      vi.mocked(writable),
+    ).toHaveBeenCalledWith(
+      { id: null, hash: null, isAuthenticated: null },
+    );
   });
 });

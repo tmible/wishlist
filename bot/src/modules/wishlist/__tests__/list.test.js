@@ -218,7 +218,7 @@ describe('wishlist/list module', () => {
       ListModule.configure(object([ 'action', 'command' ]));
       verify(subscribe(Events.Wishlist.HandleListLink, captor.capture()));
       when(
-        getUseridFromInput(),
+        emit(Events.Usernames.GetUseridAndUsernameByHash),
         { ignoreExtraArgs: true },
       ).thenReturn(
         [ userid, 'username' ],
@@ -230,7 +230,7 @@ describe('wishlist/list module', () => {
     }
 
     it('should send list', async () => {
-      await captor.value(ctx, userid);
+      await captor.value(ctx, 'hash');
       verify(sendList(
         { emit, subscribe },
         ctx,

@@ -9,7 +9,9 @@ import { initAddUserStatement } from './add-user-statement.js';
 import { initChangesStatement } from './changes-statement.js';
 import { initDeleteCategoryStatement } from './delete-category-statement.js';
 import { initGetUserCategoriesStatement } from './get-user-categories-statement.js';
+import { initGetUserHashStatement } from './get-user-hash-statement.js';
 import { initGetUserWishlistStatement } from './get-user-wishlist-statement.js';
+import { initSetUserHashStatement } from './set-user-hash-statement.js';
 import { initUpdateCategoryStatement } from './update-category-statement.js';
 
 /**
@@ -34,4 +36,6 @@ export const initDB = async () => {
   initChangesStatement();
   initUpdateCategoryStatement();
   initDeleteCategoryStatement();
+  initGetUserHashStatement();
+  initSetUserHashStatement();
 };
