@@ -35,7 +35,12 @@ access_token=$(
     2>/dev/null \
   | jq -r ".access_token"
 )
-prompt=$(cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json")
+prompt=$(
+  cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json" |
+  tr "\n" "\0" |
+  sed "s|%current_timestamp%|$(date +%s)|" |
+  tr "\0" "\n"
+)
 release_name=$(
   curl -L -X POST "https://gigachat.devices.sberbank.ru/api/v1/chat/completions" \
     -H "Content-Type: application/json" \

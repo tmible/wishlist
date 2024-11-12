@@ -6,12 +6,32 @@ exports[`text editor / extensions / spoiler > add keyboard shortcuts > should ad
 }
 `;
 
+exports[`text editor / extensions / spoiler > should add input rules 1`] = `
+[
+  InputRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\\\\\|\\\\\\|\\(\\?!\\\\s\\+\\\\\\|\\\\\\|\\)\\(\\[\\^\\|\\]\\+\\)\\\\\\|\\\\\\|\\)\\$/,
+    "handler": [Function],
+  },
+]
+`;
+
+exports[`text editor / extensions / spoiler > should add paste rules 1`] = `
+[
+  PasteRule {
+    "find": /\\(\\?:\\^\\|\\\\s\\)\\(\\\\\\|\\\\\\|\\(\\?!\\\\s\\+\\\\\\|\\\\\\|\\)\\(\\[\\^\\|\\]\\+\\)\\\\\\|\\\\\\|\\(\\?!\\\\s\\+\\\\\\|\\\\\\|\\)\\)/g,
+    "handler": [Function],
+  },
+]
+`;
+
 exports[`text editor / extensions / spoiler > should be defined 1`] = `
 Mark {
   "child": null,
   "config": {
     "addCommands": [Function],
+    "addInputRules": [Function],
     "addKeyboardShortcuts": [Function],
+    "addPasteRules": [Function],
     "defaultOptions": {},
     "name": "spoiler",
     "parseHTML": [Function],

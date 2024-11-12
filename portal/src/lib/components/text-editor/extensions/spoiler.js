@@ -1,8 +1,20 @@
-import { Mark } from '@tiptap/core';
+import { Mark, markInputRule, markPasteRule } from '@tiptap/core';
 
 /** @typedef {import('@tiptap/core').MarkConfig} MarkConfig */
 
 /** @module Расширение текстового редактора для работы со скрытым текстом */
+
+/**
+ * Регулярное выражение для определения скрытого текста в тексте при вводе
+ * @constant {RegExp}
+ */
+const spoilerInputRegex = /(?:^|\s)(\|\|(?!\s+\|\|)([^|]+)\|\|)$/;
+
+/**
+ * Регулярное выражение для определения скрытого текста в тексте при вставке
+ * @constant {RegExp}
+ */
+const spoilerPasteRegex = /(?:^|\s)(\|\|(?!\s+\|\|)([^|]+)\|\|(?!\s+\|\|))/g;
 
 /**
  * Создание расширения текстового редактора для работы со скрытым текстом
@@ -30,5 +42,23 @@ export default Mark.create({
     return {
       'Mod-Shift-p': () => this.editor.commands.toggleSpoiler(),
     };
+  },
+
+  addInputRules() {
+    return [
+      markInputRule({
+        find: spoilerInputRegex,
+        type: this.type,
+      }),
+    ];
+  },
+
+  addPasteRules() {
+    return [
+      markPasteRule({
+        find: spoilerPasteRegex,
+        type: this.type,
+      }),
+    ];
   },
 });

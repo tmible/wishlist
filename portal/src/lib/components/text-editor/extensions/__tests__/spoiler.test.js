@@ -46,4 +46,12 @@ describe('text editor / extensions / spoiler', () => {
       expect(toggleSpoiler).toHaveBeenCalled();
     });
   });
+
+  it('should add input rules', () => {
+    expect(Spoiler.config.addInputRules()).toMatchSnapshot();
+  });
+
+  it('should add paste rules', () => {
+    expect(Spoiler.config.addPasteRules()).toMatchSnapshot();
+  });
 });
