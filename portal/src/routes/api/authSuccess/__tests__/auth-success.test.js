@@ -11,7 +11,13 @@ vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('@sveltejs/kit');
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('jsonwebtoken');
-vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
+vi.mock(
+  '$env/dynamic/private',
+  () => ({ env: { HMAC_SECRET: 'HMAC secret', BOT_TOKEN: 'bot token' } }),
+);
+
+// HMAC-SHA256 подпись пустой строки с ключом SHA-256 хэшем от строки "bot token"
+const HMAC_SHA256_SIGNATURE = '05f584e13f09851dbc638a0d341b04a358adf7b0bbc0b43362de10d8f94cecb4';
 
 describe('authSuccess endpoint', () => {
   let cookies;
@@ -22,25 +28,48 @@ describe('authSuccess endpoint', () => {
       get: vi.fn(),
       set: vi.fn(),
     };
-    url = { searchParams: { get: vi.fn() } };
+    url = { searchParams: { get: vi.fn(), keys: vi.fn(() => []) } };
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
+  it('should return error if there is no hash parameter', async () => {
+    const response = await GET({ cookies, url });
+    expect(response.status).toBe(400);
+    expect(await response.text()).toBe('missing hash parameter');
+  });
+
+  it('should return error if hash parameter is not of length 64', async () => {
+    url.searchParams.get.mockReturnValueOnce('hash');
+    const response = await GET({ cookies, url });
+    expect(response.status).toBe(400);
+    expect(await response.text()).toBe('hash parameter is invalid');
+  });
+
+  it(
+    'should return error if has parameter does not equal HMAC-SHA256 signature of parameters',
+    async () => {
+      url.searchParams.get.mockReturnValueOnce(HMAC_SHA256_SIGNATURE.replace('4', 'x'));
+      const response = await GET({ cookies, url });
+      expect(response.status).toBe(403);
+      expect(await response.text()).toBe('data integrity is compromised');
+    },
+  );
+
   it('should return error if there is no id parameter', async () => {
-    url.searchParams.get.mockReturnValue(null);
+    url.searchParams.get.mockReturnValueOnce(HMAC_SHA256_SIGNATURE).mockReturnValueOnce(null);
     const response = await GET({ cookies, url });
     expect(response.status).toBe(400);
     expect(await response.text()).toBe('missing id parameter');
   });
 
-  describe('if there is id parameter', () => {
+  describe('if hash is ok and there is id parameter', () => {
     let statement;
 
     beforeEach(() => {
-      url.searchParams.get.mockReturnValueOnce('userid');
+      url.searchParams.get.mockReturnValueOnce(HMAC_SHA256_SIGNATURE).mockReturnValueOnce('userid');
       statement = { run: vi.fn() };
       vi.mocked(inject).mockReturnValue(statement);
     });
