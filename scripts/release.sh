@@ -35,12 +35,7 @@ access_token=$(
     2>/dev/null \
   | jq -r ".access_token"
 )
-prompt=$(
-  cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json" |
-  tr "\n" "\0" |
-  sed "s|\(\"content\": \"[^\"]\+Релиз пакета \)\([^\"]*Описание релиза: \)\([^\"]*\)\"|\1$package\2$1\3\"|" |
-  tr "\0" "\n"
-)
+prompt=$(cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/gigachat-prompt.json")
 release_name=$(
   curl -L -X POST "https://gigachat.devices.sberbank.ru/api/v1/chat/completions" \
     -H "Content-Type: application/json" \
@@ -112,7 +107,7 @@ done
 
 echo "Записываю релиз в changelog"
 last_commit=$(git rev-parse --short HEAD)
-origin=$(git remote get-url origin | sed "s|^git@|https://|" | sed "s|.git$||")
+origin=$(git remote get-url origin | tr ":" "/" | sed "s|^git@|https://|" | sed "s|.git$||")
 IFS="."
 touch "./release-images/${version[*]}.png"
 base64 -d <<< $release_image > "./release-images/${version[*]}.png"

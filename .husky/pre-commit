@@ -10,5 +10,5 @@ directory=$(dirname "${BASH_SOURCE[0]}")
 IFS="|" read -r -a packages <<< $($directory/packages.sh -c)
 
 for package in "${packages[@]}"; do
-  run_checks $package
+ run_checks $package
 done

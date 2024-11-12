@@ -17,9 +17,10 @@ let statement;
  * @returns {void}
  */
 const prepare = () => {
-  statement = inject(InjectionToken.Database).prepare(
-    'INSERT INTO usernames (userid, username) VALUES (?, ?)',
-  );
+  statement = inject(InjectionToken.Database).prepare(`
+    INSERT INTO usernames (userid, username) VALUES ($userid, $username)
+    ON CONFLICT DO UPDATE SET username = $username WHERE userid = $userid
+  `);
 };
 
 /**
@@ -30,7 +31,7 @@ const prepare = () => {
  * @returns {void}
  */
 const eventHandler = (userid, username) => {
-  statement.run(userid, username);
+  statement.run({ userid, username });
 };
 
 export default { eventHandler, prepare };
