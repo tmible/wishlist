@@ -12,10 +12,10 @@ export const initDAUStatement = () => provide(
   inject(InjectionToken.Database).prepare(`
     WITH RECURSIVE days(day_end, day_start, period_end, n, period_start) AS (
       SELECT
+        unixepoch($periodEnd / 1000, 'unixepoch', '+1 day', 'start of day', 'utc'),
         unixepoch($periodEnd / 1000, 'unixepoch', 'start of day', 'utc'),
-        unixepoch(? / 1000, 'unixepoch', 'start of day', 'utc'),
         $periodEnd / 1000,
-        1,
+        0,
         $periodStart / 1000
       UNION ALL
       SELECT
@@ -29,7 +29,7 @@ export const initDAUStatement = () => provide(
     )
     SELECT
       COUNT(DISTINCT userid) as dau,
-      unixepoch(day_end, 'unixepoch') * 1000 AS date
+      CASE n WHEN 0 THEN $periodEnd ELSE unixepoch(day_end - 1, 'unixepoch') * 1000 END AS date
     FROM days
     LEFT JOIN (SELECT time, userid FROM logs WHERE level = 30 AND msg = 'starting up') AS logs
     ON (logs.time / 1000 >= days.day_start AND logs.time / 1000 < days.day_end)

@@ -11,11 +11,16 @@ export const initYAUStatement = () => provide(
   InjectionToken.YAUStatement,
   inject(InjectionToken.Database).prepare(`
     WITH RECURSIVE years(year_end, year_start, period_end, n, period_start) AS (
-      SELECT $periodEnd / 1000, ? / 1000, $periodEnd / 1000, 1, $periodStart / 1000
+      SELECT
+        unixepoch($periodEnd / 1000, 'unixepoch', '+1 day', 'start of day', 'utc'),
+        unixepoch($periodEnd / 1000, 'unixepoch', '+1 day', '-1 year', 'start of day', 'utc'),
+        $periodEnd / 1000,
+        0,
+        $periodStart / 1000
       UNION ALL
       SELECT
-        unixepoch(period_end, 'unixepoch', '-' || n || ' day', 'utc'),
-        unixepoch(period_end, 'unixepoch', '-' || n || ' day', '-1 year', 'utc'),
+        unixepoch(period_end, 'unixepoch', '-' || n || ' day', 'start of day', 'utc'),
+        unixepoch(period_end, 'unixepoch', '-' || n || ' day', '-1 year', 'start of day', 'utc'),
         period_end,
         n + 1,
         period_start
@@ -24,7 +29,7 @@ export const initYAUStatement = () => provide(
     )
     SELECT
       COUNT(DISTINCT userid) as yau,
-      unixepoch(year_end, 'unixepoch') * 1000 AS date
+      CASE n WHEN 0 THEN $periodEnd ELSE unixepoch(year_end - 1, 'unixepoch') * 1000 END AS date
     FROM years
     LEFT JOIN (SELECT time, userid FROM logs WHERE level = 30 AND msg = 'starting up') AS logs
     ON (logs.time / 1000 >= years.year_start AND logs.time / 1000 < years.year_end)

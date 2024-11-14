@@ -12,10 +12,5 @@ export const GET = ({ url }) => {
     return new Response('missing periodStart parameter', { status: 400 });
   }
 
-  const periodEnd = Date.now();
-
-  return json(inject(InjectionToken.DAUStatement).all(
-    new Date(periodEnd).setDate(new Date().getDate() - 1),
-    { periodStart, periodEnd },
-  ));
+  return json(inject(InjectionToken.DAUStatement).all({ periodStart, periodEnd: Date.now() }));
 };

@@ -11,11 +11,16 @@ export const initMAUStatement = () => provide(
   InjectionToken.MAUStatement,
   inject(InjectionToken.Database).prepare(`
     WITH RECURSIVE months(month_end, month_start, period_end, n, period_start) AS (
-      SELECT $periodEnd / 1000, ? / 1000, $periodEnd / 1000, 1, $periodStart / 1000
+      SELECT
+        unixepoch($periodEnd / 1000, 'unixepoch', '+1 day', 'start of day', 'utc'),
+        unixepoch($periodEnd / 1000, 'unixepoch', '+1 day', '-1 month', 'start of day', 'utc'),
+        $periodEnd / 1000,
+        0,
+        $periodStart / 1000
       UNION ALL
       SELECT
-        unixepoch(period_end, 'unixepoch', '-' || n || ' day', 'utc'),
-        unixepoch(period_end, 'unixepoch', '-' || n || ' day', '-1 month', 'utc'),
+        unixepoch(period_end, 'unixepoch', '-' || n || ' day', 'start of day', 'utc'),
+        unixepoch(period_end, 'unixepoch', '-' || n || ' day', '-1 month', 'start of day', 'utc'),
         period_end,
         n + 1,
         period_start
@@ -24,7 +29,7 @@ export const initMAUStatement = () => provide(
     )
     SELECT
       COUNT(DISTINCT userid) as mau,
-      unixepoch(month_end, 'unixepoch') * 1000 AS date
+      CASE n WHEN 0 THEN $periodEnd ELSE unixepoch(month_end - 1, 'unixepoch') * 1000 END AS date
     FROM months
     LEFT JOIN (SELECT time, userid FROM logs WHERE level = 30 AND msg = 'starting up') AS logs
     ON (logs.time / 1000 >= months.month_start AND logs.time / 1000 < months.month_end)

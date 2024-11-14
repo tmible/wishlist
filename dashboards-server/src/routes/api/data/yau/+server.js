@@ -12,10 +12,5 @@ export const GET = ({ url }) => {
     return new Response('missing periodStart parameter', { status: 400 });
   }
 
-  const periodEnd = Date.now();
-
-  return json(inject(InjectionToken.YAUStatement).all(
-    new Date(periodEnd).setFullYear(new Date().getFullYear() - 1),
-    { periodStart, periodEnd },
-  ));
+  return json(inject(InjectionToken.YAUStatement).all({ periodStart, periodEnd: Date.now() }));
 };
