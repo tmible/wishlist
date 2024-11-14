@@ -25,6 +25,7 @@ describe('IPC hub connection service', () => {
     process.env.HUB_SOCKET_PATH = 'HUB_SOCKET_PATH';
     when(inject(InjectionToken.LocalDatabase)).thenReturn(() => 'db');
     when(inject(InjectionToken.EventBus)).thenReturn('eventBus');
+    when(inject(InjectionToken.Logger)).thenReturn('logger');
     socket = object([ 'on', 'destroySoon' ]);
     when(connect(), { ignoreExtraArgs: true }).thenReturn(socket);
   });
@@ -39,6 +40,11 @@ describe('IPC hub connection service', () => {
   it('should inject event bus', () => {
     connectToIPCHub();
     verify(inject(InjectionToken.EventBus));
+  });
+
+  it('should inject logger', () => {
+    connectToIPCHub();
+    verify(inject(InjectionToken.Logger));
   });
 
   it('should connect to socket', () => {
@@ -78,7 +84,7 @@ describe('IPC hub connection service', () => {
 
     it('should auto update if message is valid', async () => {
       await captor.value('update 123');
-      verify(autoUpdateFromIPCHub('db', 'eventBus', bot.telegram, 123));
+      verify(autoUpdateFromIPCHub('db', 'eventBus', bot.telegram, 'logger', 123));
     });
 
     it('should not auto update if message is invalid', async () => {

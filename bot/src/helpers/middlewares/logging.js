@@ -13,7 +13,6 @@ import LoggingMiddlewareType from '@tmible/wishlist-bot/constants/logging-middle
   Пробелы для консистентности с другими элементами массива
 */
 const MiddlewareTypeTostartAndFinishMessages = new Map([
-
   [ LoggingMiddlewareType.AUXILARY_ACTIVITIES, [ 'starting up', 'finished clean up' ] ],
   [ LoggingMiddlewareType.UPDATE_PROCESSING, [ 'start processing update', 'update processed' ] ],
 ]);

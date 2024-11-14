@@ -17,6 +17,7 @@ import { autoUpdateFromIPCHub } from '@tmible/wishlist-bot/services/lists-auto-u
 const connectToIPCHub = (bot) => {
   const db = inject(InjectionToken.LocalDatabase)('auto-update');
   const eventBus = inject(InjectionToken.EventBus);
+  const logger = inject(InjectionToken.Logger);
 
   const socket = connect(
     process.env.HUB_SOCKET_PATH,
@@ -31,7 +32,7 @@ const connectToIPCHub = (bot) => {
     if (!userid) {
       return;
     }
-    await autoUpdateFromIPCHub(db, eventBus, bot.telegram, Number.parseInt(userid));
+    await autoUpdateFromIPCHub(db, eventBus, bot.telegram, logger, Number.parseInt(userid));
   });
 
   provide(InjectionToken.IPCHub, { isConnected: () => socket.readyState === 'open' });

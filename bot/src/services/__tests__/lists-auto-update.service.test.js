@@ -8,6 +8,7 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const db = object([ 'get', 'getMany', 'put', 'batch' ]);
 const emit = func();
+const info = func();
 
 const [
   { inject },
@@ -37,6 +38,7 @@ describe('lists auto update service', () => {
       ctx = {
         chat: { id: 'chatId' },
         from: { id: 'fromId' },
+        update: { update_id: 'updateId' },
         botInfo: { id: 'botId' },
         session: {},
         state: {},
@@ -45,6 +47,7 @@ describe('lists auto update service', () => {
 
       when(inject(InjectionToken.LocalDatabase)).thenReturn(() => db);
       when(inject(InjectionToken.EventBus)).thenReturn({ emit });
+      when(inject(InjectionToken.Logger)).thenReturn({ info });
 
       middleware = autoUpdate();
     });
@@ -122,6 +125,23 @@ describe('lists auto update service', () => {
         }]));
       },
     );
+
+    it('should log auto update', async () => {
+      ctx.state.autoUpdate = { userid: 'userid' };
+      when(db.get('userid')).thenResolve(new Array(3).fill(null).map((_, i) => ({ id: i })));
+      when(persistentSession()).thenReturn(() => Promise.resolve());
+
+      await middleware(ctx, next);
+
+      verify(info(
+        {
+          chatId: 'chatId',
+          userid: 'fromId',
+          updateId: 'updateId',
+        },
+        'auto updating userid in 0, 1, 2',
+      ));
+    });
 
     it('should init persistent session for every fake context', async () => {
       ctx.state.autoUpdate = { userid: 'userid' };
@@ -209,11 +229,20 @@ describe('lists auto update service', () => {
   });
 
   describe('auto update from IPC hub', () => {
+    it('should log auto update', async () => {
+      when(db.get('userid')).thenResolve(new Array(3).fill(null).map((_, i) => ({ id: i })));
+      when(persistentSession()).thenReturn(() => Promise.resolve());
+
+      await autoUpdateFromIPCHub(db, { emit }, 'telegram', { info }, 'userid');
+
+      verify(info('auto updating userid in 0, 1, 2'));
+    });
+
     it('should init persistent session for every fake context', async () => {
       when(db.get('userid')).thenResolve(new Array(3).fill(null).map((_, i) => ({ id: i })));
       when(persistentSession()).thenReturn(() => Promise.resolve());
 
-      await autoUpdateFromIPCHub(db, { emit }, 'telegram', 'userid');
+      await autoUpdateFromIPCHub(db, { emit }, 'telegram', { info }, 'userid');
 
       verify(persistentSession(), { times: 3 });
     });
@@ -249,7 +278,7 @@ describe('lists auto update service', () => {
         (_, fakeCtx) => new Array(2).fill(null).map((_, i) => `message ${fakeCtx.chat.id} ${i}`),
       );
 
-      await autoUpdateFromIPCHub(db, { emit }, 'telegram', 'userid');
+      await autoUpdateFromIPCHub(db, { emit }, 'telegram', { info }, 'userid');
 
       fakeCtxs.forEach((fakeCtx) => {
         verify(manageListsMessages(
@@ -275,7 +304,7 @@ describe('lists auto update service', () => {
 
       when(db.getMany([ 'userid' ])).thenResolve([ chatIds ]);
 
-      await autoUpdateFromIPCHub(db, { emit }, 'telegram', 'userid');
+      await autoUpdateFromIPCHub(db, { emit }, 'telegram', { info }, 'userid');
 
       verify(db.batch([{
         type: 'put',

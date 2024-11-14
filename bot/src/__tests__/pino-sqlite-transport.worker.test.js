@@ -68,6 +68,9 @@ describe('pino sqlite transport worker', () => {
       verify(statement.run({
         updateType: null,
         updatePayload: null,
+        chatId: null,
+        userid: null,
+        updateId: null,
         message: 'message',
       }));
     });

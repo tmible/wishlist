@@ -183,13 +183,24 @@ const sendUpdates = (eventBus, userid, fakeCtx) => persistentSession()(fakeCtx, 
  * @param {ClassicLevel} db Объект для доступа к БД
  * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
+ * @param {unknown} logger Логгер
  * @returns {Promise<void>}
  * @async
  */
-const selectChatsAndSendUpdates = async (db, eventBus, ctx) => {
+const selectChatsAndSendUpdates = async (db, eventBus, ctx, logger) => {
   const chats = await db.get(ctx.state.autoUpdate.userid).then(
     (chats) => chats.filter(({ id }) => id !== ctx.chat.id),
   );
+
+  logger.info(
+    {
+      chatId: ctx.chat.id,
+      userid: ctx.from.id,
+      updateId: ctx.update.update_id,
+    },
+    `auto updating ${ctx.state.autoUpdate.userid} in ${chats.map(({ id }) => id).join(', ')}`,
+  );
+
   await Promise.all(chats.map((chat) => {
 
     const fakeCtx = constructFakeCtx(chat, ctx.telegram);
@@ -209,12 +220,16 @@ const selectChatsAndSendUpdates = async (db, eventBus, ctx) => {
  * @param {ClassicLevel} db Объект для доступа к БД
  * @param {EventBus} eventBus Шина событий
  * @param {Telegram} telegram Объект -- обёртка над Bot API Телеграма
+ * @param {unknown} logger Логгер
  * @param {number} userid Идентификатор пользователя -- владельца обновлённого списка
  * @returns {Promise<void>}
  * @async
  */
-export const autoUpdateFromIPCHub = async (db, eventBus, telegram, userid) => {
+export const autoUpdateFromIPCHub = async (db, eventBus, telegram, logger, userid) => {
   const chats = await db.get(userid);
+
+  logger.info(`auto updating ${userid} in ${chats.map(({ id }) => id).join(', ')}`);
+
   await Promise.all(chats.map((chat) => {
 
     const fakeCtx = constructFakeCtx(chat, telegram);
@@ -243,6 +258,7 @@ export const autoUpdateFromIPCHub = async (db, eventBus, telegram, userid) => {
 export const autoUpdate = () => {
   const db = inject(InjectionToken.LocalDatabase)('auto-update');
   const eventBus = inject(InjectionToken.EventBus);
+  const logger = inject(InjectionToken.Logger);
 
   return async (ctx, next) => {
     const memoized = Object.keys(ctx.session.persistent?.lists ?? {});
@@ -262,6 +278,6 @@ export const autoUpdate = () => {
       return;
     }
 
-    await selectChatsAndSendUpdates(db, eventBus, ctx);
+    await selectChatsAndSendUpdates(db, eventBus, ctx, logger);
   };
 };

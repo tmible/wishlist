@@ -1,0 +1,12 @@
+ALTER TABLE "logs" RENAME COLUMN "chatId" TO "chatId_old";
+ALTER TABLE "logs" ADD COLUMN "chatId" INTEGER;
+UPDATE "logs" SET "chatId" = "chatId_old";
+ALTER TABLE "logs" DROP COLUMN "chatId_old";
+ALTER TABLE "logs" RENAME COLUMN "userid" TO "userid_old";
+ALTER TABLE "logs" ADD COLUMN "userid" INTEGER;
+UPDATE "logs" SET "userid" = "userid_old";
+ALTER TABLE "logs" DROP COLUMN "userid_old";
+ALTER TABLE "logs" RENAME COLUMN "updateId" TO "updateId_old";
+ALTER TABLE "logs" ADD COLUMN "updateId" INTEGER;
+UPDATE "logs" SET "updateId" = "updateId_old";
+ALTER TABLE "logs" DROP COLUMN "updateId_old";

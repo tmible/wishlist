@@ -48,6 +48,9 @@ export default async () => {
         statement.run({
           updateType: null,
           updatePayload: null,
+          chatId: null,
+          userid: null,
+          updateId: null,
           ...obj,
         });
       }

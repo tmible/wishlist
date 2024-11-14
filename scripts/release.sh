@@ -63,8 +63,9 @@ model_id=$(
 )
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/kandinsky-prompt.json" |
-  sed "s|\"query\": \"\"|\"query\": \"Спокойное детализированное изображение высокого качества для релиза. Название релиза $release_name. Релиз пакета $package. Описание релиза: $1. Иллюстрация к названию релиза\"|" |
-  sed "s/\"/\\\\\"/g"
+  tr "\n" "\0" |
+  sed "s|%release_name%|$release_name|" |
+  tr "\0" "\n"
 )
 task_uuid=$(
   curl -L -X POST "https://api-key.fusionbrain.ai/key/api/v1/text2image/run" \
