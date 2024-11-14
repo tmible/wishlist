@@ -4,6 +4,7 @@ Svelte компонент -- заголовок столбца таблицы с
 -->
 <script>
   import Cross2 from 'svelte-radix/Cross2.svelte';
+  import { Button } from '$lib/components/ui/button';
   import { DateRangePicker } from '$lib/components/ui/date-range-picker';
   import { Input } from '$lib/components/ui/input';
 
@@ -45,18 +46,15 @@ Svelte компонент -- заголовок столбца таблицы с
         bind:value={$filters[accessor]}
       >
         {#if $filters[accessor]}
-          <Cross2
-            class="input-cross cursor-pointer absolute"
+          <Button
+            class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"
+            variant="ghost"
             on:click={() => {
               filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
             }}
-          />
-          <style>
-            .input-cross {
-              right: 6px;
-              top: 5px;
-            }
-          </style>
+          >
+            <Cross2 />
+          </Button>
         {/if}
       </DateRangePicker>
     {:else}
@@ -65,18 +63,15 @@ Svelte компонент -- заголовок столбца таблицы с
         bind:value={$filters[accessor]}
       />
       {#if $filters[accessor]}
-        <Cross2
-          class="input-cross cursor-pointer absolute"
+        <Button
+          class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"
+          variant="ghost"
           on:click={() => {
             filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
           }}
-        />
-        <style>
-          .input-cross {
-            right: 6px;
-            top: 5px;
-          }
-        </style>
+        >
+          <Cross2 />
+        </Button>
       {/if}
     {/if}
   </div>
