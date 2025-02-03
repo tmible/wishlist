@@ -74,6 +74,18 @@ const checkAuthorization = async (searchParams) => {
 };
 
 /**
+ * Сохранение в БД с логами события успешной аутентификации
+ * @function saveAuthenticationAction
+ * @param {string} unknownUserUuid Идентификатор неаутентифицированного пользователя
+ * @returns {void}
+ */
+const saveAuthenticationAction = (unknownUserUuid) => {
+  if (unknownUserUuid) {
+    inject(InjectionToken.AddActionStatement).run(Date.now(), 'authentication', unknownUserUuid);
+  }
+};
+
+/**
  * Проверка подлинности запроса, аутентификация пользователя
  * и создание cookie-файла с jwt-токеном аутентификации
  * @type {import('./$types').RequestHandler}
@@ -99,6 +111,8 @@ export const GET = async ({ cookies, url }) => {
     { expiresIn: `${AUTH_TOKEN_EXPIRATION / 60}min` },
   );
   cookies.set(AUTH_TOKEN_COOKIE_NAME, token, AUTH_TOKEN_COOKIE_OPTIONS);
+
+  saveAuthenticationAction(cookies.get('unknownUserUuid'));
 
   return redirect(302, '/list');
 };

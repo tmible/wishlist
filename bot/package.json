@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "private": true,
   "description": "Телеграм бот со списками желаний",
   "repository": {
@@ -73,9 +73,9 @@
     "snapshot-assertion": "^5.0.0",
     "testdouble": "^3.20.1"
   },
-  "packageManager": "pnpm@9.11.0",
+  "packageManager": "pnpm@9.13.2",
   "engines": {
     "node": "22.9.0",
-    "pnpm": "9.11.0"
+    "pnpm": "9.13.2"
   }
 }

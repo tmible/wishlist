@@ -14,6 +14,7 @@
 - `WISHLIST_DB_FILE_PATH` путь к SQLite БД со списками желаний
 - `WISHLIST_DB_MIGRATIONS_PATH` путь к папке с SQL скриптами миграций БД со списками желаний
 - `LOGS_DB_FILE_PATH` путь к SQLite БД с логами
+- `LOGS_DB_MIGRATIONS_PATH` путь к папке с SQL скриптами миграций БД для хранения логов
 - `ORIGIN` https://используемый_домен
 - `PORT` порт для Node.js сервера
 - `HUB_SOCKET_PATH` путь к UNIX сокету IPC хаба для синхронизации списков желаний

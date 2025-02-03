@@ -28,17 +28,17 @@
   <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <TimeDashboard data={data.timeDashboard} />
+        <TimeDashboard data={data.timeDashboard} service="bot" />
       </Card.Content>
     </Card.Root>
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <ActiveUsersDashboard data={data.activeUsersDashboard} />
+        <ActiveUsersDashboard data={data.activeUsersDashboard} service="bot" />
       </Card.Content>
     </Card.Root>
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <SuccessRateDashboard data={data.successRate} />
+        <SuccessRateDashboard data={data.successRate} service="bot" />
       </Card.Content>
     </Card.Root>
   </div>

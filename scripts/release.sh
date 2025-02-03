@@ -64,7 +64,8 @@ model_id=$(
 prompt=$(
   cat "$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/kandinsky-prompt.json" |
   tr "\n" "\0" |
-  sed "s|%release_name%|$release_name|" |
+  sed "s|\"%release_name%\\\\\"|\\\\\"$release_name\\\\\\\\\"|" |
+  sed "s|\"|\\\\\\\"|g" |
   tr "\0" "\n"
 )
 task_uuid=$(

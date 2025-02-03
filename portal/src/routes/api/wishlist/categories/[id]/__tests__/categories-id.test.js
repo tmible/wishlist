@@ -64,7 +64,7 @@ describe('categories/[id] endpoint', () => {
     it('should return error if count statement fails', async () => {
       statement.get.mockReturnValue({ changes: 0 });
       const response = await PUT({ locals, params, request });
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(403);
       expect(response.body).toBeNull();
     });
 
@@ -114,7 +114,7 @@ describe('categories/[id] endpoint', () => {
     it('should return error if count statement fails', async () => {
       statement.get.mockReturnValue({ changes: 0 });
       const response = await DELETE({ locals, params });
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(403);
       expect(response.body).toBeNull();
     });
 

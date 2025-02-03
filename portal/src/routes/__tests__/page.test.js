@@ -1,9 +1,11 @@
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
+import { onMount } from 'svelte';
 import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { user } from '$lib/store/user';
 
+vi.mock('svelte');
 vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
 vi.mock('$lib/store/breakpoints', () => ({ md: writable(true) }));
 
@@ -27,6 +29,28 @@ describe('landing', () => {
     vi.clearAllMocks();
     vi.resetModules();
     cleanup();
+  });
+
+  it('should send action on mount if user is not authenticated', async () => {
+    let mountHandler;
+    const fetchStub = vi.fn();
+    vi.stubGlobal('Date', { now: vi.fn(() => 'now') });
+    vi.stubGlobal('fetch', fetchStub);
+    vi.mocked(user).set({ isAuthenticated: false });
+    vi.mocked(onMount).mockImplementationOnce((handler) => mountHandler = handler);
+    render(await import('../+page.svelte').then((module) => module.default));
+    await mountHandler();
+    expect(fetchStub).toHaveBeenCalledWith(
+      '/api/actions',
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json;charset=utf-8' },
+        body: JSON.stringify({
+          timestamp: 'now',
+          action: 'landing visit',
+        }),
+      },
+    );
   });
 
   it('should be empty if not browser', async () => {

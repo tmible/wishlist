@@ -66,6 +66,8 @@ jobs:
         WISHLIST_DB_FILE_PATH: ${{ vars.PORTAL_WISHLIST_DB_FILE_PATH }}
         WISHLIST_DB_MIGRATIONS_PATH: ${{ vars.PORTAL_WISHLIST_DB_MIGRATIONS_PATH }}
         HUB_SOCKET_PATH: ${{ vars.PORTAL_HUB_SOCKET_PATH }}
+        LOGS_DB_FILE_PATH: ${{ vars.PORTAL_LOGS_DB_FILE_PATH }}
+        LOGS_DB_MIGRATIONS_PATH: ${{ vars.PORTAL_LOGS_DB_MIGRATIONS_PATH }}
       run: pnpm build
     - name: remove unnecessary files
       run: |

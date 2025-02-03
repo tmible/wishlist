@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-dashboards-server",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "private": true,
   "description": "Сервер с дашбордами для телеграм бота со списками желаний",
   "repository": {
@@ -79,9 +79,9 @@
     "vite": "^5.3.2",
     "vitest": "^1.6.0"
   },
-  "packageManager": "pnpm@9.11.0",
+  "packageManager": "pnpm@9.13.2",
   "engines": {
     "node": "22.9.0",
-    "pnpm": "9.11.0"
+    "pnpm": "9.13.2"
   }
 }

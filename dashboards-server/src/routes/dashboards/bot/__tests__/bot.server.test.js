@@ -1,7 +1,7 @@
 import { get } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { getData } from '$lib/get-data';
-import { load } from '../+page';
+import { load } from '../+page.js';
 
 let browserMock;
 const fetchMock = vi.fn();
@@ -49,7 +49,7 @@ describe('dashboards/bot endpoint', () => {
       expect(
         getData,
       ).toHaveBeenCalledWith(
-        expect.stringMatching(/^\/api\/data\/0\?periodStart=\d+$/),
+        expect.stringMatching(/^\/api\/data\/bot\/0\?periodStart=\d+$/),
         fetchMock,
       );
     });
@@ -58,7 +58,7 @@ describe('dashboards/bot endpoint', () => {
       expect(
         getData,
       ).not.toHaveBeenCalledWith(
-        expect.stringMatching(/^\/api\/data\/1\?periodStart=\d+$/),
+        expect.stringMatching(/^\/api\/data\/bot\/1\?periodStart=\d+$/),
         fetchMock,
       );
     });
@@ -67,7 +67,7 @@ describe('dashboards/bot endpoint', () => {
       expect(
         getData,
       ).toHaveBeenCalledWith(
-        expect.stringMatching(/^\/api\/data\/0\?periodStart=\d+$/),
+        expect.stringMatching(/^\/api\/data\/bot\/0\?periodStart=\d+$/),
         fetchMock,
       );
     });
@@ -76,7 +76,7 @@ describe('dashboards/bot endpoint', () => {
       expect(
         getData,
       ).not.toHaveBeenCalledWith(
-        expect.stringMatching(/^\/api\/data\/1\?periodStart=\d+$/),
+        expect.stringMatching(/^\/api\/data\/bot\/1\?periodStart=\d+$/),
         fetchMock,
       );
     });
@@ -85,13 +85,13 @@ describe('dashboards/bot endpoint', () => {
       expect(
         getData,
       ).toHaveBeenCalledWith(
-        expect.stringMatching(/^\/api\/data\/successRate\?periodStart=\d+$/),
+        expect.stringMatching(/^\/api\/data\/bot\/successRate\?periodStart=\d+$/),
         fetchMock,
       );
     });
 
     it('should get user sessions data', () => {
-      expect(getData).toHaveBeenCalledWith('/api/data/userSessions', fetchMock);
+      expect(getData).toHaveBeenCalledWith('/api/data/bot/userSessions', fetchMock);
     });
   });
 });

@@ -29,7 +29,7 @@ const handlePutOrDelete = (statement, userid, ...bindedParams) => {
     if (e.message !== 'Not authorized') {
       throw e;
     }
-    return new Response(null, { status: 401 });
+    return new Response(null, { status: 403 });
   }
 
   inject(InjectionToken.IPCHub).sendMessage(`update ${userid}`);

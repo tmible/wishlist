@@ -1,5 +1,5 @@
 import { connect } from 'node:net';
-import { provide } from '@tmible/wishlist-common/dependency-injector';
+import { inject, provide } from '@tmible/wishlist-common/dependency-injector';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token.js';
 import { connectToIPCHub } from '../ipc-hub-connection.js';
@@ -10,6 +10,7 @@ vi.mock('$env/static/private', () => ({ HUB_SOCKET_PATH: 'HUB_SOCKET_PATH' }));
 
 describe('IPC hub connection', () => {
   let socket;
+  let logger;
 
   beforeEach(() => {
     socket = {
@@ -17,12 +18,19 @@ describe('IPC hub connection', () => {
       write: vi.fn(),
       destroySoon: vi.fn(),
     };
+    logger = { warn: vi.fn() };
     socket.on.mockReturnValue(socket);
     vi.mocked(connect).mockReturnValue(socket);
+    vi.mocked(inject).mockReturnValueOnce(logger);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('should inject logger', () => {
+    connectToIPCHub();
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Logger);
   });
 
   it('should connect to socket', () => {
@@ -41,14 +49,9 @@ describe('IPC hub connection', () => {
       handler = eventHandler;
       return socket;
     });
-    vi.spyOn(console, 'warn').mockImplementation(() => {});
     connectToIPCHub();
     handler('error');
-    expect(
-      vi.mocked(console.warn),
-    ).toHaveBeenCalledWith(
-      'Could not connect to IPC hub with error: error',
-    );
+    expect(logger.warn).toHaveBeenCalledWith('Could not connect to IPC hub with error: error');
   });
 
   it('should provide connection object', () => {

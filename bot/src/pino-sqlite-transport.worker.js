@@ -16,7 +16,7 @@ export default async () => {
   const db = new Database(process.env.LOGS_DB_FILE_PATH);
   await migrate(db, process.env.LOGS_DB_MIGRATIONS_PATH);
   const statement = db.prepare(`
-    INSERT INTO logs (
+    INSERT INTO "bot.logs" (
       level,
       time,
       pid,

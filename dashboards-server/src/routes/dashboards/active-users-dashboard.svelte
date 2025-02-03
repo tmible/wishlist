@@ -13,13 +13,21 @@
   export let data;
 
   /**
+   * Ключ сервиса в объекте с данными о проверке здороья сервисов
+   * @type {'bot' | 'portal' | 'hub'}
+   */
+  export let service;
+
+  /**
    * Формирование пути для запроса данных для дашборда
    * @function formDataUrl
    * @param {string} chartKey Уникальный ключ графика
    * @param {number} periodStart Начало периода
    * @returns {string} Путь запроса
    */
-  const formDataUrl = (chartKey, periodStart) => `/api/data/${chartKey}?periodStart=${periodStart}`;
+  const formDataUrl = (chartKey, periodStart) => `
+    /api/data/${service}/${chartKey}?periodStart=${periodStart}
+  `;
 </script>
 
 <LineDashboard

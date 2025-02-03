@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-pnpm add -g pnpm
+pnpm self-update
 pnpm_version=$(pnpm -v)
 while IFS= read -r line; do
   cd $(dirname $line)

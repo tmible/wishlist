@@ -17,6 +17,12 @@
   export let data;
 
   /**
+   * Ключ сервиса в объекте с данными о проверке здороья сервисов
+   * @type {'bot' | 'portal' | 'hub'}
+   */
+  export let service;
+
+  /**
    * Цвет фона
    * @function getBackgroundColor
    * @returns {string} CSS строка с hsl цветом
@@ -34,7 +40,9 @@
    * @async
    */
   const getDataAndUpdateChartProps = async (dashboard, periodStart) => {
-    const successRate = await getData(`/api/data/successRate?periodStart=${periodStart}`);
+    const successRate = await getData(
+      `/api/data/${service}/successRate?periodStart=${periodStart}`,
+    );
     dashboard.data.datasets[0].data = successRate ? [ successRate, (1 - successRate) ] : [ 1 ];
     dashboard.options.borderColor = successRate ? getBackgroundColor() : SUCCESS_COLOR;
     dashboard.options.cutout = successRate ? '50%' : '100%';

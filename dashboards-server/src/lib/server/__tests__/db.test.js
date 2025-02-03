@@ -3,15 +3,25 @@ import { provide } from '@tmible/wishlist-common/dependency-injector';
 import Database from 'better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token';
-import { initDAUStatement } from '../dau-statement.js';
+import {
+  initBotDAUStatement,
+  initBotMAUStatement,
+  initBotProcessTimeStatement,
+  initBotResponseTimeStatement,
+  initBotStartupTimeStatement,
+  initBotSuccessRateStatement,
+  initBotUserSessionsStatement,
+  initBotYAUStatement,
+} from '../bot-statements';
 import { initDB } from '../db.js';
-import { initMAUStatement } from '../mau-statement.js';
-import { initProcessTimeStatement } from '../process-time-statement.js';
-import { initResponseTimeStatement } from '../response-time-statement.js';
-import { initStartupTimeStatement } from '../startup-time-statement.js';
-import { initSuccessRateStatement } from '../success-rate-statement.js';
-import { initUserSessionsStatement } from '../user-sessions-statement.js';
-import { initYAUStatement } from '../yau-statement.js';
+import {
+  initPortalAuthenticationFunnelStatement,
+  initPortalDAUStatement,
+  initPortalMAUStatement,
+  initPortalResponseTimeStatement,
+  initPortalSuccessRateStatement,
+  initPortalYAUStatement,
+} from '../portal-statements';
 
 vi.mock('@tmible/wishlist-common/db-migrations');
 vi.mock('@tmible/wishlist-common/dependency-injector');
@@ -23,14 +33,8 @@ vi.mock(
     LOGS_DB_MIGRATIONS_PATH: 'LOGS_DB_MIGRATIONS_PATH',
   }),
 );
-vi.mock('../dau-statement.js');
-vi.mock('../mau-statement.js');
-vi.mock('../process-time-statement.js');
-vi.mock('../response-time-statement.js');
-vi.mock('../startup-time-statement.js');
-vi.mock('../success-rate-statement.js');
-vi.mock('../user-sessions-statement.js');
-vi.mock('../yau-statement.js');
+vi.mock('../bot-statements');
+vi.mock('../portal-statements');
 
 describe('db', () => {
   let db;
@@ -73,43 +77,73 @@ describe('db', () => {
     expect(db.close).toHaveBeenCalled();
   });
 
-  it('should init DAU statement', async () => {
+  it('should init bot DAU statement', async () => {
     await initDB();
-    expect(vi.mocked(initDAUStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotDAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init MAU statement', async () => {
+  it('should init bot MAU statement', async () => {
     await initDB();
-    expect(vi.mocked(initMAUStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotMAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init process time statement', async () => {
+  it('should init bot process time statement', async () => {
     await initDB();
-    expect(vi.mocked(initProcessTimeStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotProcessTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init response time statement', async () => {
+  it('should init bot response time statement', async () => {
     await initDB();
-    expect(vi.mocked(initResponseTimeStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotResponseTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init startup time statement', async () => {
+  it('should init bot startup time statement', async () => {
     await initDB();
-    expect(vi.mocked(initStartupTimeStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotStartupTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init success rate statement', async () => {
+  it('should init bot success rate statement', async () => {
     await initDB();
-    expect(vi.mocked(initSuccessRateStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotSuccessRateStatement)).toHaveBeenCalled();
   });
 
-  it('should init user sessions statement', async () => {
+  it('should init bot user sessions statement', async () => {
     await initDB();
-    expect(vi.mocked(initUserSessionsStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotUserSessionsStatement)).toHaveBeenCalled();
   });
 
-  it('should init YAU statement', async () => {
+  it('should init bot YAU statement', async () => {
     await initDB();
-    expect(vi.mocked(initYAUStatement)).toHaveBeenCalled();
+    expect(vi.mocked(initBotYAUStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal authentication funnel statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalAuthenticationFunnelStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal DAU statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalDAUStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal MAU statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalMAUStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal response time statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalResponseTimeStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal success rate statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalSuccessRateStatement)).toHaveBeenCalled();
+  });
+
+  it('should init portal YAU statement', async () => {
+    await initDB();
+    expect(vi.mocked(initPortalYAUStatement)).toHaveBeenCalled();
   });
 });

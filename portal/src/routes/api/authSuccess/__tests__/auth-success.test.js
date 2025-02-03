@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { InjectionToken } from '$lib/architecture/injection-token';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const';
 import { AUTH_TOKEN_COOKIE_OPTIONS } from '$lib/constants/auth-token-cookie-options.const';
 import { AUTH_TOKEN_EXPIRATION } from '$lib/constants/auth-token-expiration.const';
@@ -74,6 +75,11 @@ describe('authSuccess endpoint', () => {
       vi.mocked(inject).mockReturnValue(statement);
     });
 
+    it('should inject AddUserStatement', async () => {
+      await GET({ cookies, url });
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.AddUserStatement);
+    });
+
     it('should run AddUserStatement', async () => {
       await GET({ cookies, url });
       expect(statement.run).toHaveBeenCalledWith('userid', null);
@@ -106,6 +112,37 @@ describe('authSuccess endpoint', () => {
         'token',
         AUTH_TOKEN_COOKIE_OPTIONS,
       );
+    });
+
+    describe('if there is unknown user UUID', () => {
+      beforeEach(async () => {
+        cookies.get.mockReturnValueOnce('unknownUserUuid');
+        vi.stubGlobal('Date', { now: vi.fn(() => 'now') });
+        await GET({ cookies, url });
+      });
+
+      it('should inject AddUserStatement', () => {
+        expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.AddActionStatement);
+      });
+
+      it('should add action', () => {
+        expect(statement.run).toHaveBeenCalledWith('now', 'authentication', 'unknownUserUuid');
+      });
+    });
+
+    describe('if there is no unknown user UUID', () => {
+      beforeEach(async () => {
+        cookies.get.mockReturnValueOnce(null);
+        await GET({ cookies, url });
+      });
+
+      it('should inject AddUserStatement', () => {
+        expect(vi.mocked(inject)).not.toHaveBeenCalledWith(InjectionToken.AddActionStatement);
+      });
+
+      it('should add action', () => {
+        expect(statement.run).not.toHaveBeenCalledWith('now', 'authentication', 'unknownUserUuid');
+      });
     });
 
     it('should return redirect', async () => {

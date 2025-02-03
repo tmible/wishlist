@@ -17,7 +17,7 @@ export const load = async ({ fetch }) => ({
       get(timeDashboardCharts)
         .filter(({ isDisplayed }) => isDisplayed)
         .map(({ key }) => getData(
-          `/api/data/${key}?periodStart=${Date.now() - TIME_DASHBOARD_DEFAULT_PERIOD}`,
+          `/api/data/bot/${key}?periodStart=${Date.now() - TIME_DASHBOARD_DEFAULT_PERIOD}`,
           fetch,
         )),
     ) :
@@ -27,16 +27,16 @@ export const load = async ({ fetch }) => ({
       get(activeUsersDashboardCharts)
         .filter(({ isDisplayed }) => isDisplayed)
         .map(({ key }) => getData(
-          `/api/data/${key}?periodStart=${Date.now() - ACTIVE_USERS_DASHBOARD_DEFAULT_PERIOD}`,
+          `/api/data/bot/${key}?periodStart=${Date.now() - ACTIVE_USERS_DASHBOARD_DEFAULT_PERIOD}`,
           fetch,
         )),
     ) :
     [],
   successRate: browser ?
     await getData(
-      `/api/data/successRate?periodStart=${Date.now() - SUCCESS_RATE_DASHBOARD_DEFAULT_PERIOD}`,
+      `/api/data/bot/successRate?periodStart=${Date.now() - SUCCESS_RATE_DASHBOARD_DEFAULT_PERIOD}`,
       fetch,
     ) :
     null,
-  userSessions: browser ? await getData('/api/data/userSessions', fetch) : [],
+  userSessions: browser ? await getData('/api/data/bot/userSessions', fetch) : [],
 });

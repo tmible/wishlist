@@ -23,4 +23,7 @@ export const InjectionToken = Object.freeze({
   DeleteCategoryStatement: 'delete category statement',
   GetUserHashStatement: 'get user hash statement',
   SetUserHashStatement: 'set user hash statement',
+  LogsDatabase: 'logs database',
+  AddActionStatement: 'add action statement',
+  Logger: 'logger',
 });

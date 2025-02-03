@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.3 Величественный закат. (2025-02-03)
+<img width="128" height="128" src="release-images/3.4.3.png"/>
+
+https://github.com/tmible/wishlist/compare/accd4c3..master
+
+
 ## 3.4.2 Великий Мастер (2024-11-14)
 <img width="128" height="128" src="release-images/3.4.2.png"/>
 
-https://github.com/tmible/wishlist/compare/b8dc515..master
+https://github.com/tmible/wishlist/compare/b8dc515..accd4c3
 
 
 ## 3.4.1 Золотая осень (2024-11-12)

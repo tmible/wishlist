@@ -14,6 +14,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { InjectionToken } from '$lib/architecture/injection-token';
 import { user } from '$lib/store/user';
+import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
 import Layout from '../+layout.svelte';
 
 vi.mock('svelte');
@@ -28,6 +29,7 @@ vi.mock(
     updateTheme: vi.fn(),
   }),
 );
+vi.mock('$lib/unknown-user-uuid');
 
 describe('layout', () => {
   beforeEach(() => {
@@ -55,6 +57,11 @@ describe('layout', () => {
       InjectionToken.ThemeService,
       { isDarkTheme, subscribeToTheme, updateTheme },
     );
+  });
+
+  it('should initialize unknown user UUID', () => {
+    render(Layout);
+    expect(vi.mocked(initUnknownUserUuid)).toHaveBeenCalled();
   });
 
   describe('on mount', () => {

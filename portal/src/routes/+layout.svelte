@@ -14,11 +14,13 @@
   import { page } from '$app/stores';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { user } from '$lib/store/user';
+  import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
 
-  /**
-   * Регистрация сервиса управления темой в сервисе внедрения зависмостей
-   */
+  // Регистрация сервиса управления темой в сервисе внедрения зависмостей
   provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+
+  // Инициализация идентификатора неаутентифицированного пользователя
+  initUnknownUserUuid();
 
   /**
    * В браузере проверка аутентифицированностии пользователя и его

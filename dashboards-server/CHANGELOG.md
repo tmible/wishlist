@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.0 Розовый куст (2025-02-03)
+<img width="128" height="128" src="release-images/1.2.0.png"/>
+
+https://github.com/tmible/wishlist/compare/accd4c3..master
+
+
 ## 1.1.4 Серебряный рассвет (2024-11-14)
 <img width="128" height="128" src="release-images/1.1.4.png"/>
 
-https://github.com/tmible/wishlist/compare/00864bd..master
+https://github.com/tmible/wishlist/compare/00864bd..accd4c3
 
 
 ## 1.1.3 Великий Коба (2024-11-14)

@@ -1,11 +1,29 @@
 <!-- Svelte компонет -- главная страница неавторизованной зоны (лендинг) -->
 <script>
+  import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import { md } from '$lib/store/breakpoints.js';
   import { user } from '$lib/store/user';
   import Cards from './cards.svelte';
   import CardsSwiper from './cards-swiper.svelte';
+
+  // Отправка на сервер действия посещения лендинга
+  onMount(async () => {
+    if (!$user.isAuthenticated) {
+      await fetch(
+        '/api/actions',
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json;charset=utf-8' },
+          body: JSON.stringify({
+            timestamp: Date.now(),
+            action: 'landing visit',
+          }),
+        },
+      );
+    }
+  });
 </script>
 
 <svelte:head>
