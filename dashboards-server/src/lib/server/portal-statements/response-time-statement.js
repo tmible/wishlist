@@ -21,5 +21,6 @@ export const initPortalResponseTimeStatement = () => provide(
       WHERE (msg LIKE 'request%' OR msg LIKE 'response%') AND time > ?
     )
     WHERE responseTime IS NOT NULL
+    ORDER BY time
   `),
 );

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.2 Грозный ураган (2025-02-03)
+<img width="128" height="128" src="release-images/1.2.2.png"/>
+
+https://github.com/tmible/wishlist/compare/e876c3c..master
+
+
 ## 1.2.1 Могучее величество (2025-02-03)
 <img width="128" height="128" src="release-images/1.2.1.png"/>
 
-https://github.com/tmible/wishlist/compare/746fa01..master
+https://github.com/tmible/wishlist/compare/746fa01..e876c3c
 
 
 ## 1.2.0 Розовый куст (2025-02-03)
