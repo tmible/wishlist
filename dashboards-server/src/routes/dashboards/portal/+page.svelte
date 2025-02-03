@@ -41,7 +41,7 @@
     </Card.Root>
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6 h-full flex items-center justify-center">
-        Воронка авторизации:
+        Воронка аутентификации:
         {data.authenticationFunnel ? `${(data.authenticationFunnel * 100).toFixed(2)}%` : ''}
       </Card.Content>
     </Card.Root>

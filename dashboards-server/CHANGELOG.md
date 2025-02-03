@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.1 Могучее величество (2025-02-03)
+<img width="128" height="128" src="release-images/1.2.1.png"/>
+
+https://github.com/tmible/wishlist/compare/746fa01..master
+
+
 ## 1.2.0 Розовый куст (2025-02-03)
 <img width="128" height="128" src="release-images/1.2.0.png"/>
 
-https://github.com/tmible/wishlist/compare/accd4c3..master
+https://github.com/tmible/wishlist/compare/accd4c3..746fa01
 
 
 ## 1.1.4 Серебряный рассвет (2024-11-14)

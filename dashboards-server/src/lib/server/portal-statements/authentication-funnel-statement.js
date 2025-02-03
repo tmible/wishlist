@@ -24,7 +24,7 @@ export const initPortalAuthenticationFunnelStatement = () => provide(
       WHERE action = 'authentication' AND timestamp > $periodStart
     )
     SELECT
-      SUM(CASE WHEN authentications.unknownUserUuid IS NULL THEN 1 ELSE 0 END) AS authentications,
+      SUM(CASE WHEN authentications.unknownUserUuid IS NULL THEN 0 ELSE 1 END) AS authentications,
       COUNT (*) landingVisits
     FROM landingVisits
     LEFT JOIN authentications
