@@ -11,7 +11,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "vite build && pnpm \"include pino SQLite worker to build\"",
+		"include pino SQLite worker to build": "cp src/lib/server/pino-sqlite-transport.worker.js build/server/chunks",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
