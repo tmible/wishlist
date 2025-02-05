@@ -37,14 +37,13 @@ export const dropPersistentSession = async (ctx) => {
  * @async
  */
 const getPersistentSessionFromDB = async (db, ctx, key) => {
-  try {
-    return await db.get(key);
-  } catch (e) {
-    if (e.code !== 'LEVEL_NOT_FOUND') {
-      throw e;
-    }
-    await dropPersistentSession(ctx);
+  const persistentSession = await db.get(key);
+
+  if (persistentSession) {
+    return persistentSession;
   }
+
+  await dropPersistentSession(ctx);
 
   return db.get(key);
 };

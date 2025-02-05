@@ -45,7 +45,6 @@ describe('persistent session', () => {
 
       beforeEach(async () => {
         ctx = { session: {} };
-        when(db.get(sessionKey), { times: 1 }).thenReject({ code: 'LEVEL_NOT_FOUND' });
         await middleware(ctx, next);
       });
 
@@ -56,11 +55,6 @@ describe('persistent session', () => {
       it('should get default value', () => {
         verify(db.get(sessionKey), { times: 2 });
       });
-    });
-
-    it('should throw other errors', async () => {
-      when(db.get(sessionKey)).thenReject(new Error('other error'));
-      await assert.rejects(() => middleware(ctx, next), new Error('other error'));
     });
 
     it('should define \'persistent\' property', async () => {
@@ -83,6 +77,7 @@ describe('persistent session', () => {
     });
 
     it('should not put session to DB if not touched after next()', async () => {
+      when(db.get(sessionKey)).thenResolve({});
       await middleware(ctx, next);
       verify(db.put(), { times: 0, ignoreExtraArgs: true });
     });
@@ -100,6 +95,7 @@ describe('persistent session', () => {
     });
 
     it('should not put session to DB if not touched after next() error', async () => {
+      when(db.get(sessionKey)).thenResolve({});
       try {
         await middleware(ctx, () => Promise.reject());
       } catch {

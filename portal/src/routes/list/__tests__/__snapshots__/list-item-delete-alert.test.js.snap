@@ -61,7 +61,7 @@ exports[`list item delete alert > opened > on confirm button click > should clos
 exports[`list item delete alert > opened > should be displayed 1`] = `
 <body
   data-melt-scroll-lock=""
-  style="overflow: hidden;"
+  style="overflow: hidden; padding-right: calc(+ 1024px);"
 >
   <div>
     <button

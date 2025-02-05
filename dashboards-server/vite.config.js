@@ -1,7 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { configDefaults, defineConfig } from 'vitest/config';
 
-
 export default defineConfig(({ mode }) => ({
   plugins: [ sveltekit() ],
   resolve: {

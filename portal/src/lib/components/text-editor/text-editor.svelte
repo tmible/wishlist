@@ -107,7 +107,7 @@
 </script>
 
 <div bind:this={element} class="contents" />
-<textarea {name} class="hidden" value={currentValue} />
+<textarea {name} class="hidden" value={currentValue} data-testid="not-displayed-textarea" />
 <FormattingMenu {editor} />
 
 <style>

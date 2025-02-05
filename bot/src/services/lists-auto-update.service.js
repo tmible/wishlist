@@ -31,14 +31,7 @@ import { persistentSession } from '@tmible/wishlist-bot/persistent-session';
  * @async
  */
 const addChatToAutoUpdate = async (db, userid, chat) => {
-  let current = [];
-  try {
-    current = await db.get(userid);
-  } catch (e) {
-    if (e.code !== 'LEVEL_NOT_FOUND') {
-      throw e;
-    }
-  }
+  const current = await db.get(userid) ?? [];
   if (new Set(current.map(({ id }) => id)).has(chat.id)) {
     return;
   }

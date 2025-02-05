@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.4 Зелёный ультрамариновый океан. (2025-02-05)
+<img width="128" height="128" src="release-images/3.4.4.png"/>
+
+https://github.com/tmible/wishlist/compare/c1bf540..master
+
+
 ## 3.4.3 Величественный закат. (2025-02-03)
 <img width="128" height="128" src="release-images/3.4.3.png"/>
 
-https://github.com/tmible/wishlist/compare/accd4c3..master
+https://github.com/tmible/wishlist/compare/accd4c3..c1bf540
 
 
 ## 3.4.2 Великий Мастер (2024-11-14)

@@ -18,7 +18,7 @@ describe('text editor', () => {
     editor.unregisterPlugin(BubbleMenu.options.pluginKey);
     editor.commands.setContent('<b>bold content</b>\nplain <i>and italic</i>');
     await act();
-    const textarea = screen.getByRole('textbox');
+    const textarea = screen.getByTestId('not-displayed-textarea');
     expect(textarea.value).toMatchSnapshot();
   });
 });

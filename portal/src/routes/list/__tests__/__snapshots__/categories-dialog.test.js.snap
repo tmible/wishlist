@@ -30,7 +30,7 @@ exports[`categories dialog > should be rendered closed 1`] = `
 exports[`categories dialog > should be rendered opened 1`] = `
 <body
   data-melt-scroll-lock=""
-  style="overflow: hidden;"
+  style="overflow: hidden; padding-right: calc(+ 1024px);"
 >
   <div>
     <button

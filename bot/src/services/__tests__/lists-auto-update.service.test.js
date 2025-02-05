@@ -55,7 +55,6 @@ describe('lists auto update service', () => {
     it('should cancel auto update if list was added to persistent session', async () => {
       ctx.state.autoUpdate = { userid: 'userid' };
       next = () => ctx.session.persistent = { lists: { listId: {} } };
-      when(db.get('listId')).thenReject({ code: 'LEVEL_NOT_FOUND' });
 
       await middleware(ctx, next);
 
@@ -72,7 +71,6 @@ describe('lists auto update service', () => {
       ctx.chat.type = 'chatType';
       ctx.session.persistent = { lists: { 'listId 1': {} } };
       next = () => ctx.session.persistent.lists['listId 2'] = {};
-      when(db.get('listId 2')).thenReject({ code: 'LEVEL_NOT_FOUND' });
 
       await middleware(ctx, next);
 
@@ -91,7 +89,6 @@ describe('lists auto update service', () => {
     it('should add chat from state', async () => {
       ctx.chat.type = 'chatType';
       ctx.state.autoUpdate = { shouldAddChat: 'listId' };
-      when(db.get('listId')).thenReject({ code: 'LEVEL_NOT_FOUND' });
 
       await middleware(ctx, next);
 
