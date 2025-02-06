@@ -1,4 +1,3 @@
-// eslint-disable-next-line unicorn/import-style -- Почему-то отключение в конфиге не работает
 import { resolve } from 'node:path';
 import { provide } from '@tmible/wishlist-common/dependency-injector';
 import pino from 'pino';

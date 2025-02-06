@@ -67,6 +67,7 @@ const constructStyle = (hue1, hue2, saturation, lightness) => {
 export const generateGradient = (isDark) => {
   const hue1 = getRandomArbitrary(...HUE_MIN_MAX);
   const hue2 = (
+    // eslint-disable-next-line sonarjs/pseudo-random -- Просто генерация градиента
     hue1 + ([ -1, 1 ][Math.round(Math.random())] * getRandomArbitrary(...HUE_DIFF_MIN_MAX))
   ) % 360;
   const saturation = getRandomArbitrary(...SATURATION_MIN_MAX);

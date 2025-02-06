@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-/* eslint-disable no-unused-vars -- импорт для кэширования,
+/* eslint-disable no-unused-vars, sonarjs/unused-import -- импорт для кэширования,
   иначе тесты не пройдут по времени из-за долгого импорта внутри */
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
@@ -9,7 +9,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { goto } from '$app/navigation';
 import MenuCache from '../menu.svelte';
 
-/* eslint-enable no-unused-vars */
+/* eslint-enable no-unused-vars, sonarjs/unused-import */
 
 vi.mock('$app/navigation');
 vi.mock('$lib/store/list', () => ({ list: writable([{}]) }));

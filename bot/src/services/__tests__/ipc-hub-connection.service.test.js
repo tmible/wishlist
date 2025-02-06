@@ -15,7 +15,7 @@ const [
 ]);
 
 const connectToIPCHub = await import(
-  '../ipc-hub-connection.service.js'
+  '../ipc-hub-connection.service.js',
 ).then((module) => module.default);
 
 describe('IPC hub connection service', () => {

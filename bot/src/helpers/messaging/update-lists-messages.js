@@ -98,19 +98,26 @@ const checkIfMessageChanged = (messageToEdit, message) => {
  * сообщениях и в отправляемых с помощью алгоритма [Нидлмана-Вунша]{@link nwAlign}
  * с такими [параметрами]{@link NWAlignOptions}, чтобы в первой последовательности не было
  * пропусков, так как в отправленные ранее сообщения невозможно вклинить новые.
- * Оба массива сообщений приводятся к строкам, где каждому идентификатору подарка
+ * Если количество сообщений одинаковое, строка выравнивания конструируется на месте.
+ * Иначе оба массива сообщений приводятся к строкам, где каждому идентификатору подарка
  * ставится в соответствие уникальный символ
  * @function alignItemsIds
  * @param {object[]} messagesToEdit Отправленные ранее сообщения
  * @param {Message[]} messages Отправляемые сообщения
- * @returns {string} Строка выравнивания. Содержит символы `=`, `!`, `-`.
- * `=` обозначает равенство идентификаторов, `!` -- различие,
- * `-` -- пропуск очередного идентификатора из уже отправленных сообщений.
+ * @returns {Promise<string>} Строка выравнивания. Содержит символы `=`, `!`, `-`.
+ * `=` обозначает равенство идентификаторов, `!` — различие,
+ * `-` — пропуск очередного идентификатора из уже отправленных сообщений.
  * Возможен ещё `+`, обозначающий пропуск очередного идентификатора из отправляемых сообщений,
- * но в этом контексте его появление -- баг
+ * но в этом контексте его появление — баг
  * @async
  */
 const alignItemsIds = async (messagesToEdit, messages) => {
+  if (messagesToEdit.length === messages.length) {
+    return messagesToEdit.map(
+      ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
+    ).join('');
+  }
+
   const itemsIdsMap = new Map(messagesToEdit.map(({ itemId }, i) => [ itemId, i ]));
 
   for (const { itemId } of messages) {
@@ -128,7 +135,6 @@ const alignItemsIds = async (messagesToEdit, messages) => {
 
   return representation;
 };
-
 
 /**
  * Проверка сообщения на наличие имзенений после отправки телеграму запроса на редатирование
@@ -152,9 +158,7 @@ const handleEditingError = (e, messageToEdit, message) => {
 
 /**
  * 1. Построение выравнивания последовательностей идентификаторов в отправленных ранее сообщениях
- * и отправляемых сообщениях. Если количество сообщений одинаковое, строка выравнивания
- * (см. возвращаемое значение {@link alignItemsIds}) конструируется на месте, если различное,
- * [используется алгоритм Нидлмана-Вушна]{@link alignItemsIds}.
+ * и отправляемых сообщениях {@link alignItemsIds}.
  * 2. На основании выравнивания редактирование или удаление сообщений с обновалением онформации
  * в персистентной сессии.
  * @function editMessages
@@ -168,13 +172,7 @@ const editMessages = async (ctx, userid, messages) => {
 
   const alignmentRepresentation = messages.length === 0 ?
     messagesToEdit.map(() => '-').join('') :
-    (
-      messagesToEdit.length === messages.length ?
-        messagesToEdit.map(
-          ({ itemId }, i) => (itemId === messages[i].itemId ? '=' : '!'),
-        ).join('') :
-        await alignItemsIds(messagesToEdit, messages)
-    );
+    await alignItemsIds(messagesToEdit, messages);
 
   const sessionPatch = [];
   let messagesIndex = 0;

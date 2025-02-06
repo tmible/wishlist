@@ -148,9 +148,7 @@
    */
   const chartsSelectWidth = (($chartsStore ?? [])
     .reduce(
-      (longestLabelLength, { label }) => (
-        label.length > longestLabelLength ? label.length : longestLabelLength
-      ),
+      (longestLabelLength, { label }) => Math.max(label.length, longestLabelLength),
       0,
     ) ?? 10) * 10;
 

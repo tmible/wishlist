@@ -73,6 +73,8 @@ describe('unknown user UUID', () => {
         setUp();
       });
 
+      /* eslint-disable-next-line sonarjs/assertions-in-tests --
+        Проверки внутри initializationExpectations */
       it('should initialize unknown user UUID', () => {
         initUnknownUserUuid();
         initializationExpectations();

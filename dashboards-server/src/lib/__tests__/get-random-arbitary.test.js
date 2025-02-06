@@ -6,6 +6,6 @@ describe('getRandomArbitrary', () => {
     const min = Math.random() * 100;
     const max = min + (Math.random() * 100);
     const random = getRandomArbitrary(min, max);
-    expect(random >= min && random < max);
+    expect(random).toSatisfy((random) => random >= min && random < max);
   });
 });

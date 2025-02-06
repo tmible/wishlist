@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.4 Величественный ландыш. (2025-02-07)
+<img width="128" height="128" src="release-images/1.2.4.png"/>
+
+https://github.com/tmible/wishlist/compare/e6986b1..master
+
+
 ## 1.2.2 Грозный ураган (2025-02-03)
 <img width="128" height="128" src="release-images/1.2.2.png"/>
 
-https://github.com/tmible/wishlist/compare/e876c3c..master
+https://github.com/tmible/wishlist/compare/e876c3c..e6986b1
 
 
 ## 1.2.1 Могучее величество (2025-02-03)

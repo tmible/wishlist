@@ -172,7 +172,6 @@
                     class="btn btn-ghost"
                     data-testid="cancel-button"
                     on:click={cancelEditingCategory}
-
                   >
                     <Undo2 />
                   </button>
@@ -180,7 +179,6 @@
                     class="btn btn-ghost"
                     data-testid="submit-button"
                     on:click={() => submitEditedCategory(name)}
-
                   >
                     <Save />
                   </button>

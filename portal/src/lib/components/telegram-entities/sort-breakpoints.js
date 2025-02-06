@@ -19,7 +19,6 @@ const compareByOffset = (a, b) => (a.offset === b.offset ? null : a.offset - b.o
  */
 const compareByType = (a, b) => (a.type === b.type ? null : (a.type === 'closing' ? -1 : 1));
 
-// eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
 /**
  * Компаратор точек изменения разметки в тексте по типу соответсвующей сущности. Приоретизация
  * цитат, блоков кода в первую очередь и абзацев во вторую. Открывающие в прямом порядке

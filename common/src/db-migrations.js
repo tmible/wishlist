@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/newline-after-import -- 🤪🤪🤪
 import { readdir, readFile } from 'node:fs/promises';
-// eslint-disable-next-line unicorn/import-style -- Почему-то отключение в конфиге не работает
 import { join } from 'node:path';
 
 /** @typedef {import('better-sqlite3').Database} Database */

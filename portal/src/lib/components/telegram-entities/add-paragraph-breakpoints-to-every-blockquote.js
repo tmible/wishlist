@@ -1,6 +1,5 @@
 /** @typedef {import('./parser.svelte').Breakpoint} Breakpoint */
 
-// eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
 /**
  * Обеспечение наличия разметки абзацев в каждой цитате. Начала в начале и конца в конце.
  * Функция для использования в {@link Array.prototype.flatMap}

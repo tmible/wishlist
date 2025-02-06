@@ -12,6 +12,8 @@ import build from 'pino-abstract-transport';
  * @returns {Promise<Transform>} Поток для записи лога в БД
  * @async
  */
+/* eslint-disable-next-line unicorn/no-anonymous-default-export --
+  Не импортируется в коде, используется только pino */
 export default async () => {
   const db = new Database(process.env.LOGS_DB_FILE_PATH);
   await migrate(db, process.env.LOGS_DB_MIGRATIONS_PATH);

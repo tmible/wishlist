@@ -30,7 +30,6 @@
     editor.chain().focus()[option.editorAction]().run();
   };
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик начала касания опции меню форматирования.
    * Установка значения isTouchedDirectly в true
@@ -41,7 +40,6 @@
    */
   const onFormattingMenuOptionTouchStart = (option) => option.isTouchedDirectly = true;
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик движения касания опции меню форматирования
    * @function onFormattingMenuOptionTouchMove
@@ -51,7 +49,6 @@
    */
   const onFormattingMenuOptionTouchMove = (option) => option.isTouchedDirectly = false;
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик отмены касания опции меню форматирования
    * @function onFormattingMenuOptionTouchCancel
@@ -61,7 +58,6 @@
    */
   const onFormattingMenuOptionTouchCancel = (option) => option.isTouchedDirectly = false;
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик окончания касания опции меню форматирования
    * @function onFormattingMenuOptionTouchEnd
@@ -89,7 +85,6 @@
     editor.commands.focus();
   };
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик окончания касания опции меню форматирования
    * для настройки ссылки, текст которой не совпадает с адресом
@@ -105,7 +100,6 @@
     textLinkInputValue = editor.getAttributes('text_link').href ?? 'https://';
   };
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик нажатия кнопки удаления или отмены добавления
    * ссылки, текст которой не совпадает с адресом
@@ -120,7 +114,6 @@
     editor.chain().focus().unsetTextLink().run();
   };
 
-  // eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
   /**
    * Обработчик нажатия кнопки добавления или подтверждения
    * изменения ссылки, текст которой не совпадает с адресом

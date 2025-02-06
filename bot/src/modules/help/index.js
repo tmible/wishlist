@@ -52,7 +52,7 @@ const configure = (bot) => {
     await ctx.replyWithMarkdownV2(
       `${
         await import(
-          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/general.const.js`
+          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/general.const.js`,
         ).then((module) => module.default)
       }\n\n${
         SharedHelpSupportSection
@@ -76,7 +76,7 @@ const configure = (bot) => {
       undefined,
       `${
         await import(
-          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/${ctx.match[1]}.const.js`
+          `./constants/sections/${isChatGroup(ctx) ? 'group' : 'default'}/${ctx.match[1]}.const.js`,
         ).then((module) => module.default)
       }\n\n${
         SharedHelpSupportSection

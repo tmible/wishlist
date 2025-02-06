@@ -41,17 +41,28 @@ prompt=$(
   sed "s|%current_timestamp%|$(date +%s)|" |
   tr "\0" "\n"
 )
-release_name=$(
-  curl -L -X POST "https://gigachat.devices.sberbank.ru/api/v1/chat/completions" \
-    -H "Content-Type: application/json" \
-    -H "Accept: application/json" \
-    -H "Authorization: Bearer $access_token" \
-    --data-raw "$prompt" \
-    2>/dev/null |
-  jq -r ".choices[0].message.content" |
-  sed -e "s/^\"\|\"$//g"
-)
-echo "Название релиза от GigaChat — $release_name"
+release_name=""
+while : ; do
+  release_name=$(
+    curl -L -X POST "https://gigachat.devices.sberbank.ru/api/v1/chat/completions" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "Authorization: Bearer $access_token" \
+      --data-raw "$prompt" \
+      2>/dev/null |
+    jq -r ".choices[0].message.content" |
+    sed -e "s/^\"\|\"$//g"
+  )
+  echo "Название релиза от GigaChat — $release_name"
+  is_release_name_accepted=""
+  while ! echo "|y|n|" | grep "|${is_release_name_accepted}|" > /dev/null; do
+    read -p "Название релиза годится? (y|n) " is_release_name_accepted < /dev/tty
+  done
+  if [[ $is_release_name_accepted == "y" ]]; then
+    break
+  fi
+  echo "Запрашиваю у GigaChat название релиза ещё раз"
+done
 
 echo -n "Запрашиваю у Kandinsky изображение релиза"
 model_id=$(
@@ -81,7 +92,7 @@ if [[ $task_uuid == null ]]; then
   echo -e "\nИзображение релиза от Kandinsky не получено"
   exit 1
 fi
-for (( attempts = 20; attempts > 0; attempts-- )); do
+for (( attempts = 30; attempts > 0; attempts-- )); do
   spinner[0]="—"
   spinner[1]="\\"
   spinner[2]="|"

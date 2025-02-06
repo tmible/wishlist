@@ -3,18 +3,18 @@
 /** @typedef {import('@tiptap/core').JSONContent} JSONContent */
 /** @typedef {import('$lib/components/telegram-entities/parser.svelte').Entity} Entity */
 /**
- * @template ArrayType
  * @typedef
  * {ArrayType extends readonly (infer ElementType)[] ? ElementType : never}
  * ArrayElement<ArrayType extends readonly unknown[]>
  */
-// eslint-disable-next-line no-secrets/no-secrets -- Просто длинное название
 /**
  * Уплощёный узел дерева текстового редактора
  * @typedef {object} FlatChild
  * @property {string[]} marks Набор активных меток
  * //Будет работать только в TS
- * //@property {Pick<ArrayElement<Pick<JSONContent, 'marks'>>, 'type'>[]} marks Набор активных меток
+ * //@property
+ * //{Pick<ArrayElement<Pick<JSONContent, 'marks'>>, 'type'>[]}
+ * //marks Набор активных меток
  * @property {Pick<JSONContent, 'text'>} text Содержащийся в узле текст
  * @property {Pick<JSONContent, 'attrs'>} attrs Атрибуты для меток
  */
@@ -79,6 +79,7 @@ const preAndTextLinksMapper = (entity) => {
   if (
     entity.type === 'text_link' &&
     !entity.url.endsWith('/') &&
+    // eslint-disable-next-line sonarjs/slow-regex -- Оптимизировать регулярное выражение
     /https:\/\/[^/]+$|\/[^.]+$/.test(entity.url)
   ) {
     entity.url += '/';

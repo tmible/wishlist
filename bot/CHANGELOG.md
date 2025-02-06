@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.6 Задумчивый ёж (2025-02-07)
+<img width="128" height="128" src="release-images/3.4.6.png"/>
+
+https://github.com/tmible/wishlist/compare/e6986b1..master
+
+
 ## 3.4.4 Зелёный ультрамариновый океан. (2025-02-05)
 <img width="128" height="128" src="release-images/3.4.4.png"/>
 
-https://github.com/tmible/wishlist/compare/c1bf540..master
+https://github.com/tmible/wishlist/compare/c1bf540..e6986b1
 
 
 ## 3.4.3 Величественный закат. (2025-02-03)

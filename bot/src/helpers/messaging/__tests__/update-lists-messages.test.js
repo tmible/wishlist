@@ -9,7 +9,7 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 const { inject } = await replaceModule('@tmible/wishlist-common/dependency-injector');
 
 const updateListsMessages = await import(
-  '../update-lists-messages.js'
+  '../update-lists-messages.js',
 ).then(
   (module) => module.default,
 );

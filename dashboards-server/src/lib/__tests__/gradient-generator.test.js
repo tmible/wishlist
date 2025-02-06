@@ -7,8 +7,11 @@ const gradientMatcher = {
   saturation: expect.any(Number),
   lightness: expect.any(Number),
   style: expect.stringMatching(
-    /* eslint-disable-next-line @stylistic/js/max-len -- Большая константа */
-    /^linear-gradient\(135deg, hsl\(-?\d+(\.\d+)? \d+(\.\d+)? \d+(\.\d+)?\), hsl\(-?\d+(\.\d+)? \d+(\.\d+)? \d+(\.\d+)?\)\)$/,
+    /* eslint-disable-next-line sonarjs/regex-complexity --
+      Соответствие строке linear-gradient(135deg, hsl(a1 b1 b2), hsl(a2 b3 b4)),
+      где a1 и a2 -- действительные числа,
+      b1, b2, b3, b4 -- действительные неотрициательные числа */
+    /^linear-gradient\(135deg(?:, hsl\(-?(?:\d+(?:\.\d+)? ){2}\d+(?:\.\d+)?\)){2}\)$/,
   ),
 };
 
