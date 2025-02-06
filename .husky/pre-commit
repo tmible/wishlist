@@ -1,7 +1,9 @@
 run_checks() {
   cd $1
   pnpm lint
-  pnpm test:prod
+  if [[ $(pnpm pkg get scripts.test:prod) != "{}" ]]; then
+    pnpm test:prod
+  fi
   cd - > /dev/null
 }
 

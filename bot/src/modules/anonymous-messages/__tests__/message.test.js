@@ -143,13 +143,11 @@ describe('anonymous-messages/message module', () => {
           chat: {},
           message: { text: 'text' },
           sendMessage: mock.fn(),
-          /* eslint-disable @stylistic/js/object-curly-newline -- Переносы строк для читаемости */
           session: {
             messagePurpose: {
               type: MessagePurposeType.AnonymousMessageRecieverUsername,
             },
           },
-          /* eslint-enable @stylistic/js/object-curly-newline */
         };
       });
 

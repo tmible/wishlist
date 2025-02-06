@@ -272,13 +272,11 @@ describe('wishlist/list module', () => {
           from: { id: 'fromId' },
           message: { text: 'text' },
           reply: () => {},
-          /* eslint-disable @stylistic/js/object-curly-newline -- Переносы строк для читаемости */
           session: {
             messagePurpose: {
               type: MessagePurposeType.WishlistOwnerUsername,
             },
           },
-          /* eslint-enable @stylistic/js/object-curly-newline */
         });
         when(
           getUseridFromInput(),

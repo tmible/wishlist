@@ -43,11 +43,13 @@ describe('wishlist/[id] endpoint', () => {
     let ipcConnection;
 
     beforeEach(() => {
-      request = { json: vi.fn(() => ({
-        name: 'name',
-        categoryId: null,
-        userid: 'userid',
-      })) };
+      request = {
+        json: vi.fn(() => ({
+          name: 'name',
+          categoryId: null,
+          userid: 'userid',
+        })),
+      };
       db = {
         transaction: vi.fn(() => vi.fn()),
       };

@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.7 Яркий солнечный день. (2025-02-07)
+<img width="128" height="128" src="release-images/3.4.7.png"/>
+
+https://github.com/tmible/wishlist/compare/e96113f..master
+
+
 ## 3.4.6 Задумчивый ёж (2025-02-07)
 <img width="128" height="128" src="release-images/3.4.6.png"/>
 
-https://github.com/tmible/wishlist/compare/e6986b1..master
+https://github.com/tmible/wishlist/compare/e6986b1..e96113f
 
 
 ## 3.4.4 Зелёный ультрамариновый океан. (2025-02-05)

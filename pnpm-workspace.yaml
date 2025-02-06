@@ -4,3 +4,4 @@ packages:
   - "portal"
   - "common"
   - "hub"
+  - "eslint-config"

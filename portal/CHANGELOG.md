@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.3 Негативный интроверт. (2025-02-07)
+<img width="128" height="128" src="release-images/1.4.3.png"/>
+
+https://github.com/tmible/wishlist/compare/e96113f..master
+
+
 ## 1.4.2 Блестящий фарфоровый чайник. (2025-02-07)
 <img width="128" height="128" src="release-images/1.4.2.png"/>
 
-https://github.com/tmible/wishlist/compare/e6986b1..master
+https://github.com/tmible/wishlist/compare/e6986b1..e96113f
 
 
 ## 1.4.1 Звездное небо. (2025-02-05)

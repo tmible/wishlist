@@ -8,13 +8,9 @@ describe('configureModules', () => {
   beforeEach(() => modules = [{
     configure: mock.fn(),
     messageHandler: mock.fn(),
-  /* eslint-disable @stylistic/js/object-curly-newline --
-    Переносы строк для консистентности с другими элементами массива
-  */
   }, {
     configure: mock.fn(),
   }]);
-  /* eslint-enable @stylistic/js/object-curly-newline */
 
   afterEach(() => mock.reset());
 
