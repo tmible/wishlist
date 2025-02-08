@@ -19,7 +19,6 @@ import config from "./config.js";
 export default [
   js.configs.recommended,
   eslintComments.recommended,
-  security.configs.recommended,
   jsdoc.configs["flat/recommended-error"],
   sonarjs.configs.recommended,
   unicorn.configs["flat/recommended"],
@@ -38,7 +37,6 @@ export default [
       "simple-import-sort": simpleImportSort,
       promise,
       "no-secrets": noSecrets,
-      security,
       jsdoc,
       // sonarjs,
       // unicorn,
@@ -62,8 +60,8 @@ export default [
 
       /* Suggestions */
       "arrow-body-style": "error",
-      // annoys with autofix on file saving, but useful in general
-      // "capitalized-comments": [ "error", "always" ],
+      // configured to be ignored by editor
+      "capitalized-comments": [ "error", "always", { ignorePattern: "[a-zA-Z].*" } ],
       "consistent-return": "error",
       "curly": "error",
       "default-case": "error",
@@ -150,14 +148,17 @@ export default [
 
       /* @stylistic/js */
       "@stylistic/js/array-bracket-newline": [ "error", "consistent" ],
-      "@stylistic/js/array-bracket-spacing": [
-        "error",
-        "always",
-        {
-          objectsInArrays: false,
-          arraysInArrays: false,
-        },
-      ],
+      // produces too many eslint-disable comments
+      // does require no space if object or array is first or last element in array
+      // even if on the other side of array is variable with space between it and brace
+      // "@stylistic/js/array-bracket-spacing": [
+      //   "error",
+      //   "always",
+      //   {
+      //     objectsInArrays: false,
+      //     arraysInArrays: false,
+      //   },
+      // ],
       "@stylistic/js/array-element-newline": [ "error", "consistent" ],
       "@stylistic/js/arrow-parens": "error",
       "@stylistic/js/arrow-spacing": "error",
@@ -244,7 +245,7 @@ export default [
       "import/namespace": "error",
       "import/no-absolute-path": "error",
       "import/no-cycle": "error",
-      "import/no-internal-modules": "error",
+      "import/no-internal-modules": "off",
       "import/no-relative-packages": "error",
       "import/no-self-import": "error",
       // too many false positive reports
@@ -329,6 +330,19 @@ export default [
     },
   },
   {
+    ignores: [ "**/**.test.js", "**/__tests__/**" ],
+
+    ...security.configs.recommended,
+
+    rules: {
+      ...security.configs.recommended.rules,
+
+      // configured to notify in editor
+      // produces a lot of mess in CI hence turned off
+      "security/detect-object-injection": "off",
+    },
+  },
+  {
     files: [ "**/**.test.js", "**/__tests__/**" ],
 
     plugins: { "no-only-tests": noOnlyTests },
@@ -342,7 +356,6 @@ export default [
       "sonarjs/no-nested-functions": "off",
       "sonarjs/pseudo-random": "off",
       "unicorn/error-message": "off",
-      "security-node/detect-insecure-randomness": "off",
       "no-only-tests/no-only-tests": "error",
     },
   },

@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-common",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"private": true,
 	"description": "Общие элементы для телеграм бота и портала со списками желаний и сервера с дашбордами для них",
 	"repository": {
@@ -41,11 +41,10 @@
 		"release": "../scripts/release.sh"
 	},
 	"devDependencies": {
-	  "@tmible/eslint-config-wishlist": "workspace:*",
-		"@sveltejs/adapter-auto": "3.2.4",
 		"@sveltejs/kit": "2.5.24",
 		"@sveltejs/package": "2.3.4",
 		"@sveltejs/vite-plugin-svelte": "3.1.1",
+		"@tmible/eslint-config-wishlist": "workspace:*",
 		"@types/eslint": "9.6.1",
 		"@vitest/coverage-v8": "3.0.5",
 		"eslint": "9.19.0",

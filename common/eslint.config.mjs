@@ -22,12 +22,6 @@ export default [
   ...js,
   ...svelte,
   {
-    rules: {
-      /* import */
-      "import/no-internal-modules": [ "error", { allow: [ "constants/*.const.js" ] } ],
-    },
-  },
-  {
     files: [ "**/*.svelte" ],
     languageOptions: { parserOptions: { svelteConfig } },
   },

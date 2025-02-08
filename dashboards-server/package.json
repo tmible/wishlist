@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-dashboards-server",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "private": true,
   "description": "Сервер с дашбордами для телеграм бота со списками желаний",
   "repository": {
@@ -42,12 +42,12 @@
     "tailwind-variants": "0.3.1"
   },
   "devDependencies": {
-    "@tmible/eslint-config-wishlist": "workspace:*",
     "@sveltejs/adapter-node": "5.2.12",
     "@sveltejs/kit": "2.5.24",
     "@sveltejs/vite-plugin-svelte": "3.1.1",
     "@testing-library/svelte": "5.2.6",
     "@testing-library/user-event": "14.6.1",
+    "@tmible/eslint-config-wishlist": "workspace:*",
     "@types/eslint": "9.6.1",
     "@vitest/coverage-v8": "3.0.5",
     "autoprefixer": "10.4.20",

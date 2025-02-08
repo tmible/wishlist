@@ -1,14 +1,8 @@
 <!-- Svelte компонент -- тексторый редактор -->
 <script>
   import { Editor } from '@tiptap/core';
-  /* eslint-disable-next-line
-     import/default, import/no-named-as-default, import/no-named-as-default-member --
-     Ошибка из-за версии eslint */
-  import BubbleMenu from '@tiptap/extension-bubble-menu';
-  /* eslint-disable-next-line
-     import/default, import/no-named-as-default, import/no-named-as-default-member --
-     Ошибка из-за версии eslint */
-  import Placeholder from '@tiptap/extension-placeholder';
+  import { BubbleMenu } from '@tiptap/extension-bubble-menu';
+  import { Placeholder } from '@tiptap/extension-placeholder';
   import { onDestroy, onMount } from 'svelte';
   import { md } from '$lib/store/breakpoints.js';
   import { textEditorConfig } from './config.const.js';

@@ -103,9 +103,6 @@ describe('lists auto update service', () => {
         when(
           db.getMany([ 'listId 1', 'listId 2' ]),
         ).thenResolve(
-        /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-          Пробелы для консистентности с другими элементами массива
-        */
           [ [{ id: 'chatId' }, { id: 'anotherId' }], undefined ],
         );
 
@@ -156,9 +153,6 @@ describe('lists auto update service', () => {
       when(
         db.get('userid'),
       ).thenResolve(
-      /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-        Пробелы для консистентности с другими элементами массива
-      */
         [ ...new Array(3).fill(null).map((_, i) => ({ id: i })), { id: 'chatId' } ],
       );
 
@@ -248,9 +242,6 @@ describe('lists auto update service', () => {
       when(
         db.get('userid'),
       ).thenResolve(
-      /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-        Пробелы для консистентности с другими элементами массива
-      */
         [ ...new Array(3).fill(null).map((_, i) => ({ id: i })), { id: 'chatId' } ],
       );
 

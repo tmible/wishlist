@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.4 Безграничная скорость (2025-02-08)
+<img width="128" height="128" src="release-images/1.4.4.png"/>
+
+https://github.com/tmible/wishlist/compare/fd30564..master
+
+
 ## 1.4.3 Негативный интроверт. (2025-02-07)
 <img width="128" height="128" src="release-images/1.4.3.png"/>
 
-https://github.com/tmible/wishlist/compare/e96113f..master
+https://github.com/tmible/wishlist/compare/e96113f..fd30564
 
 
 ## 1.4.2 Блестящий фарфоровый чайник. (2025-02-07)

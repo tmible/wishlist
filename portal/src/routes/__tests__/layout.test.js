@@ -1,4 +1,3 @@
-/* eslint-disable no-undef -- jsdom -- глобальная переменная тестового окружения */
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
 import { provide } from '@tmible/wishlist-common/dependency-injector';
@@ -34,7 +33,7 @@ vi.mock('$lib/unknown-user-uuid');
 describe('layout', () => {
   beforeEach(() => {
     Object.defineProperty(
-      jsdom.window,
+      globalThis.jsdom.window,
       'matchMedia',
       {
         value: vi.fn().mockReturnValue(true),
@@ -44,7 +43,7 @@ describe('layout', () => {
   });
 
   afterEach(() => {
-    delete jsdom.window.matchMedia;
+    delete globalThis.jsdom.window.matchMedia;
     vi.clearAllMocks();
     cleanup();
   });
@@ -132,4 +131,3 @@ describe('layout', () => {
     expect(goto).toHaveBeenCalledWith('/list');
   });
 });
-/* eslint-enable no-undef */

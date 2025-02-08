@@ -1,5 +1,6 @@
 export default {
   rules: {
+    "capitalized-comments": "off",
     "max-lines": "off",
     "@stylistic/js/array-bracket-spacing": [
       "error",
@@ -24,14 +25,5 @@ export default {
     ],
     "@stylistic/js/quote-props": [ "off" ],
     "@stylistic/js/quotes": [ "error", "double" ],
-    "import/no-internal-modules": [
-      "error",
-      {
-        allow: [
-          // from documentation https://eslint-community.github.io/eslint-plugin-eslint-comments
-          "@eslint-community/eslint-plugin-eslint-comments/configs",
-        ],
-      },
-    ],
   },
 };

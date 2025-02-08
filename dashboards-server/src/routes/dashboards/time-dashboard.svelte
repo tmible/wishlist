@@ -17,15 +17,23 @@
    * @type {'bot' | 'portal' | 'hub'}
    */
   export let service;
+
+  /**
+   * Формирование пути для запроса данных для дашборда
+   * @function formDataUrl
+   * @param {string} chartKey Уникальный ключ графика
+   * @param {number} periodStart Начало периода
+   * @returns {string} Путь запроса
+   */
+  const formDataUrl = (chartKey, periodStart) => (
+    `/api/data/${service}/${chartKey}?periodStart=${periodStart}`
+  );
 </script>
 
-<!-- eslint-disable svelte/mustache-spacing -->
 <LineDashboard
   {data}
   chartsStore={timeDashboardCharts}
-  formDataUrl={
-    (chartKey, periodStart) => `/api/data/${service}/${chartKey}?periodStart=${periodStart}`
-  }
+  {formDataUrl}
   isAutoUpdating={true}
   defaultPeriodSelected={TIME_DASHBOARD_DEFAULT_PERIOD}
   tooltipFormat="D.MM.YYYY H:mm:ss.SSS"
@@ -36,4 +44,3 @@
     },
   }}
 />
-<!-- eslint-enable svelte/mustache-spacing -->

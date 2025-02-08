@@ -5,9 +5,6 @@ import { matchers, object, reset, verify, when } from 'testdouble';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
-/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-      Пробелы для консистентности с другими элементами массива
-    */
 const [ getUseridFromInput, { sendMessageAndMarkItForMarkupRemove } ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/get-userid-from-input'),
   replaceModule('@tmible/wishlist-bot/helpers/middlewares/remove-markup'),

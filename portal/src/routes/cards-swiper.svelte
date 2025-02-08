@@ -15,7 +15,7 @@
   let cards;
 
   /**
-   * Количествоа видимых карточек
+   * Количество видимых карточек
    * @type {number}
    */
   let shownCardsNumber;

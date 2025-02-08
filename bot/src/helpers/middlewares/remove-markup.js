@@ -31,10 +31,6 @@ const sendMethodGuard = (sendMethod) => {
  */
 export const sendMessageAndMarkItForMarkupRemove = async (ctx, sendMethod, ...messageArgs) => {
   const message = await ctx[sendMethodGuard(sendMethod)](...messageArgs);
-
-  /* eslint-disable-next-line require-atomic-updates --
-    Даже после отправки сообщения персистентная сессия определена в контексте
-  */
   ctx.session.persistent.messageForMarkupRemove = {
     id: message.message_id,
     chatId: message.chat.id,

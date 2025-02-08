@@ -17,6 +17,7 @@ const compareByOffset = (a, b) => (a.offset === b.offset ? null : a.offset - b.o
  * @param {Breakpoint} b Вторая сравниваемая точка
  * @returns {-1 | 1 | null} -1, если a раньше b; 1, если b раньше a; null, если типы равны
  */
+// eslint-disable-next-line sonarjs/no-nested-conditional -- Атомарная функциональность
 const compareByType = (a, b) => (a.type === b.type ? null : (a.type === 'closing' ? -1 : 1));
 
 /**

@@ -209,9 +209,6 @@ const editMessages = async (ctx, userid, messages) => {
     }, []),
   );
 
-  /* eslint-disable-next-line require-atomic-updates --
-    Даже после редактирования сообщений персистентная сессия определена в контексте
-  */
   ctx.session.persistent.lists[userid].messagesToEdit = sessionPatch;
 };
 

@@ -79,8 +79,16 @@ const preAndTextLinksMapper = (entity) => {
   if (
     entity.type === 'text_link' &&
     !entity.url.endsWith('/') &&
-    // eslint-disable-next-line sonarjs/slow-regex -- Оптимизировать регулярное выражение
-    /https:\/\/[^/]+$|\/[^.]+$/.test(entity.url)
+    (
+      (
+        entity.url.includes('https://') &&
+        !entity.url.slice(entity.url.lastIndexOf('https://') + 'https://'.length).includes('/')
+      ) ||
+      (
+        entity.url.includes('/') &&
+        !entity.url.slice(entity.url.lastIndexOf('/') + '/'.length).includes('.')
+      )
+    )
   ) {
     entity.url += '/';
   }

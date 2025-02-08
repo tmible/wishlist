@@ -109,9 +109,6 @@ const resendListsMessages = async (
 
   const pinnedMessage = await pinMessage(ctx, userid, titleMessageText);
 
-  /* eslint-disable-next-line require-atomic-updates --
-    Даже после редактирования и закрепления сообщений персистентная сессия определена в контексте
-  */
   ctx.session.persistent.lists[userid] = {
     pinnedMessageId: pinnedMessage.message_id,
     messagesToEdit: [],

@@ -28,9 +28,6 @@ const configure = () => {
     [ Events.Usernames.StoreUsername, StoreUsername ],
     [ Events.Usernames.GetUserHash, GetUserHash ],
     [ Events.Usernames.GetUseridAndUsernameByHash, GetUseridAndUsernameByHash ],
-  /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-    Пробел нужен для консистентности с другими элементами массива
-  */
   ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [

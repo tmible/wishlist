@@ -9,14 +9,10 @@ import LoggingMiddlewareType from '@tmible/wishlist-bot/constants/logging-middle
  * для добавления в лог
  * @constant {Map<LoggingMiddlewareType, string[]>}
  */
-/* eslint-disable @stylistic/js/array-bracket-spacing --
-  Пробелы для консистентности с другими элементами массива
-*/
 const MiddlewareTypeTostartAndFinishMessages = new Map([
   [ LoggingMiddlewareType.AUXILARY_ACTIVITIES, [ 'starting up', 'finished clean up' ] ],
   [ LoggingMiddlewareType.UPDATE_PROCESSING, [ 'start processing update', 'update processed' ] ],
 ]);
-/* eslint-enable @stylistic/js/array-bracket-spacing */
 
 /**
  * Обогащение сообщения информацией об обновлении

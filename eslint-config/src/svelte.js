@@ -9,24 +9,22 @@ export default [
         ...globals.browser,
         ...globals.node,
       },
-      ecmaVersion: 2022,
+      ecmaVersion: "latest",
       sourceType: "module",
       parserOptions: {
         extraFileExtensions: [ ".svelte" ],
       },
     },
 
+    settings: {
+      "import/parsers": {
+        "svelte-eslint-parser": [ ".svelte" ],
+        "espree": [ ".js" ],
+      },
+    },
+
     rules: {
       /* import */
-      "import/no-internal-modules": [
-        "error",
-        {
-          allow: [
-            // svelte specific alias
-            "$lib/**",
-          ],
-        },
-      ],
       // svelte does tree shaking when compiling
       "import/no-namespace": "off",
 

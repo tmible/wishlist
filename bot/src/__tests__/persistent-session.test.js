@@ -6,9 +6,6 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 const sessionKey = 'sessionKey';
 const db = object([ 'get', 'put' ]);
 
-/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-  Пробелы для консистентности с другими элементами массива
-*/
 const [ { inject }, getSessionKey ] = await Promise.all([
   replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceModule('@tmible/wishlist-bot/helpers/get-session-key'),

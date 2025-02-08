@@ -25,9 +25,9 @@
    * @param {number} periodStart Начало периода
    * @returns {string} Путь запроса
    */
-  const formDataUrl = (chartKey, periodStart) => `
-    /api/data/${service}/${chartKey}?periodStart=${periodStart}
-  `;
+  const formDataUrl = (chartKey, periodStart) => (
+    `/api/data/${service}/${chartKey}?periodStart=${periodStart}`
+  );
 </script>
 
 <LineDashboard

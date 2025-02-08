@@ -6,9 +6,8 @@ export default [
   ...node,
   {
     rules: {
-      /* import */
-      // enable if resolver stops treating self reference as external module reference
-      "import/no-internal-modules": "off",
+      // constantly causing problems with telegraf's ctx, therefore overridden
+      "require-atomic-updates": [ "error", { allowProperties: true } ],
 
       /* simple-import-sort */
       "simple-import-sort/imports": [

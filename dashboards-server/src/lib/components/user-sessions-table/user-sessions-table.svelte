@@ -103,16 +103,14 @@
       cell: ({ value }) => dayjs(value).format('DD.MM.YYYY HH:mm:ss.SSS'),
       plugins: {
         colFilter: {
-          /* eslint-disable-next-line arrow-body-style --
-            Для читаемости и соблюдения требований к длине строки */
-          fn: ({ filterValue, value }) => {
-            return !filterValue.start || !filterValue.end || dayjs(value).isBetween(
+          fn: ({ filterValue, value }) => (
+            !filterValue.start || !filterValue.end || dayjs(value).isBetween(
               dayjs(filterValue.start),
               dayjs(filterValue.end),
               'day',
               '[]',
-            );
-          },
+            )
+          ),
         },
       },
     }),

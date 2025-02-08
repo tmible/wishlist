@@ -33,9 +33,10 @@ export default [
       "no-secrets/no-secrets": [
         "error",
         {
+          // ignore function names in jsdoc
           ignoreContent: [
-            / \* @function [a-zA-Z]+/,
-            / \*.+{@link [a-zA-Z]+}/,
+            / \* @function [A-Za-z]+/,
+            / \*.+{@link [A-Za-z]+}/,
           ],
         },
       ],

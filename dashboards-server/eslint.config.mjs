@@ -24,27 +24,6 @@ export default [
   ...js,
   ...svelte,
   {
-    rules: {
-      /* import */
-      "import/no-internal-modules": [
-        "error",
-        {
-          allow: [
-            // official way to import from docs
-            // https://www.chartjs.org/docs/latest/getting-started/integration.html#quick-start
-            "chart.js/auto",
-            // official way to import from docs https://github.com/bolstycjw/chartjs-adapter-dayjs-4
-            "chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm",
-            // official way to import from docs
-            // https://day.js.org/docs/en/plugin/loading-into-nodejs
-            "dayjs/plugin/isBetween",
-            "dayjs/plugin/objectSupport",
-          ],
-        },
-      ],
-    },
-  },
-  {
     files: [ "**/*.svelte" ],
     languageOptions: { parserOptions: { svelteConfig } },
   },

@@ -11,6 +11,7 @@ export const GET = async ({ locals }) => {
 
   let hash = inject(InjectionToken.GetUserHashStatement).get(userid)?.hash;
 
+  // eslint-disable-next-line security/detect-possible-timing-attacks -- Сравнение с null
   if (hash === null) {
     hash = await sha256(userid);
     hash = hash.slice(0, 7);

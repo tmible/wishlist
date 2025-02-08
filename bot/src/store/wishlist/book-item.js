@@ -19,7 +19,6 @@ let statements;
  */
 const prepare = () => {
   const db = inject(InjectionToken.Database);
-  /* eslint-disable @stylistic/js/array-bracket-spacing -- Форматирование по аналогии с {} */
   statements = [`
     INSERT INTO participants
     SELECT id, ? FROM list WHERE id = ? AND state = ${ListItemState.FREE}
@@ -28,7 +27,6 @@ const prepare = () => {
     SET state = ${ListItemState.BOOKED}
     WHERE id = ? AND state = ${ListItemState.FREE}
   `].map((statement) => db.prepare(statement));
-  /* eslint-enable @stylistic/js/array-bracket-spacing */
 };
 
 /**

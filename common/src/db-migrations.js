@@ -25,7 +25,7 @@ const migrate = async (db, migrationsPath) => {
       db.exec(migration);
       db.pragma(`user_version = ${i}`);
     /* eslint-disable-next-line security/detect-non-literal-fs-filename --
-      Имя папки хранится в переменной окружения, названия файло читаются из неё же,
+      Имя папки хранится в переменной окружения, названия файлов читаются из неё же,
       никакого пользовательского ввода -- должно быть безопасно. Особенно с учётом того,
       что база данных, к которой применяются миграции, тоже локальная */
     })(await readFile(join(migrationsPath, migrations[i - 1]), 'utf8'));

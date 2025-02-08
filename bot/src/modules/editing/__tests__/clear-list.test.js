@@ -9,9 +9,6 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 const emit = func();
 const bot = object([ 'command', 'action' ]);
 
-/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-  Пробелы для консистентности с другими элементами массива
-*/
 const [ isChatGroup, { inject } ] = await Promise.all([
   replaceModule('@tmible/wishlist-bot/helpers/is-chat-group'),
   replaceModule('@tmible/wishlist-common/dependency-injector'),

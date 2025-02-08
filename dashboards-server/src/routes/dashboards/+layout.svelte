@@ -45,7 +45,8 @@
 </script>
 
 {#if $isAuthenticated}
-  <!-- eslint-disable svelte/no-inline-styles -->
+  <!-- eslint-disable svelte/no-inline-styles --
+    Нужны цвета из переменных, которые используются в других местах в коде -->
   <div
     style:--success-color={SUCCESS_COLOR}
     style:--warning-color="#ffbc42"

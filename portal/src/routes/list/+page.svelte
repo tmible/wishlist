@@ -1,9 +1,6 @@
 <!-- Svelte компонент -- страница со списком, главная страница авторизованной зоны -->
 <script>
-  /* eslint-disable-next-line
-     import/default, import/no-named-as-default, import/no-named-as-default-member --
-     Ошибка из-за версии eslint */
-  import Sortable from 'sortablejs';
+  import * as Sortable from 'sortablejs';
   import { goto } from '$app/navigation';
   import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
   import { list } from '$lib/store/list';

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.2 Безграничная фантазия (2025-02-08)
+<img width="128" height="128" src="release-images/1.2.2.png"/>
+
+https://github.com/tmible/wishlist/compare/fd30564..master
+
+
 ## 1.2.1 Безутешное прощание (2025-02-07)
 <img width="128" height="128" src="release-images/1.2.1.png"/>
 
-https://github.com/tmible/wishlist/compare/e6986b1..master
+https://github.com/tmible/wishlist/compare/e6986b1..fd30564
 
 
 ## 1.2.0 Зимний Урожай (2024-11-11)

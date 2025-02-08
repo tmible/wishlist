@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.8 Блестящая идиллия (2025-02-08)
+<img width="128" height="128" src="release-images/3.4.8.png"/>
+
+https://github.com/tmible/wishlist/compare/fd30564..master
+
+
 ## 3.4.7 Яркий солнечный день. (2025-02-07)
 <img width="128" height="128" src="release-images/3.4.7.png"/>
 
-https://github.com/tmible/wishlist/compare/e96113f..master
+https://github.com/tmible/wishlist/compare/e96113f..fd30564
 
 
 ## 3.4.6 Задумчивый ёж (2025-02-07)

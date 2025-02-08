@@ -35,6 +35,8 @@ const locatePackage = async (modulePackage) => {
     const absoluteModulePath = resolve(prefix, 'node_modules', modulePackage);
     return [
       absoluteModulePath,
+      /* eslint-disable-next-line security/detect-non-literal-fs-filename --
+        Используется только при разработке */
       JSON.parse(await readFile(resolve(absoluteModulePath, 'package.json'), 'utf8')).exports,
     ];
   }
@@ -86,7 +88,7 @@ const matchExportAlias = (moduleAlias, modulePackage, exportAliases) => {
  * указанному адресу
  */
 const replaceModule = async (moduleAlias, moduleMocks) => {
-  const [ , modulePackage ] = /^((?:@[\w-]+\/)?[\w-]+)\//.exec(moduleAlias);
+  const [ , modulePackage ] = /^(@[\w-]*\/[\w-]*|[\w-]*)\//.exec(moduleAlias);
   const [ absoluteModulePath, exportAliases ] = await locatePackage(modulePackage);
 
   if (!exportAliases || !absoluteModulePath) {

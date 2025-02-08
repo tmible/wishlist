@@ -21,9 +21,6 @@ const configure = () => {
     [ Events.Wishlist.BookItem, BookItem ],
     [ Events.Wishlist.CooperateOnItem, CooperateOnItem ],
     [ Events.Wishlist.RetireFromItem, RetireFromItem ],
-  /* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-    Пробел нужен для консистентности с другими элементами массива
-  */
   ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [

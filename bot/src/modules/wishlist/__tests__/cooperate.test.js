@@ -5,9 +5,6 @@ import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 
 const emit = func();
 
-/* eslint-disable-next-line @stylistic/js/array-bracket-spacing --
-  Пробелы для консистентности с другими элементами массива
-*/
 const [ { inject }, sendList ] = await Promise.all([
   replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('../helpers/send-list.js').then((module) => module.default),

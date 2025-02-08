@@ -34,6 +34,10 @@ const prepare = () => {
 const eventHandler = async (userid) => {
   let hash = statements.get.get(userid)?.hash;
 
+  /* eslint-disable-next-line
+    security/detect-possible-timing-attacks,
+    security-node/detect-possible-timing-attacks --
+    Сравнение с null */
   if (hash === null) {
     hash = await sha256(userid);
     hash = hash.slice(0, 7);

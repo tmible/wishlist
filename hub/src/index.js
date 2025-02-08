@@ -10,7 +10,11 @@ import pino from 'pino';
 /** @typedef {import('node:net').Socket} Socket */
 
 const removeSocket = () => {
+  /* eslint-disable-next-line security/detect-non-literal-fs-filename --
+    Переменная окружения, никакого пользовательского ввода */
   if (existsSync(process.env.SOCKET_PATH)) {
+    /* eslint-disable-next-line security/detect-non-literal-fs-filename --
+      Переменная окружения, никакого пользовательского ввода */
     unlinkSync(process.env.SOCKET_PATH);
   }
 };
@@ -43,6 +47,8 @@ const clients = new Map([]);
  * При получении сообщения от клиента оно транслируется всем другим клиентам
  */
 server.on('connection', (socket) => {
+  /* eslint-disable-next-line sonarjs/pseudo-random, security-node/detect-insecure-randomness --
+    Только для внутреннего использования */
   const id = Math.random().toString(16).slice(2);
   clients.set(id, socket);
   logger.info({ clientId: id }, 'client connected');

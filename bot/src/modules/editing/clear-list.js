@@ -75,7 +75,6 @@ const clearListCommandHandler = async (eventBus, ctx) => {
     LIST_CLEARING_MESSAGE_INLINE_KEYBOARD,
   );
 
-  /* eslint-disable-next-line require-atomic-updates -- Сессия всегда определена в контексте */
   ctx.session.listClearing = {
     list,
     listItemsToDeleteIds: [],

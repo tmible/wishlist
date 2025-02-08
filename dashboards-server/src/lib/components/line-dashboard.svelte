@@ -3,9 +3,6 @@
   import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
   import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Chart } from 'chart.js/auto';
-  /* eslint-disable-next-line
-     import/default, import/no-named-as-default, import/no-named-as-default-member --
-     Ошибка из-за версии eslint */
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { PERIOD } from '$lib/constants/period.const.js';
@@ -85,8 +82,8 @@
   };
 
   /**
-   * Получение данных для графиков и обновление графиков в дашборде
-   * @function getDataAndUpdateChartProps
+   * Получение данных для графиков
+   * @function getChartsData
    * @param {Chart} dashboard Дашборд
    * @param {number} periodStart Начало периода
    * @param {number} periodSelected Длительность периода
@@ -94,7 +91,7 @@
    * @returns {Promise<void>}
    * @async
    */
-  const getDataAndUpdateChartProps = async (
+  const getChartsData = async (
     dashboard,
     periodStart,
     periodSelected,
@@ -111,18 +108,30 @@
 
     await Promise.all(
       $chartsStore
-        /* eslint-disable-next-line arrow-body-style --
-          Для читаемости и соблюдения требований к длине строки */
-        .filter(({ isDisplayed, period }) => {
-          return isDisplayed && (shouldRequestAll || period !== periodSelected);
-        })
+        .filter(({ isDisplayed, period }) => (
+          isDisplayed && (shouldRequestAll || period !== periodSelected)
+        ))
         .map((chart) => getData(formDataUrl(chart.key, periodStart)).then((data) => {
           chart.data = data;
           chart.period = periodSelected;
           dashboard.data.labels = data.map((item) => item[labelsKey]);
         })),
     );
+  };
 
+  /**
+   * Обновление графиков в дашборде
+   * @function updateChartProps
+   * @param {Chart} dashboard Дашборд
+   * @param {number} periodStart Начало периода
+   * @param {number} periodSelected Длительность периода
+   * @returns {void}
+   */
+  const updateChartProps = (
+    dashboard,
+    periodStart,
+    periodSelected,
+  ) => {
     const previousDatasetsLength = dashboard.data.datasets.length;
 
     dashboard.data.datasets = $chartsStore
@@ -134,14 +143,36 @@
       }));
     dashboard.options.scales.x.min = periodStart;
     dashboard.options.scales.x.max = Date.now();
-    dashboard.options.scales.x.time.minUnit = periodSelected >= PERIOD.WEEK ?
-      'day' :
-      (periodSelected >= PERIOD.SIX_HOURS ?
-        'hour' :
-        'minute'
-      );
+    if (periodSelected >= PERIOD.WEEK) {
+      dashboard.options.scales.x.time.minUnit = 'day';
+    } else if (periodSelected >= PERIOD.SIX_HOURS) {
+      dashboard.options.scales.x.time.minUnit = 'hour';
+    } else {
+      dashboard.options.scales.x.time.minUnit = 'minute';
+    }
 
     dashboard.update(previousDatasetsLength === 0 ? undefined : 'none');
+  };
+
+  /**
+   * [Получение данных для графиков]{@link getChartsData}
+   * и [обновление графиков в дашборде]{@link updateChartProps}
+   * @function getDataAndUpdateChartProps
+   * @param {Chart} dashboard Дашборд
+   * @param {number} periodStart Начало периода
+   * @param {number} periodSelected Длительность периода
+   * @param {boolean} shouldRequestAll Признак необходимости запроса данных для всех графиков
+   * @returns {Promise<void>}
+   * @async
+   */
+  const getDataAndUpdateChartProps = async (
+    dashboard,
+    periodStart,
+    periodSelected,
+    shouldRequestAll,
+  ) => {
+    await getChartsData(dashboard, periodStart, periodSelected, shouldRequestAll);
+    updateChartProps(dashboard, periodStart, periodSelected);
   };
 
   /**

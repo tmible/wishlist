@@ -100,9 +100,6 @@ const manageListsMessages = async (
   );
 
   if (options.isAutoUpdate) {
-    /* eslint-disable-next-line require-atomic-updates --
-      Даже после обнвления/отправки сообщений персистентная сессия определена в контексте
-    */
     ctx.state.autoUpdate = { shouldRemoveChat: true };
   }
 };
