@@ -21,4 +21,8 @@
   $: updateTheme(isDark);
 </script>
 
-<Switch --thumb-icon={isDark ? 'url("/moon.svg")' : 'url("/sun.svg")'} bind:checked={isDark} />
+<Switch
+  --thumb-icon={isDark ? 'url("/moon.svg")' : 'url("/sun.svg")'}
+  aria-label="Переключить тему"
+  bind:checked={isDark}
+/>

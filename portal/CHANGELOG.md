@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.5 Золотая осень (2025-03-17)
+<img width="128" height="128" src="release-images/1.4.5.png"/>
+
+https://github.com/tmible/wishlist/compare/2a4adce..master
+
+
 ## 1.4.4 Безграничная скорость (2025-02-08)
 <img width="128" height="128" src="release-images/1.4.4.png"/>
 
-https://github.com/tmible/wishlist/compare/fd30564..master
+https://github.com/tmible/wishlist/compare/fd30564..2a4adce
 
 
 ## 1.4.3 Негативный интроверт. (2025-02-07)

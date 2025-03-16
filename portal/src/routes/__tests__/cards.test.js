@@ -38,6 +38,12 @@ describe('cards', () => {
       );
     });
 
+    it('should add title to telegram login widget', async () => {
+      const titleSetter = vi.spyOn(mockElement, 'title', 'set');
+      await beforeUpdateHandler();
+      expect(titleSetter).toHaveBeenCalledWith(expect.any(String));
+    });
+
     it('should replace telegram login widget on beforeUpdateHandler', async () => {
       const [ telegramloginWidgetContainer ] = baseElement.querySelectorAll('.card-body');
       vi.spyOn(telegramloginWidgetContainer, 'append');
@@ -54,6 +60,12 @@ describe('cards', () => {
     it('should not wait for telegram login widget on beforeUpdateHandler', async () => {
       await beforeUpdateHandler();
       expect(vi.mocked(waitForElement)).not.toHaveBeenCalled();
+    });
+
+    it('should not add title to telegram login widget', async () => {
+      const titleSetter = vi.spyOn(mockElement, 'title', 'set');
+      await beforeUpdateHandler();
+      expect(titleSetter).not.toHaveBeenCalled();
     });
 
     it('should not replace telegram login widget on beforeUpdateHandler', async () => {

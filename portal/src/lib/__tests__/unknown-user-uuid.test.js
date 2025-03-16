@@ -96,10 +96,15 @@ describe('unknown user UUID', () => {
 
       it('should add event listener', () => {
         initUnknownUserUuid();
-        expect(windowStub.addEventListener).toHaveBeenCalledWith('unload', expect.any(Function));
+        expect(
+          windowStub.addEventListener,
+        ).toHaveBeenCalledWith(
+          'beforeunload',
+          expect.any(Function),
+        );
       });
 
-      describe('on unload event', () => {
+      describe('on beforeunload event', () => {
         let event;
 
         beforeEach(() => {

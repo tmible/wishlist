@@ -29,7 +29,7 @@
 <svelte:head>
   {#if browser && !$user.isAuthenticated}
     <script
-      async
+      defer
       src="https://telegram.org/js/telegram-widget.js?22"
       data-telegram-login="tmible_wishlist_bot"
       data-size="large"

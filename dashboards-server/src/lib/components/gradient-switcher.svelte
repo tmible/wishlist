@@ -69,4 +69,8 @@
   }
 </script>
 
-<Switch --bg-color={isGradient ? undefined : gradient.style} bind:checked={isGradient} />
+<Switch
+  --bg-color={isGradient ? undefined : gradient.style}
+  aria-label="Переключить градиент"
+  bind:checked={isGradient}
+/>

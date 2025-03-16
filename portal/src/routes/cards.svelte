@@ -23,17 +23,17 @@
     if (!isVisible) {
       return;
     }
+    const telegramLoginWidget = await waitForElement(
+      '[id="telegram-login-tmible_wishlist_bot"]',
+      [
+        document.head,
+        ...Array.from(document.querySelectorAll('.telegram-login-widget-container')),
+      ],
+    );
+    telegramLoginWidget.title = 'Telegram login widget';
     /* eslint-disable-next-line svelte/no-dom-manipulating -- по-другому не получается. Скрипт
       Телеграма вставляет виджет после себя, а чтобы скрипт выполнился, он должен быть в <head> */
-    telegramLoginWidgetContainer?.append(
-      await waitForElement(
-        '[id="telegram-login-tmible_wishlist_bot"]',
-        [
-          document.head,
-          ...Array.from(document.querySelectorAll('.telegram-login-widget-container')),
-        ],
-      ),
-    );
+    telegramLoginWidgetContainer?.append(telegramLoginWidget);
   });
 </script>
 
@@ -87,7 +87,7 @@
   <div class="card-body h-full">
     <div class="w-full h-0 my-0 mx-auto grow">
       <img
-        class="max-w-full max-h-full my-0 mx-auto mask mask-circle"
+        class="max-w-full max-h-full my-0 mx-auto mask mask-circle aspect-square"
         loading="lazy"
         decoding="async"
         src="avatar_square.jpg"

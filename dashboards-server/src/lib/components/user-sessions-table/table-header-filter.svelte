@@ -38,9 +38,9 @@ Svelte компонент -- заголовок столбца таблицы с
 </script>
 
 <div class="py-2 h-full">
-  <p class="mb-1">{label}</p>
   <div class="relative">
     {#if type === 'date range'}
+      <p class="mb-1">{label}</p>
       <DateRangePicker
         class={$filters[accessor] ? 'pr-8 absolute w-fit' : 'absolute w-fit'}
         bind:value={$filters[accessor]}
@@ -58,10 +58,14 @@ Svelte компонент -- заголовок столбца таблицы с
         {/if}
       </DateRangePicker>
     {:else}
-      <Input
-        class={$filters[accessor] ? 'pr-8 absolute' : 'absolute'}
-        bind:value={$filters[accessor]}
-      />
+      <!-- eslint-disable-next-line svelte/valid-compile -- input внутри Input -->
+      <label>
+        <span class="block mb-1">{label}</span>
+        <Input
+          class={$filters[accessor] ? 'pr-8 absolute' : 'absolute'}
+          bind:value={$filters[accessor]}
+        />
+      </label>
       {#if $filters[accessor]}
         <Button
           class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"

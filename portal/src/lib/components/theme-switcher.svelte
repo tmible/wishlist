@@ -22,7 +22,11 @@
   $: updateTheme(isDark);
 </script>
 
-<Switch.Root class="toggle bg-base-content hover:bg-base-content" bind:checked={isDark}>
+<Switch.Root
+  class="toggle bg-base-content hover:bg-base-content"
+  aria-label="Переключить тему"
+  bind:checked={isDark}
+>
   <Switch.Thumb asChild let:attrs>
     <div
       class="h-full w-1/2 p-[3px]"

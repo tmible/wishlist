@@ -29,6 +29,9 @@ export const initUnknownUserUuid = () => {
       document.cookie.match(/unknownUserUuid=([^;]+)/)?.[1] ??
       crypto.randomUUID();
     storeUnknownUserUuid(unknownUserUuid);
-    window.addEventListener('unload', (event) => storeUnknownUserUuid(unknownUserUuid, event));
+    window.addEventListener(
+      'beforeunload',
+      (event) => storeUnknownUserUuid(unknownUserUuid, event),
+    );
   }
 };
