@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.3.0 Загадочная Арктика. (2025-03-17)
+<img width="128" height="128" src="release-images/1.3.0.png"/>
+
+https://github.com/tmible/wishlist/compare/164adfd..master
+
+
 ## 1.2.2 Безграничная фантазия (2025-02-08)
 <img width="128" height="128" src="release-images/1.2.2.png"/>
 
-https://github.com/tmible/wishlist/compare/fd30564..master
+https://github.com/tmible/wishlist/compare/fd30564..164adfd
 
 
 ## 1.2.1 Безутешное прощание (2025-02-07)

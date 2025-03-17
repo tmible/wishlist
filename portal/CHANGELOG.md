@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.6 Небесная гармония (2025-03-17)
+<img width="128" height="128" src="release-images/1.4.6.png"/>
+
+https://github.com/tmible/wishlist/compare/164adfd..master
+
+
 ## 1.4.5 Золотая осень (2025-03-17)
 <img width="128" height="128" src="release-images/1.4.5.png"/>
 
-https://github.com/tmible/wishlist/compare/2a4adce..master
+https://github.com/tmible/wishlist/compare/2a4adce..164adfd
 
 
 ## 1.4.4 Безграничная скорость (2025-02-08)

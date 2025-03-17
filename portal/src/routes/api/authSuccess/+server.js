@@ -50,14 +50,6 @@ const hmacSha256 = async (value, secretKey) => {
  * @see {@link https://core.telegram.org/widgets/login#checking-authorization}
  */
 const checkAuthorization = async (searchParams) => {
-  const dataCheckString = Array.from(searchParams.keys())
-    .filter((key) => key !== 'hash')
-    .sort()
-    .map((key) => `${key}=${searchParams.get(key)}`)
-    .join('\n');
-
-  const secretKey = await sha256(env.BOT_TOKEN);
-
   const hash = searchParams.get('hash');
 
   if (!hash) {
@@ -67,6 +59,14 @@ const checkAuthorization = async (searchParams) => {
   if (hash.length !== 64) {
     throw new Error('["hash parameter is invalid", {"status":400}]');
   }
+
+  const dataCheckString = Array.from(searchParams.keys())
+    .filter((key) => key !== 'hash')
+    .sort()
+    .map((key) => `${key}=${searchParams.get(key)}`)
+    .join('\n');
+
+  const secretKey = await sha256(env.BOT_TOKEN);
 
   if (await hmacSha256(dataCheckString, secretKey) !== hash.slice(0, 64)) {
     throw new Error('["data integrity is compromised", {"status":403}]');
