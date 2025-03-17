@@ -2,31 +2,27 @@
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import ListItemDeleteAlert from '../list-item-delete-alert.svelte';
+
+let dispatchSpies = [];
+vi.doMock(
+  'svelte',
+  async (importOriginal) => {
+    const original = await importOriginal();
+    return {
+      ...original,
+      createEventDispatcher: () => {
+        const spy = vi.fn(original.createEventDispatcher());
+        dispatchSpies.push(spy);
+        return spy;
+      },
+    };
+  },
+);
+const ListItemDeleteAlert = await import('../list-item-delete-alert.svelte');
 
 describe('list item delete alert', () => {
-  // let dispatchSpies;
-
-  // beforeAll(() => {
-  //   dispatchSpies = [];
-  //   vi.doMock(
-  //     'svelte',
-  //     async (importOriginal) => {
-  //       const original = await importOriginal();
-  //       return {
-  //         ...original,
-  //         createEventDispatcher: () => {
-  //           const spy = vi.fn(original.createEventDispatcher());
-  //           dispatchSpies.push(spy);
-  //           return spy;
-  //         },
-  //       };
-  //     },
-  //   );
-  // });
-
   afterEach(() => {
-    // dispatchSpies = [];
+    dispatchSpies = [];
     vi.clearAllMocks();
     cleanup();
   });
@@ -77,9 +73,9 @@ describe('list item delete alert', () => {
         expect(vi.mocked(fetch)).not.toHaveBeenCalled();
       });
 
-      // it('should not dispatch event', () => {
-      //   expect(dispatchSpies[0]).not.toHaveBeenCalled();
-      // });
+      it('should not dispatch event', () => {
+        expect(dispatchSpies[0]).not.toHaveBeenCalled();
+      });
     });
 
     describe('on confirm button click', () => {
@@ -105,9 +101,9 @@ describe('list item delete alert', () => {
         );
       });
 
-      // it('should dispatch event', () => {
-      //   expect(dispatchSpies[0]).toHaveBeenCalledWith('delete');
-      // });
+      it('should dispatch event', () => {
+        expect(dispatchSpies[0]).toHaveBeenCalledWith('delete');
+      });
     });
   });
 });

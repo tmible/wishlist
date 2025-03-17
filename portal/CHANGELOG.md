@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.7 Загадочное Происхождение (2025-03-17)
+<img width="128" height="128" src="release-images/1.4.7.png"/>
+
+https://github.com/tmible/wishlist/compare/9061d9a..master
+
+
 ## 1.4.6 Небесная гармония (2025-03-17)
 <img width="128" height="128" src="release-images/1.4.6.png"/>
 
-https://github.com/tmible/wishlist/compare/164adfd..master
+https://github.com/tmible/wishlist/compare/164adfd..9061d9a
 
 
 ## 1.4.5 Золотая осень (2025-03-17)
