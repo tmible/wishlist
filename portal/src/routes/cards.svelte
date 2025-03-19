@@ -1,13 +1,14 @@
 <!-- Svelte компонет -- карточки для главной страницы неавторизованной зоны -->
 <script>
-  import { beforeUpdate } from 'svelte';
   import { waitForElement } from '$lib/wait-for-element.js';
 
   /**
-   * Признак того, что карточки отображаются
-   * @type {boolean}
+   * @typedef {object} Props
+   * @property {boolean} [isVisible] Признак того, что карточки отображаются
    */
-  export let isVisible;
+
+  /** @type {Props} */
+  const { isVisible } = $props();
 
   /**
    * Элемент, внутрь которого добавится виджет авторизации Телеграма
@@ -19,7 +20,7 @@
    * Ожидание выполнения скрипта Телеграма и подстановка виджета авторизации либо от скрипта, либо
    * из карточек, отображаемых для другой ширины экрана, так как виджет должен быть один на странице
    */
-  beforeUpdate(async () => {
+  $effect(async () => {
     if (!isVisible) {
       return;
     }
@@ -92,7 +93,7 @@
         decoding="async"
         src="avatar_square.jpg"
         alt="bot avatar"
-      />
+      >
     </div>
     <p class="font-bold text-center prose-base max-md:my-0 grow-0">Tmible's wishlist</p>
     <a class="grow-0" href="https://t.me/tmible_wishlist_bot" target="_blank">

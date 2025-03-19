@@ -11,14 +11,10 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 	import type { CardData, Direction } from '.';
 	import Card from './card.svelte';
 
-	import { createEventDispatcher } from 'svelte';
+	let container: HTMLElement = $state();
 
-	const dispatch = createEventDispatcher();
-
-	let container: HTMLElement;
-
-	let card1: HTMLElement, card2: HTMLElement;
-	let card1Data: CardData, card2Data: CardData;
+	let card1: HTMLElement = $state(), card2: HTMLElement = $state();
+	let card1Data: CardData = $state(), card2Data: CardData = $state();
 
 	let cardIndex = 0;
 	let topCard: HTMLElement;
@@ -47,7 +43,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 		let direction: Direction = movement[0] > 0 ? 'right' : 'left';
 		let data = el === card1 ? card1Data : card2Data;
-		dispatch('swiped', { direction, element: el, data, index: cardIndex - 2 });
+		swiped({ direction, element: el, data, index: cardIndex - 2 });
 		thresholdPassed = movement[0] > 0 ? 1 : -1;
 
 		let moveOutWidth = document.body.clientWidth;
@@ -137,19 +133,28 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 		cardSwiped(topCard, [dir, 0.1], [dir, 1]);
 	};
 
-	export let cardData: (index: number) => CardData;
+	interface Props {
+		cardData: (index: number) => CardData;
+		minSwipeDistance?: number;
+		minSwipeVelocity?: number;
+		arrowKeys?: boolean;
+		thresholdPassed?: number;
+		anchor?: number | null;
+		swiped: () => void;
+	}
 
-	export let minSwipeDistance: number = 0.5;
-	export let minSwipeVelocity: number = 0.5;
-
-	export let arrowKeys = true;
-
-	export let thresholdPassed = 0;
-
-	export let anchor: number | null = null;
+	let {
+		cardData,
+		minSwipeDistance = 0.5,
+		minSwipeVelocity = 0.5,
+		arrowKeys = true,
+		thresholdPassed = $bindable(0),
+		anchor = null,
+		swiped,
+	}: Props = $props();
 </script>
 
-<svelte:body on:keydown={(e) => {
+<svelte:body onkeydown={(e) => {
 	if(!arrowKeys) return;
 	if (e.key === 'ArrowLeft') {
 		swipe('left');
@@ -160,7 +165,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 <div class="w-full h-full">
 	<div class="w-full h-full relative hidden z-0" bind:this={container}>
-		<svelte:component this={Card} bind:element={card1} {...card1Data} />
-		<svelte:component this={Card} bind:element={card2} {...card2Data} />
+		<Card bind:element={card1} {...card1Data} />
+		<Card bind:element={card2} {...card2Data} />
 	</div>
 </div>

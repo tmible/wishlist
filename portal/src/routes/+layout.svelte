@@ -9,12 +9,19 @@
     updateTheme,
   } from '@tmible/wishlist-common/theme-service';
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { InjectionToken } from '$lib/architecture/injection-token';
   import { user } from '$lib/store/user';
   import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
+
+  /**
+   * @typedef {object} Props
+   * @property {import('svelte').Snippet} [children] Дочерние компоненты
+   */
+
+  /** @type {Props} */
+  const { children } = $props();
 
   // Регистрация сервиса управления темой в сервисе внедрения зависмостей
   provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
@@ -26,13 +33,15 @@
    * В браузере проверка аутентифицированностии пользователя и его
    * перенаправление на соответствующую статусу аутентификации страницу
    */
-  $: if (browser && $user.isAuthenticated !== null) {
-    if (!$user.isAuthenticated && $page.url.pathname.startsWith('/list')) {
-      goto('/');
-    } else if ($user.isAuthenticated && $page.url.pathname === '/') {
-      goto('/list');
+  $effect(() => {
+    if ($user.isAuthenticated !== null) {
+      if (!$user.isAuthenticated && $page.url.pathname.startsWith('/list')) {
+        goto('/');
+      } else if ($user.isAuthenticated && $page.url.pathname === '/') {
+        goto('/list');
+      }
     }
-  }
+  });
 
   /**
    * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
@@ -82,5 +91,5 @@
 </svelte:head>
 
 {#if $user.isAuthenticated !== null}
-  <slot />
+  {@render children?.()}
 {/if}

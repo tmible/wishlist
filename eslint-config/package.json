@@ -1,6 +1,6 @@
 {
   "name": "@tmible/eslint-config-wishlist",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Общая конфигурация ESLint для всех пакетов @tmible/wishlist-",
   "repository": {
@@ -22,13 +22,13 @@
   },
   "devDependencies": {
     "@eslint-community/eslint-plugin-eslint-comments": "4.4.1",
-    "@eslint/js": "9.19.0",
-    "@stylistic/eslint-plugin-js": "3.0.1",
-    "eslint": "9.19.0",
+    "@eslint/js": "9.22.0",
+    "@stylistic/eslint-plugin-js": "4.2.0",
+    "eslint": "9.22.0",
     "eslint-plugin-array-func": "5.0.2",
     "eslint-plugin-import": "2.31.0",
-    "eslint-plugin-jsdoc": "50.6.3",
-    "eslint-plugin-n": "17.15.1",
+    "eslint-plugin-jsdoc": "50.6.8",
+    "eslint-plugin-n": "17.16.2",
     "eslint-plugin-no-only-tests": "3.3.0",
     "eslint-plugin-no-secrets": "2.2.1",
     "eslint-plugin-optimize-regex": "1.2.1",
@@ -38,11 +38,11 @@
     "eslint-plugin-security": "3.0.1",
     "eslint-plugin-security-node": "1.1.4",
     "eslint-plugin-simple-import-sort": "12.1.1",
-    "eslint-plugin-sonarjs": "3.0.1",
-    "eslint-plugin-svelte": "2.46.1",
-    "eslint-plugin-unicorn": "56.0.1",
-    "globals": "15.14.0",
-    "npm-check-updates": "17.1.14"
+    "eslint-plugin-sonarjs": "3.0.2",
+    "eslint-plugin-svelte": "3.3.2",
+    "eslint-plugin-unicorn": "57.0.0",
+    "globals": "16.0.0",
+    "npm-check-updates": "17.1.15"
   },
   "peerDependencies": {
     "eslint": "9.19.0"

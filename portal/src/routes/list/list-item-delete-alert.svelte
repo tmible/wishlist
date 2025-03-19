@@ -1,27 +1,19 @@
 <!-- Svelte компонент -- диалог с подтверждением удаления элемента списка -->
 <script>
   import { AlertDialog } from 'bits-ui';
-  import { createEventDispatcher } from 'svelte';
 
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
 
   /**
-   * Диспетчер событий
-   * @type {import('svelte').EventDispatcher}
+   * @typedef {object} Props
+   * @property {OwnListItem} listItemToDelete Удаляемый элемент
+   * @property {boolean} open Признак открытости диалога
+   * @property {() => void} ondelete Функция обратного вызова для удаления элемента
    */
-  const dispatch = createEventDispatcher();
 
-  /**
-   * Удаляемый элемент
-   * @type {OwnListItem}
-   */
-  export let listItemToDelete;
-
-  /**
-   * Признак открытости диалога
-   * @type {boolean}
-   */
-  export let open;
+  /** @type {Props} */
+  // eslint-disable-next-line prefer-const -- Нельзя разорвать определение $props
+  let { open = $bindable(), listItemToDelete, ondelete } = $props();
 
   /**
    * Удаление элемента списка и выпуск события обновления списка
@@ -30,6 +22,7 @@
    * @async
    */
   const deleteListItem = async () => {
+    open = false;
     await fetch(
       '/api/wishlist',
       {
@@ -38,7 +31,7 @@
         body: JSON.stringify([ listItemToDelete.id ]),
       },
     );
-    dispatch('delete');
+    ondelete();
   };
 </script>
 
@@ -49,16 +42,18 @@
     <AlertDialog.Content class="modal-box modal-alert">
       <div class="contents prose">
         <AlertDialog.Title>Подвердите удаление</AlertDialog.Title>
-        <AlertDialog.Description asChild let:builder>
-          <p use:builder.action {...builder}>
-            Вы&nbsp;уверены, что хотите удалить желание «{listItemToDelete.name}» из списка?
-          </p>
+        <AlertDialog.Description>
+          {#snippet child({ props })}
+            <p {...props}>
+              Вы&nbsp;уверены, что хотите удалить желание «{listItemToDelete.name}» из списка?
+            </p>
+          {/snippet}
         </AlertDialog.Description>
         <div class="card-actions">
           <AlertDialog.Cancel class="btn btn-neutral flex-1">
             Отмена
           </AlertDialog.Cancel>
-          <AlertDialog.Action class="btn btn-error flex-1" on:click={deleteListItem}>
+          <AlertDialog.Action class="btn btn-error flex-1" onclick={deleteListItem}>
             Удалить
           </AlertDialog.Action>
         </div>

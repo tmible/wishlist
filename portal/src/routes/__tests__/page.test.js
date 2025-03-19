@@ -1,45 +1,44 @@
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
-import { onMount } from 'svelte';
 import { writable } from 'svelte/store';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { user } from '$lib/store/user';
+import Landing from '../+page.svelte';
 
-vi.mock('svelte');
-vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
+let browserMock = vi.hoisted(() => true);
+
+vi.mock('$app/environment', () => ({
+  get browser() {
+    return browserMock;
+  },
+}));
 vi.mock('$lib/store/breakpoints', () => ({ md: writable(true) }));
+vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
+vi.mock(
+  '$lib/components/theme-switcher.svelte',
+  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+);
+vi.mock(
+  '../cards.svelte',
+  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+);
+vi.mock(
+  '../cards-swiper.svelte',
+  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+);
 
 describe('landing', () => {
-  beforeEach(() => {
-    vi.doMock(
-      '$lib/components/theme-switcher.svelte',
-      async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-    );
-    vi.doMock(
-      '../cards.svelte',
-      async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-    );
-    vi.doMock(
-      '../cards-swiper.svelte',
-      async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-    );
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
-    vi.resetModules();
     cleanup();
   });
 
-  it('should send action on mount if user is not authenticated', async () => {
-    let mountHandler;
+  it('should send action on mount if user is not authenticated', () => {
     const fetchStub = vi.fn();
-    vi.stubGlobal('Date', { now: vi.fn(() => 'now') });
+    vi.spyOn(Date, 'now').mockReturnValue('now');
     vi.stubGlobal('fetch', fetchStub);
     vi.mocked(user).set({ isAuthenticated: false });
-    vi.mocked(onMount).mockImplementationOnce((handler) => mountHandler = handler);
-    render(await import('../+page.svelte').then((module) => module.default));
-    await mountHandler();
+    render(Landing);
     expect(fetchStub).toHaveBeenCalledWith(
       '/api/actions',
       {
@@ -53,24 +52,24 @@ describe('landing', () => {
     );
   });
 
-  it('should be empty if not browser', async () => {
-    vi.doMock('$app/environment', () => ({ browser: false }));
+  it('should be empty if not browser', () => {
+    browserMock = false;
     vi.mocked(user).set({ isAuthenticated: false });
-    const { container } = render(await import('../+page.svelte').then((module) => module.default));
-    expect(container.innerHTML.trim()).toBe('');
+    const { container } = render(Landing);
+    expect(container.children.length).toBe(0);
   });
 
-  it('should be empty if user is authenticated', async () => {
-    vi.doMock('$app/environment', () => ({ browser: true }));
+  it('should be empty if user is authenticated', () => {
+    browserMock = true;
     vi.mocked(user).set({ isAuthenticated: true });
-    const { container } = render(await import('../+page.svelte').then((module) => module.default));
-    expect(container.innerHTML.trim()).toBe('');
+    const { container } = render(Landing);
+    expect(container.children.length).toBe(0);
   });
 
-  it('should be displayed if browser and user is not authenticated', async () => {
-    vi.doMock('$app/environment', () => ({ browser: true }));
+  it('should be displayed if browser and user is not authenticated', () => {
+    browserMock = true;
     vi.mocked(user).set({ isAuthenticated: false });
-    const { container } = render(await import('../+page.svelte').then((module) => module.default));
-    expect(container.innerHTML.trim()).not.toBe('');
+    const { container } = render(Landing);
+    expect(container.children.length).not.toBe(0);
   });
 });

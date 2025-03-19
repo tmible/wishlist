@@ -62,7 +62,7 @@ describe('logging middleware', () => {
         },
         'finished clean up',
       ));
-      assert(explain(info).callCount > infoCallsAsOfNextCall);
+      assert.ok(explain(info).callCount > infoCallsAsOfNextCall);
     });
 
     it('should enrich message for command type updates', async () => {

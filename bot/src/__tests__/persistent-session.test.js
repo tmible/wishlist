@@ -56,7 +56,7 @@ describe('persistent session', () => {
 
     it('should define \'persistent\' property', async () => {
       await middleware(ctx, () => {
-        assert(Object.hasOwn(ctx.session, 'persistent'));
+        assert.ok(Object.hasOwn(ctx.session, 'persistent'));
       });
     });
 

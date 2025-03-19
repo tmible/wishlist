@@ -9,46 +9,38 @@
   import FormattingMenu from './formatting-menu.svelte';
 
   /**
-   * Имя элемента ввода (для коректной работы в формах)
-   * @type {string}
+   * @typedef {object} Props
+   * @property {string} name Имя элемента ввода (для коректной работы в формах)
+   * @property {string} [className] CSS классы для текстового редактора
+   * @property {string} [value] Начальный текст для отображения в текстовом редакторе
+   * @property {string} [placeholder] Плейсхолдер для текстового редактора
    */
-  export let name;
 
-  /**
-   * CSS классы для текстового редактора
-   * @type {string}
-   */
-  export let className = '';
-
-  /**
-   * Начальный текст для отображения в текстовом редакторе
-   * @type {string}
-   */
-  export let value = '';
-
-  /**
-   * Плейсхолдер для текстового редактора
-   * @type {string}
-   */
-  export let placeholder = '';
+  /** @type {Props} */
+  const {
+    name,
+    className = '',
+    value = '',
+    placeholder = '',
+  } = $props();
 
   /**
    * Элемент для отображеня текстового редактора
    * @type {HTMLElement}
    */
-  let element;
+  let element = $state();
 
   /**
    * Текстовый редактор
    * @type {Editor}
    */
-  let editor;
+  let editor = $state();
 
   /**
    * Текущее значение текста в редакторе
    * @type {string}
    */
-  $: currentValue = editor?.getJSON ? JSON.stringify(editor.getJSON()) : value;
+  const currentValue = $derived(editor?.getJSON ? JSON.stringify(editor.getJSON()) : value);
 
   /**
    * Создание [текстового редатктора]{@link editor} при создании компонента
@@ -66,7 +58,7 @@
             } :
             {
               maxWidth: 'none',
-              appendTo: () => document.body,
+              appendTo: () => document.documentElement,
               offset: [ 0, 0 ],
               getReferenceClientRect: () => ({
                 left: 0,
@@ -85,7 +77,9 @@
     content: value,
     onTransaction: () => {
       // Force re-render so `editor.isActive` works as expected
-      editor = editor;
+      const tmp = editor;
+      editor = null;
+      editor = tmp;
     },
     editorProps: {
       attributes: {
@@ -100,8 +94,13 @@
   onDestroy(() => editor?.destroy());
 </script>
 
-<div bind:this={element} class="contents" />
-<textarea {name} class="hidden" value={currentValue} data-testid="not-displayed-textarea" />
+<div bind:this={element} class="contents"></div>
+<textarea
+  {name}
+  class="hidden"
+  value={currentValue}
+  data-testid="not-displayed-textarea"
+></textarea>
 <FormattingMenu {editor} />
 
 <style>

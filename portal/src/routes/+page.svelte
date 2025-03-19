@@ -35,7 +35,7 @@
       data-size="large"
       data-auth-url="/api/authSuccess"
       data-request-access="write"
-    />
+    ></script>
   {/if}
 </svelte:head>
 

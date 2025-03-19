@@ -2,27 +2,10 @@
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-let dispatchSpies = [];
-vi.doMock(
-  'svelte',
-  async (importOriginal) => {
-    const original = await importOriginal();
-    return {
-      ...original,
-      createEventDispatcher: () => {
-        const spy = vi.fn(original.createEventDispatcher());
-        dispatchSpies.push(spy);
-        return spy;
-      },
-    };
-  },
-);
-const ListItemDeleteAlert = await import('../list-item-delete-alert.svelte');
+import ListItemDeleteAlert from '../list-item-delete-alert.svelte';
 
 describe('list item delete alert', () => {
   afterEach(() => {
-    dispatchSpies = [];
     vi.clearAllMocks();
     cleanup();
   });
@@ -37,25 +20,17 @@ describe('list item delete alert', () => {
 
   describe('opened', () => {
     let baseElement;
+    const ondelete = vi.fn();
 
     beforeEach(() => {
       vi.stubGlobal('fetch', vi.fn());
       ({ baseElement } = render(
         ListItemDeleteAlert,
-        { open: true, listItemToDelete: { id: 'id', name: 'name' } },
+        { open: true, listItemToDelete: { id: 'id', name: 'name' }, ondelete },
       ));
     });
 
     it('should be displayed', () => {
-      // remove random ids to match snapshot
-      const alertDialog = screen.getByRole('alertdialog');
-      alertDialog.removeAttribute('id');
-      const titleId = alertDialog.getAttribute('aria-describedby');
-      alertDialog.removeAttribute('aria-describedby');
-      const descriptionId = alertDialog.getAttribute('aria-labelledby');
-      alertDialog.removeAttribute('aria-labelledby');
-      baseElement.querySelector(`[id="${titleId}"]`).removeAttribute('id');
-      baseElement.querySelector(`[id="${descriptionId}"]`).removeAttribute('id');
       expect(baseElement).toMatchSnapshot();
     });
 
@@ -74,7 +49,7 @@ describe('list item delete alert', () => {
       });
 
       it('should not dispatch event', () => {
-        expect(dispatchSpies[0]).not.toHaveBeenCalled();
+        expect(ondelete).not.toHaveBeenCalled();
       });
     });
 
@@ -102,7 +77,7 @@ describe('list item delete alert', () => {
       });
 
       it('should dispatch event', () => {
-        expect(dispatchSpies[0]).toHaveBeenCalledWith('delete');
+        expect(ondelete).toHaveBeenCalled();
       });
     });
   });

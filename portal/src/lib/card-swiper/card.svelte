@@ -8,12 +8,22 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 <script lang="ts">
 	import { fade } from "svelte/transition";
 
-	export let element: HTMLElement;
 
-	export let color: string = '';
-	export let title: string = '';
-	export let description: string = '';
-	export let image: string | undefined = undefined;
+	interface Props {
+		element: HTMLElement;
+		color?: string;
+		title?: string;
+		description?: string;
+		image?: string | undefined;
+	}
+
+	let {
+		element = $bindable(),
+		color = '',
+		title = '',
+		description = '',
+		image = undefined
+	}: Props = $props();
 </script>
 
 <div

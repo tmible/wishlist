@@ -8,8 +8,7 @@
    * Классы для иконки
    * @type {string}
    */
-  let className;
-  export { className as class };
+  const { class: className } = $props();
 </script>
 
 <Icon class={className} iconNode={layoutListMove} />

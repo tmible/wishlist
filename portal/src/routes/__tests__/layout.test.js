@@ -7,16 +7,15 @@ import {
   subscribeToTheme,
   updateTheme,
 } from '@tmible/wishlist-common/theme-service';
-import { onMount } from 'svelte';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
+import { page } from '$app/stores';
 import { InjectionToken } from '$lib/architecture/injection-token';
 import { user } from '$lib/store/user';
 import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
 import Layout from '../+layout.svelte';
 
-vi.mock('svelte');
 vi.mock('$app/navigation');
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock(
@@ -28,7 +27,14 @@ vi.mock(
     updateTheme: vi.fn(),
   }),
 );
+vi.mock('$app/stores', () => ({ page: writable({ url: { pathname: '' } }) }));
+vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: null }) }));
 vi.mock('$lib/unknown-user-uuid');
+
+vi.stubGlobal(
+  'fetch',
+  vi.fn().mockResolvedValue({ json: vi.fn(() => ({ response: 'response' })) }),
+);
 
 describe('layout', () => {
   beforeEach(() => {
@@ -40,6 +46,7 @@ describe('layout', () => {
         configurable: true,
       },
     );
+    vi.mocked(user).set({ isAuthenticated: null });
   });
 
   afterEach(() => {
@@ -64,70 +71,44 @@ describe('layout', () => {
   });
 
   describe('on mount', () => {
-    let mountHandler;
-
     beforeEach(() => {
-      vi.mocked(onMount).mockImplementation((handler) => mountHandler = handler);
-      vi.stubGlobal(
-        'fetch',
-        vi.fn().mockResolvedValue({ json: vi.fn(() => ({ response: 'response' })) }),
-      );
-      vi.spyOn(vi.mocked(user), 'set').mockImplementation(vi.fn());
+      vi.spyOn(vi.mocked(user), 'set').mockImplementationOnce(vi.fn());
       render(Layout);
     });
 
-    it('should fetch user', async () => {
-      await mountHandler();
+    it('should fetch user', () => {
       expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/user');
     });
 
-    it('should set user to store', async () => {
-      await mountHandler();
+    it('should set user to store', () => {
       expect(vi.mocked(user.set)).toHaveBeenCalledWith({
+        ...get(vi.mocked(user)),
         response: 'response',
-        id: null,
-        hash: null,
-        isAuthenticated: null,
       });
     });
 
-    it('should init theme store', async () => {
-      await mountHandler();
+    it('should init theme store', () => {
       expect(vi.mocked(initTheme)).toHaveBeenCalled();
     });
   });
 
-  it('should not redirect if browser is false', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: false }));
-    vi.doMock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).not.toHaveBeenCalled();
-  });
-
   it('should not redirect if isAuthenticated is null', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/user', () => ({ user: writable({ isAuthenticated: null }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).not.toHaveBeenCalled();
+    vi.mocked(user).set({ isAuthenticated: null });
+    render(Layout);
+    await vi.waitFor(() => expect(goto).not.toHaveBeenCalled());
   });
 
   it('should redirect to /', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/user', () => ({ user: writable({ isAuthenticated: false }) }));
-    vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/list' } }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).toHaveBeenCalledWith('/');
+    vi.mocked(user).set({ isAuthenticated: false });
+    vi.mocked(page).set({ url: { pathname: '/list' } });
+    render(Layout);
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/'));
   });
 
   it('should redirect to /list', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
-    vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/' } }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).toHaveBeenCalledWith('/list');
+    vi.mocked(user).set({ isAuthenticated: true });
+    vi.mocked(page).set({ url: { pathname: '/' } });
+    render(Layout);
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/list'));
   });
 });

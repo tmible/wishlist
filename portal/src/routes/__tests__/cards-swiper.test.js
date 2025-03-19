@@ -1,40 +1,30 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render } from '@testing-library/svelte';
-import { onDestroy, onMount } from 'svelte';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import CardsSwiper from '../cards-swiper.svelte';
 
-vi.mock('svelte');
-
 describe('cards', () => {
   afterEach(() => {
-    vi.clearAllMocks();
     vi.restoreAllMocks();
     cleanup();
   });
 
   it('should ignore swipes during welcome animation', () => {
-    let mountHandler;
     const classList = { add: vi.fn() };
     vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
     vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-    vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
     const { container } = render(CardsSwiper);
-    mountHandler();
     fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 0 }] });
     fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
     expect(classList.add).toHaveBeenCalledTimes(1);
   });
 
   it('should ignore swipes during another swipe handle', () => {
-    let mountHandler;
     const classList = { add: vi.fn(), remove: vi.fn() };
     vi.useFakeTimers();
     vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
     vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-    vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
     const { container } = render(CardsSwiper);
-    mountHandler();
     vi.advanceTimersToNextTimer();
     fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 0 }] });
     fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
@@ -48,15 +38,12 @@ describe('cards', () => {
     let classList;
 
     beforeEach(() => {
-      let mountHandler;
       classList = { add: vi.fn(), remove: vi.fn() };
       vi.useFakeTimers();
       vi.spyOn(window, 'setTimeout');
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
       vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       const { container } = render(CardsSwiper);
-      mountHandler();
       vi.advanceTimersToNextTimer();
       fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
       fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 0 }] });
@@ -84,15 +71,12 @@ describe('cards', () => {
     let classList;
 
     beforeEach(() => {
-      let mountHandler;
       classList = { add: vi.fn(), remove: vi.fn() };
       vi.useFakeTimers();
       vi.spyOn(window, 'setTimeout');
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
       vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       const { container } = render(CardsSwiper);
-      mountHandler();
       vi.advanceTimersToNextTimer();
       fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 0 }] });
       fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
@@ -121,15 +105,12 @@ describe('cards', () => {
     let classList;
 
     beforeEach(() => {
-      let mountHandler;
       classList = { add: vi.fn(), remove: vi.fn() };
       vi.useFakeTimers();
       vi.spyOn(window, 'setTimeout');
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
       vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       const { container } = render(CardsSwiper);
-      mountHandler();
       vi.advanceTimersToNextTimer();
       fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
       fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 0 }] });
@@ -164,15 +145,12 @@ describe('cards', () => {
     let classList;
 
     beforeEach(() => {
-      let mountHandler;
       classList = { add: vi.fn(), remove: vi.fn() };
       vi.useFakeTimers();
       vi.spyOn(window, 'setTimeout');
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
       vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       const { container } = render(CardsSwiper);
-      mountHandler();
       vi.advanceTimersToNextTimer();
       for (let i = 1; i < cards.length; ++i) {
         fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
@@ -206,30 +184,27 @@ describe('cards', () => {
   });
 
   describe('on mount', () => {
-    let mountHandler;
-
     beforeEach(() => {
       vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
       render(CardsSwiper);
     });
 
     it('should select cards swiper', () => {
       vi.spyOn(document, 'querySelector');
-      mountHandler();
+      render(CardsSwiper);
       expect(document.querySelector).toHaveBeenCalledWith('.cards-swiper');
     });
 
     it('should start welcome animation', () => {
       const classList = { add: vi.fn() };
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
-      mountHandler();
+      render(CardsSwiper);
       expect(classList.add).toHaveBeenCalledWith('welcome-animation');
     });
 
     it('should set timeout to remove welcome animation', () => {
       vi.stubGlobal('setTimeout', vi.fn().mockReturnValue('timeout'));
-      mountHandler();
+      render(CardsSwiper);
       expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 2000);
     });
 
@@ -237,47 +212,42 @@ describe('cards', () => {
       const classList = { add: vi.fn(), remove: vi.fn() };
       vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
       vi.useFakeTimers();
-      mountHandler();
+      render(CardsSwiper);
       vi.advanceTimersByTime(2000);
       expect(classList.remove).toHaveBeenCalledWith('welcome-animation');
       vi.useRealTimers();
     });
 
     it('should select cards', () => {
-      mountHandler();
+      render(CardsSwiper);
       expect(vi.mocked(document.querySelectorAll)).toHaveBeenCalledWith('.cards-swiper > *');
     });
 
     it('should mark first card', () => {
       const classList = { add: vi.fn() };
       vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList }]);
-      mountHandler();
+      render(CardsSwiper);
       expect(classList.add).toHaveBeenCalledWith('shown');
     });
   });
 
   describe('on destroy', () => {
-    let destroyHandler;
-
     beforeEach(() => {
       vi.stubGlobal('clearTimeout', vi.fn());
-      vi.mocked(onDestroy).mockImplementation((...args) => [ destroyHandler ] = args);
+      vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
     });
 
     it('should not clear timer if there is none', () => {
-      render(CardsSwiper);
-      destroyHandler();
+      vi.stubGlobal('setTimeout', vi.fn().mockReturnValue(null));
+      const { unmount } = render(CardsSwiper);
+      unmount();
       expect(vi.mocked(clearTimeout)).not.toHaveBeenCalled();
     });
 
     it('should clear timer if there is one', () => {
-      let mountHandler;
       vi.stubGlobal('setTimeout', vi.fn().mockReturnValue('timeout'));
-      vi.spyOn(document, 'querySelectorAll').mockReturnValue([{ classList: { add: vi.fn() } }]);
-      vi.mocked(onMount).mockImplementation((...args) => [ mountHandler ] = args);
-      render(CardsSwiper);
-      mountHandler();
-      destroyHandler();
+      const { unmount } = render(CardsSwiper);
+      unmount();
       expect(vi.mocked(clearTimeout)).toHaveBeenCalledWith('timeout');
     });
   });

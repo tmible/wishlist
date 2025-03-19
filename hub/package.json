@@ -31,8 +31,8 @@
   "devDependencies": {
     "@tmible/eslint-config-wishlist": "workspace:*",
     "c8": "10.1.3",
-    "eslint": "9.19.0",
-    "npm-check-updates": "17.1.14",
+    "eslint": "9.22.0",
+    "npm-check-updates": "17.1.15",
     "testdouble": "3.20.2"
   },
   "packageManager": "pnpm@10.2.0",

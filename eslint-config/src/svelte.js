@@ -52,7 +52,17 @@ export default [
       "svelte/html-closing-bracket-new-line": "error",
       "svelte/html-closing-bracket-spacing": "error",
       "svelte/html-quotes": "error",
-      "svelte/html-self-closing": "error",
+      "svelte/html-self-closing": [
+        "error",
+        {
+          "void": "never",
+          "normal": "never",
+          "svg": "always",
+          "math": "never",
+          "component": "always",
+          "svelte": "always",
+        },
+      ],
       "svelte/indent": [ "error", { ignoredNodes: [ "ConditionalExpression" ] } ],
       "svelte/max-attributes-per-line": [ "error", { multiline: 1, singleline: 100 } ],
       "svelte/mustache-spacing": "error",
@@ -111,7 +121,14 @@ export default [
     },
   },
   {
-    files: [ "**/**.test.js", "**/__tests__/**" ],
+    files: [ "**/*.svelte" ],
+    rules: {
+      // svelte components can import themselves
+      "import/no-self-import": "off",
+    },
+  },
+  {
+    files: [ "**/**.test.js", "**/**.test.svelte.js", "**/__tests__/**" ],
     settings: { "import/ignore": [ "vitest", "@testing-library/svelte" ] },
   },
 ];

@@ -14,14 +14,16 @@
   /**
    * Отметка элемента списка к удалению при соответсвующем направлении свайпа
    * @typedef {import('$lib/card-swiper').Direction} Direction
+   * @typedef {import('$lib/card-swiper').CardData} CardData
    * @function markListItem
-   * @param {CustomEvent} event Событие свайпа
-   * @param {{ direction: Direction }} event.detail Полезная нагрузка события
+   * @param {{ direction: Direction, data: CardData }} payload Полезная нагрузка события
+   * @param {Direction} payload.direction Направление свайпа
+   * @param {CardData} payload.data Данные свайпнутой карточки
    * @returns {void}
    */
-  const markListItem = ({ detail }) => {
-    if (detail.direction === 'right') {
-      toDelete.push(detail.data.id);
+  const markListItem = ({ direction, data }) => {
+    if (direction === 'right') {
+      toDelete.push(data.id);
     }
   };
 
@@ -47,7 +49,7 @@
    * карточки приведёт к выполнению соответствующего стороне действия
    * @type {-1 | 0 | 1}
    */
-  let thresholdPassed = 0;
+  let thresholdPassed = $state(0);
 
   /**
    * Возврат на главную страницу авторизованной зоны, если список пуст
@@ -75,7 +77,7 @@
 
 {#if ($list ?? []).length > 0}
   <div class="w-dvw h-dvh md:w-1/3 mx-auto overflow-hidden">
-    <CardSwiper {cardData} on:swiped={markListItem} bind:thresholdPassed />
+    <CardSwiper {cardData} swiped={markListItem} bind:thresholdPassed />
     {#if thresholdPassed !== 0}
       <div class="absolute w-full h-full inset-0 flex items-center justify-center text-4xl">
         <span
@@ -89,7 +91,7 @@
           class="absolute w-full h-full opacity-10"
           class:bg-success={thresholdPassed > 0}
           class:bg-error={thresholdPassed < 0}
-        />
+        ></div>
       </div>
     {/if}
   </div>

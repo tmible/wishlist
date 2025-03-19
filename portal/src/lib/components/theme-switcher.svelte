@@ -14,12 +14,12 @@
    * Признак использования тёмной темы
    * @type {boolean}
    */
-  let isDark = isDarkTheme();
+  let isDark = $state(isDarkTheme());
 
   /**
    * Смена темы
    */
-  $: updateTheme(isDark);
+  $effect(() => updateTheme(isDark));
 </script>
 
 <Switch.Root
@@ -27,14 +27,17 @@
   aria-label="Переключить тему"
   bind:checked={isDark}
 >
-  <Switch.Thumb asChild let:attrs>
-    <div
-      class="h-full w-1/2 p-[3px]"
-      class:ml-auto={isDark}
-      class:pr-[4px]={!isDark}
-      {...attrs}
-    >
-      <svelte:component this={isDark ? Moon : SunDim} class="w-full h-full text-base-100" />
-    </div>
+  <Switch.Thumb>
+    {#snippet child({ props })}
+      {@const Icon = isDark ? Moon : SunDim}
+      <div
+        class="h-full w-1/2 p-[3px]"
+        class:ml-auto={isDark}
+        class:pr-[4px]={!isDark}
+        {...props}
+      >
+        <Icon class="w-full h-full text-base-100" />
+      </div>
+    {/snippet}
   </Switch.Thumb>
 </Switch.Root>

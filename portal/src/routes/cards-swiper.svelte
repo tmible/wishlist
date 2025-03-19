@@ -3,6 +3,14 @@
   import { onDestroy, onMount } from 'svelte';
 
   /**
+   * @typedef {object} Props
+   * @property {import('svelte').Snippet} [children] Дочерние компоненты
+   */
+
+  /** @type {Props} */
+  const { children } = $props();
+
+  /**
    * Элемент, внутри которого карточки
    * @type {HTMLElement}
    */
@@ -131,10 +139,10 @@
 
 <div
   class="md:hidden relative w-full h-[310px] text-[0.75rem] cards-swiper"
-  on:touchstart={onTouchStart}
-  on:touchend={onTouchEnd}
+  ontouchstart={onTouchStart}
+  ontouchend={onTouchEnd}
 >
-  <slot />
+  {@render children?.()}
 </div>
 
 <style>

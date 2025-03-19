@@ -1,6 +1,5 @@
 <!-- Svelte компонент -- тексторый редактор -->
 <script>
-  import { Editor } from '@tiptap/core';
   import { Popover } from 'bits-ui';
   import { md } from '$lib/store/breakpoints.js';
   import { formattingMenu } from './formatting-menu.const.js';
@@ -8,16 +7,18 @@
   /** @typedef {import('./formatting-menu.const.js').FormattingMenuOption} FormattingMenuOption */
 
   /**
-   * Текстовый редактор
-   * @type {Editor}
+   * @typedef {object} Props
+   * @property {import('@tiptap/core').Editor} editor Текстовый редактор
    */
-  export let editor;
+
+  /** @type {Props} */
+  const { editor } = $props();
 
   /**
    * Адрес выделенной ссылки с текстом, не совпадающим с адресом
    * @type {string}
    */
-  let textLinkInputValue = '';
+  let textLinkInputValue = $state('');
 
   /**
    * Обработчик клика по опции меню форматирования
@@ -149,52 +150,55 @@
     {#if option.label === 'Добавить ссылку'}
       <Popover.Root>
         <li>
-          <Popover.Trigger asChild let:builder>
-            <button
-              class:active={editor?.isActive('text_link')}
-              type="button"
-              on:click={onFormattingMenuLinkOptionClick}
-              on:touchstart={() => onFormattingMenuOptionTouchStart(option)}
-              on:touchmove={() => onFormattingMenuOptionTouchMove(option)}
-              on:touchcancel={() => onFormattingMenuOptionTouchCancel(option)}
-              on:touchend={() => onFormattingMenuLinkOptionTouchEnd(option)}
-              use:builder.action
-              {...builder}
-            >
-              <svelte:component this={option.icon} class="w-5 h-5" />
-              <span class="hidden md:inline">
-                {editor?.isActive('text_link') ? 'Изменить' : 'Добавить'} ссылку
-              </span>
-            </button>
+          <Popover.Trigger>
+            {#snippet child({ props })}
+              <button
+                class:active={editor?.isActive('text_link')}
+                type="button"
+                onclick={onFormattingMenuLinkOptionClick}
+                ontouchstart={() => onFormattingMenuOptionTouchStart(option)}
+                ontouchmove={() => onFormattingMenuOptionTouchMove(option)}
+                ontouchcancel={() => onFormattingMenuOptionTouchCancel(option)}
+                ontouchend={() => onFormattingMenuLinkOptionTouchEnd(option)}
+                {...props}
+              >
+                <option.icon class="w-5 h-5" />
+                <span class="hidden md:inline">
+                  {editor?.isActive('text_link') ? 'Изменить' : 'Добавить'} ссылку
+                </span>
+              </button>
+            {/snippet}
           </Popover.Trigger>
         </li>
-        <Popover.Content
-          class="bg-base-100 rounded-box shadow-xl py-4 px-6"
-          side={$md ? 'left' : 'top'}
-        >
-          <input
-            class="input input-xs input-bordered mb-3"
-            type="text"
-            placeholder="Адрес ссылки"
-            bind:value={textLinkInputValue}
-          />
-          <div class="flex gap-1">
-            <Popover.Close
-              class="btn btn-xs btn-neutral grow"
-              type="button"
-              on:click={onFormattingMenuLinkPopupNegativeClick}
+        <Popover.Portal>
+          <Popover.Content
+            class="bg-base-100 rounded-box shadow-xl py-4 px-6"
+            side={$md ? 'left' : 'top'}
+          >
+            <input
+              class="input input-xs input-bordered mb-3"
+              type="text"
+              placeholder="Адрес ссылки"
+              bind:value={textLinkInputValue}
             >
-              {editor.isActive('text_link') ? 'Удалить' : 'Отмена'}
-            </Popover.Close>
-            <Popover.Close
-              class="btn btn-xs btn-neutral grow"
-              type="button"
-              on:click={onFormattingMenuLinkPopupPositiveClick}
-            >
-              {editor.isActive('text_link') ? 'Сохранить' : 'Добавить'}
-            </Popover.Close>
-          </div>
-        </Popover.Content>
+            <div class="flex gap-1">
+              <Popover.Close
+                class="btn btn-xs btn-neutral grow"
+                type="button"
+                onclick={onFormattingMenuLinkPopupNegativeClick}
+              >
+                {editor.isActive('text_link') ? 'Удалить' : 'Отмена'}
+              </Popover.Close>
+              <Popover.Close
+                class="btn btn-xs btn-neutral grow"
+                type="button"
+                onclick={onFormattingMenuLinkPopupPositiveClick}
+              >
+                {editor.isActive('text_link') ? 'Сохранить' : 'Добавить'}
+              </Popover.Close>
+            </div>
+          </Popover.Content>
+        </Popover.Portal>
       </Popover.Root>
     {:else}
       <li>
@@ -202,13 +206,13 @@
           class="conditionally-join-item"
           class:active={option.activityKey && editor?.isActive(option.activityKey)}
           type="button"
-          on:click={() => onFormattingMenuOptionClick(option)}
-          on:touchstart={() => onFormattingMenuOptionTouchStart(option)}
-          on:touchmove={() => onFormattingMenuOptionTouchMove(option)}
-          on:touchcancel={() => onFormattingMenuOptionTouchCancel(option)}
-          on:touchend={(event) => onFormattingMenuOptionTouchEnd(event, option)}
+          onclick={() => onFormattingMenuOptionClick(option)}
+          ontouchstart={() => onFormattingMenuOptionTouchStart(option)}
+          ontouchmove={() => onFormattingMenuOptionTouchMove(option)}
+          ontouchcancel={() => onFormattingMenuOptionTouchCancel(option)}
+          ontouchend={(event) => onFormattingMenuOptionTouchEnd(event, option)}
         >
-          <svelte:component this={option.icon} class="w-5 h-5" />
+          <option.icon class="w-5 h-5" />
           {#if option.labelTag}
             <svelte:element
               this={option.labelTag}
@@ -234,8 +238,8 @@
         </button>
       </li>
       {#if option.isLastInSection}
-        <div class="divider my-1" />
-        <div class="divider divider-horizontal mx-1" />
+        <div class="divider my-1"></div>
+        <div class="divider divider-horizontal mx-1"></div>
       {/if}
     {/if}
   {/each}
@@ -247,15 +251,15 @@
     font-size: 0.6rem;
   }
 
-  .conditionally-join-vertical *:has(.conditionally-join-item.active) {
-    &:has(+ * .conditionally-join-item.active) .conditionally-join-item.active {
+  .conditionally-join-vertical *:has(:global(.conditionally-join-item.active)) {
+    &:has(:global(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
       border-start-start-radius: var(--rounded-btn);
       border-start-end-radius: var(--rounded-btn);
     }
 
-    & + *:has(.conditionally-join-item.active) {
+    & + *:has(:global(.conditionally-join-item.active)) {
       & .conditionally-join-item.active {
         border-radius: 0;
       }
@@ -269,15 +273,15 @@
     }
   }
 
-  .conditionally-join-horizontal *:has(.conditionally-join-item.active) {
-    &:has(+ * .conditionally-join-item.active) .conditionally-join-item.active {
+  .conditionally-join-horizontal *:has(:global(.conditionally-join-item.active)) {
+    &:has(:global(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
       border-end-start-radius: var(--rounded-btn);
       border-end-end-radius: 0;
       border-start-start-radius: var(--rounded-btn);
       border-start-end-radius: 0;
     }
 
-    & + *:has(.conditionally-join-item.active) {
+    & + *:has(:global(.conditionally-join-item.active)) {
       & .conditionally-join-item.active {
         border-radius: 0;
       }

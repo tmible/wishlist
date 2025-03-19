@@ -33,14 +33,6 @@ describe('categories dialog', () => {
 
   it('should be rendered opened', () => {
     const { baseElement } = render(CategoriesDialog, { open: true });
-
-    // remove random ids to match snapshot
-    const dialog = screen.getByRole('dialog');
-    dialog.removeAttribute('id');
-    dialog.removeAttribute('aria-describedby');
-    const descriptionId = dialog.getAttribute('aria-labelledby');
-    dialog.removeAttribute('aria-labelledby');
-    baseElement.querySelector(`[id="${descriptionId}"]`).removeAttribute('id');
     expect(baseElement).toMatchSnapshot();
   });
 

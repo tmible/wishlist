@@ -4,53 +4,46 @@
   import LayoutGrid from 'lucide-svelte/icons/layout-grid';
   import Pencil from 'lucide-svelte/icons/pencil';
   import Trash2 from 'lucide-svelte/icons/trash-2';
-  import { createEventDispatcher } from 'svelte';
   import TelegramEntitiesParser from '$lib/components/telegram-entities/parser.svelte';
   import ListItemForm from './list-item-form.svelte';
 
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
 
   /**
-   * Диспетчер событий
-   * @type {import('svelte').EventDispatcher}
+   * @typedef {object} Props
+   * @property {OwnListItem} [listItem] Элемент списка
+   * @property {boolean} [isReorderModeOn] Признак режима переупорядочивания списка
+   * @property {boolean} [isSkeleton] Признак отображения карточки без контента при загрузке
+   * @property {() => void} [ondelete] Функция обратного вызова для удаления элемента
+   * @property {() => void} [refreshlist] Функция обратного вызова для обновления списка
    */
-  const dispatch = createEventDispatcher();
 
-  /**
-   * Элемент списка
-   * @type {OwnListItem}
-   */
-  export let listItem = null;
-
-  /**
-   * Признак режима переупорядочивания списка
-   * @type {boolean}
-   */
-  export let isReorderModeOn = false;
-
-  /**
-   * Признак отображения карточки без контента при загрузке
-   * @type {boolean}
-   */
-  export let isSkeleton = false;
+  /** @type {Props} */
+  const {
+    listItem = null,
+    isReorderModeOn = false,
+    isSkeleton = false,
+    ondelete,
+    refreshlist,
+  } = $props();
 
   /**
    * Признак отображения карточки в режиме редактирования элемента (с формой вместо контента)
    * @type {boolean}
    */
-  let isEditingModeOn = false;
+  let isEditingModeOn = $state(false);
 
   /**
    * Элемент, содержащий описание элемента списка
    * @type {HTMLElement}
    */
-  let description;
+  let description = $state();
 
   /**
    * Текущие значения свойств элемента списка для подстановку в форму в режиме редактирования
    * @type {OwnListItem}
    */
-  let values;
+  let values = $state();
 
   /**
    * Переключение в режим редактирования
@@ -76,7 +69,7 @@
    */
   const finishEditItem = () => {
     isEditingModeOn = false;
-    dispatch('refreshlist');
+    refreshlist();
   };
 
   /**
@@ -84,7 +77,7 @@
    * @function deleteItem
    * @returns {void}
    */
-  const deleteItem = () => dispatch('delete', listItem);
+  const deleteItem = () => ondelete(listItem);
 </script>
 
 {#if isSkeleton}
@@ -121,8 +114,8 @@
       {#if isEditingModeOn}
         <ListItemForm
           {values}
-          on:cancel={cancelEditItem}
-          on:success={finishEditItem}
+          cancel={cancelEditItem}
+          success={finishEditItem}
         />
       {:else}
         <h3 class="card-title" class:mb-0={isReorderModeOn}>
@@ -145,11 +138,11 @@
             </div>
           {/if}
           <div class="card-actions pt-4">
-            <button class="btn btn-outline btn-neutral w-full md:flex-1" on:click={editItem}>
+            <button class="btn btn-outline btn-neutral w-full md:flex-1" onclick={editItem}>
               <Pencil />
               Редактировать
             </button>
-            <button class="btn btn-outline btn-error w-full md:flex-1" on:click={deleteItem}>
+            <button class="btn btn-outline btn-error w-full md:flex-1" onclick={deleteItem}>
               <Trash2 />
               Удалить
             </button>

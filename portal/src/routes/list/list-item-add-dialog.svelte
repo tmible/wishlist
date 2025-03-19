@@ -2,20 +2,17 @@
 <script>
   import { Dialog } from 'bits-ui';
   import X from 'lucide-svelte/icons/x';
-  import { createEventDispatcher } from 'svelte';
   import ListItemForm from './list-item-form.svelte';
 
   /**
-   * Диспетчер событий
-   * @type {import('svelte').EventDispatcher}
+   * @typedef {object} Props
+   * @property {boolean} [open] Признак открытости диалога
+   * @property {() => void} add Функция обратного вызова для добавления элемента в список
    */
-  const dispatch = createEventDispatcher();
 
-  /**
-   * Признак открытости диалога
-   * @type {boolean}
-   */
-  export let open = false;
+  /** @type {Props} */
+  // eslint-disable-next-line prefer-const -- Нельзя разорвать определение $props
+  let { open = $bindable(false), add } = $props();
 
   /**
    * Закрытие диалога
@@ -31,7 +28,7 @@
    */
   const dispatchAndClose = () => {
     open = false;
-    dispatch('add');
+    add();
   };
 </script>
 
@@ -47,7 +44,7 @@
             <X />
           </Dialog.Close>
         </div>
-        <ListItemForm on:cancel={close} on:success={dispatchAndClose} />
+        <ListItemForm cancel={close} success={dispatchAndClose} />
       </div>
     </Dialog.Content>
   </Dialog.Portal>

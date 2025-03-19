@@ -9,7 +9,6 @@
   import Plus from 'lucide-svelte/icons/plus';
   import User from 'lucide-svelte/icons/user';
   import Users from 'lucide-svelte/icons/users';
-  import { createEventDispatcher } from 'svelte';
   import { goto } from '$app/navigation';
   import { list } from '$lib/store/list';
   import { user } from '$lib/store/user';
@@ -45,28 +44,35 @@
   /** @typedef {MenuItemInteractive | MenuItemWithChildren} MenuItem */
 
   /**
-   * Диспетчер событий
-   * @type {import('svelte').EventDispatcher}
+   * @typedef {object} Props
+   * @property {boolean} [isMenuHidden] Признак необходимости спрятать меню
+   * @property {() => void} add Функция обратного вызова для добавления элемента в список
+   * @property {() => void} reorder
+   *   Функция обратного вызова для изменения порядка элементов в списке
+   * @property {() => void} clear Функция обратного вызова для перехода к очистке списка
+   * @property {() => void} manageCategories Функция обратного вызова для управления категориями
    */
-  const dispatch = createEventDispatcher();
 
-  /**
-   * Признак необходимости спрятать меню
-   * @type {boolean}
-   */
-  export let isMenuHidden = false;
+  /** @type {Props} */
+  const {
+    isMenuHidden = false,
+    add,
+    reorder,
+    clear,
+    manageCategories,
+  } = $props();
 
   /**
    * Формирование ссылки на список пользователя в диалоге с ботом или для групп, в которых есть бот.
    * По возможности вызов меню "Поделиться", иначе копирование ссылки в буфер обмена и индикация
    * в интерфейсе
    * @function shareLink
-   * @param {Event} event Событие клика по кнопке получения ссылки
+   * @param {HTMLElement} currentTarget Цель события клика по кнопке получения ссылки
    * @param {boolean} isLinkForGroups Признак необходимости формирования ссылки для групп
    * @returns {void}
    * @async
    */
-  const shareLink = async (event, isLinkForGroups) => {
+  const shareLink = async (currentTarget, isLinkForGroups) => {
     if ($user.hash === null) {
       user.set({
         ...$user,
@@ -78,42 +84,41 @@
       isLinkForGroups ? 'group' : ''
     }=${$user.hash}`;
 
-    if (navigator.share) {
+    try {
       await navigator.share({ url: link });
-      return;
+    } catch {
+      await navigator.clipboard.writeText(link);
+      currentTarget.classList.add('clicked', 'relative');
+      setTimeout(() => currentTarget.classList.remove('clicked', 'relative'), 1000);
     }
-
-    await navigator.clipboard.writeText(link);
-    event.detail.currentTarget.classList.add('clicked', 'relative');
-    setTimeout(() => event.detail.currentTarget.classList.remove('clicked', 'relative'), 1000);
   };
 
   /**
    * Пункты меню
    * @type {MenuItem[]}
    */
-  $: options = [{
+  const options = $derived([{
     icon: Plus,
     label: 'Добавить',
     testId: 'add',
-    onClick: () => dispatch('add'),
+    onClick: add,
   }, {
     icon: LayoutListMove,
     label: 'Изменить порядок',
     testId: 'reorder',
-    onClick: () => dispatch('reorder'),
+    onClick: reorder,
     condition: ($list ?? []).length > 0,
   }, {
     icon: Eraser,
     label: 'Быстрая очистка',
     testId: 'clear',
-    onClick: () => dispatch('clear'),
+    onClick: clear,
     condition: ($list ?? []).length > 0,
   }, {
     icon: LayoutGrid,
     label: 'Управлять категориями',
     testId: 'categories',
-    onClick: () => dispatch('manageCategories'),
+    onClick: manageCategories,
   }, {
     icon: Link,
     label: 'Поделиться',
@@ -122,12 +127,12 @@
       icon: User,
       label: 'Ссылка на чат с ботом',
       testId: 'share-bot',
-      onClick: (event) => shareLink(event, false),
+      onClick: (event, currentTarget) => shareLink(currentTarget, false),
     }, {
       icon: Users,
       label: 'Ссылка для групп',
       testId: 'share-group',
-      onClick: (event) => shareLink(event, true),
+      onClick: (event, currentTarget) => shareLink(currentTarget, true),
     }],
   }, {
     icon: Bot,
@@ -145,7 +150,7 @@
         goto('/');
       }
     },
-  }];
+  }]);
 </script>
 
 <MobileMenu {isMenuHidden} {options} />

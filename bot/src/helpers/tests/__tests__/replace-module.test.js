@@ -73,9 +73,9 @@ describe('replaceModule', () => {
     when(resolve('prefix', './module/real/path.js')).thenReturn('prefix/module/real/path.js');
     try {
       await replaceModule('package/module/path');
-      assert(false);
+      assert.ok(false);
     } catch (e) {
-      assert(e.message.startsWith('Cannot find package \'prefix\''));
+      assert.ok(e.message.startsWith('Cannot find package \'prefix\''));
     }
   });
 
@@ -106,9 +106,9 @@ describe('replaceModule', () => {
     );
     try {
       await replaceModule('package/module/path');
-      assert(false);
+      assert.ok(false);
     } catch (e) {
-      assert(e.message.startsWith('Cannot find package \'prefix\''));
+      assert.ok(e.message.startsWith('Cannot find package \'prefix\''));
     }
   });
 

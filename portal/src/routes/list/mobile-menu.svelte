@@ -7,16 +7,13 @@
   /** @typedef {import('./menu.svelte').MenuItem} MenuItem */
 
   /**
-   * Признак необходимости спрятать меню
-   * @type {boolean}
+   * @typedef {object} Props
+   * @property {boolean} [isMenuHidden] Признак необходимости спрятать меню
+   * @property {MenuItem[]} options Пункты меню
    */
-  export let isMenuHidden = false;
 
-  /**
-   * Пункты меню
-   * @type {MenuItem[]}
-   */
-  export let options;
+  /** @type {Props} */
+  const { isMenuHidden = false, options } = $props();
 
   /**
    * Фунция svelte transition
@@ -53,9 +50,10 @@
           {#if children}
             <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger data-testid={testId}>
+                {@const Icon = icon}
                 <li>
                   <span>
-                    <svelte:component this={icon} class="w-5 h-5" />
+                    <Icon class="w-5 h-5" />
                     {label}
                   </span>
                 </li>
@@ -68,10 +66,14 @@
                 side="top"
               >
                 {#each children as { icon, label, testId, onClick } (label)}
-                  <DropdownMenu.Item data-testid={testId} on:click={onClick}>
+                  <DropdownMenu.Item
+                    data-testid={testId}
+                    onclick={(event) => onClick(event, event.currentTarget)}
+                  >
+                    {@const Icon = icon}
                     <li>
                       <span>
-                        <svelte:component this={icon} class="w-5 h-5" />
+                        <Icon class="w-5 h-5" />
                         {label}
                       </span>
                     </li>
@@ -80,10 +82,14 @@
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
           {:else}
-            <DropdownMenu.Item data-testid={testId} on:click={onClick}>
+            <DropdownMenu.Item
+              data-testid={testId}
+              onclick={(event) => onClick(event, event.currentTarget)}
+            >
+              {@const Icon = icon}
               <li>
                 <span>
-                  <svelte:component this={icon} class="w-5 h-5" />
+                  <Icon class="w-5 h-5" />
                   {label}
                 </span>
               </li>

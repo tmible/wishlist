@@ -44,7 +44,6 @@ Svelte компонент -- парсер элементов разметки с
    * @property {number} index Уникальный порядковый номер среди потомков родителя узла
    */
 
-
   /**
    * Листовой узел дерева элементов разметки текста с текстом
    * @typedef {object} EntitiesTreeTextNode
@@ -67,22 +66,53 @@ Svelte компонент -- парсер элементов разметки с
    */
 
   /**
-   * Размечаемый текст
-   * @type {string}
+   * @typedef {object} Props
+   * @property {string} text Размечаемый текст
+   * @property {Entity[]} entities Элементы разметки
    */
-  export let text;
+
+  /** @type {Props} */
+  const { text, entities } = $props();
 
   /**
-   * Элементы разметки
-   * @type {Entity[]}
+   * При нахождении открывающей точки изменения разметки добавление потомка
+   * и переход в него. При нахождении закрывающей -- [выход из текущего узла до соответсвующего
+   * родителя с сохранением активных встреченных при этом узлов]{@link goUpSavingNodes}.
+   * @function EntitiesTreeNode
+   * @param {Breakpoint} breakpoint Очередная точка изменения разметки
+   * @param {EntitiesTreeNode} node Текущий узел дерева
+   * @param {string} textPiece Соответствующая часть текста
+   * @returns {EntitiesTreeNode} Следующий узел дерева
    */
-  export let entities;
+  const handleBreakpoint = (breakpoint, node, textPiece) => {
+    let nextNode = node;
 
-  /**
-   * Корень построенного дерева
-   * @type {EntitiesTreeRoot}
-   */
-  let tree;
+    if (breakpoint.type === 'opening') {
+
+      node.children.push({
+        index: node.children.length,
+        type: breakpoint.entity.type,
+        ...Object.fromEntries(
+          Object
+            .entries(breakpoint.entity)
+            .filter(([ key ]) => ![ 'type', 'offset', 'length' ].includes(key)),
+        ),
+        children: textPiece ? [{ text: textPiece, index: 0 }] : [],
+        parent: node,
+      });
+
+      nextNode = node.children.at(-1);
+
+    } else if (breakpoint.type === 'closing') {
+
+      nextNode = goUpSavingNodes(node, breakpoint);
+      if (textPiece) {
+        nextNode.children.push({ text: textPiece, index: nextNode.children.length });
+      }
+    }
+
+    return nextNode;
+  };
 
   /**
    * Построение из элементов разметки сообщения из телеграма дерева для отображения в HTML
@@ -93,11 +123,11 @@ Svelte компонент -- парсер элементов разметки с
    *    ]{@link addParagraphBreakpointsToEveryBlockquote};
    * 4. [Удаление абзацев из блоков кода]{@link filterPreParagraphs};
    * 5. [Сортировка точек изменения разметки текста]{@link sortBreakpoints};
-   * 6. Построение дерева. При нахождении открывающей точки изменения разметки добавление потомка
-   *    и переход в него. При нахождении закрывающей -- [выход из текущего узла до соответсвующего
-   *    родителя с сохранением активных встреченных при этом узлов]{@link goUpSavingNodes}.
+   * 6. [Построение дерева]{@link handleBreakpoint}.
+   * @function buildTree
+   * @returns {EntitiesTreeRoot} Построенное дерево
    */
-  $: {
+  const buildTree = () => {
     const breakpoints = [
       ...entitiesToBreakpoints(entities),
       ...lineBreaksToBreakpoints(Array.from(text.matchAll(/(?!^)\n(?!$)/g)), text.length),
@@ -112,8 +142,8 @@ Svelte компонент -- парсер элементов разметки с
       .filter(filterPreParagraphs)
       .sort(sortBreakpoints);
 
-    tree = { children: [], parent: null };
-    let node = tree;
+    const root = { children: [], parent: null };
+    let node = root;
 
     for (let i = 0; i < breakpoints.length; ++i) {
       const breakpoint = breakpoints[i];
@@ -129,33 +159,20 @@ Svelte компонент -- парсер элементов разметки с
           breakpoints[i + 1].offset,
       ).replaceAll('\n', '');
 
-      if (breakpoint.type === 'opening') {
+      node = handleBreakpoint(breakpoint, node, textPiece);
 
-        node.children.push({
-          index: node.children.length,
-          type: breakpoint.entity.type,
-          ...Object.fromEntries(
-            Object
-              .entries(breakpoint.entity)
-              .filter(([ key ]) => ![ 'type', 'offset', 'length' ].includes(key)),
-          ),
-          children: textPiece ? [{ text: textPiece, index: 0 }] : [],
-          parent: node,
-        });
-        node = node.children.at(-1);
-
-      } else if (breakpoint.type === 'closing') {
-
-        node = goUpSavingNodes(node, breakpoint);
-        if (textPiece) {
-          node.children.push({ text: textPiece, index: node.children.length });
-        }
-
-      }
     }
-  }
+
+    return root;
+  };
+
+  /**
+   * Корень построенного дерева
+   * @type {EntitiesTreeRoot}
+   */
+  const tree = $derived.by(buildTree);
 </script>
 
-{#each tree.children as { index, ...child } (index)}
+{#each (tree?.children ?? []) as { index, ...child } (index)}
   <TelegramEntity node={child} />
 {/each}

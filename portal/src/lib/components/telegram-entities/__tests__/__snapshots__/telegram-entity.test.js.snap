@@ -1,53 +1,53 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`telegram entity > pre > should display pre with language 1`] = `"<pre language="javascript"></pre>"`;
+exports[`telegram entity > pre > should display pre with language 1`] = `"<!----><!----><pre language="javascript"><!----></pre>"`;
 
-exports[`telegram entity > pre > should display pre without language 1`] = `"<pre></pre>"`;
+exports[`telegram entity > pre > should display pre without language 1`] = `"<!----><!----><pre><!----></pre>"`;
 
-exports[`telegram entity > should display bank_card 1`] = `"text"`;
+exports[`telegram entity > should display bank_card 1`] = `"<!---->text"`;
 
-exports[`telegram entity > should display blockquote 1`] = `"<blockquote class="prose"></blockquote>"`;
+exports[`telegram entity > should display blockquote 1`] = `"<!----><!----><blockquote class="prose"><!----></blockquote>"`;
 
-exports[`telegram entity > should display bold 1`] = `"<b></b>"`;
+exports[`telegram entity > should display bold 1`] = `"<!----><!----><b><!----></b>"`;
 
-exports[`telegram entity > should display bot_command 1`] = `"<span class="link cursor-auto" data-entity="bot_command"></span>"`;
+exports[`telegram entity > should display bot_command 1`] = `"<!----><!----><span class="link cursor-auto" data-entity="bot_command"><!----></span>"`;
 
-exports[`telegram entity > should display cashtag 1`] = `"<span class="link cursor-auto" data-entity="cashtag"></span>"`;
+exports[`telegram entity > should display cashtag 1`] = `"<!----><!----><span class="link cursor-auto" data-entity="cashtag"><!----></span>"`;
 
-exports[`telegram entity > should display children recursively 1`] = `"<b><i><u>formatted</u></i></b>"`;
+exports[`telegram entity > should display children recursively 1`] = `"<!----><!----><b><!----><!----><!----><i><!----><!----><!----><u><!----><!---->formatted</u></i></b>"`;
 
-exports[`telegram entity > should display code 1`] = `"<code></code>"`;
+exports[`telegram entity > should display code 1`] = `"<!----><!----><code><!----></code>"`;
 
-exports[`telegram entity > should display custom_emoji 1`] = `"text"`;
+exports[`telegram entity > should display custom_emoji 1`] = `"<!---->text"`;
 
-exports[`telegram entity > should display default 1`] = `"text"`;
+exports[`telegram entity > should display default 1`] = `"<!---->text"`;
 
-exports[`telegram entity > should display email 1`] = `"<a href="mailto:email" data-entity="email">email</a>"`;
+exports[`telegram entity > should display email 1`] = `"<!----><!----><a href="mailto:email" data-entity="email"><!----><!---->email</a>"`;
 
-exports[`telegram entity > should display hashtag 1`] = `"<span class="link cursor-auto" data-entity="hashtag"></span>"`;
+exports[`telegram entity > should display hashtag 1`] = `"<!----><!----><span class="link cursor-auto" data-entity="hashtag"><!----></span>"`;
 
-exports[`telegram entity > should display italic 1`] = `"<i></i>"`;
+exports[`telegram entity > should display italic 1`] = `"<!----><!----><i><!----></i>"`;
 
-exports[`telegram entity > should display mention 1`] = `"<a href="https://t.me/mention" data-entity="mention">@mention</a>"`;
+exports[`telegram entity > should display mention 1`] = `"<!----><!----><a href="https://t.me/mention" data-entity="mention"><!----><!---->@mention</a>"`;
 
-exports[`telegram entity > should display mention_name 1`] = `"text"`;
+exports[`telegram entity > should display mention_name 1`] = `"<!---->text"`;
 
-exports[`telegram entity > should display paragraph 1`] = `"<p class="break-words"></p>"`;
+exports[`telegram entity > should display paragraph 1`] = `"<!----><!----><p class="break-words"><!----></p>"`;
 
-exports[`telegram entity > should display phone_number 1`] = `"<a href="tel:phone_number" data-entity="phone_number">phone_number</a>"`;
+exports[`telegram entity > should display phone_number 1`] = `"<!----><!----><a href="tel:phone_number" data-entity="phone_number"><!----><!---->phone_number</a>"`;
 
-exports[`telegram entity > should display spoiler 1`] = `"<span class="text-transparent hover:text-base-content spoiler" data-entity="spoiler"></span>"`;
+exports[`telegram entity > should display spoiler 1`] = `"<!----><!----><span class="text-transparent hover:text-base-content spoiler" data-entity="spoiler"><!----></span>"`;
 
-exports[`telegram entity > should display strikethrough 1`] = `"<s></s>"`;
+exports[`telegram entity > should display strikethrough 1`] = `"<!----><!----><s><!----></s>"`;
 
-exports[`telegram entity > should display underline 1`] = `"<u></u>"`;
+exports[`telegram entity > should display underline 1`] = `"<!----><!----><u><!----></u>"`;
 
-exports[`telegram entity > text_link > should display text_link with url 1`] = `"<a href="https://example.com" data-entity="text_link"></a>"`;
+exports[`telegram entity > text_link > should display text_link with url 1`] = `"<!----><!----><a href="https://example.com" data-entity="text_link"><!----></a>"`;
 
-exports[`telegram entity > text_link > should display text_link without url 1`] = `"<a data-entity="text_link"></a>"`;
+exports[`telegram entity > text_link > should display text_link without url 1`] = `"<!----><!----><a data-entity="text_link"><!----></a>"`;
 
-exports[`telegram entity > url > should display url with http protocol 1`] = `"<a href="https://example.com">http://example.com</a>"`;
+exports[`telegram entity > url > should display url with http protocol 1`] = `"<!----><!----><a href="https://example.com"><!----><!---->http://example.com</a>"`;
 
-exports[`telegram entity > url > should display url with https protocol 1`] = `"<a href="https://example.com">https://example.com</a>"`;
+exports[`telegram entity > url > should display url with https protocol 1`] = `"<!----><!----><a href="https://example.com"><!----><!---->https://example.com</a>"`;
 
-exports[`telegram entity > url > should display url without protocol 1`] = `"<a href="https://example.com">example.com</a>"`;
+exports[`telegram entity > url > should display url without protocol 1`] = `"<!----><!----><a href="https://example.com"><!----><!---->example.com</a>"`;

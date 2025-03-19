@@ -152,7 +152,7 @@ describe('updateListsMessages', () => {
       const error = mock.fn();
       when(inject(InjectionToken.Logger)).thenReturn({ error });
       await updateListsMessages(ctx, 'userid', messages, false);
-      assert(error.mock.calls.length > 0);
+      assert.ok(error.mock.calls.length > 0);
     });
 
     it('should throw other errors', async () => {
@@ -272,7 +272,7 @@ describe('updateListsMessages', () => {
       const error = mock.fn();
       when(inject(InjectionToken.Logger)).thenReturn({ error });
       await updateListsMessages(ctx, 'userid', messages, false);
-      assert(error.mock.calls.length > 0);
+      assert.ok(error.mock.calls.length > 0);
     });
 
     it('should throw other errors', async () => {

@@ -7,7 +7,7 @@ describe('tryPinning', () => {
   it('should call editing method', async (testContext) => {
     const pinChatMessage = testContext.mock.fn();
     await tryPinning({ pinChatMessage });
-    assert(pinChatMessage.mock.calls.length > 0);
+    assert.ok(pinChatMessage.mock.calls.length > 0);
   });
 
   it('should catch not changed error', async (testContext) => {

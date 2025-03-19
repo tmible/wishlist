@@ -57,7 +57,7 @@ describe('forcePrivacyModeMiddleware', () => {
 
   it('should pass non-message updates', async () => {
     await forcePrivacyModeMiddleware({ updateType: 'action', message: {} }, next);
-    assert(next.mock.calls.length > 0);
+    assert.ok(next.mock.calls.length > 0);
   });
 
   it('should pass messages that are commands', async () => {
@@ -65,7 +65,7 @@ describe('forcePrivacyModeMiddleware', () => {
       { updateType: 'message', message: { text: '', entities: [{ type: 'bot_command' }] } },
       next,
     );
-    assert(next.mock.calls.length > 0);
+    assert.ok(next.mock.calls.length > 0);
   });
 
   it('should pass messages where bot is mentioned', async () => {
@@ -80,7 +80,7 @@ describe('forcePrivacyModeMiddleware', () => {
       },
       next,
     );
-    assert(next.mock.calls.length > 0);
+    assert.ok(next.mock.calls.length > 0);
   });
 
   it('should pass messages that are replies to bot messages', async () => {
@@ -92,6 +92,6 @@ describe('forcePrivacyModeMiddleware', () => {
       },
       next,
     );
-    assert(next.mock.calls.length > 0);
+    assert.ok(next.mock.calls.length > 0);
   });
 });

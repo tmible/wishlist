@@ -14,7 +14,7 @@ describe('removeLastMarkupMiddleware', () => {
     it('should pass', async (testContext) => {
       const next = testContext.mock.fn();
       await removeLastMarkupMiddleware(ctx, next);
-      assert(next.mock.calls.length > 0);
+      assert.ok(next.mock.calls.length > 0);
     });
 
     it('should not remove reply markup', async (testContext) => {
@@ -43,7 +43,7 @@ describe('removeLastMarkupMiddleware', () => {
     it('should pass', async (testContext) => {
       const next = testContext.mock.fn();
       await removeLastMarkupMiddleware(ctx, next);
-      assert(next.mock.calls.length > 0);
+      assert.ok(next.mock.calls.length > 0);
     });
 
     it('should edit marked message reply markup', async (testContext) => {

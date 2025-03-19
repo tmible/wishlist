@@ -6,16 +6,13 @@
   /** @typedef {import('./menu.svelte').MenuItem} MenuItem */
 
   /**
-   * Признак необходимости спрятать меню
-   * @type {boolean}
+   * @typedef {object} Props
+   * @property {boolean} [isMenuHidden] Признак необходимости спрятать меню
+   * @property {MenuItem[]} options Пункты меню
    */
-  export let isMenuHidden = false;
 
-  /**
-   * Пункты меню
-   * @type {MenuItem[]}
-   */
-  export let options;
+  /** @type {Props} */
+  const { isMenuHidden = false, options } = $props();
 
   /**
    * Фунция svelte transition
@@ -41,9 +38,10 @@
         {#if children}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger data-testid={testId}>
+              {@const Icon = icon}
               <li>
                 <span>
-                  <svelte:component this={icon} class="w-5 h-5" />
+                  <Icon class="w-5 h-5" />
                   {label}
                 </span>
               </li>
@@ -56,10 +54,14 @@
               side="left"
             >
               {#each children as { icon, label, testId, onClick } (label)}
-                <DropdownMenu.Item data-testid={testId} on:click={onClick}>
+                <DropdownMenu.Item
+                  data-testid={testId}
+                  onclick={(event) => onClick(event, event.currentTarget)}
+                >
+                  {@const Icon = icon}
                   <li>
                     <span>
-                      <svelte:component this={icon} class="w-5 h-5" />
+                      <Icon class="w-5 h-5" />
                       {label}
                     </span>
                   </li>
@@ -68,10 +70,11 @@
             </DropdownMenu.Content>
           </DropdownMenu.Root>
         {:else}
-          <button data-testid={testId} on:click={onClick}>
+          {@const Icon = icon}
+          <button data-testid={testId} onclick={onClick}>
             <li>
               <span>
-                <svelte:component this={icon} class="w-5 h-5" />
+                <Icon class="w-5 h-5" />
                 {label}
               </span>
             </li>

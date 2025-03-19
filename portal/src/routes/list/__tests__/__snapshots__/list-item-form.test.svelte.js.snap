@@ -1,0 +1,10 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`list item form > should be displayed with empty inputs 1`] = `"<form class="prose" method="POST"><label class="form-control w-full mb-2"><div class="label"><span class="label-text">Название</span></div> <input name="name" class="input input-bordered w-full bg-base-200" required="" type="text" placeholder="Название"></label> <label class="form-control w-full mb-2"><div class="label"><span class="label-text">Описание</span></div> <!----><!----> <!----> Mock<!----></label> <label class="form-control w-full mb-6"><div class="label"><span class="label-text">Категория</span></div> <!----><!----><!----><!----><!----><!----><!----><button class="select select-bordered bg-base-200 items-center" id="bits-1" aria-haspopup="listbox" aria-expanded="false" data-state="closed" data-select-trigger="" type="button"><!----></button><!----> <!----><!----><!----> <!----><!----><input name="categoryId" aria-hidden="true" tabindex="-1" style="position: absolute; width: 1px; height: 1px; padding: 0px; margin: -1px; overflow: hidden; clip: rect(0px, 0px, 0px, 0px); white-space: nowrap; border-width: 0px; transform: translateX(-100%);"><!----><!----></label> <div class="card-actions"><button class="btn btn-neutral w-full md:flex-1" type="button">Отмена</button> <button class="btn btn-primary w-full md:flex-1" type="submit">Добавить</button></div></form>"`;
+
+exports[`list item form > should prefill inputs 1`] = `
+[
+  "name",
+  "categoryId",
+]
+`;

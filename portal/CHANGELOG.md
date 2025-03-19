@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.8 Безграничное пространство (2025-03-19)
+<img width="128" height="128" src="release-images/1.4.8.png"/>
+
+https://github.com/tmible/wishlist/compare/d1ac1f2..master
+
+
 ## 1.4.7 Загадочное Происхождение (2025-03-17)
 <img width="128" height="128" src="release-images/1.4.7.png"/>
 
-https://github.com/tmible/wishlist/compare/9061d9a..master
+https://github.com/tmible/wishlist/compare/9061d9a..d1ac1f2
 
 
 ## 1.4.6 Небесная гармония (2025-03-17)

@@ -17,26 +17,26 @@
    * Признак открытости диалога добавления нового элемента списка
    * @type {boolean}
    */
-  let isAddDialogOpen = false;
+  let isAddDialogOpen = $state(false);
 
   /**
    * Признак удаления элемента списка. Фактически признак
    * открытости диалога с подтверждением удаления
    * @type {boolean}
    */
-  let isDeletionBeingConfirmed = false;
+  let isDeletionBeingConfirmed = $state(false);
 
   /**
    * Удаляемый элемент списка
    * @type {OwnListItem}
    */
-  let listItemToDelete;
+  let listItemToDelete = $state();
 
   /**
    * Признак активности режима переупорядочивания списка
    * @type {boolean}
    */
-  let isReorderModeOn = false;
+  let isReorderModeOn = $state(false);
 
   /**
    * Объект управления сортировкой списка перетаскиванием
@@ -48,7 +48,7 @@
    * Признак открытости диалога управления категориями
    * @type {boolean}
    */
-  let isCategoriesDialogOpen = false;
+  let isCategoriesDialogOpen = $state(false);
 
   /**
    * Запрос списка желаний пользователя и запись результата в [хранилище]{@link list}
@@ -64,13 +64,12 @@
   /**
    * Открытие диалога с подтверждением удаления элемента списка
    * @function deleteListItem
-   * @param {CustomEvent} event Событие удаления элемента списка из дочернего компонента
-   * @param {OwnListItem} event.detail Удаляемый элемента списка
+   * @param {OwnListItem} item Удаляемый элемента списка
    * @returns {void}
    */
-  const deleteListItem = ({ detail }) => {
+  const deleteListItem = (item) => {
     isDeletionBeingConfirmed = true;
-    listItemToDelete = detail;
+    listItemToDelete = item;
   };
 
   /**
@@ -87,7 +86,7 @@
    */
   const reorder = () => {
     isReorderModeOn = true;
-    sortable = Sortable.create(
+    sortable = Sortable.Sortable.create(
       document.querySelector('#list'),
       {
         delay: 250,
@@ -190,7 +189,7 @@
               <div class="card-body prose">
                 <h3 class="card-title">Ваш список пуст</h3>
                 <p>Добавьте в&nbsp;него свои желания</p>
-                <button class="btn btn-primary" on:click={openAddDialog}>
+                <button class="btn btn-primary" onclick={openAddDialog}>
                   Добавить
                 </button>
               </div>
@@ -200,8 +199,8 @@
               <ListItemCard
                 {listItem}
                 {isReorderModeOn}
-                on:delete={deleteListItem}
-                on:refreshlist={requestList}
+                ondelete={deleteListItem}
+                refreshlist={requestList}
               />
             {/each}
           {/if}
@@ -210,10 +209,10 @@
     </div>
     <Menu
       isMenuHidden={isReorderModeOn}
-      on:add={openAddDialog}
-      on:reorder={reorder}
-      on:clear={gotoClear}
-      on:manageCategories={openCategoriesDialog}
+      add={openAddDialog}
+      {reorder}
+      clear={gotoClear}
+      manageCategories={openCategoriesDialog}
     />
     <div
       class="fixed bottom-0 left-1/2 translate-x-[-50%] transition-transform shadow-xl"
@@ -222,7 +221,7 @@
     >
       <button
         class="btn btn-primary btn-lg"
-        on:click={commitOrder}
+        onclick={commitOrder}
       >
         Сохранить
       </button>
@@ -230,15 +229,15 @@
   </div>
 
   <ListItemAddDialog
+    add={requestList}
     bind:open={isAddDialogOpen}
-    on:add={requestList}
   />
 
   <CategoriesDialog bind:open={isCategoriesDialogOpen} />
 
   <ListItemDeleteAlert
     {listItemToDelete}
+    ondelete={requestList}
     bind:open={isDeletionBeingConfirmed}
-    on:delete={requestList}
   />
 {/if}

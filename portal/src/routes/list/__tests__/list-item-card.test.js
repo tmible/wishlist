@@ -21,7 +21,7 @@ describe('list item card', () => {
 
   it('should be displayed as skeleton', () => {
     const { container } = render(ListItemCard, { isSkeleton: true });
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container.innerHTML).toMatchSnapshot();
   });
 
   it('should be displayed default', () => {
@@ -29,7 +29,7 @@ describe('list item card', () => {
       ListItemCard,
       { listItem: { name: 'name', category: { id: 0, name: 'category' } } },
     );
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container.innerHTML).toMatchSnapshot();
   });
 
   it('should be displayed for reordering', () => {
@@ -37,7 +37,7 @@ describe('list item card', () => {
       ListItemCard,
       { listItem: { name: 'name' }, isReorderModeOn: true },
     );
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container.innerHTML).toMatchSnapshot();
   });
 
   it('should enable editing mode', async () => {
@@ -47,31 +47,18 @@ describe('list item card', () => {
     );
     const user = userEvent.setup();
     await user.click(screen.getByText(/Редактировать/, { selector: 'button' }));
-    expect(container.firstChild).toMatchSnapshot();
+    expect(container.innerHTML).toMatchSnapshot();
   });
 
   it('should request item deletion', async () => {
-    const dispatch = vi.fn();
-    vi.resetModules();
-    vi.doMock('svelte');
-    vi.doMock(
-      '$lib/components/telegram-entities/parser.svelte',
-      async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-    );
-    vi.doMock(
-      '../list-item-form.svelte',
-      async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-    );
-    vi.mocked(
-      await import('svelte').then(({ createEventDispatcher }) => createEventDispatcher),
-    ).mockReturnValue(dispatch);
+    const ondelete = vi.fn();
     const listItem = { id: 'id', name: 'name', category: { id: 0, name: 'category' } };
     render(
-      await import('../list-item-card.svelte').then((module) => module.default),
-      { listItem },
+      ListItemCard,
+      { listItem, ondelete },
     );
     const user = userEvent.setup();
     await user.click(screen.getByText(/Удалить/, { selector: 'button' }));
-    expect(dispatch).toHaveBeenCalledWith('delete', listItem);
+    expect(ondelete).toHaveBeenCalledWith(listItem);
   });
 });

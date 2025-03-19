@@ -20,6 +20,7 @@ describe('theme switcher', () => {
 
   describe('on create', () => {
     it('should check theme', () => {
+      isDarkTheme.mockReturnValue(true);
       render(ThemeSwitcher);
       expect(isDarkTheme).toHaveBeenCalled();
     });

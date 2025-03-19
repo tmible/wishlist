@@ -294,6 +294,8 @@ export default [
 
       /* sonarjs */
       "sonarjs/anchor-precedence": "off",
+      // too many false positive reports on jsdoc
+      "sonarjs/no-commented-code": "off",
       "sonarjs/no-inverted-boolean-check": "error",
       "sonarjs/no-nested-conditional": "warn",
       "sonarjs/pseudo-random": "warn",

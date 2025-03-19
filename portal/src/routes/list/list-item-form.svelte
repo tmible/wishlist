@@ -3,7 +3,6 @@
   import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
   import { Select } from 'bits-ui';
   import Check from 'lucide-svelte/icons/check';
-  import { createEventDispatcher } from 'svelte';
   import TextEditor from '$lib/components/text-editor';
   import { categories } from '$lib/store/categories.js';
   import { list } from '$lib/store/list';
@@ -13,16 +12,29 @@
   /** @typedef {import('$lib/components/telegram-entities/parser.svelte').Entity} Entity */
 
   /**
-   * Диспетчер событий
-   * @type {import('svelte').EventDispatcher}
+   * @typedef {object} Props
+   * @property {OwnListItem | null} [values] Текущие значения свойств элемента списка
+   *  для подстановки в форму в режиме редактирования
+   * @property {() => void} cancel Функция обратного вызова для отмены отправки формы на сервер
+   * @property {() => void} success Функция обратного вызова для успеха редактирования
    */
-  const dispatch = createEventDispatcher();
+
+  /** @type {Props} */
+  const { values = null, cancel, success } = $props();
 
   /**
-   * Текущие значения свойств элемента списка для подстановку в форму в режиме редактирования
-   * @type {OwnListItem | null}
+   * Идентификатор выбранной категории
+   * @type {number | null}
    */
-  export let values = null;
+  let selectedCategoryId = $state(values ? values.category.id : null);
+
+  /**
+   * Название выбранной категории
+   * @type {string}
+   */
+  const selectedCategoryName = $derived(
+    $categories?.find(({ id }) => id === selectedCategoryId)?.name ?? '',
+  );
 
   /**
    * Парсинг и подстановка в форму описания элемента списка. Парсинг нужен
@@ -93,7 +105,7 @@
     );
 
     if (response.ok) {
-      dispatch('success');
+      success();
     }
   };
 
@@ -105,6 +117,7 @@
    * @async
    */
   const handleFormSubmit = async (event) => {
+    event.preventDefault();
     const formData = new FormData(event.target);
     setDescription(formData);
 
@@ -112,7 +125,7 @@
       filterNotModifiedProperties(formData);
 
       if (Array.from(formData.entries()).length === 0) {
-        dispatch('cancel');
+        cancel();
         return;
       }
     } else {
@@ -121,16 +134,9 @@
 
     await sendForm(formData);
   };
-
-  /**
-   * Выпуск события отмены отправки формы на сервер по инициативе пользователя
-   * @function cancel
-   * @returns {void}
-   */
-  const cancel = () => dispatch('cancel');
 </script>
 
-<form class="prose" method="POST" on:submit|preventDefault={handleFormSubmit}>
+<form class="prose" method="POST" onsubmit={handleFormSubmit}>
   <label class="form-control w-full mb-2">
     <div class="label">
       <span class="label-text">Название</span>
@@ -142,7 +148,7 @@
       type="text"
       value={values?.name ?? ''}
       placeholder="Название"
-    />
+    >
   </label>
   <!-- eslint-disable-next-line svelte/valid-compile -- textarea внутри TextEditor -->
   <label class="form-control w-full mb-2">
@@ -163,53 +169,54 @@
     </div>
     <Select.Root
       name="categoryId"
+      type="single"
       preventScroll={false}
-      items={$categories}
-      selected={values ?
-        { value: values.category.id, label: values.category.name ?? '⸻' } :
-        { value: null, label: '⸻' }}
+      allowDeselect={true}
+      items={$categories ?? []}
+      bind:value={selectedCategoryId}
     >
-      <Select.Input />
       <Select.Trigger class="select select-bordered bg-base-200 items-center">
-        <Select.Value />
+        {selectedCategoryName}
       </Select.Trigger>
 
-      <Select.Content
-        asChild
-        side="bottom"
-        align="center"
-        sameWidth={true}
-        sideOffset={8}
-        let:builder
-      >
-        <ul
-          class="shadow-xl menu bg-base-200 rounded-lg not-prose"
-          use:builder.action
-          {...builder}
-        >
-          <Select.Item asChild value={null} label="⸻" let:builder>
-            <li use:builder.action {...builder}>
-              <span>⸻</span>
-            </li>
-          </Select.Item>
-          {#each $categories as { id, name } (id)}
-            <Select.Item asChild value={id} label={name} let:builder let:isSelected>
-              <li use:builder.action {...builder}>
-                <div class="flex justify-between" class:bg-base-100={isSelected}>
-                  {name}
-                  <Select.ItemIndicator>
-                    <Check />
-                  </Select.ItemIndicator>
-                </div>
-              </li>
-            </Select.Item>
-          {/each}
-        </ul>
-      </Select.Content>
+      <Select.Portal>
+        <Select.Content side="bottom" align="center" sideOffset={8}>
+          {#snippet child({ wrapperProps, props })}
+            <div {...wrapperProps}>
+              <ul
+                class="
+                  shadow-xl
+                  menu
+                  bg-base-200
+                  rounded-lg
+                  not-prose
+                  w-[var(--bits-select-anchor-width)]
+                "
+                {...props}
+              >
+                {#each $categories as { id, name } (id)}
+                  <Select.Item value={id} label={name}>
+                    {#snippet child({ props, selected })}
+                      <li {...props}>
+                        <div class="flex justify-between" class:bg-base-100={selected}>
+                          {name}
+                          {#if selected}
+                            <Check />
+                          {/if}
+                        </div>
+                      </li>
+                    {/snippet}
+                  </Select.Item>
+                {/each}
+              </ul>
+            </div>
+          {/snippet}
+        </Select.Content>
+      </Select.Portal>
     </Select.Root>
   </label>
   <div class="card-actions">
-    <button class="btn btn-neutral w-full md:flex-1" type="button" on:click={cancel}>
+    <button class="btn btn-neutral w-full md:flex-1" type="button" onclick={cancel}>
       Отмена
     </button>
     <button class="btn btn-primary w-full md:flex-1" type="submit">

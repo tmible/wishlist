@@ -11,28 +11,30 @@
   /** @typedef {import('$lib/store/categories.js').Category} Category */
 
   /**
-   * Признак открытости диалога
-   * @type {boolean}
+   * @typedef {object} Props
+   * @property {boolean} [open] Признак открытости диалога
    */
-  export let open = false;
+
+  /** @type {Props} */
+  let { open = $bindable(false) } = $props();
 
   /**
    * Значение инпута ввода названия новой категории
    * @type {string | null}
    */
-  let newCategoryName = null;
+  let newCategoryName = $state(null);
 
   /**
    * Редактируемая категория
    * @type {Category | null}
    */
-  let editingCategory = null;
+  let editingCategory = $state(null);
 
   /**
    * Инпут ввода названия редактируемой категории. Используется для установки фокуса
    * @type {HTMLInputElement}
    */
-  let editingCategoryInput = null;
+  let editingCategoryInput = $state(null);
 
   /**
    * Обработчк изменения открытости диалога. Сбрасывает состояние при закрытии диалога
@@ -142,12 +144,12 @@
             type="text"
             placeholder="Новая категория"
             bind:value={newCategoryName}
-          />
+          >
           <button
             class="btn btn-primary"
             class:btn-disabled={!newCategoryName}
             disabled={!newCategoryName}
-            on:click={addCategory}
+            onclick={addCategory}
           >
             Добавить
           </button>
@@ -166,19 +168,19 @@
                   type="text"
                   placeholder={name}
                   bind:value={editingCategory.name}
-                />
+                >
                 <div>
                   <button
                     class="btn btn-ghost"
                     data-testid="cancel-button"
-                    on:click={cancelEditingCategory}
+                    onclick={cancelEditingCategory}
                   >
                     <Undo2 />
                   </button>
                   <button
                     class="btn btn-ghost"
                     data-testid="submit-button"
-                    on:click={() => submitEditedCategory(name)}
+                    onclick={() => submitEditedCategory(name)}
                   >
                     <Save />
                   </button>
@@ -189,14 +191,14 @@
                   <button
                     class="btn btn-ghost"
                     data-testid="edit-button"
-                    on:click={() => editCategory(id, name)}
+                    onclick={() => editCategory(id, name)}
                   >
                     <Pencil />
                   </button>
                   <button
                     class="btn btn-ghost"
                     data-testid="delete-button"
-                    on:click={() => deleteCategory(id)}
+                    onclick={() => deleteCategory(id)}
                   >
                     <Trash2 />
                   </button>
