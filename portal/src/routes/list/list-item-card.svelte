@@ -97,9 +97,9 @@
       </p>
       <div class="card-actions">
         <!-- eslint-disable-next-line svelte/html-self-closing -- тег не пустой -->
-        <button class="skeleton btn btn-neutral w-full md:flex-1">&nbsp;</button>
+        <button class="skeleton btn w-full md:flex-1">&nbsp;</button>
         <!-- eslint-disable-next-line svelte/html-self-closing -- тег не пустой -->
-        <button class="skeleton btn btn-neutral w-full md:flex-1">&nbsp;</button>
+        <button class="skeleton btn w-full md:flex-1">&nbsp;</button>
       </div>
     </div>
   </div>

@@ -38,10 +38,10 @@
   });
 </script>
 
-<div class="card bg-base-100 md:shadow-xl w-full md:w-1/3 md:order-2 main-card-center">
+<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:w-1/3 md:order-2 main-card-center">
   <div
     bind:this={telegramLoginWidgetContainer}
-    class="card-body items-center prose text-[0.75rem] telegram-login-widget-container"
+    class="card-body items-center prose telegram-login-widget-container"
   >
     <p>
       Tmible's wishlist&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
@@ -64,38 +64,39 @@
 <div
   class="
     card
+    md:card-lg
     bg-base-100
     md:shadow-xl
     w-full
     md:w-1/4
     md:order-1
     main-card-left
-    prose
-    text-[0.75rem]
   "
 >
-  <ul class="card-body justify-center">
-    <li class="my-0">Создавайте и&nbsp;редактируйте свой список</li>
-    <li class="my-0">Делитесь своим списком по&nbsp;ссылке</li>
-    <li class="my-0">Отмечайтесь под подарками в&nbsp;списках друзей</li>
-    <li class="my-0">Отправляйте анонимные сообщения</li>
-    <li class="my-0">Быстро очищайте список после праздника</li>
-    <li class="my-0">Упорядочивайте и&nbsp;группируйте свой список, если нужно</li>
-    <li class="my-0">Добавляйте бота в&nbsp;группы для совместного обсуждения</li>
-  </ul>
+  <div class="card-body justify-center prose">
+    <ul>
+      <li class="not-prose">Создавайте и&nbsp;редактируйте свой список</li>
+      <li class="not-prose">Делитесь своим списком по&nbsp;ссылке</li>
+      <li class="not-prose">Отмечайтесь под подарками в&nbsp;списках друзей</li>
+      <li class="not-prose">Отправляйте анонимные сообщения</li>
+      <li class="not-prose">Быстро очищайте список после праздника</li>
+      <li class="not-prose">Упорядочивайте и&nbsp;группируйте свой список</li>
+      <li class="not-prose">Добавляйте бота в&nbsp;группы</li>
+    </ul>
+  </div>
 </div>
 <div class="card bg-base-100 md:shadow-xl w-full md:w-1/4 md:order-3 main-card-right">
   <div class="card-body h-full">
-    <div class="w-full h-0 my-0 mx-auto grow">
+    <div class="flex items-start justify-center w-full h-0 my-0 mx-auto grow">
       <img
-        class="max-w-full max-h-full my-0 mx-auto mask mask-circle aspect-square"
+        class="max-w-full max-h-full mask mask-circle aspect-square"
         loading="lazy"
         decoding="async"
         src="avatar_square.jpg"
         alt="bot avatar"
       >
     </div>
-    <p class="font-bold text-center prose-base max-md:my-0 grow-0">Tmible's wishlist</p>
+    <p class="font-bold text-center prose max-md:my-0 grow-0">Tmible's wishlist</p>
     <a class="grow-0" href="https://t.me/tmible_wishlist_bot" target="_blank">
       <button class="btn w-full">
         Перейти к боту

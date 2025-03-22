@@ -32,20 +32,18 @@
   };
 </script>
 
-<Dialog.Root bind:open={open}>
+<Dialog.Root bind:open>
   <Dialog.Trigger class="hidden" />
-  <Dialog.Portal>
-    <Dialog.Overlay class="modal-overlay" />
-    <Dialog.Content class="modal-box p-0">
-      <div class="overflow-y-auto p-6">
-        <div class="flex items-start prose">
-          <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
-          <Dialog.Close>
-            <X />
-          </Dialog.Close>
-        </div>
-        <ListItemForm cancel={close} success={dispatchAndClose} />
+  <div class="modal" {...(open ? { open: '' } : {})}>
+    <Dialog.Overlay class="modal-backdrop" />
+    <Dialog.Content class="modal-box overflow-y-auto p-6" interactOutsideBehavior="close">
+      <div class="flex items-start prose">
+        <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
+        <Dialog.Close>
+          <X />
+        </Dialog.Close>
       </div>
+      <ListItemForm cancel={close} success={dispatchAndClose} />
     </Dialog.Content>
-  </Dialog.Portal>
+  </div>
 </Dialog.Root>

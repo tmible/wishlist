@@ -128,19 +128,19 @@
 
 <Dialog.Root {onOpenChange} bind:open={open}>
   <Dialog.Trigger class="hidden" />
-  <Dialog.Portal>
-    <Dialog.Overlay class="modal-overlay" />
+  <div class="modal" {...(open ? { open: '' } : {})}>
+    <Dialog.Overlay class="modal-backdrop" />
     <Dialog.Content class="modal-box p-0">
       <div class="overflow-y-auto p-6">
-        <div class="flex items-start prose">
+        <div class="flex items-start prose mb-3">
           <Dialog.Title class="mt-0 mr-auto">Категории</Dialog.Title>
           <Dialog.Close>
             <X />
           </Dialog.Close>
         </div>
-        <div class="flex items-center gap-4 mb-6">
+        <div class="flex items-center gap-4 mb-3">
           <input
-            class="input input-bordered w-full bg-base-200"
+            class="input w-full bg-base-200"
             type="text"
             placeholder="Новая категория"
             bind:value={newCategoryName}
@@ -164,7 +164,7 @@
               {#if editingCategory?.id === id}
                 <input
                   bind:this={editingCategoryInput}
-                  class="input input-bordered flex-grow bg-base-200"
+                  class="input grow bg-base-200"
                   type="text"
                   placeholder={name}
                   bind:value={editingCategory.name}
@@ -209,5 +209,5 @@
         </div>
       </div>
     </Dialog.Content>
-  </Dialog.Portal>
+  </div>
 </Dialog.Root>

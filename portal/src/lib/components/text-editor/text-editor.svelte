@@ -83,7 +83,7 @@
     },
     editorProps: {
       attributes: {
-        class: `${className}${className ? ' ' : ''}cursor-text overflow-y-auto resize-y prose`,
+        class: `${className}${className ? ' ' : ''}cursor-text overflow-y-auto resize-y prose-sm`,
       },
     },
   }));

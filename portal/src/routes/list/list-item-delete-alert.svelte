@@ -37,9 +37,9 @@
 
 <AlertDialog.Root bind:open={open}>
   <AlertDialog.Trigger class="hidden" />
-  <AlertDialog.Portal>
-    <AlertDialog.Overlay class="modal-overlay" />
-    <AlertDialog.Content class="modal-box modal-alert">
+  <div class="modal" {...(open ? { open: '' } : {})}>
+    <AlertDialog.Overlay class="modal-backdrop" />
+    <AlertDialog.Content class="modal-box flex flex-col justify-center">
       <div class="contents prose">
         <AlertDialog.Title>Подвердите удаление</AlertDialog.Title>
         <AlertDialog.Description>
@@ -59,5 +59,5 @@
         </div>
       </div>
     </AlertDialog.Content>
-  </AlertDialog.Portal>
+  </div>
 </AlertDialog.Root>

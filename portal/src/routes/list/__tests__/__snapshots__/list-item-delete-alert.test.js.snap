@@ -23,26 +23,21 @@ exports[`list item delete alert > opened > on cancel button click > should close
     
     <!---->
      
-    <!---->
-    
-    <!---->
+    <div
+      class="modal"
+    >
+      <!---->
+      
+      <!---->
+       
+      <!---->
+      
+      <!---->
+    </div>
     
     
     
   </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  
-  <!---->
-   
-  <!---->
-  
-  <!---->
-  
-  
-  
 </body>
 `;
 
@@ -69,26 +64,21 @@ exports[`list item delete alert > opened > on confirm button click > should clos
     
     <!---->
      
-    <!---->
-    
-    <!---->
+    <div
+      class="modal"
+    >
+      <!---->
+      
+      <!---->
+       
+      <!---->
+      
+      <!---->
+    </div>
     
     
     
   </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  
-  <!---->
-   
-  <!---->
-  
-  <!---->
-  
-  
-  
 </body>
 `;
 
@@ -115,129 +105,125 @@ exports[`list item delete alert > opened > should be displayed 1`] = `
     
     <!---->
      
-    <!---->
-    
-    <!---->
-    
-    
-    
-  </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <div
-    class="modal-overlay"
-    data-alert-dialog-overlay=""
-    data-state="open"
-    id="bits-5"
-    style="pointer-events: auto;"
-  >
-    <!---->
-  </div>
-  
-  
-  
-  <!---->
-   
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-   
-  <div
-    aria-describedby="bits-10"
-    aria-labelledby="bits-9"
-    aria-modal="true"
-    class="modal-box modal-alert"
-    data-alert-dialog-content=""
-    data-state="open"
-    id="bits-6"
-    role="alertdialog"
-    style="pointer-events: auto; outline: none;"
-    tabindex="-1"
-  >
     <div
-      class="contents prose"
+      class="modal"
+      open=""
     >
       <!---->
+      <!---->
+      <!---->
       <div
-        aria-level="2"
-        data-alert-dialog-title=""
+        class="modal-backdrop"
+        data-alert-dialog-overlay=""
         data-state="open"
-        id="bits-9"
-        role="heading"
+        id="bits-5"
+        style="pointer-events: auto;"
       >
-        Подвердите удаление
         <!---->
       </div>
+      
+      
       
       <!---->
        
       <!---->
       <!---->
-      <p
-        data-alert-dialog-description=""
-        data-state="open"
-        id="bits-10"
-      >
-        Вы уверены, что хотите удалить желание «name» из списка?
-      </p>
-      
-      
+      <!---->
+      <!---->
+      <!---->
+      <!---->
+      <!---->
+      <!---->
       <!---->
        
       <div
-        class="card-actions"
+        aria-describedby="bits-10"
+        aria-labelledby="bits-9"
+        aria-modal="true"
+        class="modal-box flex flex-col justify-center"
+        data-alert-dialog-content=""
+        data-state="open"
+        id="bits-6"
+        role="alertdialog"
+        style="pointer-events: auto; outline: none;"
+        tabindex="-1"
       >
-        <!---->
-        <button
-          class="btn btn-neutral flex-1"
-          data-alert-dialog-cancel=""
-          data-state="open"
-          id="bits-11"
-          tabindex="0"
+        <div
+          class="contents prose"
         >
-          Отмена
           <!---->
-        </button>
-        
-        <!---->
-         
-        <!---->
-        <button
-          class="btn btn-error flex-1"
-          data-alert-dialog-action=""
-          data-state="open"
-          id="bits-12"
-        >
-          Удалить
+          <div
+            aria-level="2"
+            data-alert-dialog-title=""
+            data-state="open"
+            id="bits-9"
+            role="heading"
+          >
+            Подвердите удаление
+            <!---->
+          </div>
+          
           <!---->
-        </button>
-        
+           
+          <!---->
+          <!---->
+          <p
+            data-alert-dialog-description=""
+            data-state="open"
+            id="bits-10"
+          >
+            Вы уверены, что хотите удалить желание «name» из списка?
+          </p>
+          
+          
+          <!---->
+           
+          <div
+            class="card-actions"
+          >
+            <!---->
+            <button
+              class="btn btn-neutral flex-1"
+              data-alert-dialog-cancel=""
+              data-state="open"
+              id="bits-11"
+              tabindex="0"
+            >
+              Отмена
+              <!---->
+            </button>
+            
+            <!---->
+             
+            <!---->
+            <button
+              class="btn btn-error flex-1"
+              data-alert-dialog-action=""
+              data-state="open"
+              id="bits-12"
+            >
+              Удалить
+              <!---->
+            </button>
+            
+            <!---->
+          </div>
+        </div>
         <!---->
       </div>
+      
+      
+      
+      
+      
+      
+      
+      <!---->
     </div>
-    <!---->
+    
+    
+    
   </div>
-  
-  
-  
-  
-  
-  
-  
-  <!---->
-  
-  
-  
 </body>
 `;
 
@@ -261,25 +247,20 @@ exports[`list item delete alert > should be displayed closed 1`] = `
     
     <!---->
      
-    <!---->
-    
-    <!---->
+    <div
+      class="modal"
+    >
+      <!---->
+      
+      <!---->
+       
+      <!---->
+      
+      <!---->
+    </div>
     
     
     
   </div>
-  <!---->
-  <!---->
-  <!---->
-  <!---->
-  
-  <!---->
-   
-  <!---->
-  
-  <!---->
-  
-  
-  
 </body>
 `;

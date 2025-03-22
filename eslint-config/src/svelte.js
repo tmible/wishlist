@@ -125,6 +125,8 @@ export default [
     rules: {
       // svelte components can import themselves
       "import/no-self-import": "off",
+      // false positive with svelte snippets
+      "sonarjs/no-use-of-empty-return-value": "off",
     },
   },
   {

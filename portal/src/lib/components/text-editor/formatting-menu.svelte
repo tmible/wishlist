@@ -28,7 +28,12 @@
    * @see FormattingMenuOption.editorAction
    */
   const onFormattingMenuOptionClick = (option) => {
-    editor.chain().focus()[option.editorAction]().run();
+    if (option.activityKey === 'text_link') {
+      textLinkInputValue = editor.getAttributes('text_link').href ?? 'https://';
+      editor.commands.focus();
+    } else {
+      editor.chain().focus()[option.editorAction]().run();
+    }
   };
 
   /**
@@ -71,34 +76,12 @@
     if (!option.isTouchedDirectly) {
       return;
     }
-    event.preventDefault();
-    editor.commands[option.editorAction]();
-  };
-
-  /**
-   * Обработчик клика по опции меню форматирования для настройки
-   * ссылки, текст которой не совпадает с адресом
-   * @function onFormattingMenuLinkOptionClick
-   * @returns {void}
-   */
-  const onFormattingMenuLinkOptionClick = () => {
-    textLinkInputValue = editor.getAttributes('text_link').href ?? 'https://';
-    editor.commands.focus();
-  };
-
-  /**
-   * Обработчик окончания касания опции меню форматирования
-   * для настройки ссылки, текст которой не совпадает с адресом
-   * @function onFormattingMenuLinkOptionTouchEnd
-   * @param {FormattingMenuOption} option Опция меню, которой коснулся пользователь
-   * @returns {void}
-   * @see FormattingMenuOption.isTouchedDirectly
-   */
-  const onFormattingMenuLinkOptionTouchEnd = (option) => {
-    if (!option.isTouchedDirectly) {
-      return;
+    if (option.activityKey === 'text_link') {
+      textLinkInputValue = editor.getAttributes('text_link').href ?? 'https://';
+    } else {
+      event.preventDefault();
+      editor.commands[option.editorAction]();
     }
-    textLinkInputValue = editor.getAttributes('text_link').href ?? 'https://';
   };
 
   /**
@@ -126,6 +109,23 @@
   };
 </script>
 
+{#snippet optionButton(option, children, props = {})}
+  <button
+    class="conditionally-join-item"
+    class:menu-active={option.activityKey && editor?.isActive(option.activityKey)}
+    type="button"
+    onclick={() => onFormattingMenuOptionClick(option)}
+    ontouchstart={() => onFormattingMenuOptionTouchStart(option)}
+    ontouchmove={() => onFormattingMenuOptionTouchMove(option)}
+    ontouchcancel={() => onFormattingMenuOptionTouchCancel(option)}
+    ontouchend={(event) => onFormattingMenuOptionTouchEnd(event, option)}
+    {...props}
+  >
+    <option.icon class="w-5 h-5" />
+    {@render children?.()}
+  </button>
+{/snippet}
+
 <ul
   id="text-editor-bubble-menu"
   class="
@@ -152,31 +152,22 @@
         <li>
           <Popover.Trigger>
             {#snippet child({ props })}
-              <button
-                class:active={editor?.isActive('text_link')}
-                type="button"
-                onclick={onFormattingMenuLinkOptionClick}
-                ontouchstart={() => onFormattingMenuOptionTouchStart(option)}
-                ontouchmove={() => onFormattingMenuOptionTouchMove(option)}
-                ontouchcancel={() => onFormattingMenuOptionTouchCancel(option)}
-                ontouchend={() => onFormattingMenuLinkOptionTouchEnd(option)}
-                {...props}
-              >
-                <option.icon class="w-5 h-5" />
+              {#snippet buttonContent()}
                 <span class="hidden md:inline">
                   {editor?.isActive('text_link') ? 'Изменить' : 'Добавить'} ссылку
                 </span>
-              </button>
+              {/snippet}
+              {@render optionButton(option, buttonContent, props)}
             {/snippet}
           </Popover.Trigger>
         </li>
         <Popover.Portal>
           <Popover.Content
-            class="bg-base-100 rounded-box shadow-xl py-4 px-6"
+            class="bg-base-100 rounded-box shadow-xl py-4 px-6 z-1000"
             side={$md ? 'left' : 'top'}
           >
             <input
-              class="input input-xs input-bordered mb-3"
+              class="input input-xs mb-3"
               type="text"
               placeholder="Адрес ссылки"
               bind:value={textLinkInputValue}
@@ -202,17 +193,7 @@
       </Popover.Root>
     {:else}
       <li>
-        <button
-          class="conditionally-join-item"
-          class:active={option.activityKey && editor?.isActive(option.activityKey)}
-          type="button"
-          onclick={() => onFormattingMenuOptionClick(option)}
-          ontouchstart={() => onFormattingMenuOptionTouchStart(option)}
-          ontouchmove={() => onFormattingMenuOptionTouchMove(option)}
-          ontouchcancel={() => onFormattingMenuOptionTouchCancel(option)}
-          ontouchend={(event) => onFormattingMenuOptionTouchEnd(event, option)}
-        >
-          <option.icon class="w-5 h-5" />
+        {#snippet buttonContent()}
           {#if option.labelTag}
             <svelte:element
               this={option.labelTag}
@@ -235,7 +216,8 @@
               {/each}
             </div>
           {/if}
-        </button>
+        {/snippet}
+        {@render optionButton(option, buttonContent)}
       </li>
       {#if option.isLastInSection}
         <div class="divider my-1"></div>
@@ -246,51 +228,57 @@
 </ul>
 
 <style>
+  @reference "../../../app.css";
+
   kbd {
     @apply text-base-content;
     font-size: 0.6rem;
   }
 
-  .conditionally-join-vertical *:has(:global(.conditionally-join-item.active)) {
-    &:has(:global(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
+  .menu-active {
+    @apply cursor-pointer;
+  }
+
+  .conditionally-join-vertical *:has(:global(.conditionally-join-item.menu-active)) {
+    &:has(:global(+ * .conditionally-join-item.menu-active)) .conditionally-join-item.menu-active {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
-      border-start-start-radius: var(--rounded-btn);
-      border-start-end-radius: var(--rounded-btn);
+      border-start-start-radius: var(--radius-field);
+      border-start-end-radius: var(--radius-field);
     }
 
-    & + *:has(:global(.conditionally-join-item.active)) {
-      & .conditionally-join-item.active {
+    & + *:has(:global(.conditionally-join-item.menu-active)) {
+      & .conditionally-join-item.menu-active {
         border-radius: 0;
       }
 
-      &:not(:has(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
-        border-end-start-radius: var(--rounded-btn);
-        border-end-end-radius: var(--rounded-btn);
+      &:not(:has(+ * .conditionally-join-item.menu-active)) .conditionally-join-item.menu-active {
+        border-end-start-radius: var(--radius-field);
+        border-end-end-radius: var(--radius-field);
         border-start-start-radius: 0;
         border-start-end-radius: 0;
       }
     }
   }
 
-  .conditionally-join-horizontal *:has(:global(.conditionally-join-item.active)) {
-    &:has(:global(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
-      border-end-start-radius: var(--rounded-btn);
+  .conditionally-join-horizontal *:has(:global(.conditionally-join-item.menu-active)) {
+    &:has(:global(+ * .conditionally-join-item.menu-active)) .conditionally-join-item.menu-active {
+      border-end-start-radius: var(--radius-field);
       border-end-end-radius: 0;
-      border-start-start-radius: var(--rounded-btn);
+      border-start-start-radius: var(--radius-field);
       border-start-end-radius: 0;
     }
 
-    & + *:has(:global(.conditionally-join-item.active)) {
-      & .conditionally-join-item.active {
+    & + *:has(:global(.conditionally-join-item.menu-active)) {
+      & .conditionally-join-item.menu-active {
         border-radius: 0;
       }
 
-      &:not(:has(+ * .conditionally-join-item.active)) .conditionally-join-item.active {
+      &:not(:has(+ * .conditionally-join-item.menu-active)) .conditionally-join-item.menu-active {
         border-end-start-radius: 0;
-        border-end-end-radius: var(--rounded-btn);
+        border-end-end-radius: var(--radius-field);
         border-start-start-radius: 0;
-        border-start-end-radius: var(--rounded-btn);
+        border-start-end-radius: var(--radius-field);
       }
     }
   }

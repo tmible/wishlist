@@ -30,6 +30,7 @@
 <div
   class="fixed bottom-0 transition-transform floating-menu hidden md:block"
   class:mb-6={!isMenuHidden}
+  class:mr-6={!isMenuHidden}
   class:translate-y-[100%]={isMenuHidden}
 >
   <ul class="shadow-xl menu bg-base-100 rounded-box">
@@ -86,6 +87,8 @@
 </div>
 
 <style>
+  @reference "../../app.css";
+
   @keyframes success {
     0% {
       opacity: 0;
@@ -115,6 +118,6 @@
   }
 
   .floating-menu {
-    right: calc(1.5rem + var(--scrollbar-width, 0px));
+    right: calc(100% - 100vw);
   }
 </style>

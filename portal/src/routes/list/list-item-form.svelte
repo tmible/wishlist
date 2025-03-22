@@ -137,36 +137,29 @@
 </script>
 
 <form class="prose" method="POST" onsubmit={handleFormSubmit}>
-  <label class="form-control w-full mb-2">
-    <div class="label">
-      <span class="label-text">Название</span>
-    </div>
+  <fieldset class="fieldset mb-2">
+    <legend class="fieldset-legend">Название</legend>
     <input
       name="name"
-      class="input input-bordered w-full bg-base-200"
+      class="input w-full bg-base-200"
       required
       type="text"
       value={values?.name ?? ''}
       placeholder="Название"
     >
-  </label>
-  <!-- eslint-disable-next-line svelte/valid-compile -- textarea внутри TextEditor -->
-  <label class="form-control w-full mb-2">
-    <div class="label">
-      <span class="label-text">Описание</span>
-    </div>
+  </fieldset>
+  <fieldset class="fieldset mb-2">
+    <legend class="fieldset-legend">Описание</legend>
     <TextEditor
       name="description"
-      className="textarea textarea-bordered h-24 bg-base-200"
+      className="textarea textarea-bordered w-full h-24 bg-base-200"
       value={values?.description ?? ''}
       placeholder="Описание"
     />
-  </label>
+  </fieldset>
   <!-- eslint-disable-next-line svelte/valid-compile -- input внутри Select -->
-  <label class="form-control w-full mb-6">
-    <div class="label">
-      <span class="label-text">Категория</span>
-    </div>
+  <fieldset class="fieldset mb-6">
+    <legend class="fieldset-legend">Категория</legend>
     <Select.Root
       name="categoryId"
       type="single"
@@ -175,46 +168,44 @@
       items={$categories ?? []}
       bind:value={selectedCategoryId}
     >
-      <Select.Trigger class="select select-bordered bg-base-200 items-center">
+      <Select.Trigger class="select select-bordered bg-base-200 items-center w-full">
         {selectedCategoryName}
       </Select.Trigger>
 
-      <Select.Portal>
-        <Select.Content side="bottom" align="center" sideOffset={8}>
-          {#snippet child({ wrapperProps, props })}
-            <div {...wrapperProps}>
-              <ul
-                class="
-                  shadow-xl
-                  menu
-                  bg-base-200
-                  rounded-lg
-                  not-prose
-                  w-[var(--bits-select-anchor-width)]
-                "
-                {...props}
-              >
-                {#each $categories as { id, name } (id)}
-                  <Select.Item value={id} label={name}>
-                    {#snippet child({ props, selected })}
-                      <li {...props}>
-                        <div class="flex justify-between" class:bg-base-100={selected}>
-                          {name}
-                          {#if selected}
-                            <Check />
-                          {/if}
-                        </div>
-                      </li>
-                    {/snippet}
-                  </Select.Item>
-                {/each}
-              </ul>
-            </div>
-          {/snippet}
-        </Select.Content>
-      </Select.Portal>
+      <Select.Content side="bottom" align="center" sideOffset={8}>
+        {#snippet child({ wrapperProps, props })}
+          <div {...wrapperProps}>
+            <ul
+              class="
+                shadow-xl
+                menu
+                bg-base-200
+                rounded-lg
+                not-prose
+                w-[var(--bits-select-anchor-width)]
+              "
+              {...props}
+            >
+              {#each $categories as { id, name } (id)}
+                <Select.Item value={id} label={name}>
+                  {#snippet child({ props, selected })}
+                    <li {...props}>
+                      <div class="flex justify-between" class:bg-base-100={selected}>
+                        {name}
+                        {#if selected}
+                          <Check />
+                        {/if}
+                      </div>
+                    </li>
+                  {/snippet}
+                </Select.Item>
+              {/each}
+            </ul>
+          </div>
+        {/snippet}
+      </Select.Content>
     </Select.Root>
-  </label>
+  </fieldset>
   <div class="card-actions">
     <button class="btn btn-neutral w-full md:flex-1" type="button" onclick={cancel}>
       Отмена

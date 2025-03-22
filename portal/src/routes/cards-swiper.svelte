@@ -138,7 +138,7 @@
 </script>
 
 <div
-  class="md:hidden relative w-full h-[310px] text-[0.75rem] cards-swiper"
+  class="md:hidden relative w-full h-[310px] cards-swiper"
   ontouchstart={onTouchStart}
   ontouchend={onTouchEnd}
 >
@@ -146,6 +146,8 @@
 </div>
 
 <style>
+  @reference "../app.css";
+
   :global(html) {
     @apply overflow-hidden;
     @apply overscroll-none;

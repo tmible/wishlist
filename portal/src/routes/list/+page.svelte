@@ -100,6 +100,17 @@
   };
 
   /**
+   * Выход из режима переупорядочивания списка без изменения порядка
+   * @function cancelReorder
+   * @returns {void}
+   */
+  const cancelReorder = () => {
+    sortable.sort($list.map(({ id }) => id), false);
+    sortable.destroy();
+    isReorderModeOn = false;
+  };
+
+  /**
    * Подтверждение порядка элементов списка и выход из режима переупорядочивания
    * @function commitOrder
    * @returns {Promise<void>}
@@ -215,14 +226,14 @@
       manageCategories={openCategoriesDialog}
     />
     <div
-      class="fixed bottom-0 left-1/2 translate-x-[-50%] transition-transform shadow-xl"
+      class="fixed bottom-0 left-1/2 translate-x-[-50%] transition-transform w-max"
       class:mb-6={isReorderModeOn}
       class:translate-y-[100%]={!isReorderModeOn}
     >
-      <button
-        class="btn btn-primary btn-lg"
-        onclick={commitOrder}
-      >
+      <button class="btn btn-neutral btn-lg mr-6 shadow-xl" onclick={cancelReorder}>
+        Отменить
+      </button>
+      <button class="btn btn-primary btn-lg shadow-xl" onclick={commitOrder}>
         Сохранить
       </button>
     </div>

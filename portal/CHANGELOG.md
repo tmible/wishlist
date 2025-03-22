@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.9 Золотой Океан (2025-03-22)
+<img width="128" height="128" src="release-images/1.4.9.png"/>
+
+https://github.com/tmible/wishlist/compare/a45bf87..master
+
+
 ## 1.4.8 Безграничное пространство (2025-03-19)
 <img width="128" height="128" src="release-images/1.4.8.png"/>
 
-https://github.com/tmible/wishlist/compare/d1ac1f2..master
+https://github.com/tmible/wishlist/compare/d1ac1f2..a45bf87
 
 
 ## 1.4.7 Загадочное Происхождение (2025-03-17)

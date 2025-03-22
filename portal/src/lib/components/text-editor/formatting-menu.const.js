@@ -104,6 +104,7 @@ export const formattingMenu = [{
   icon: Link,
   label: 'Добавить ссылку',
   isTouchedDirectly: false,
+  activityKey: 'text_link',
   isLastInSection: false,
 }, {
   icon: Quote,
