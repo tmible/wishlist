@@ -33,6 +33,8 @@
   --radius-field: 0.5rem;
 }
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 @theme {
   --color-white: var(--oc-white);
   --color-black: var(--oc-black);
@@ -213,6 +215,11 @@
   }
 }
 
+:root {
+  /* comment out in favour of bits-ui setting body padding and --scrollbar-width */
+  scrollbar-gutter: auto;
+}
+
 body {
   font-family: "Involve";
 }
@@ -245,8 +252,10 @@ span.spoiler {
 
 .modal-box {
   @apply max-md:w-full;
+  @apply max-md:max-w-none;
   @apply max-md:h-full;
   @apply max-md:rounded-none;
+  transform: translateX(calc(var(--scrollbar-width) / -2));
 }
 
 body:has(.sortable-fallback) * {
@@ -258,4 +267,19 @@ body:has(.sortable-fallback) * {
   @apply opacity-100;
   opacity: 1 !important;
   transform: rotate(7deg);
+}
+
+@keyframes invisible {
+  0% {
+    visibility: visible;
+  }
+  100% {
+    visibility: hidden;
+  }
+}
+
+.invisible {
+  animation-duration: var(--tw-duration, var(--default-transition-duration));
+  animation-fill-mode: forwards;
+  animation-name: invisible;
 }

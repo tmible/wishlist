@@ -29,9 +29,9 @@
 
 <div
   class="fixed bottom-0 transition-transform floating-menu hidden md:block"
-  class:mb-6={!isMenuHidden}
-  class:mr-6={!isMenuHidden}
+  class:bottom-6={!isMenuHidden}
   class:translate-y-[100%]={isMenuHidden}
+  class:invisible={isMenuHidden}
 >
   <ul class="shadow-xl menu bg-base-100 rounded-box">
     {#each options as { icon, label, testId, children, onClick, condition = true } (label)}
@@ -118,6 +118,6 @@
   }
 
   .floating-menu {
-    right: calc(100% - 100vw);
+    right: calc(var(--scrollbar-width, 0px) + var(--spacing) * 6);
   }
 </style>

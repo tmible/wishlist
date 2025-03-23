@@ -5,7 +5,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ListItemDeleteAlert from '../list-item-delete-alert.svelte';
 
 describe('list item delete alert', () => {
+  let modalPortal;
+
+  beforeEach(() => {
+    modalPortal = document.createElement('div');
+    modalPortal.id = 'modal-portal';
+    document.body.append(modalPortal);
+  });
+
   afterEach(() => {
+    modalPortal.remove();
     vi.clearAllMocks();
     cleanup();
   });

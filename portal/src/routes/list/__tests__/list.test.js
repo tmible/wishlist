@@ -13,6 +13,10 @@ vi.mock(
   async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
 );
 vi.mock(
+  '../categories-dialog.svelte',
+  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+);
+vi.mock(
   '../list-item-add-dialog.svelte',
   async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
 );
@@ -26,6 +30,10 @@ vi.mock(
 );
 vi.mock(
   '../menu.svelte',
+  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+);
+vi.mock(
+  '../modal-portal.svelte',
   async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
 );
 vi.mock('$lib/store/list', () => ({ list: writable(null) }));

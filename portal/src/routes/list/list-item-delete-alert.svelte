@@ -37,7 +37,7 @@
 
 <AlertDialog.Root bind:open={open}>
   <AlertDialog.Trigger class="hidden" />
-  <div class="modal" {...(open ? { open: '' } : {})}>
+  <AlertDialog.Portal to="#modal-portal">
     <AlertDialog.Overlay class="modal-backdrop" />
     <AlertDialog.Content class="modal-box flex flex-col justify-center">
       <div class="contents prose">
@@ -59,5 +59,5 @@
         </div>
       </div>
     </AlertDialog.Content>
-  </div>
+  </AlertDialog.Portal>
 </AlertDialog.Root>

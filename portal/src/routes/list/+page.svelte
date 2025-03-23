@@ -10,6 +10,7 @@
   import ListItemCard from './list-item-card.svelte';
   import ListItemDeleteAlert from './list-item-delete-alert.svelte';
   import Menu from './menu.svelte';
+  import ModalPortal from './modal-portal.svelte';
 
   /** @typedef {import('$lib/store/list').OwnListItem} OwnListItem */
 
@@ -229,6 +230,7 @@
       class="fixed bottom-0 left-1/2 translate-x-[-50%] transition-transform w-max"
       class:mb-6={isReorderModeOn}
       class:translate-y-[100%]={!isReorderModeOn}
+      class:invisible={!isReorderModeOn}
     >
       <button class="btn btn-neutral btn-lg mr-6 shadow-xl" onclick={cancelReorder}>
         Отменить
@@ -238,6 +240,8 @@
       </button>
     </div>
   </div>
+
+  <ModalPortal />
 
   <ListItemAddDialog
     add={requestList}

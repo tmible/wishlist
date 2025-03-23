@@ -128,13 +128,13 @@
 
 <Dialog.Root {onOpenChange} bind:open={open}>
   <Dialog.Trigger class="hidden" />
-  <div class="modal" {...(open ? { open: '' } : {})}>
+  <Dialog.Portal to="#modal-portal">
     <Dialog.Overlay class="modal-backdrop" />
     <Dialog.Content class="modal-box p-0">
       <div class="overflow-y-auto p-6">
         <div class="flex items-start prose mb-3">
           <Dialog.Title class="mt-0 mr-auto">Категории</Dialog.Title>
-          <Dialog.Close>
+          <Dialog.Close class="cursor-pointer">
             <X />
           </Dialog.Close>
         </div>
@@ -209,5 +209,5 @@
         </div>
       </div>
     </Dialog.Content>
-  </div>
+  </Dialog.Portal>
 </Dialog.Root>

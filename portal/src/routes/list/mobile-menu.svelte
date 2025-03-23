@@ -29,9 +29,10 @@
 </script>
 
 <div
-  class="fixed bottom-0 right-0 transition-transform mr-6 md:hidden"
-  class:mb-6={!isMenuHidden}
+  class="fixed bottom-0 right-6 transition-transform md:hidden"
+  class:bottom-6={!isMenuHidden}
   class:translate-y-[100%]={isMenuHidden}
+  class:invisible={isMenuHidden}
 >
   <DropdownMenu.Root preventScroll={false}>
     <DropdownMenu.Trigger class="btn btn-primary btn-circle">

@@ -17,12 +17,17 @@ vi.mock(
 
 describe('categories dialog', () => {
   let user;
+  let modalPortal;
 
   beforeEach(() => {
+    modalPortal = document.createElement('div');
+    modalPortal.id = 'modal-portal';
+    document.body.append(modalPortal);
     user = userEvent.setup();
   });
 
   afterEach(() => {
+    modalPortal.remove();
     vi.clearAllMocks();
     cleanup();
   });

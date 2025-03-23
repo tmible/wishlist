@@ -34,16 +34,16 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger class="hidden" />
-  <div class="modal" {...(open ? { open: '' } : {})}>
+  <Dialog.Portal to="#modal-portal">
     <Dialog.Overlay class="modal-backdrop" />
     <Dialog.Content class="modal-box overflow-y-auto p-6" interactOutsideBehavior="close">
       <div class="flex items-start prose">
         <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
-        <Dialog.Close>
+        <Dialog.Close class="cursor-pointer">
           <X />
         </Dialog.Close>
       </div>
       <ListItemForm cancel={close} success={dispatchAndClose} />
     </Dialog.Content>
-  </div>
+  </Dialog.Portal>
 </Dialog.Root>
