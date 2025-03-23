@@ -27,13 +27,13 @@ exports[`list item add dialog > opened > on form cancel > should close 1`] = `
     <!---->
     <!---->
     <button
-      aria-controls="bits-18"
+      aria-controls="bits-30"
       aria-expanded="false"
       aria-haspopup="dialog"
       class="hidden"
       data-dialog-trigger=""
       data-state="closed"
-      id="bits-16"
+      id="bits-28"
     >
       <!---->
     </button>
@@ -77,13 +77,13 @@ exports[`list item add dialog > opened > on form success > should close 1`] = `
     <!---->
     <!---->
     <button
-      aria-controls="bits-42"
+      aria-controls="bits-54"
       aria-expanded="false"
       aria-haspopup="dialog"
       class="hidden"
       data-dialog-trigger=""
       data-state="closed"
-      id="bits-40"
+      id="bits-52"
     >
       <!---->
     </button>

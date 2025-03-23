@@ -20,6 +20,12 @@
   let { open = $bindable(false) } = $props();
 
   /**
+   * Ссылка на элемент с содержимым диалога
+   * @type {HTMLElement}
+   */
+  let content = $state(null);
+
+  /**
    * Значение инпута ввода названия новой категории
    * @type {string | null}
    */
@@ -131,7 +137,11 @@
   <Dialog.Trigger class="hidden" />
   <Dialog.Portal to="#modal-portal">
     <Dialog.Overlay class="modal-backdrop" />
-    <Dialog.Content class="modal-box overflow-y-visible p-0">
+    <Dialog.Content
+      class="modal-box overflow-y-visible p-0"
+      onOpenAutoFocus={() => setTimeout(() => content.focus())}
+      bind:ref={content}
+    >
       <ScrollArea class="max-h-[inherit]" viewportClasses="max-h-[inherit] p-6">
         <div class="flex items-start prose mb-3">
           <Dialog.Title class="mt-0 mr-auto">Категории</Dialog.Title>

@@ -15,13 +15,14 @@
 {#snippet Scrollbar({ orientation })}
   <ScrollArea.Scrollbar
     class="
+      hidden
+      md:flex
       hover:bg-gray-3
       dark:hover:bg-gray-7
       data-[state=visible]:animate-in
       data-[state=hidden]:animate-out
       data-[state=hidden]:fade-out-0
       data-[state=visible]:fade-in-0
-      flex
       w-2.5
       hover:w-3
       touch-none

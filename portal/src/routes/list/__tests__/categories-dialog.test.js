@@ -37,13 +37,29 @@ describe('categories dialog', () => {
   });
 
   it('should be rendered opened', () => {
+    vi.useFakeTimers();
     const { baseElement } = render(CategoriesDialog, { open: true });
+    vi.runAllTimers();
     expect(baseElement).toMatchSnapshot();
+    vi.useRealTimers();
+  });
+
+  it('should focus itself', () => {
+    vi.useFakeTimers();
+    render(CategoriesDialog, { open: true });
+    const dialog = screen.getByRole('dialog');
+    vi.spyOn(dialog, 'focus');
+    vi.runAllTimers();
+    expect(vi.mocked(dialog.focus)).toHaveBeenCalled();
+    vi.useRealTimers();
   });
 
   describe('opened', () => {
     beforeEach(() => {
+      vi.useFakeTimers();
       render(CategoriesDialog, { open: true });
+      vi.clearAllTimers();
+      vi.useRealTimers();
     });
 
     it('should set button disabled if input is empty', () => {

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.13 Осенний ветер (2025-03-24)
+<img width="128" height="128" src="release-images/1.4.13.png"/>
+
+https://github.com/tmible/wishlist/compare/1af0877..master
+
+
 ## 1.4.12 Могучие каменные великаны (2025-03-23)
 <img width="128" height="128" src="release-images/1.4.12.png"/>
 
-https://github.com/tmible/wishlist/compare/85c1e1f..master
+https://github.com/tmible/wishlist/compare/85c1e1f..1af0877
 
 
 ## 1.4.11 Морской подводный мир (2025-03-23)

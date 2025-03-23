@@ -29,8 +29,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 right-6 transition-transform md:hidden"
-  class:bottom-6={!isMenuHidden}
+  class="fixed bottom-6 right-6 transition-transform md:hidden"
   class:translate-y-[100%]={isMenuHidden}
   class:invisible={isMenuHidden}
 >
