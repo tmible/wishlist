@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-portal",
-	"version": "1.4.10",
+	"version": "1.4.11",
 	"private": true,
 	"description": "Портал со списками желаний",
 	"repository": {
@@ -73,9 +73,11 @@
 		"eslint": "9.23.0",
 		"jsdom": "26.0.0",
 		"npm-check-updates": "17.1.16",
+		"resize-observer-polyfill": "1.5.1",
 		"svelte": "5.25.2",
 		"svelte-check": "4.1.5",
 		"tailwindcss": "4.0.15",
+		"tailwindcss-animate": "1.0.7",
 		"typescript": "5.8.2",
 		"vite": "6.2.2",
 		"vitest": "3.0.9"

@@ -2,6 +2,7 @@
 <script>
   import { Dialog } from 'bits-ui';
   import X from 'lucide-svelte/icons/x';
+  import ScrollArea from '$lib/components/scroll-area.svelte';
   import ListItemForm from './list-item-form.svelte';
 
   /**
@@ -36,14 +37,16 @@
   <Dialog.Trigger class="hidden" />
   <Dialog.Portal to="#modal-portal">
     <Dialog.Overlay class="modal-backdrop" />
-    <Dialog.Content class="modal-box overflow-y-auto p-6" interactOutsideBehavior="close">
-      <div class="flex items-start prose">
-        <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
-        <Dialog.Close class="cursor-pointer">
-          <X />
-        </Dialog.Close>
-      </div>
-      <ListItemForm cancel={close} success={dispatchAndClose} />
+    <Dialog.Content class="modal-box overflow-y-visible p-0" interactOutsideBehavior="close">
+      <ScrollArea class="max-h-[inherit]" viewportClasses="max-h-[inherit] p-6">
+        <div class="flex items-start prose">
+          <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
+          <Dialog.Close class="cursor-pointer">
+            <X />
+          </Dialog.Close>
+        </div>
+        <ListItemForm cancel={close} success={dispatchAndClose} />
+      </ScrollArea>
     </Dialog.Content>
   </Dialog.Portal>
 </Dialog.Root>

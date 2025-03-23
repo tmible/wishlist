@@ -15,7 +15,7 @@ vi.mock('$app/environment', () => ({
 vi.mock('$lib/store/breakpoints', () => ({ md: writable(true) }));
 vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: true }) }));
 vi.mock(
-  '$lib/components/theme-switcher.svelte',
+  '$lib/components/header.svelte',
   async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
 );
 vi.mock(

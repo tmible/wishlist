@@ -172,38 +172,40 @@
         {selectedCategoryName}
       </Select.Trigger>
 
-      <Select.Content side="bottom" align="center" sideOffset={8}>
-        {#snippet child({ wrapperProps, props })}
-          <div {...wrapperProps}>
-            <ul
-              class="
-                shadow-xl
-                menu
-                bg-base-200
-                rounded-lg
-                not-prose
-                w-[var(--bits-select-anchor-width)]
-              "
-              {...props}
-            >
-              {#each $categories as { id, name } (id)}
-                <Select.Item value={id} label={name}>
-                  {#snippet child({ props, selected })}
-                    <li {...props}>
-                      <div class="flex justify-between" class:bg-base-100={selected}>
-                        {name}
-                        {#if selected}
-                          <Check />
-                        {/if}
-                      </div>
-                    </li>
-                  {/snippet}
-                </Select.Item>
-              {/each}
-            </ul>
-          </div>
-        {/snippet}
-      </Select.Content>
+      <Select.Portal>
+        <Select.Content side="bottom" align="center" sideOffset={8} strategy="fixed">
+          {#snippet child({ wrapperProps, props })}
+            <div {...wrapperProps}>
+              <ul
+                class="
+                  shadow-xl
+                  menu
+                  bg-base-200
+                  rounded-lg
+                  not-prose
+                  w-[var(--bits-select-anchor-width)]
+                "
+                {...props}
+              >
+                {#each $categories as { id, name } (id)}
+                  <Select.Item value={id} label={name}>
+                    {#snippet child({ props, selected })}
+                      <li {...props}>
+                        <div class="flex justify-between" class:bg-base-100={selected}>
+                          {name}
+                          {#if selected}
+                            <Check />
+                          {/if}
+                        </div>
+                      </li>
+                    {/snippet}
+                  </Select.Item>
+                {/each}
+              </ul>
+            </div>
+          {/snippet}
+        </Select.Content>
+      </Select.Portal>
     </Select.Root>
   </fieldset>
   <div class="card-actions">

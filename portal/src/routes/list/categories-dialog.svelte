@@ -6,6 +6,7 @@
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import Undo2 from 'lucide-svelte/icons/undo-2';
   import X from 'lucide-svelte/icons/x';
+  import ScrollArea from '$lib/components/scroll-area.svelte';
   import { categories } from '$lib/store/categories.js';
 
   /** @typedef {import('$lib/store/categories.js').Category} Category */
@@ -130,8 +131,8 @@
   <Dialog.Trigger class="hidden" />
   <Dialog.Portal to="#modal-portal">
     <Dialog.Overlay class="modal-backdrop" />
-    <Dialog.Content class="modal-box p-0">
-      <div class="overflow-y-auto p-6">
+    <Dialog.Content class="modal-box overflow-y-visible p-0">
+      <ScrollArea class="max-h-[inherit]" viewportClasses="max-h-[inherit] p-6">
         <div class="flex items-start prose mb-3">
           <Dialog.Title class="mt-0 mr-auto">Категории</Dialog.Title>
           <Dialog.Close class="cursor-pointer">
@@ -207,7 +208,7 @@
             </div>
           {/each}
         </div>
-      </div>
+      </ScrollArea>
     </Dialog.Content>
   </Dialog.Portal>
 </Dialog.Root>

@@ -8,7 +8,9 @@
 		<meta name="description" content="Создайте свой спискок желаний здесь, на портале, смотрите списки друзей в телеграм боте" />
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
+	<body class="bg-[url('/bg.svg')] bg-no-repeat bg-cover bg-base-200 overflow-hidden" data-sveltekit-preload-data="hover">
+	 <div class="h-dvh dark:backdrop-brightness-75">
+		  %sveltekit.body%
+		</div>
 	</body>
 </html>

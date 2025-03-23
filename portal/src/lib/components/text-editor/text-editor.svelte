@@ -105,7 +105,7 @@
 
 <style>
   :global(.tiptap p.is-editor-empty:first-child::before) {
-    color: #adb5bd;
+    color: color-mix(in oklch, var(--color-base-content) 40%, #0000);
     content: attr(data-placeholder);
     float: left;
     height: 0;

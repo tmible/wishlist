@@ -2,7 +2,7 @@
 <script>
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
-  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import Header from '$lib/components/header.svelte';
   import { md } from '$lib/store/breakpoints.js';
   import { user } from '$lib/store/user';
   import Cards from './cards.svelte';
@@ -40,57 +40,44 @@
 </svelte:head>
 
 {#if browser && !$user.isAuthenticated}
-  <div class="h-dvh bg-[url('/bg.svg')] bg-no-repeat bg-cover bg-base-200 overflow-hidden">
-    <div class="w-full h-full flex flex-col dark:backdrop-brightness-75">
-      <div class="navbar">
-        <div class="pl-4 md:pl-24 mr-auto relative self-start">
-          <a href="https://t.me/tmible" target="_blank">
-            <div class="absolute top-[-0.5rem] p-2 bg-[#ffd1dc]" data-theme="light">
-              tmible
-            </div>
-          </a>
-        </div>
-        <div class="mr-2 md:mr-4">
-          <ThemeSwitcher />
-        </div>
-      </div>
-      <div class="hero grow">
-        <div class="hero-content flex-col md:p-0 h-full md:h-auto justify-end">
-          <div class="grow md:grow-0 flex items-center prose">
-            <h1
-              class="
-                md:mb-16
-                text-[22vw]
-                md:text-[11vw]
-                2xl:text-[160px]
-                text-center
-                dark:text-gray-300
-                main-header
-              "
-            >
-              Tmible's wishlist
-            </h1>
-          </div>
-          <CardsSwiper>
-            <Cards isVisible={!$md} />
-          </CardsSwiper>
-          <div
+  <div class="w-full h-full flex flex-col">
+    <Header />
+    <main class="hero grow">
+      <div class="hero-content flex-col md:p-0 h-full md:h-auto justify-end">
+        <div class="grow md:grow-0 flex items-center prose">
+          <h1
             class="
-              hidden
-              md:flex
-              md:flex-row
-              w-full
-              justify-around
-              h-auto
-              overflow-y-visible
-              main-cards
+              md:mb-16
+              text-[22vw]
+              md:text-[11vw]
+              2xl:text-[160px]
+              text-center
+              dark:text-gray-300
+              main-header
             "
           >
-            <Cards isVisible={$md} />
-          </div>
+            Tmible's wishlist
+          </h1>
+        </div>
+        <CardsSwiper>
+          <Cards isVisible={!$md} />
+        </CardsSwiper>
+        <div
+          class="
+            hidden
+            md:flex
+            md:flex-row
+            w-full
+            justify-around
+            h-auto
+            overflow-y-visible
+            main-cards
+          "
+        >
+          <Cards isVisible={$md} />
         </div>
       </div>
-    </div>
+    </main>
   </div>
 {/if}
 

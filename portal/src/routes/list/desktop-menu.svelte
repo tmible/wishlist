@@ -28,7 +28,7 @@
 </script>
 
 <div
-  class="fixed bottom-0 transition-transform floating-menu hidden md:block"
+  class="fixed bottom-0 right-6 transition-transform hidden md:block"
   class:bottom-6={!isMenuHidden}
   class:translate-y-[100%]={isMenuHidden}
   class:invisible={isMenuHidden}
@@ -115,9 +115,5 @@
     @apply py-0.5;
     @apply px-1;
     @apply rounded-full;
-  }
-
-  .floating-menu {
-    right: calc(var(--scrollbar-width, 0px) + var(--spacing) * 6);
   }
 </style>

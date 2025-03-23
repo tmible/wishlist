@@ -19,5 +19,6 @@ export default defineConfig(({ mode }) => ({
         'src/lib/components/text-editor/mark-paste-rule.js',
       ],
     },
+    setupFiles: 'vitest-setup.js',
   },
 }));

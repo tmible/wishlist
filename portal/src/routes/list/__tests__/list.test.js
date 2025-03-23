@@ -9,7 +9,7 @@ import List from '../+page.svelte';
 vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn(() => []) }));
 vi.mock('sortablejs');
 vi.mock(
-  '$lib/components/theme-switcher.svelte',
+  '$lib/components/header.svelte',
   async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
 );
 vi.mock(

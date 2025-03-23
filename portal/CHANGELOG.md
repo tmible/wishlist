@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.11 Морской подводный мир (2025-03-23)
+<img width="128" height="128" src="release-images/1.4.11.png"/>
+
+https://github.com/tmible/wishlist/compare/2cbb318..master
+
+
 ## 1.4.10 Изменчивая вечность (2025-03-23)
 <img width="128" height="128" src="release-images/1.4.10.png"/>
 
-https://github.com/tmible/wishlist/compare/6b09fb7..master
+https://github.com/tmible/wishlist/compare/6b09fb7..2cbb318
 
 
 ## 1.4.9 Золотой Океан (2025-03-22)

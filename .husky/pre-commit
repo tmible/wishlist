@@ -7,6 +7,8 @@ run_checks() {
   cd - > /dev/null
 }
 
+pnpm install > /dev/null
+
 directory=$(dirname "${BASH_SOURCE[0]}")
 
 IFS="|" read -r -a packages <<< $($directory/packages.sh -c)

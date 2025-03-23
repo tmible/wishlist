@@ -2,7 +2,8 @@
 <script>
   import * as Sortable from 'sortablejs';
   import { goto } from '$app/navigation';
-  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import Header from '$lib/components/header.svelte';
+  import ScrollArea from '$lib/components/scroll-area.svelte';
   import { list } from '$lib/store/list';
   import { user } from '$lib/store/user';
   import CategoriesDialog from './categories-dialog.svelte';
@@ -171,54 +172,41 @@
 </script>
 
 {#if $user.isAuthenticated}
-  <div class="bg-[url('/bg.svg')] bg-no-repeat bg-cover bg-base-200">
-    <div class="w-full h-full min-h-dvh flex flex-col dark:backdrop-brightness-75">
-      <div class="navbar">
-        <div class="pl-12 md:pl-24 mr-auto relative self-start">
-          <a href="https://t.me/tmible" target="_blank">
-            <div class="absolute top-[-0.5rem] p-2 bg-[#ffd1dc]" data-theme="light">
-              tmible
+  <ScrollArea viewportClasses="w-full h-full max-h-dvh flex flex-col">
+    <Header />
+    <main
+      id="list"
+      class="flex flex-col gap-4 pt-6 pb-24 md:pt-12 mx-6 lg:w-1/3 lg:mx-auto"
+      class:md:pb-6={!isReorderModeOn}
+    >
+      <!-- eslint-disable-next-line unicorn/prefer-top-level-await -->
+      {#await requestList()}
+        {#each [ 1, 2, 3, 4 ] as index (index)}
+          <ListItemCard isSkeleton={true} />
+        {/each}
+      {:then}
+        {#if $list.length === 0}
+          <div class="card bg-base-100 md:shadow-xl">
+            <div class="card-body prose">
+              <h3 class="card-title">Ваш список пуст</h3>
+              <p>Добавьте в&nbsp;него свои желания</p>
+              <button class="btn btn-primary" onclick={openAddDialog}>
+                Добавить
+              </button>
             </div>
-          </a>
-        </div>
-        <div class="mr-4">
-          <ThemeSwitcher />
-        </div>
-      </div>
-      <div
-        id="list"
-        class="flex flex-col gap-4 pt-6 pb-24 md:pt-12 mx-6 lg:w-1/3 lg:mx-auto"
-        class:md:pb-6={!isReorderModeOn}
-      >
-        <!-- eslint-disable-next-line unicorn/prefer-top-level-await -->
-        {#await requestList()}
-          {#each [ 1, 2, 3, 4 ] as index (index)}
-            <ListItemCard isSkeleton={true} />
+          </div>
+        {:else}
+          {#each $list as listItem (listItem.id)}
+            <ListItemCard
+              {listItem}
+              {isReorderModeOn}
+              ondelete={deleteListItem}
+              refreshlist={requestList}
+            />
           {/each}
-        {:then}
-          {#if $list.length === 0}
-            <div class="card bg-base-100 md:shadow-xl">
-              <div class="card-body prose">
-                <h3 class="card-title">Ваш список пуст</h3>
-                <p>Добавьте в&nbsp;него свои желания</p>
-                <button class="btn btn-primary" onclick={openAddDialog}>
-                  Добавить
-                </button>
-              </div>
-            </div>
-          {:else}
-            {#each $list as listItem (listItem.id)}
-              <ListItemCard
-                {listItem}
-                {isReorderModeOn}
-                ondelete={deleteListItem}
-                refreshlist={requestList}
-              />
-            {/each}
-          {/if}
-        {/await}
-      </div>
-    </div>
+        {/if}
+      {/await}
+    </main>
     <Menu
       isMenuHidden={isReorderModeOn}
       add={openAddDialog}
@@ -239,7 +227,7 @@
         Сохранить
       </button>
     </div>
-  </div>
+  </ScrollArea>
 
   <ModalPortal />
 

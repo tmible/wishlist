@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@plugin "tailwindcss-animate";
 @plugin "daisyui";
 @import "open-color/open-color.css";
 @plugin "daisyui/theme" {
@@ -216,7 +217,7 @@
 }
 
 :root {
-  /* comment out in favour of bits-ui setting body padding and --scrollbar-width */
+  /* disable in favour of using bits-ui ScrollArea */
   scrollbar-gutter: auto;
 }
 
@@ -255,7 +256,6 @@ span.spoiler {
   @apply max-md:max-w-none;
   @apply max-md:h-full;
   @apply max-md:rounded-none;
-  transform: translateX(calc(var(--scrollbar-width) / -2));
 }
 
 body:has(.sortable-fallback) * {

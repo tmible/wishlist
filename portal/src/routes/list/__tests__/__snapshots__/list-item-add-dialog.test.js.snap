@@ -27,13 +27,13 @@ exports[`list item add dialog > opened > on form cancel > should close 1`] = `
     <!---->
     <!---->
     <button
-      aria-controls="bits-13"
+      aria-controls="bits-18"
       aria-expanded="false"
       aria-haspopup="dialog"
       class="hidden"
       data-dialog-trigger=""
       data-state="closed"
-      id="bits-11"
+      id="bits-16"
     >
       <!---->
     </button>
@@ -77,13 +77,13 @@ exports[`list item add dialog > opened > on form success > should close 1`] = `
     <!---->
     <!---->
     <button
-      aria-controls="bits-27"
+      aria-controls="bits-42"
       aria-expanded="false"
       aria-haspopup="dialog"
       class="hidden"
       data-dialog-trigger=""
       data-state="closed"
-      id="bits-25"
+      id="bits-40"
     >
       <!---->
     </button>
@@ -138,9 +138,9 @@ exports[`list item add dialog > opened > should be displayed 1`] = `
     <!---->
      
     <div
-      aria-labelledby="bits-9"
+      aria-labelledby="bits-12"
       aria-modal="true"
-      class="modal-box overflow-y-auto p-6"
+      class="modal-box overflow-y-visible p-0"
       data-dialog-content=""
       data-state="open"
       id="bits-6"
@@ -149,70 +149,115 @@ exports[`list item add dialog > opened > should be displayed 1`] = `
       style="pointer-events: auto; outline: undefined;"
       tabindex="-1"
     >
+      <!---->
+      <!---->
       <div
-        class="flex items-start prose"
+        class="max-h-[inherit]"
+        data-scroll-area-root=""
+        dir="ltr"
+        id="bits-9"
+        style="position: relative; --bits-scroll-area-corner-height: 0px; --bits-scroll-area-corner-width: 0px;"
       >
         <!---->
         <div
-          aria-level="2"
-          class="mt-0 mr-auto"
-          data-dialog-title=""
-          data-state="open"
-          id="bits-9"
-          role="heading"
+          class="max-h-[inherit] p-6"
+          data-scroll-area-viewport=""
+          id="bits-10"
+          style="overflow-x: hidden; overflow-y: scroll;"
         >
-          Добавить желание
-          <!---->
+          <div
+            data-scroll-area-content=""
+            id="bits-11"
+            style="min-width: undefined;"
+          >
+            <!---->
+            <div
+              class="flex items-start prose"
+            >
+              <!---->
+              <div
+                aria-level="2"
+                class="mt-0 mr-auto"
+                data-dialog-title=""
+                data-state="open"
+                id="bits-12"
+                role="heading"
+              >
+                Добавить желание
+                <!---->
+              </div>
+              
+              <!---->
+               
+              <!---->
+              <button
+                class="cursor-pointer"
+                data-dialog-close=""
+                data-state="open"
+                id="bits-13"
+                tabindex="0"
+              >
+                <svg
+                  class="lucide-icon lucide lucide-x"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <!---->
+                  <path
+                    d="M18 6 6 18"
+                  >
+                    
+                  </path>
+                  
+                  <!---->
+                  <path
+                    d="m6 6 12 12"
+                  >
+                    
+                  </path>
+                  
+                  <!---->
+                  <!---->
+                  
+                  <!---->
+                </svg>
+                <!---->
+              </button>
+              
+              <!---->
+            </div>
+             
+            <!---->
+            
+            <!---->
+          </div>
         </div>
+        <!---->
+         
+        <!---->
+        <!---->
+        <!---->
+        
+        
         
         <!---->
          
         <!---->
-        <button
-          class="cursor-pointer"
-          data-dialog-close=""
-          data-state="open"
-          id="bits-10"
-          tabindex="0"
-        >
-          <svg
-            class="lucide-icon lucide lucide-x"
-            fill="none"
-            height="24"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <!---->
-            <path
-              d="M18 6 6 18"
-            >
-              
-            </path>
-            
-            <!---->
-            <path
-              d="m6 6 12 12"
-            >
-              
-            </path>
-            
-            <!---->
-            <!---->
-            
-            <!---->
-          </svg>
-          <!---->
-        </button>
+         
+        <!---->
         
         <!---->
+        <!---->
       </div>
-       
-      <!---->
+      
+      
       <!---->
     </div>
     
