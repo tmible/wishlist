@@ -100,88 +100,108 @@ describe('cards', () => {
     });
   });
 
-  describe('on swipe up', () => {
-    const cards = new Array(2).fill(null).map(() => ({ classList: { add: vi.fn() } }));
-    let classList;
+  const swipeUpTests = [
+    { description: 'on swipe up', startScreenY: 1, endScreenY: 0 },
+    { description: 'on touch in upper half', startScreenY: 0, endScreenY: 0, pageY: 1 },
+  ];
 
-    beforeEach(() => {
-      classList = { add: vi.fn(), remove: vi.fn() };
-      vi.useFakeTimers();
-      vi.spyOn(window, 'setTimeout');
-      vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
-      vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
-      const { container } = render(CardsSwiper);
-      vi.advanceTimersToNextTimer();
-      fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
-      fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 0 }] });
-    });
+  for (const { description, startScreenY, endScreenY, pageY } of swipeUpTests) {
+    describe(description, () => {
+      const cards = new Array(2).fill(null).map(() => ({ classList: { add: vi.fn() } }));
+      let classList;
 
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it('should add shown class to corresponding card', () => {
-      expect(cards[1].classList.add).toHaveBeenCalledWith('shown');
-    });
-
-    it('should add swipe class to swiper', () => {
-      expect(classList.add).toHaveBeenCalledWith('swiped-up');
-    });
-
-    it('should set timeout to remove swipe class from swiper', () => {
-      expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 375);
-    });
-
-    it('should remove swipe class from swiper on timeout', () => {
-      vi.advanceTimersByTime(375);
-      expect(classList.remove).toHaveBeenCalledWith('swiped-up');
-    });
-  });
-
-  describe('on swipe down', () => {
-    const cards = new Array(2).fill(null).map(() => ({
-      classList: { add: vi.fn(), remove: vi.fn() },
-    }));
-    let classList;
-
-    beforeEach(() => {
-      classList = { add: vi.fn(), remove: vi.fn() };
-      vi.useFakeTimers();
-      vi.spyOn(window, 'setTimeout');
-      vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
-      vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
-      const { container } = render(CardsSwiper);
-      vi.advanceTimersToNextTimer();
-      for (let i = 1; i < cards.length; ++i) {
-        fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
-        fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 0 }] });
+      beforeEach(() => {
+        classList = { add: vi.fn(), remove: vi.fn() };
+        vi.useFakeTimers();
+        vi.spyOn(window, 'setTimeout');
+        vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
+        vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
+        const { container } = render(CardsSwiper);
         vi.advanceTimersToNextTimer();
-      }
-      fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 0 }] });
-      fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
-    });
+        fireEvent.touchStart(container.firstChild, { touches: [{ screenY: startScreenY }] });
+        fireEvent.touchEnd(
+          container.firstChild,
+          { changedTouches: [{ screenY: endScreenY, pageY }] },
+        );
+      });
 
-    afterEach(() => {
-      vi.useRealTimers();
-    });
+      afterEach(() => {
+        vi.useRealTimers();
+      });
 
-    it('should add shown class to corresponding card', () => {
-      expect(cards[1].classList.remove).toHaveBeenCalledWith('shown');
-    });
+      it('should add shown class to corresponding card', () => {
+        expect(cards[1].classList.add).toHaveBeenCalledWith('shown');
+      });
 
-    it('should add swipe class to swiper', () => {
-      expect(classList.add).toHaveBeenCalledWith('swiped-down');
-    });
+      it('should add swipe class to swiper', () => {
+        expect(classList.add).toHaveBeenCalledWith('swiped-up');
+      });
 
-    it('should set timeout to remove swipe class from swiper', () => {
-      expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 375);
-    });
+      it('should set timeout to remove swipe class from swiper', () => {
+        expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 375);
+      });
 
-    it('should remove swipe class from swiper on timeout', () => {
-      vi.advanceTimersByTime(375);
-      expect(classList.remove).toHaveBeenCalledWith('swiped-down');
+      it('should remove swipe class from swiper on timeout', () => {
+        vi.advanceTimersByTime(375);
+        expect(classList.remove).toHaveBeenCalledWith('swiped-up');
+      });
     });
-  });
+  }
+
+  const swipeDownTests = [
+    { description: 'on swipe down', startScreenY: 0, endScreenY: 1 },
+    { description: 'on touch in lower half', startScreenY: 0, endScreenY: 0, pageY: -1 },
+  ];
+
+  for (const { description, startScreenY, endScreenY, pageY } of swipeDownTests) {
+    describe(description, () => {
+      const cards = new Array(2).fill(null).map(() => ({
+        classList: { add: vi.fn(), remove: vi.fn() },
+      }));
+      let classList;
+
+      beforeEach(() => {
+        classList = { add: vi.fn(), remove: vi.fn() };
+        vi.useFakeTimers();
+        vi.spyOn(window, 'setTimeout');
+        vi.spyOn(document, 'querySelector').mockReturnValueOnce({ classList });
+        vi.spyOn(document, 'querySelectorAll').mockReturnValue(cards);
+        const { container } = render(CardsSwiper);
+        vi.advanceTimersToNextTimer();
+        for (let i = 1; i < cards.length; ++i) {
+          fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 1 }] });
+          fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 0 }] });
+          vi.advanceTimersToNextTimer();
+        }
+        fireEvent.touchStart(container.firstChild, { touches: [{ screenY: startScreenY }] });
+        fireEvent.touchEnd(
+          container.firstChild,
+          { changedTouches: [{ screenY: endScreenY, pageY }] },
+        );
+      });
+
+      afterEach(() => {
+        vi.useRealTimers();
+      });
+
+      it('should add shown class to corresponding card', () => {
+        expect(cards[1].classList.remove).toHaveBeenCalledWith('shown');
+      });
+
+      it('should add swipe class to swiper', () => {
+        expect(classList.add).toHaveBeenCalledWith('swiped-down');
+      });
+
+      it('should set timeout to remove swipe class from swiper', () => {
+        expect(vi.mocked(setTimeout)).toHaveBeenCalledWith(expect.any(Function), 375);
+      });
+
+      it('should remove swipe class from swiper on timeout', () => {
+        vi.advanceTimersByTime(375);
+        expect(classList.remove).toHaveBeenCalledWith('swiped-down');
+      });
+    });
+  }
 
   describe('on mount', () => {
     beforeEach(() => {

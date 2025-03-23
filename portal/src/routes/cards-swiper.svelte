@@ -49,11 +49,50 @@
   /**
    * Фиксация [начальной координаты свайпа]{@link swipeStartY}
    * @function onTouchStart
-   * @param {Event} event Событие начала касания
+   * @param {TouchEvent} event Событие начала касания
    * @returns {void}
    */
   const onTouchStart = (event) => {
     swipeStartY = event.touches[0].screenY;
+  };
+
+  /**
+   * Определение координаты верха элемента по оси Y
+   * @function getElementYPosition
+   * @param {HTMLElement} element Элемент
+   * @returns {number} Координата верха элемента по оси Y
+   */
+  const getElementYPosition = (element) => {
+    let yPosition = 0;
+
+    for (let el = element; el !== null; el = el.offsetParent) {
+      if (el.tagName === 'BODY') {
+        const yScrollPos = el.scrollTop || document.documentElement.scrollTop;
+        yPosition += (el.offsetTop - yScrollPos + el.clientTop);
+        break;
+      } else {
+        yPosition += (el.offsetTop - el.scrollTop + el.clientTop);
+      }
+    }
+
+    return yPosition;
+  };
+
+  /**
+   * Определение направления свайпа. Если произошло касание без движения, определяется, в верхней
+   * или нижней половине карточки оно произошло
+   * @function establishSwipeDirection
+   * @param {TouchEvent} event Событие окончания касания
+   * @returns {boolean} Признак направления свайпа вниз
+   */
+  const establishSwipeDirection = (event) => {
+    const swipeEndY = event.changedTouches[0].screenY;
+    if (swipeStartY === swipeEndY) {
+      const top = getElementYPosition(event.currentTarget);
+      const middle = top + (event.currentTarget.offsetHeight / 2);
+      return event.changedTouches[0].pageY < middle;
+    }
+    return swipeEndY - swipeStartY > 0;
   };
 
   /**
@@ -90,10 +129,11 @@
 
   /**
    * Обработка окончания касания. Если [касания не игнорируются]{@link isSwipeIgnored},
-   * Определение направления свайпа, обработка свайпа в соответствии с направлением
-   * {@link onSwipeDown} {@link onSwipeUp} и установка соответствующих классов для анимаций
+   * [Определение направления свайпа]{@link establishSwipeDirection}, обработка свайпа
+   * в соответствии с направлением {@link onSwipeDown} {@link onSwipeUp} и установка соответствующих
+   * классов для анимаций
    * @function onTouchEnd
-   * @param {Event} event Событие окончания касания
+   * @param {TouchEvent} event Событие окончания касания
    * @returns {void}
    */
   const onTouchEnd = (event) => {
@@ -101,8 +141,7 @@
       return;
     }
     isSwipeIgnored = true;
-    const swipeEndY = event.changedTouches[0].screenY;
-    const cardsSwiperClass = swipeEndY - swipeStartY > 0 ? onSwipeDown() : onSwipeUp();
+    const cardsSwiperClass = establishSwipeDirection(event) ? onSwipeDown() : onSwipeUp();
     cardsSwiper.classList.add(cardsSwiperClass);
     timeout = setTimeout(() => {
       cardsSwiper.classList.remove(cardsSwiperClass);
