@@ -104,11 +104,13 @@
 <FormattingMenu {editor} />
 
 <style>
+  @reference "../../../app.css";
+
   :global(.tiptap p.is-editor-empty:first-child::before) {
-    color: color-mix(in oklch, var(--color-base-content) 40%, #0000);
+    @apply text-placeholder;
     content: attr(data-placeholder);
-    float: left;
-    height: 0;
-    pointer-events: none;
+    @apply float-left;
+    @apply h-0;
+    @apply pointer-events-none;
   }
 </style>

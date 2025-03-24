@@ -111,7 +111,7 @@
 
 {#snippet optionButton(option, children, props = {})}
   <button
-    class="conditionally-join-item"
+    class="conditionally-join-item cursor-pointer"
     class:menu-active={option.activityKey && editor?.isActive(option.activityKey)}
     type="button"
     onclick={() => onFormattingMenuOptionClick(option)}
@@ -208,7 +208,7 @@
             <div class="hidden md:block">
               {#each option.keys as key (key)}
                 {@const isLast = key === option.keys.at(-1)}
-                <kbd class="kbd w-fit">{key}</kbd>
+                <kbd class="kbd w-fit text-base-content text-[0.6rem]">{key}</kbd>
                 {#if !isLast}
                   {@const plusWithSpaces = ' + '}
                   {plusWithSpaces}
@@ -228,17 +228,6 @@
 </ul>
 
 <style>
-  @reference "../../../app.css";
-
-  kbd {
-    @apply text-base-content;
-    font-size: 0.6rem;
-  }
-
-  .menu-active {
-    @apply cursor-pointer;
-  }
-
   .conditionally-join-vertical *:has(:global(.conditionally-join-item.menu-active)) {
     &:has(:global(+ * .conditionally-join-item.menu-active)) .conditionally-join-item.menu-active {
       border-end-start-radius: 0;

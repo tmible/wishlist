@@ -177,7 +177,7 @@
 </script>
 
 <div
-  class="md:hidden relative w-full h-[310px] cards-swiper"
+  class="md:hidden relative w-full h-[310px] cards-swiper perspective-[200px]"
   ontouchstart={onTouchStart}
   ontouchend={onTouchEnd}
 >
@@ -192,49 +192,32 @@
     @apply overscroll-none;
   }
 
-  :root {
-    /* timig function из tailwind .transition-all */
-    --timig-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @keyframes allowing {
+  @keyframes cardAnimation {
     0% {
-      transform: scale(1) rotateX(0deg);
+      transform: translateY(var(--initial-translate, 0)) scale(1) rotateX(0deg);
     }
     50% {
-      transform: scale(0.9) rotateX(-7deg);
+      transform:
+        translateY(var(--intermediate-translate, 0))
+        scale(var(--intermediate-scale, 1))
+        rotateX(var(--intermediate-rotation, 0deg));
     }
     100% {
-      transform: scale(1) rotateX(0deg);
+      transform: translateY(var(--initial-translate, 0)) scale(1) rotateX(0deg);
     }
   }
 
-  @keyframes teasing {
-    0% {
-      top: 110%;
-    }
-    50% {
-      top: calc(70% + var(--index) * 20px);
-    }
-    100% {
-      top: 110%;
-    }
-  }
-
-  .cards-swiper {
-    perspective: 200px;
-  }
-
-  .cards-swiper:global(.welcome-animation > *:first-child)  {
-    animation: 2s var(--timig-function) allowing;
+  .cards-swiper:global(.welcome-animation > *) {
+    --intermediate-scale: 0.9;
+    --intermediate-rotation: -7deg;
+    animation: 2s cardAnimation;
   }
 
   .cards-swiper:global(.welcome-animation > *:nth-child(n+2))  {
     /* .shadow-sm, но вверх, а не вниз */
     box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 0.05);
-    animation:
-      2s var(--timig-function) allowing,
-      2s var(--timig-function) teasing;
+    --initial-translate: 10%;
+    --intermediate-translate: calc(-30% + var(--index) * 20px);
   }
 
   :global(html[data-theme="dark"] .cards-swiper.welcome-animation > *:nth-child(n+2))  {
@@ -254,43 +237,38 @@
     @apply top-full;
     @apply h-full;
     @apply transition-all;
-    transform: scaleX(0) rotateX(-52.2245deg);
+    transform: translateY(0) scaleX(0) rotateX(-52.2245deg);
     transition-property: transform, top;
     transition-duration: 375ms;
+    /* timig function из tailwind .transition-all */
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .cards-swiper > :global(.shown) {
-    @apply top-0;
-    transform: scale(1) rotateX(0deg);
+    --initial-translate: -100%;
+    --intermediate-translate: -100%;
+    transform: translateY(-100%) scale(1) rotateX(0deg);
   }
 
   .cards-swiper:global(.swiped-up > *:nth-last-child(n + 2 of .shown)) {
-    animation: 375ms var(--timig-function) allowing;
+    --intermediate-scale: 0.9;
+    --intermediate-rotation: -7deg;
+    animation: 375ms cardAnimation;
   }
 
   .cards-swiper:global(.swiped-down > .shown) {
-    animation: 375ms var(--timig-function) allowing;
-  }
-
-  @keyframes overswiped {
-    0% {
-      top: 0;
-    }
-    50% {
-      top: var(--overswipe-offset);
-    }
-    100% {
-      top: 0;
-    }
+    --intermediate-scale: 0.9;
+    --intermediate-rotation: -7deg;
+    animation: 375ms cardAnimation;
   }
 
   .cards-swiper:global(.overswiped-up > .shown) {
-    --overswipe-offset: -20px;
-    animation: 375ms var(--timig-function) overswiped;
+    --intermediate-translate: calc(-100% - 20px);
+    animation: 375ms cardAnimation;
   }
 
   .cards-swiper:global(.overswiped-down > .shown) {
-    --overswipe-offset: 20px;
-    animation: 375ms var(--timig-function) overswiped;
+    --intermediate-translate: calc(-100% + 20px);
+    animation: 375ms cardAnimation;
   }
 </style>

@@ -117,7 +117,7 @@ describe('list item form', () => {
           [ 'property1', 'stored1' ],
           [ 'property2', 'fromForm2' ],
           [ 'descriptionEntities', '[{"type":0,"offset":0}]' ],
-          [ 'categoryId', 'null' ],
+          [ 'categoryId', '' ],
         ]);
         vi.mocked(arrayToOrderedJSON).mockReturnValue('[]');
       });

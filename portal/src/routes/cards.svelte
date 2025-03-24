@@ -61,18 +61,7 @@
     </p>
   </div>
 </div>
-<div
-  class="
-    card
-    md:card-lg
-    bg-base-100
-    md:shadow-xl
-    w-full
-    md:w-1/4
-    md:order-1
-    main-card-left
-  "
->
+<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:w-1/4 md:order-1 main-card-left">
   <div class="card-body justify-center prose">
     <ul>
       <li class="not-prose">Создавайте и&nbsp;редактируйте свой список</li>
@@ -106,6 +95,8 @@
 </div>
 
 <style>
+  @reference "../app.css";
+
   @keyframes popUp {
     0% {
       opacity: 0;
@@ -120,17 +111,18 @@
   @media (min-width: 768px) {
     .main-card-center, .main-card-left, .main-card-right {
       animation-name: popUp;
-      animation-duration: var(--animation-duration);
-      animation-timing-function: ease-out;
-      animation-fill-mode: both;
+      @apply duration-(--animation-duration);
+      @apply ease-out;
+      @apply fill-mode-both;
     }
 
     .main-card-center {
-      animation-delay: var(--animation-duration);
+      @apply delay-(--animation-duration);
     }
 
     .main-card-left, .main-card-right {
-      animation-delay: calc(1.5 * var(--animation-duration));
+      --delay: calc(1.5 * var(--animation-duration));
+      @apply delay-(--delay);
     }
 
     .main-card-left {

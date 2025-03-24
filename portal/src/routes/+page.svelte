@@ -52,8 +52,11 @@
               md:text-[11vw]
               2xl:text-[160px]
               text-center
-              dark:text-gray-300
               main-header
+              animate-in
+              fade-in-0
+              zoom-in-[0.8]
+              ease-out
             "
           >
             Tmible's wishlist
@@ -86,18 +89,7 @@
     --animation-duration: 0.75s;
   }
 
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
   .main-header {
-    animation: var(--animation-duration) ease-out both fadeIn;
+    animation-duration: var(--animation-duration);
   }
 </style>

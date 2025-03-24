@@ -24,9 +24,9 @@
 
   /**
    * Идентификатор выбранной категории
-   * @type {number | null}
+   * @type {number | ''}
    */
-  let selectedCategoryId = $state(values ? values.category.id : null);
+  let selectedCategoryId = $state(values ? values.category.id : '');
 
   /**
    * Название выбранной категории
@@ -69,10 +69,7 @@
           key === 'descriptionEntities' &&
           arrayToOrderedJSON(JSON.parse(value)) === arrayToOrderedJSON(storedItem[key])
         ) ||
-        (
-          key === 'categoryId' &&
-          (value === 'null' ? null : value) === (storedItem.category.id?.toString() ?? null)
-        ) ||
+        (key === 'categoryId' && value === (storedItem.category.id?.toString() ?? '')) ||
         (
           key !== 'descriptionEntities' &&
           key !== 'categoryId' &&
@@ -93,7 +90,7 @@
    */
   const sendForm = async (formData) => {
     const body = Object.fromEntries(formData);
-    if (body.categoryId === 'null') {
+    if (body.categoryId === '') {
       body.categoryId = null;
     }
     const response = await fetch(
@@ -168,14 +165,26 @@
       items={$categories ?? []}
       bind:value={selectedCategoryId}
     >
-      <Select.Trigger class="select select-bordered bg-base-200 items-center w-full">
-        {selectedCategoryName}
+      <Select.Trigger
+        class="
+          select
+          select-bordered
+          bg-base-200
+          items-center
+          w-full
+          data-placeholder:text-placeholder
+        "
+      >
+        {selectedCategoryName || 'Категория'}
       </Select.Trigger>
 
       <Select.Portal>
         <Select.Content side="bottom" align="center" sideOffset={8} strategy="fixed">
           {#snippet child({ wrapperProps, props })}
-            <div {...wrapperProps}>
+            <!-- eslint-disable svelte/no-inline-styles --
+              Floating UI пишет z-index: auto прямо в стили элемента -->
+            <div style:z-index="1000" {...wrapperProps}>
+              <!-- eslint-enable svelte/no-inline-styles -->
               <ul
                 class="
                   shadow-xl

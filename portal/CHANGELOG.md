@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.15 Величественный рассвет (2025-03-24)
+<img width="128" height="128" src="release-images/1.4.15.png"/>
+
+https://github.com/tmible/wishlist/compare/d1d4eb3..master
+
+
 ## 1.4.14 Величественный каскад (2025-03-24)
 <img width="128" height="128" src="release-images/1.4.14.png"/>
 
-https://github.com/tmible/wishlist/compare/8324e7c..master
+https://github.com/tmible/wishlist/compare/8324e7c..d1d4eb3
 
 
 ## 1.4.13 Осенний ветер (2025-03-24)

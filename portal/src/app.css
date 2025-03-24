@@ -169,6 +169,8 @@
   --color-orange-7: var(--oc-orange-7);
   --color-orange-8: var(--oc-orange-8);
   --color-orange-9: var(--oc-orange-9);
+
+  --color-placeholder: color-mix(in oklch, var(--color-base-content) 40%, #0000);
 }
 
 @layer base {
@@ -234,7 +236,7 @@ h1, h2, h3, h4 {
 }
 
 .prose {
-  max-width: unset;
+  @apply max-w-[unset];
 }
 
 fieldset:has(input:required) > .fieldset-legend::after {
@@ -244,11 +246,9 @@ fieldset:has(input:required) > .fieldset-legend::after {
 
 span.spoiler {
   background-image: url("/C4Zf.gif");
-  background-repeat: no-repeat;
-  background-size: cover;
-  &:hover {
-    background: none;
-  }
+  @apply bg-no-repeat;
+  @apply bg-cover;
+  @apply hover:bg-none;
 }
 
 .modal-box {
