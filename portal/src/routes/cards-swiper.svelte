@@ -187,7 +187,7 @@
 <style>
   @reference "../app.css";
 
-  :global(html) {
+  :global(html:has(.cards-swiper)) {
     @apply overflow-hidden;
     @apply overscroll-none;
   }
