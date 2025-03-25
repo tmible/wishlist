@@ -8,5 +8,10 @@ import { InjectionToken } from '$lib/architecture/injection-token';
  */
 export const initAddUserStatement = () => provide(
   InjectionToken.AddUserStatement,
-  inject(InjectionToken.Database).prepare('INSERT INTO usernames (userid, username) VALUES (?, ?)'),
+  inject(
+    InjectionToken.Database,
+  ).prepare(`
+    INSERT INTO usernames (userid, username) VALUES ($userid, $username)
+    ON CONFLICT DO UPDATE SET (userid, username) = ($userid, $username)
+  `),
 );

@@ -104,7 +104,10 @@ export const GET = async ({ cookies, url }) => {
     return new Response('missing id parameter', { status: 400 });
   }
 
-  inject(InjectionToken.AddUserStatement).run(userid, url.searchParams.get('username') ?? null);
+  inject(InjectionToken.AddUserStatement).run({
+    userid,
+    username: url.searchParams.get('username') ?? null,
+  });
 
   saveAuthenticationAction(cookies);
 

@@ -78,13 +78,13 @@ describe('authSuccess endpoint', () => {
 
     it('should run AddUserStatement', async () => {
       await GET({ cookies, url });
-      expect(statement.run).toHaveBeenCalledWith('userid', null);
+      expect(statement.run).toHaveBeenCalledWith({ userid: 'userid', username: null });
     });
 
     it('should run AddUserStatement with username', async () => {
       url.searchParams.get.mockReturnValueOnce('username');
       await GET({ cookies, url });
-      expect(statement.run).toHaveBeenCalledWith('userid', 'username');
+      expect(statement.run).toHaveBeenCalledWith({ userid: 'userid', username: 'username' });
     });
 
     describe('if there is unknown user UUID', () => {

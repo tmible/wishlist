@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.18 Звездное небо (2025-03-25)
+<img width="128" height="128" src="release-images/1.4.18.png"/>
+
+https://github.com/tmible/wishlist/compare/42241f9..master
+
+
 ## 1.4.17 Золотой Океан (2025-03-25)
 <img width="128" height="128" src="release-images/1.4.17.png"/>
 
-https://github.com/tmible/wishlist/compare/701cfb0..master
+https://github.com/tmible/wishlist/compare/701cfb0..42241f9
 
 
 ## 1.4.16 Величественный горизонт (2025-03-25)

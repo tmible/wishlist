@@ -17,7 +17,7 @@ import { UNKNOWN_USER_UUID_COOKIE_NAME } from '$lib/constants/unknown-user-uuid-
  * @function generateAndStoreTokens
  * @param {import('./$types').Cookies} cookies Куки файлы запроса и ответа
  * @param {number} userid Идентификатор пользователя
- * @returns {void}
+ * @returns {Promise<void>}
  * @async
  */
 export const generateAndStoreAuthTokens = async (cookies, userid) => {
