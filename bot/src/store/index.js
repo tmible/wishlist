@@ -33,12 +33,11 @@ const storeModules = [
 /**
  * Создание подключения к БД, [миграции БД]{@link migrate} и настройка модулей хранилища
  * @function initStore
- * @returns {Promise<() => void>} Функция закрытия подключения к БД
- * @async
+ * @returns {() => void} Функция закрытия подключения к БД
  */
-const initStore = async () => {
+const initStore = () => {
   const db = new Database(process.env.WISHLIST_DB_FILE_PATH);
-  await migrate(db, process.env.WISHLIST_DB_MIGRATIONS_PATH);
+  migrate(db, process.env.WISHLIST_DB_MIGRATIONS_PATH);
   provide(InjectionToken.Database, db);
   storeModules.forEach(({ configure }) => configure());
   return () => db.close();

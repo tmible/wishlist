@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.10 Бескрайний горизонт (2025-03-25)
+<img width="128" height="128" src="release-images/3.4.10.png"/>
+
+https://github.com/tmible/wishlist/compare/701cfb0..master
+
+
 ## 3.4.9 Утренний туман (2025-03-19)
 <img width="128" height="128" src="release-images/3.4.9.png"/>
 
-https://github.com/tmible/wishlist/compare/d1ac1f2..master
+https://github.com/tmible/wishlist/compare/d1ac1f2..701cfb0
 
 
 ## 3.4.8 Блестящая идиллия (2025-02-08)

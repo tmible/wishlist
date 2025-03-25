@@ -46,7 +46,7 @@ provide(InjectionToken.EventBus, { subscribe, emit });
 provide(InjectionToken.LocalDatabase, getLocalDB);
 
 logger.debug('initializing store');
-const destroyStore = await initStore();
+const destroyStore = initStore();
 
 logger.debug('creating bot');
 const bot = new Telegraf(process.env.BOT_TOKEN);

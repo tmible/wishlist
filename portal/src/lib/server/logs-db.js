@@ -9,12 +9,11 @@ import { initAddActionStatement } from './add-action-statement.js';
  * Создание подключения к БД с логами с отложенным закрытием, миграции БД, регистрация БД в сервисе
  * внедрения зависмостей, инициализация всех подготовленных SQL выражений
  * @function initLogsDB
- * @returns {Promise<void>}
- * @async
+ * @returns {void}
  */
-export const initLogsDB = async () => {
+export const initLogsDB = () => {
   const db = new Database(LOGS_DB_FILE_PATH);
-  await migrate(db, LOGS_DB_MIGRATIONS_PATH);
+  migrate(db, LOGS_DB_MIGRATIONS_PATH);
   provide(InjectionToken.LogsDatabase, db);
   process.on('sveltekit:shutdown', () => db.close());
 

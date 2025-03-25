@@ -54,97 +54,97 @@ describe('db', () => {
     vi.clearAllMocks();
   });
 
-  it('should create database', async () => {
-    await initDB();
+  it('should create database', () => {
+    initDB();
     expect(vi.mocked(Database)).toHaveBeenCalledWith('WISHLIST_DB_FILE_PATH');
   });
 
-  it('should migrate database', async () => {
-    await initDB();
+  it('should migrate database', () => {
+    initDB();
     expect(vi.mocked(migrate)).toHaveBeenCalledWith(db, 'WISHLIST_DB_MIGRATIONS_PATH');
   });
 
-  it('should provide database', async () => {
-    await initDB();
+  it('should provide database', () => {
+    initDB();
     expect(vi.mocked(provide)).toHaveBeenCalledWith(InjectionToken.Database, db);
   });
 
-  it('should set close listener', async () => {
+  it('should set close listener', () => {
     vi.spyOn(process, 'on');
-    await initDB();
+    initDB();
     expect(process.on).toHaveBeenCalledWith('sveltekit:shutdown', expect.any(Function));
   });
 
-  it('should close db on close listener invocation', async () => {
+  it('should close db on close listener invocation', () => {
     let handler;
     vi.spyOn(process, 'on').mockImplementation((eventName, eventHandler) => handler = eventHandler);
-    await initDB();
+    initDB();
     handler();
     expect(db.close).toHaveBeenCalled();
   });
 
-  it('should init add user statement', async () => {
-    await initDB();
+  it('should init add user statement', () => {
+    initDB();
     expect(vi.mocked(initAddUserStatement)).toHaveBeenCalled();
   });
 
-  it('should init get user wishlist statement', async () => {
-    await initDB();
+  it('should init get user wishlist statement', () => {
+    initDB();
     expect(vi.mocked(initGetUserWishlistStatement)).toHaveBeenCalled();
   });
 
-  it('should init add item statement', async () => {
-    await initDB();
+  it('should init add item statement', () => {
+    initDB();
     expect(vi.mocked(initAddItemStatement)).toHaveBeenCalled();
   });
 
-  it('should init get user categories statement', async () => {
-    await initDB();
+  it('should init get user categories statement', () => {
+    initDB();
     expect(vi.mocked(initGetUserCategoriesStatement)).toHaveBeenCalled();
   });
 
-  it('should init add category statement', async () => {
-    await initDB();
+  it('should init add category statement', () => {
+    initDB();
     expect(vi.mocked(initAddCategoryStatement)).toHaveBeenCalled();
   });
 
-  it('should init changes statement', async () => {
-    await initDB();
+  it('should init changes statement', () => {
+    initDB();
     expect(vi.mocked(initChangesStatement)).toHaveBeenCalled();
   });
 
-  it('should init update category statement', async () => {
-    await initDB();
+  it('should init update category statement', () => {
+    initDB();
     expect(vi.mocked(initUpdateCategoryStatement)).toHaveBeenCalled();
   });
 
-  it('should init delete category statement', async () => {
-    await initDB();
+  it('should init delete category statement', () => {
+    initDB();
     expect(vi.mocked(initDeleteCategoryStatement)).toHaveBeenCalled();
   });
 
-  it('should init get user hash statement', async () => {
-    await initDB();
+  it('should init get user hash statement', () => {
+    initDB();
     expect(vi.mocked(initGetUserHashStatement)).toHaveBeenCalled();
   });
 
-  it('should init set user hash statement', async () => {
-    await initDB();
+  it('should init set user hash statement', () => {
+    initDB();
     expect(vi.mocked(initSetUserHashStatement)).toHaveBeenCalled();
   });
 
-  it('should init store refresh token statement', async () => {
-    await initDB();
+  it('should init store refresh token statement', () => {
+    initDB();
     expect(vi.mocked(initStoreRefreshTokenStatement)).toHaveBeenCalled();
   });
 
-  it('should init get refresh token statement', async () => {
-    await initDB();
+  it('should init get refresh token statement', () => {
+    initDB();
     expect(vi.mocked(initGetRefreshTokenStatement)).toHaveBeenCalled();
   });
 
-  it('should init delete refresh token statement', async () => {
-    await initDB();
+  it('should init delete refresh token statement', () => {
+    initDB();
     expect(vi.mocked(initDeleteRefreshTokenStatement)).toHaveBeenCalled();
   });
 });

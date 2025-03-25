@@ -48,102 +48,102 @@ describe('db', () => {
     vi.clearAllMocks();
   });
 
-  it('should create database', async () => {
-    await initDB();
+  it('should create database', () => {
+    initDB();
     expect(vi.mocked(Database)).toHaveBeenCalledWith('LOGS_DB_FILE_PATH');
   });
 
-  it('should migrate database', async () => {
-    await initDB();
+  it('should migrate database', () => {
+    initDB();
     expect(vi.mocked(migrate)).toHaveBeenCalledWith(db, 'LOGS_DB_MIGRATIONS_PATH');
   });
 
-  it('should provide database', async () => {
-    await initDB();
+  it('should provide database', () => {
+    initDB();
     expect(vi.mocked(provide)).toHaveBeenCalledWith(InjectionToken.Database, db);
   });
 
-  it('should set close listener', async () => {
+  it('should set close listener', () => {
     vi.spyOn(process, 'on');
-    await initDB();
+    initDB();
     expect(process.on).toHaveBeenCalledWith('sveltekit:shutdown', expect.any(Function));
   });
 
-  it('should close db on close listener invocation', async () => {
+  it('should close db on close listener invocation', () => {
     let handler;
     vi.spyOn(process, 'on').mockImplementation((eventName, eventHandler) => handler = eventHandler);
-    await initDB();
+    initDB();
     handler();
     expect(db.close).toHaveBeenCalled();
   });
 
-  it('should init bot DAU statement', async () => {
-    await initDB();
+  it('should init bot DAU statement', () => {
+    initDB();
     expect(vi.mocked(initBotDAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot MAU statement', async () => {
-    await initDB();
+  it('should init bot MAU statement', () => {
+    initDB();
     expect(vi.mocked(initBotMAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot process time statement', async () => {
-    await initDB();
+  it('should init bot process time statement', () => {
+    initDB();
     expect(vi.mocked(initBotProcessTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot response time statement', async () => {
-    await initDB();
+  it('should init bot response time statement', () => {
+    initDB();
     expect(vi.mocked(initBotResponseTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot startup time statement', async () => {
-    await initDB();
+  it('should init bot startup time statement', () => {
+    initDB();
     expect(vi.mocked(initBotStartupTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot success rate statement', async () => {
-    await initDB();
+  it('should init bot success rate statement', () => {
+    initDB();
     expect(vi.mocked(initBotSuccessRateStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot user sessions statement', async () => {
-    await initDB();
+  it('should init bot user sessions statement', () => {
+    initDB();
     expect(vi.mocked(initBotUserSessionsStatement)).toHaveBeenCalled();
   });
 
-  it('should init bot YAU statement', async () => {
-    await initDB();
+  it('should init bot YAU statement', () => {
+    initDB();
     expect(vi.mocked(initBotYAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal authentication funnel statement', async () => {
-    await initDB();
+  it('should init portal authentication funnel statement', () => {
+    initDB();
     expect(vi.mocked(initPortalAuthenticationFunnelStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal DAU statement', async () => {
-    await initDB();
+  it('should init portal DAU statement', () => {
+    initDB();
     expect(vi.mocked(initPortalDAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal MAU statement', async () => {
-    await initDB();
+  it('should init portal MAU statement', () => {
+    initDB();
     expect(vi.mocked(initPortalMAUStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal response time statement', async () => {
-    await initDB();
+  it('should init portal response time statement', () => {
+    initDB();
     expect(vi.mocked(initPortalResponseTimeStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal success rate statement', async () => {
-    await initDB();
+  it('should init portal success rate statement', () => {
+    initDB();
     expect(vi.mocked(initPortalSuccessRateStatement)).toHaveBeenCalled();
   });
 
-  it('should init portal YAU statement', async () => {
-    await initDB();
+  it('should init portal YAU statement', () => {
+    initDB();
     expect(vi.mocked(initPortalYAUStatement)).toHaveBeenCalled();
   });
 });

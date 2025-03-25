@@ -22,8 +22,8 @@ describe('pino sqlite transport worker', () => {
 
   afterEach(reset);
 
-  it('should open DB connection', async () => {
-    await transport();
+  it('should open DB connection', () => {
+    transport();
     verify(new Database('logs db file path'));
   });
 
@@ -34,25 +34,25 @@ describe('pino sqlite transport worker', () => {
 
     afterEach(reset);
 
-    it('should migrate DB', async () => {
-      await transport();
+    it('should migrate DB', () => {
+      transport();
       verify(migrate(db, 'logs db migrations path'));
     });
 
-    it('should prepare statement', async () => {
-      await transport();
+    it('should prepare statement', () => {
+      transport();
       verify(db.prepare(matchers.isA(String)));
     });
 
-    it('should build transport', async () => {
-      await transport();
+    it('should build transport', () => {
+      transport();
       verify(build(matchers.isA(Function), matchers.contains({ close: matchers.isA(Function) })));
     });
 
     it('should run statement for every message', async () => {
       when(db.prepare(matchers.isA(String))).thenReturn(statement);
       const captor = matchers.captor();
-      await transport();
+      transport();
       verify(build(captor.capture(), matchers.contains({ close: matchers.isA(Function) })));
       const source = {
         [Symbol.asyncIterator]: () => ({
@@ -77,7 +77,7 @@ describe('pino sqlite transport worker', () => {
 
     it('should close DB connection', async () => {
       const captor = matchers.captor();
-      await transport();
+      transport();
       verify(build(matchers.isA(Function), captor.capture()));
       await captor.value.close();
       verify(db.close());

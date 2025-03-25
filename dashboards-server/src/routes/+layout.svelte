@@ -84,5 +84,5 @@
 </svelte:head>
 
 {#if $isAuthenticated !== null}
-  <slot />
+  <slot></slot>
 {/if}

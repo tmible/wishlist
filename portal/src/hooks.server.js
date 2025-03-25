@@ -147,7 +147,7 @@ export const handleError = ({ error, event }) => {
 };
 
 // Открытие подключения к БД при старте приложения
-await initDB();
+initDB();
 
 // Открытие подключения к БД с логами при старте приложения
 await initLogsDB();

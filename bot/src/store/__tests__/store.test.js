@@ -22,23 +22,23 @@ describe('store', () => {
 
   afterEach(reset);
 
-  it('should open DB connection', async () => {
-    await initStore();
+  it('should open DB connection', () => {
+    initStore();
     verify(new Database('WISHLIST_DB_FILE_PATH'));
   });
 
-  it('should migrate DB', async () => {
-    await initStore();
+  it('should migrate DB', () => {
+    initStore();
     verify(migrate(new Database('WISHLIST_DB_FILE_PATH'), 'WISHLIST_DB_MIGRATIONS_PATH'));
   });
 
-  it('should configure modules', async () => {
-    await initStore();
+  it('should configure modules', () => {
+    initStore();
     verify(modules.forEach(({ configure }) => configure()));
   });
 
-  it('should close DB connection', async () => {
-    await initStore().then((destroyStore) => destroyStore());
+  it('should close DB connection', () => {
+    initStore()();
     verify(Database.prototype.close());
   });
 });

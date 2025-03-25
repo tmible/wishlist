@@ -1,4 +1,4 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** @typedef {import('better-sqlite3').Database} Database */
@@ -8,17 +8,16 @@ import { join } from 'node:path';
  * @function migrate
  * @param {Database} db Объект для доступа к БД
  * @param {string} migrationsPath Путь к папке со скриптами миграции БД
- * @returns {Promise<void>}
- * @async
+ * @returns {void}
  */
-const migrate = async (db, migrationsPath) => {
+const migrate = (db, migrationsPath) => {
   const userVersion = db.pragma('user_version', { simple: true });
   /* eslint-disable-next-line security/detect-non-literal-fs-filename --
     Имя папки хранится в переменной окружения, никакого пользовательского ввода --
     должно быть безопасно. Особенно с учётом того, что база данных, к которой применяются миграции,
     тоже локальная
   */
-  const migrations = await readdir(migrationsPath);
+  const migrations = readdirSync(migrationsPath);
 
   for (let i = userVersion + 1; i < migrations.length + 1; ++i) {
     db.transaction((migration) => {
@@ -28,7 +27,7 @@ const migrate = async (db, migrationsPath) => {
       Имя папки хранится в переменной окружения, названия файлов читаются из неё же,
       никакого пользовательского ввода -- должно быть безопасно. Особенно с учётом того,
       что база данных, к которой применяются миграции, тоже локальная */
-    })(await readFile(join(migrationsPath, migrations[i - 1]), 'utf8'));
+    })(readFileSync(join(migrationsPath, migrations[i - 1]), 'utf8'));
   }
 };
 

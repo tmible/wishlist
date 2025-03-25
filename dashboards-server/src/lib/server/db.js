@@ -26,13 +26,12 @@ import {
  * Создание подключения к БД с отложенным закрытием, миграции БД, регистрация БД в сервисе
  * внедрения зависмостей, инициализация всех подготовленных SQL выражений
  * @function initDB
- * @returns {Promise<void>}
- * @async
+ * @returns {void}
  */
 /* eslint-disable-next-line max-statements -- Рунная инициализация SQL выражений */
-export const initDB = async () => {
+export const initDB = () => {
   const db = new Database(LOGS_DB_FILE_PATH);
-  await migrate(db, LOGS_DB_MIGRATIONS_PATH);
+  migrate(db, LOGS_DB_MIGRATIONS_PATH);
   provide(InjectionToken.Database, db);
   process.on('sveltekit:shutdown', () => db.close());
 

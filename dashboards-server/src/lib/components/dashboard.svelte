@@ -288,7 +288,7 @@
   </div>
 
   <div class="relative">
-    <canvas bind:this={dashboardCanvas} />
-    <slot {dashboard} />
+    <canvas bind:this={dashboardCanvas}></canvas>
+    <slot {dashboard}></slot>
   </div>
 </div>

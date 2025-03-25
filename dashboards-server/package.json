@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-dashboards-server",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "private": true,
   "description": "Сервер с дашбордами для телеграм бота со списками желаний",
   "repository": {

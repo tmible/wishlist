@@ -7,16 +7,15 @@ import {
   subscribeToTheme,
   updateTheme,
 } from '@tmible/wishlist-common/theme-service';
-import { onMount } from 'svelte';
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { InjectionToken } from '$lib/architecture/injection-token';
 import { isAuthenticated } from '$lib/store/is-authenticated.js';
 import Layout from '../+layout.svelte';
 
-vi.mock('svelte');
 vi.mock('$app/navigation');
+vi.mock('$app/stores', () => ({ page: readable({ url: { pathname: '' } }) }));
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock(
   '@tmible/wishlist-common/theme-service',
@@ -38,6 +37,7 @@ describe('layout', () => {
         configurable: true,
       },
     );
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn(() => 'response') }));
   });
 
   afterEach(() => {
@@ -57,27 +57,20 @@ describe('layout', () => {
   });
 
   describe('on mount', () => {
-    let mountHandler;
-
     beforeEach(() => {
-      vi.mocked(onMount).mockImplementation((handler) => mountHandler = handler);
-      vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn(() => 'response') }));
       vi.spyOn(vi.mocked(isAuthenticated), 'set').mockImplementation(vi.fn());
       render(Layout);
     });
 
-    it('should fetch authentication status', async () => {
-      await mountHandler();
+    it('should fetch authentication status', () => {
       expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/isAuthenticated');
     });
 
-    it('should set authentication status to store', async () => {
-      await mountHandler();
+    it('should set authentication status to store', () => {
       expect(vi.mocked(isAuthenticated.set)).toHaveBeenCalledWith('response');
     });
 
-    it('should init theme store', async () => {
-      await mountHandler();
+    it('should init theme store', () => {
       expect(vi.mocked(initTheme)).toHaveBeenCalled();
     });
   });

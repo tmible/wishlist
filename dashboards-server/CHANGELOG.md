@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.8 Зимняя стужа (2025-03-25)
+<img width="128" height="128" src="release-images/1.2.8.png"/>
+
+https://github.com/tmible/wishlist/compare/701cfb0..master
+
+
 ## 1.2.7 Величественный 1742206901 (2025-03-17)
 <img width="128" height="128" src="release-images/1.2.7.png"/>
 
-https://github.com/tmible/wishlist/compare/164adfd..master
+https://github.com/tmible/wishlist/compare/164adfd..701cfb0
 
 
 ## 1.2.6 Величественный закат. (2025-03-17)

@@ -62,7 +62,7 @@
             class:success-bg={$healthData[service]?.[key]}
             class:error-bg={$healthData[service] && !$healthData[service][key]}
             class:undefined-bg={!$healthData[service]}
-          />
+          ></div>
           {label}
         </div>
       {/each}

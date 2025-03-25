@@ -78,7 +78,7 @@
                   class:warning-bg={Object.values($healthData[healthKey]).some(Boolean) &&
                     Object.values($healthData[healthKey]).some((value) => !value)}
                   class:error-bg={!Object.values($healthData[healthKey]).some(Boolean)}
-                />
+                ></div>
               {/if}
               {label}
             </a>
@@ -91,6 +91,6 @@
         <Button variant="secondary" on:click={logout}>Выйти</Button>
       </div>
     </div>
-    <slot />
+    <slot></slot>
   </div>
 {/if}

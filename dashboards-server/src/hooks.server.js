@@ -28,4 +28,4 @@ export const handle = async ({ event, resolve }) => {
 /**
  * Открытие подключения к БД при старте приложения
  */
-await initDB();
+initDB();

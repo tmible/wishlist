@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.3.1 Незабвенный расцвет (2025-03-25)
+<img width="128" height="128" src="release-images/1.3.1.png"/>
+
+https://github.com/tmible/wishlist/compare/701cfb0..master
+
+
 ## 1.3.0 Загадочная Арктика. (2025-03-17)
 <img width="128" height="128" src="release-images/1.3.0.png"/>
 
-https://github.com/tmible/wishlist/compare/164adfd..master
+https://github.com/tmible/wishlist/compare/164adfd..701cfb0
 
 
 ## 1.2.2 Безграничная фантазия (2025-02-08)

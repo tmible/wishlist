@@ -30,37 +30,37 @@ describe('logs db', () => {
     vi.clearAllMocks();
   });
 
-  it('should create database', async () => {
-    await initLogsDB();
+  it('should create database', () => {
+    initLogsDB();
     expect(vi.mocked(Database)).toHaveBeenCalledWith('LOGS_DB_FILE_PATH');
   });
 
-  it('should migrate database', async () => {
-    await initLogsDB();
+  it('should migrate database', () => {
+    initLogsDB();
     expect(vi.mocked(migrate)).toHaveBeenCalledWith(db, 'LOGS_DB_MIGRATIONS_PATH');
   });
 
-  it('should provide database', async () => {
-    await initLogsDB();
+  it('should provide database', () => {
+    initLogsDB();
     expect(vi.mocked(provide)).toHaveBeenCalledWith(InjectionToken.LogsDatabase, db);
   });
 
-  it('should set close listener', async () => {
+  it('should set close listener', () => {
     vi.spyOn(process, 'on');
-    await initLogsDB();
+    initLogsDB();
     expect(process.on).toHaveBeenCalledWith('sveltekit:shutdown', expect.any(Function));
   });
 
-  it('should close db on close listener invocation', async () => {
+  it('should close db on close listener invocation', () => {
     let handler;
     vi.spyOn(process, 'on').mockImplementation((eventName, eventHandler) => handler = eventHandler);
-    await initLogsDB();
+    initLogsDB();
     handler();
     expect(db.close).toHaveBeenCalled();
   });
 
-  it('should init add action statement', async () => {
-    await initLogsDB();
+  it('should init add action statement', () => {
+    initLogsDB();
     expect(vi.mocked(initAddActionStatement)).toHaveBeenCalled();
   });
 });

@@ -9,14 +9,13 @@ import build from 'pino-abstract-transport';
  * создание функции, добавляющей сообщения в БД и закрытие подключения к БД при завершении работы
  * воркера
  * @function
- * @returns {Promise<Transform>} Поток для записи лога в БД
- * @async
+ * @returns {Transform} Поток для записи лога в БД
  */
 /* eslint-disable-next-line unicorn/no-anonymous-default-export -- Функция нигде статически
   не импортируется и используется только самим pino */
-export default async () => {
+export default () => {
   const db = new Database(process.env.LOGS_DB_FILE_PATH);
-  await migrate(db, process.env.LOGS_DB_MIGRATIONS_PATH);
+  migrate(db, process.env.LOGS_DB_MIGRATIONS_PATH);
   const statement = db.prepare(`
     INSERT INTO "portal.logs" (
       level,
