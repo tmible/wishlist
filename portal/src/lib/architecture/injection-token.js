@@ -26,4 +26,7 @@ export const InjectionToken = Object.freeze({
   LogsDatabase: 'logs database',
   AddActionStatement: 'add action statement',
   Logger: 'logger',
+  StoreRefreshTokenStatement: 'store refresh token statement',
+  GetRefreshTokenStatement: 'get refresh token statement',
+  DeleteRefreshTokenStatement: 'delete refresh token statement',
 });

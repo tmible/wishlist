@@ -2,20 +2,24 @@ import { inject } from '@tmible/wishlist-common/dependency-injector';
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token';
+import { ACCESS_TOKEN_COOKIE_NAME } from '$lib/constants/access-token-cookie-name.const';
+import { REFRESH_TOKEN_COOKIE_NAME } from '$lib/constants/refresh-token-cookie-name.const';
 import { initDB } from '$lib/server/db';
 import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
 import { initLogger } from '$lib/server/logger';
 import { initLogsDB } from '$lib/server/logs-db';
+import { reissueAuthTokens } from '$lib/server/reissue-auth-tokens';
 
 const resolve = vi.fn();
-vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('node:util', () => ({ promisify: (original) => original }));
+vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('jsonwebtoken');
+vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('$lib/server/db');
 vi.mock('$lib/server/ipc-hub-connection');
 vi.mock('$lib/server/logger');
 vi.mock('$lib/server/logs-db');
+vi.mock('$lib/server/reissue-auth-tokens');
 
 describe('server hooks', () => {
   afterEach(() => {
@@ -110,24 +114,47 @@ describe('server hooks', () => {
             event.url.pathname = path;
           });
 
-          it('should fail if there is no cookie', async () => {
+          it('should fail if there are no auth tokens in cookies', async () => {
             event.cookies.get = () => {};
             expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
           });
 
-          describe('if there is cookie', () => {
+          describe('if there is access token cookie', () => {
             beforeEach(() => {
-              event.cookies.get = () => 'token';
+              event.cookies.get = () => 'jwt';
             });
 
             it('should verify it\'s value', async () => {
               await handle({ event, resolve });
-              expect(jwt.verify).toHaveBeenCalledWith('token', 'HMAC secret');
+              expect(jwt.verify).toHaveBeenCalledWith('jwt', 'HMAC secret');
             });
 
             it('should fail if verification fails', async () => {
               vi.mocked(jwt.verify).mockImplementation(() => {
                 throw new Error('verification failed');
+              });
+              expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
+            });
+          });
+
+          describe('if there is no access token cookie, but there is refresh token cookie', () => {
+            const cookies = {
+              [ACCESS_TOKEN_COOKIE_NAME]: undefined,
+              [REFRESH_TOKEN_COOKIE_NAME]: 'refresh token',
+            };
+
+            beforeEach(() => {
+              event.cookies.get = (key) => cookies[key];
+            });
+
+            it('should reissue auth tokens', async () => {
+              await handle({ event, resolve });
+              expect(vi.mocked(reissueAuthTokens)).toHaveBeenCalledWith(event.cookies);
+            });
+
+            it('should fail if verification fails', async () => {
+              vi.mocked(reissueAuthTokens).mockImplementation(() => {
+                throw new Error('reissue failed');
               });
               expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
             });
@@ -141,8 +168,23 @@ describe('server hooks', () => {
           event.url.path = '/api';
         },
       }, {
-        condition: 'token is valid',
+        condition: 'access token is valid',
         setUp: () => {
+          const cookies = {
+            [ACCESS_TOKEN_COOKIE_NAME]: 'jwt',
+            [REFRESH_TOKEN_COOKIE_NAME]: undefined,
+          };
+          event.cookies.get = (key) => cookies[key];
+          event.url.path = '/api/wishlist';
+        },
+      }, {
+        condition: 'there is no access token, but refresh token is valid',
+        setUp: () => {
+          const cookies = {
+            [ACCESS_TOKEN_COOKIE_NAME]: undefined,
+            [REFRESH_TOKEN_COOKIE_NAME]: 'refresh token',
+          };
+          event.cookies.get = (key) => cookies[key];
           event.url.path = '/api/wishlist';
         },
       }];

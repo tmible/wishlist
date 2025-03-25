@@ -1,13 +1,11 @@
-import { promisify } from 'node:util';
+import { randomUUID } from 'node:crypto';
 import { redirect } from '@sveltejs/kit';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import sha256 from '@tmible/wishlist-common/sha-256';
-import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { InjectionToken } from '$lib/architecture/injection-token';
-import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const';
-import { AUTH_TOKEN_COOKIE_OPTIONS } from '$lib/constants/auth-token-cookie-options.const';
-import { AUTH_TOKEN_EXPIRATION } from '$lib/constants/auth-token-expiration.const';
+import { UNKNOWN_USER_UUID_COOKIE_NAME } from '$lib/constants/unknown-user-uuid-cookie-name.const';
+import { generateAndStoreAuthTokens } from '$lib/server/generate-and-store-auth-tokens';
 
 /**
  * Вычисление HMAC-SHA256 подписи
@@ -76,18 +74,21 @@ const checkAuthorization = async (searchParams) => {
 /**
  * Сохранение в БД с логами события успешной аутентификации
  * @function saveAuthenticationAction
- * @param {string} unknownUserUuid Идентификатор неаутентифицированного пользователя
+ * @param {import('./$types').Cookies} cookies Куки файлы запроса и ответа
  * @returns {void}
  */
-const saveAuthenticationAction = (unknownUserUuid) => {
-  if (unknownUserUuid) {
-    inject(InjectionToken.AddActionStatement).run(Date.now(), 'authentication', unknownUserUuid);
+const saveAuthenticationAction = (cookies) => {
+  let unknownUserUuid = cookies.get(UNKNOWN_USER_UUID_COOKIE_NAME);
+  if (unknownUserUuid === undefined) {
+    unknownUserUuid = randomUUID();
+    cookies.set(UNKNOWN_USER_UUID_COOKIE_NAME, unknownUserUuid);
   }
+  inject(InjectionToken.AddActionStatement).run(Date.now(), 'authentication', unknownUserUuid);
 };
 
 /**
- * Проверка подлинности запроса, аутентификация пользователя
- * и создание cookie-файла с jwt-токеном аутентификации
+ * Проверка подлинности запроса, аутентификация пользователя, выпуск и запись
+ * в cookie файлы access и refresh токенов аутентификации
  * @type {import('./$types').RequestHandler}
  */
 export const GET = async ({ cookies, url }) => {
@@ -105,14 +106,9 @@ export const GET = async ({ cookies, url }) => {
 
   inject(InjectionToken.AddUserStatement).run(userid, url.searchParams.get('username') ?? null);
 
-  const token = await promisify(jwt.sign)(
-    { userid },
-    env.HMAC_SECRET,
-    { expiresIn: `${AUTH_TOKEN_EXPIRATION / 60}min` },
-  );
-  cookies.set(AUTH_TOKEN_COOKIE_NAME, token, AUTH_TOKEN_COOKIE_OPTIONS);
+  saveAuthenticationAction(cookies);
 
-  saveAuthenticationAction(cookies.get('unknownUserUuid'));
+  await generateAndStoreAuthTokens(cookies, userid);
 
   return redirect(302, '/list');
 };

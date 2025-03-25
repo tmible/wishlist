@@ -8,6 +8,7 @@
 - rsync (для деплоя)
 - certbot
 - nginx
+- sqlite3 (для [refresh-tokens-cleaner](refresh-tokens-cleaner))
 
 ## Переменные окружения
 - `HMAC_SECRET` случайный SHA-256 хэш для генерации jwt-токенов аутентификации
@@ -34,3 +35,6 @@ http {
 ```
 - домен. Указывается в переменной окружения и в конфигурации nginx
 - TLS сертификат. Устанавливается автоматически с помощью certbot
+
+# [refresh-tokens-cleaner](refresh-tokens-cleaner)
+Вспомогательный systemd сервис, запускающийся раз в сутки по таймеру. Удаляет из БД протухшие refresh токены

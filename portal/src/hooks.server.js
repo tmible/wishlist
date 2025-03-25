@@ -3,11 +3,13 @@ import { inject } from '@tmible/wishlist-common/dependency-injector';
 import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { InjectionToken } from '$lib/architecture/injection-token';
-import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const';
+import { ACCESS_TOKEN_COOKIE_NAME } from '$lib/constants/access-token-cookie-name.const';
+import { REFRESH_TOKEN_COOKIE_NAME } from '$lib/constants/refresh-token-cookie-name.const';
 import { initDB } from '$lib/server/db';
 import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
 import { initLogger } from '$lib/server/logger';
 import { initLogsDB } from '$lib/server/logs-db';
+import { reissueAuthTokens } from '$lib/server/reissue-auth-tokens';
 
 /** @typedef {import('@sveltejs/kit').RequestEvent} RequestEvent */
 /** @typedef {import('@sveltejs/kit').ResolveOptions} ResolveOptions */
@@ -31,10 +33,12 @@ import { initLogsDB } from '$lib/server/logs-db';
 const isPathProtected = (path) => path.startsWith('/api/wishlist') || path === '/api/user/hash';
 
 /**
- * 1. Проверка наличия cookie с токеном аутентификации;
- * 2. Расшифрока токена для получения идентификатора пользователя;
- * 3. Вызов следующего обработчика, если cookie есть и содержит идентификатор пользователя,
- *    иначе возврат ошибки 401
+ * 1. Проверка наличия cookie с access токеном аутентификации;
+ * 2.1. Если cookie есть, то расшифрока токена для получения идентификатора пользователя;
+ * 2.2. Если cookie нет, проверка наличия refresh токена
+ *      для [перевыпуска пары токенов]{@link reissueAuthTokens}
+ * 3. Вызов следующего обработчика, если есть cookie с валидным access токеном или если есть cookie
+ *    с refresh токеном и перевыпуск пары токенов удался, иначе возврат ошибки 401
  * @function handleApiRequest
  * @param {RequestEvent} event Событие запроса
  * @param {ResponseResolver} resolve Функция вызова следующих обработчиков
@@ -42,14 +46,22 @@ const isPathProtected = (path) => path.startsWith('/api/wishlist') || path === '
  * @async
  */
 const handleApiRequest = async (event, resolve) => {
-  if (event.cookies.get(AUTH_TOKEN_COOKIE_NAME)) {
+  if (event.cookies.get(ACCESS_TOKEN_COOKIE_NAME)) {
     try {
       await promisify(jwt.verify)(
-        event.cookies.get(AUTH_TOKEN_COOKIE_NAME),
+        event.cookies.get(ACCESS_TOKEN_COOKIE_NAME),
         env.HMAC_SECRET,
       ).then(
         ({ userid }) => event.locals.userid = userid,
       );
+    } catch {
+      if (isPathProtected(event.url.pathname)) {
+        return new Response(null, { status: 401 });
+      }
+    }
+  } else if (event.cookies.get(REFRESH_TOKEN_COOKIE_NAME)) {
+    try {
+      await reissueAuthTokens(event.cookies);
     } catch {
       if (isPathProtected(event.url.pathname)) {
         return new Response(null, { status: 401 });
@@ -107,9 +119,8 @@ const loggingMiddleware = async (event, resolve) => {
 };
 
 /**
- * Промежуточный обработчик, возвращающий ошибку, если в запросе нет
- * cookie-файла, содержащего jwt-токен аутентификации, или токен в файле
- * недействителен, и добавляющий userid из jwt-токена в запрос иначе
+ * Промежуточный обработчик, возвращающий ошибку, если запрос не аутентифицирован,
+ * и добавляющий userid из access jwt в запрос иначе
  * @type {import('@sveltejs/kit').Handle}
  */
 export const handle = async ({ event, resolve }) => (

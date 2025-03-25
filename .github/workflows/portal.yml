@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       portal: ${{ steps.filter.outputs.portal }}
+      refresh-tokens-cleaner: ${{ steps.filter.outputs.refresh-tokens-cleaner }}
     steps:
     - uses: actions/checkout@v4
       with:
@@ -19,9 +20,13 @@ jobs:
       id: filter
       with:
         base: ${{ steps.previous-sha.outputs.sha }}
+        predicate-quantifier: 'every'
         filters: |
           portal:
             - 'portal/**'
+            - '!portal/refresh-tokens-cleaner/**'
+          refresh-tokens-cleaner:
+            - 'portal/refresh-tokens-cleaner/**'
 
   lint:
     needs: changes
@@ -100,3 +105,24 @@ jobs:
           pnpm install --prod
           pnpm start:background
           pnpm restart:background
+
+  refresh-tokens-cleaner:
+    needs: changes
+    if: ${{ needs.changes.outputs.refresh-tokens-cleaner == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal/refresh-tokens-cleaner
+    steps:
+    - uses: actions/checkout@v4
+    - name: deploy
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SOURCE: portal/refresh-tokens-cleaner
+        TARGET: ${{ secrets.REMOTE_TARGET }}/portal
+        SCRIPT_AFTER: |
+          cd ${{ secrets.REMOTE_TARGET }}/portal/refresh-tokens-cleaner
+          ./start-refresh-tokens-cleaner-service.sh

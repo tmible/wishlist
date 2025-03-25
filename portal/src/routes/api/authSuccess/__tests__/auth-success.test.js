@@ -1,36 +1,32 @@
+import { randomUUID } from 'node:crypto';
 import { redirect } from '@sveltejs/kit';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { InjectionToken } from '$lib/architecture/injection-token';
-import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const';
-import { AUTH_TOKEN_COOKIE_OPTIONS } from '$lib/constants/auth-token-cookie-options.const';
-import { AUTH_TOKEN_EXPIRATION } from '$lib/constants/auth-token-expiration.const';
+import { UNKNOWN_USER_UUID_COOKIE_NAME } from '$lib/constants/unknown-user-uuid-cookie-name.const';
+import { generateAndStoreAuthTokens } from '$lib/server/generate-and-store-auth-tokens';
 import { GET } from '../+server.js';
 
-vi.mock('node:util', () => ({ promisify: (original) => original }));
+vi.mock('node:crypto');
 vi.mock('@sveltejs/kit');
 vi.mock('@tmible/wishlist-common/dependency-injector');
-vi.mock('jsonwebtoken');
 vi.mock(
   '$env/dynamic/private',
   () => ({ env: { HMAC_SECRET: 'HMAC secret', BOT_TOKEN: 'bot token' } }),
 );
+vi.mock('$lib/server/generate-and-store-auth-tokens');
 
 // HMAC-SHA256 подпись пустой строки с ключом SHA-256 хэшем от строки "bot token"
 const HMAC_SHA256_SIGNATURE = '05f584e13f09851dbc638a0d341b04a358adf7b0bbc0b43362de10d8f94cecb4';
 
-describe('authSuccess endpoint', () => {
-  let cookies;
-  let url;
+const cookies = {
+  get: vi.fn(),
+  set: vi.fn(),
+};
+const url = { searchParams: { get: vi.fn(), keys: vi.fn(() => []) } };
 
-  beforeEach(() => {
-    cookies = {
-      get: vi.fn(),
-      set: vi.fn(),
-    };
-    url = { searchParams: { get: vi.fn(), keys: vi.fn(() => []) } };
-  });
+describe('authSuccess endpoint', () => {
+  beforeEach(() => {});
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -91,37 +87,14 @@ describe('authSuccess endpoint', () => {
       expect(statement.run).toHaveBeenCalledWith('userid', 'username');
     });
 
-    it('should create jwt', async () => {
-      await GET({ cookies, url });
-      expect(
-        vi.mocked(jwt.sign),
-      ).toHaveBeenCalledWith(
-        { userid: 'userid' },
-        'HMAC secret',
-        { expiresIn: `${AUTH_TOKEN_EXPIRATION / 60}min` },
-      );
-    });
-
-    it('should set cookie', async () => {
-      vi.mocked(jwt.sign).mockReturnValue('token');
-      await GET({ cookies, url });
-      expect(
-        cookies.set,
-      ).toHaveBeenCalledWith(
-        AUTH_TOKEN_COOKIE_NAME,
-        'token',
-        AUTH_TOKEN_COOKIE_OPTIONS,
-      );
-    });
-
     describe('if there is unknown user UUID', () => {
       beforeEach(async () => {
         cookies.get.mockReturnValueOnce('unknownUserUuid');
-        vi.stubGlobal('Date', { now: vi.fn(() => 'now') });
+        vi.spyOn(Date, 'now').mockReturnValueOnce('now');
         await GET({ cookies, url });
       });
 
-      it('should inject AddUserStatement', () => {
+      it('should inject add action statement', () => {
         expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.AddActionStatement);
       });
 
@@ -132,17 +105,32 @@ describe('authSuccess endpoint', () => {
 
     describe('if there is no unknown user UUID', () => {
       beforeEach(async () => {
-        cookies.get.mockReturnValueOnce(null);
+        cookies.get.mockReturnValueOnce();
+        vi.mocked(randomUUID).mockReturnValueOnce('random UUID');
+        vi.spyOn(Date, 'now').mockReturnValueOnce('now');
         await GET({ cookies, url });
       });
 
+      it('should generate it', () => {
+        expect(vi.mocked(randomUUID)).toHaveBeenCalled();
+      });
+
+      it('should store it in cookie', () => {
+        expect(cookies.set).toHaveBeenCalledWith(UNKNOWN_USER_UUID_COOKIE_NAME, 'random UUID');
+      });
+
       it('should inject AddUserStatement', () => {
-        expect(vi.mocked(inject)).not.toHaveBeenCalledWith(InjectionToken.AddActionStatement);
+        expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.AddActionStatement);
       });
 
       it('should add action', () => {
-        expect(statement.run).not.toHaveBeenCalledWith('now', 'authentication', 'unknownUserUuid');
+        expect(statement.run).toHaveBeenCalledWith('now', 'authentication', 'random UUID');
       });
+    });
+
+    it('should generate and store auth tokens', async () => {
+      await GET({ cookies, url });
+      expect(vi.mocked(generateAndStoreAuthTokens)).toHaveBeenCalledWith(cookies, 'userid');
     });
 
     it('should return redirect', async () => {

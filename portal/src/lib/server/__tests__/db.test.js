@@ -9,10 +9,13 @@ import { initAddUserStatement } from '../add-user-statement.js';
 import { initChangesStatement } from '../changes-statement.js';
 import { initDB } from '../db.js';
 import { initDeleteCategoryStatement } from '../delete-category-statement.js';
+import { initDeleteRefreshTokenStatement } from '../delete-refresh-token-statement.js';
+import { initGetRefreshTokenStatement } from '../get-refresh-token-statement.js';
 import { initGetUserCategoriesStatement } from '../get-user-categories-statement.js';
 import { initGetUserHashStatement } from '../get-user-hash-statement.js';
 import { initGetUserWishlistStatement } from '../get-user-wishlist-statement.js';
 import { initSetUserHashStatement } from '../set-user-hash-statement.js';
+import { initStoreRefreshTokenStatement } from '../store-refresh-token-statement.js';
 import { initUpdateCategoryStatement } from '../update-category-statement.js';
 
 vi.mock('@tmible/wishlist-common/db-migrations');
@@ -30,10 +33,13 @@ vi.mock('../add-item-statement.js');
 vi.mock('../add-user-statement.js');
 vi.mock('../changes-statement.js');
 vi.mock('../delete-category-statement.js');
+vi.mock('../delete-refresh-token-statement.js');
+vi.mock('../get-refresh-token-statement.js');
 vi.mock('../get-user-categories-statement.js');
 vi.mock('../get-user-hash-statement.js');
 vi.mock('../get-user-wishlist-statement.js');
 vi.mock('../set-user-hash-statement.js');
+vi.mock('../store-refresh-token-statement.js');
 vi.mock('../update-category-statement.js');
 
 describe('db', () => {
@@ -125,5 +131,20 @@ describe('db', () => {
   it('should init set user hash statement', async () => {
     await initDB();
     expect(vi.mocked(initSetUserHashStatement)).toHaveBeenCalled();
+  });
+
+  it('should init store refresh token statement', async () => {
+    await initDB();
+    expect(vi.mocked(initStoreRefreshTokenStatement)).toHaveBeenCalled();
+  });
+
+  it('should init get refresh token statement', async () => {
+    await initDB();
+    expect(vi.mocked(initGetRefreshTokenStatement)).toHaveBeenCalled();
+  });
+
+  it('should init delete refresh token statement', async () => {
+    await initDB();
+    expect(vi.mocked(initDeleteRefreshTokenStatement)).toHaveBeenCalled();
   });
 });

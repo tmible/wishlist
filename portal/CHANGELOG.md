@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.16 Величественный горизонт (2025-03-25)
+<img width="128" height="128" src="release-images/1.4.16.png"/>
+
+https://github.com/tmible/wishlist/compare/01736f2..master
+
+
 ## 1.4.15 Величественный рассвет (2025-03-24)
 <img width="128" height="128" src="release-images/1.4.15.png"/>
 
-https://github.com/tmible/wishlist/compare/d1d4eb3..master
+https://github.com/tmible/wishlist/compare/d1d4eb3..01736f2
 
 
 ## 1.4.14 Величественный каскад (2025-03-24)
