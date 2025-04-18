@@ -65,8 +65,8 @@ while : ; do
 done
 
 echo -n "Запрашиваю у Kandinsky изображение релиза"
-model_id=$(
-  curl "https://api-key.fusionbrain.ai/key/api/v1/models" \
+pipeline_id=$(
+  curl "https://api-key.fusionbrain.ai/key/api/v1/pipelines" \
     -H "X-Key: Key $KANDINSKY_API_KEY" \
     -H "X-Secret: Secret $KANDINSKY_API_SECRET" \
     2>/dev/null |
@@ -80,10 +80,10 @@ prompt=$(
   tr "\0" "\n"
 )
 task_uuid=$(
-  curl -L -X POST "https://api-key.fusionbrain.ai/key/api/v1/text2image/run" \
+  curl -L -X POST "https://api-key.fusionbrain.ai/key/api/v1/pipeline/run" \
     -H "X-Key: Key $KANDINSKY_API_KEY" \
     -H "X-Secret: Secret $KANDINSKY_API_SECRET" \
-    -F "model_id=\"$model_id\"" \
+    -F "pipeline_id=\"$pipeline_id\"" \
     -F "params=\"$prompt\";type=application/json" \
     2>/dev/null |
   jq -r ".uuid"
@@ -103,7 +103,7 @@ for (( attempts = 30; attempts > 0; attempts-- )); do
   done
   echo -ne "\rЗапрашиваю у Kandinsky изображение релиза  "
   status=$(
-    curl "https://api-key.fusionbrain.ai/key/api/v1/text2image/status/$task_uuid" \
+    curl "https://api-key.fusionbrain.ai/key/api/v1/pipeline/status/$task_uuid" \
       -H "X-Key: Key $KANDINSKY_API_KEY" \
       -H "X-Secret: Secret $KANDINSKY_API_SECRET" \
       2>/dev/null
@@ -113,7 +113,7 @@ for (( attempts = 30; attempts > 0; attempts-- )); do
     exit 1
   fi
   if [[ $(echo $status | jq -r ".status") == "DONE" ]]; then
-    release_image=$(echo $status | jq -r ".images[0]")
+    release_image=$(echo $status | jq -r ".result.files[0]")
     echo -e "\nИзображение релиза от Kandinsky получено"
     break
   fi
