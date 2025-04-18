@@ -9,19 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       dashboards-server: ${{ steps.filter.outputs.dashboards-server }}
+      health-checker: ${{ steps.filter.outputs.health-checker }}
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 2
-    - id: previous-sha
-      run: 'echo "sha=$(git rev-list -n 1 ${{ github.ref }}^)" >> $GITHUB_OUTPUT'
     - uses: dorny/paths-filter@v3
       id: filter
       with:
-        base: ${{ steps.previous-sha.outputs.sha }}
+        base: ${{ github.ref }}
+        predicate-quantifier: 'every'
         filters: |
           dashboards-server:
             - 'dashboards-server/**'
+            - '!dashboards-server/health-checker/**'
+          health-checker:
+            - 'dashboards-server/health-checker/**'
+
 
   lint:
     needs: changes
@@ -96,3 +98,24 @@ jobs:
           pnpm install --prod
           pnpm start:background
           pnpm restart:background
+
+  health-checker:
+    needs: changes
+    if: ${{ needs.changes.outputs.health-checker == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dashboards-server/health-checker
+    steps:
+    - uses: actions/checkout@v4
+    - name: deploy
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SOURCE: dashboards-server/health-checker
+        TARGET: ${{ secrets.REMOTE_TARGET }}/dashboards-server
+        SCRIPT_AFTER: |
+          cd ${{ secrets.REMOTE_TARGET }}/dashboards-server/health-checker
+          ./start-health-checker-service.sh

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { GetSuccessRate } from '$lib/server/db/portal/events.js';
 
 /**
  * Получение из БД с логами метрики доли успешно обработанных
@@ -12,10 +12,6 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  const { successful, total } = inject(
-    InjectionToken.PortalSuccessRateStatement,
-  ).get(
-    { periodStart },
-  );
+  const { successful, total } = emit(GetSuccessRate, { periodStart });
   return json(successful / total);
 };

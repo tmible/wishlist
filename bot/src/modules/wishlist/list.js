@@ -17,7 +17,7 @@ import sendList from './helpers/send-list.js';
  * @typedef {
  *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleMessageHandler
  * } ModuleMessageHandler
- * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
+ * @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus
  */
 
 /**

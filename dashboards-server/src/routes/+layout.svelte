@@ -2,6 +2,7 @@
 <script>
   import '../app.pcss';
   import { provide } from '@tmible/wishlist-common/dependency-injector';
+  import { subscribe } from '@tmible/wishlist-common/event-bus';
   import {
     initTheme,
     isDarkTheme,
@@ -12,34 +13,48 @@
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { InjectionToken } from '$lib/architecture/injection-token';
-  import { isAuthenticated } from '$lib/store/is-authenticated';
+  import { ThemeService } from '$lib/theme-service-injection-token.js';
+  import { Navigate } from '$lib/user/events.js';
+  import {
+    NetworkService as UserNetworkService,
+    Store as UserStore,
+  } from '$lib/user/injection-tokens.js';
+  import * as userNetworkService from '$lib/user/network.service.js';
+  import { user } from '$lib/user/store.js';
+  import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 
-  /**
-   * Регистрация сервиса управления темой в сервисе внедрения зависмостей
-   */
-  provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+  // Регистрация сервиса управления темой в сервисе внедрения зависмостей
+  provide(ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+
+  // Регистрация зависисмостей и подписка на события для работы с пользователем
+  provide(UserStore, user);
+  provide(UserNetworkService, userNetworkService);
+  subscribe(
+    Navigate,
+    (route) => {
+      if ($page.url.pathname.startsWith(route)) {
+        return;
+      }
+      goto(route);
+    },
+  );
 
   /**
    * В браузере проверка аутентифицированностии пользователя и его
    * перенаправление на соответствующую статусу аутентификации страницу
    */
-  $: if (browser && $isAuthenticated !== null) {
-    if (!$isAuthenticated && $page.url.pathname === '/dashboards') {
+  $: if (browser && $user.isAuthenticated !== null) {
+    if (!$user.isAuthenticated && $page.url.pathname.startsWith('/dashboards')) {
       goto('/login');
-    } else if ($isAuthenticated && $page.url.pathname === '/login') {
+    } else if ($user.isAuthenticated && $page.url.pathname === '/login') {
       goto('/dashboards');
     }
   }
 
-  /**
-   * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
-   */
+  // Инициализация темы, pапрос статуса аутентификации пользователя
   onMount(async () => {
-    isAuthenticated.set(
-      await fetch('/api/isAuthenticated').then((response) => response.json()),
-    );
     initTheme();
+    await checkAuthentication();
   });
 </script>
 
@@ -83,6 +98,6 @@
   <!-- eslint-enable svelte/indent -->
 </svelte:head>
 
-{#if $isAuthenticated !== null}
+{#if $user.isAuthenticated !== null}
   <slot></slot>
 {/if}

@@ -1,8 +1,23 @@
-import { goto } from '$app/navigation';
-import { isAuthenticated } from '$lib/store/is-authenticated.js';
+import { logout } from '$lib/user/use-cases/logout.js';
 
 /**
- * Проверка авторизации при получении ответа от сервера
+ * Текст исключения при получении ошибки аутентификации от сервера
+ * @constant {string}
+ */
+const AUTH_ERROR_MESSAGE = 'Got 401 response';
+
+/** Добавление глобального обработчика ошибок для перехвата исключений от {@link authInterceptor} */
+globalThis.addEventListener?.(
+  'unhandledrejection',
+  (event) => {
+    if (event.reason.message === AUTH_ERROR_MESSAGE) {
+      event.preventDefault();
+    }
+  },
+);
+
+/**
+ * Проверка аутентификации пользователя при получении ответа от сервера
  * @function authInterceptor
  * @param {Response} response Ответ от сервера
  * @returns {Response} Ответ от сервера
@@ -10,9 +25,8 @@ import { isAuthenticated } from '$lib/store/is-authenticated.js';
  */
 export const authInterceptor = (response) => {
   if (response.status === 401) {
-    isAuthenticated.set(false);
-    goto('/login');
-    throw new Error('Got 401 response');
+    logout();
+    throw new Error(AUTH_ERROR_MESSAGE);
   }
   return response;
 };

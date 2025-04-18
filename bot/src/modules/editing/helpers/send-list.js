@@ -6,7 +6,7 @@ import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-l
 /**
  * @typedef {import('telegraf').Context} Context
  * @typedef {import('telegraf').InlineKeyboardMarkup} InlineKeyboardMarkup
- * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
+ * @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus
  * @typedef {import('@tmible/wishlist-bot/store/editing/get-list').OwnListItem} OwnListItem
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').SendListOptions

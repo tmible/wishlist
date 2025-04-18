@@ -12,14 +12,10 @@ jobs:
       refresh-tokens-cleaner: ${{ steps.filter.outputs.refresh-tokens-cleaner }}
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 2
-    - id: previous-sha
-      run: 'echo "sha=$(git rev-list -n 1 ${{ github.ref }}^)" >> $GITHUB_OUTPUT'
     - uses: dorny/paths-filter@v3
       id: filter
       with:
-        base: ${{ steps.previous-sha.outputs.sha }}
+        base: ${{ github.ref }}
         predicate-quantifier: 'every'
         filters: |
           portal:

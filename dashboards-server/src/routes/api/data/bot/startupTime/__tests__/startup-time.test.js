@@ -1,18 +1,12 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { GetStartupTime } from '$lib/server/db/bot/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 
 describe('bot startupTime endpoint', () => {
-  let startupTimeStatement;
-
-  beforeAll(() => {
-    startupTimeStatement = { all: vi.fn() };
-    vi.mocked(inject).mockReturnValue(startupTimeStatement);
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -26,16 +20,16 @@ describe('bot startupTime endpoint', () => {
       },
     });
     expect(response.status).toEqual(400);
-    expect(await response.text()).toEqual('missing periodStart parameter');
+    await expect(response.text()).resolves.toBe('missing periodStart parameter');
   });
 
-  it('should run SQL statement', () => {
+  it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(startupTimeStatement.all).toHaveBeenCalled();
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetStartupTime, 'param');
   });
 
-  it('should return SQL statement run result', () => {
-    startupTimeStatement.all.mockReturnValue('startupTime');
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toEqual('startupTime');
+  it('should return event result', () => {
+    vi.mocked(emit).mockReturnValueOnce('startupTime');
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('startupTime');
   });
 });

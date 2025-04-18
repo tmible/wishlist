@@ -1,44 +1,86 @@
 <!-- Svelte компонент -- страница с дашбордами бота -->
 <script>
-  import HealthDashboard from '$lib/components/health-dashboard.svelte';
   import * as Card from '$lib/components/ui/card';
   import UserSessionsTable from '$lib/components/user-sessions-table';
-  import { isAuthenticated } from '$lib/store/is-authenticated';
-  import ActiveUsersDashboard from '../active-users-dashboard.svelte';
-  import SuccessRateDashboard from '../success-rate-dashboard.svelte';
-  import TimeDashboard from '../time-dashboard.svelte';
+  import { PERIOD } from '$lib/constants/period.const.js';
+  import Dashboard from '$lib/dashboard/dashboard.svelte';
+  import HealthDashboard from '$lib/health/dashboard.svelte';
+  import { user } from '$lib/user/store.js';
 
-  /** @typedef {import('$lib/components/dashboard.svelte').DashboardChart} DashboardChart */
+  /** @typedef {import('$lib/dashboard/domain.js').DashboardData} DashboardData */
   /** @typedef {import('$lib/components/user-sessions-table').TableData} TableData */
 
   /**
    * Данные для дашбордов
    * @type {{
-   *   timeDashboard: DashboardChart[];
-   *   activeUsersDashboard: DashboardChart[];
-   *   successRate: number;
+   *   time: DashboardData;
+   *   activeUsers: DashboardData;
+   *   successRate: DashboardData;
    *   userSessions: TableData[];
    * }}
    */
   export let data;
 </script>
 
-{#if $isAuthenticated}
+{#if $user.isAuthenticated}
   <HealthDashboard service="bot" />
   <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <TimeDashboard data={data.timeDashboard} service="bot" />
+        <Dashboard
+          service="bot"
+          config={{
+            key: 'time',
+            type: 'line',
+            initialData: data.time,
+            chartConfigs: [{
+              key: 'responseTime',
+              label: 'Время ответа',
+            }, {
+              key: 'processTime',
+              label: 'Время обработки обновления',
+            }, {
+              key: 'startupTime',
+              label: 'Время до начала ответа',
+            }],
+          }}
+        />
       </Card.Content>
     </Card.Root>
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <ActiveUsersDashboard data={data.activeUsersDashboard} service="bot" />
+        <Dashboard
+          service="bot"
+          config={{
+            key: 'activeUsers',
+            type: 'line',
+            period: PERIOD.WEEK,
+            initialData: data.activeUsers,
+            chartConfigs: [{
+              key: 'dau',
+              label: 'Уникальные пользователи за сутки',
+            }, {
+              key: 'mau',
+              label: 'Уникальные пользователи за месяц',
+            }, {
+              key: 'yau',
+              label: 'Уникальные пользователи за год',
+            }],
+          }}
+        />
       </Card.Content>
     </Card.Root>
     <Card.Root>
       <Card.Content class="pt-3 md:pt-6">
-        <SuccessRateDashboard data={data.successRate} service="bot" />
+        <Dashboard
+          service="bot"
+          config={{
+            key: 'successRate',
+            type: 'doughnut',
+            initialData: data.successRate,
+            label: [ 'Success rate' ],
+          }}
+        />
       </Card.Content>
     </Card.Root>
   </div>

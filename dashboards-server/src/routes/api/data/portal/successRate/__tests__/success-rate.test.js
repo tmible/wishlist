@@ -1,18 +1,12 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { GetSuccessRate } from '$lib/server/db/portal/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 
 describe('portal successRate endpoint', () => {
-  let successRateStatement;
-
-  beforeAll(() => {
-    successRateStatement = { get: vi.fn() };
-    vi.mocked(inject).mockReturnValue(successRateStatement);
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -26,19 +20,19 @@ describe('portal successRate endpoint', () => {
       },
     });
     expect(response.status).toEqual(400);
-    expect(await response.text()).toEqual('missing periodStart parameter');
+    await expect(response.text()).resolves.toBe('missing periodStart parameter');
   });
 
-  it('should run SQL statement', () => {
-    successRateStatement.get.mockReturnValue({});
+  it('should emit event', () => {
+    vi.mocked(emit).mockReturnValueOnce({});
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(successRateStatement.get).toHaveBeenCalled();
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetSuccessRate, { periodStart: 'param' });
   });
 
-  it('should return SQL statement run result', () => {
+  it('should return event result', () => {
     const successful = Math.random();
     const total = Math.random();
-    successRateStatement.get.mockReturnValue({ successful, total });
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toEqual(successful / total);
+    vi.mocked(emit).mockReturnValueOnce({ successful, total });
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe(successful / total);
   });
 });

@@ -1,13 +1,13 @@
 <!-- Svelte компонент -- страница с формой аутентификации -->
 <script>
   import { enhance } from '$app/forms';
-  import { goto } from '$app/navigation';
-  import GradientSwitcher from '$lib/components/gradient-switcher.svelte';
-  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import ThemeSwitch from '$lib/components/theme-switch.svelte';
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
-  import { isAuthenticated } from '$lib/store/is-authenticated';
+  import GradientSwitch from '$lib/gradient/switch.svelte';
+  import { user } from '$lib/user/store.js';
+  import { login } from '$lib/user/use-cases/login.js';
 
   /**
    * Форма аутентификации
@@ -19,17 +19,16 @@
    * Аутентификация пользователя при успешном заполнении формы
    */
   $: if (form?.success) {
-    isAuthenticated.set(true);
-    goto('/dashboards');
+    login();
   }
 </script>
 
-{#if !$isAuthenticated}
+{#if !$user.isAuthenticated}
   <div class="self-end flex mr-4 md:mr-0">
     <div class="mr-4">
-      <GradientSwitcher />
+      <GradientSwitch />
     </div>
-    <ThemeSwitcher />
+    <ThemeSwitch />
   </div>
   <form class="flex flex-col m-auto" method="POST" use:enhance>
     <div class="mb-2">

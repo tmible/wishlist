@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { GetAuthenticationFunnel } from '$lib/server/db/portal/events.js';
 
 /**
  * Получение из БД с логами доли пользователей,
@@ -13,10 +13,6 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  const { authentications, landingVisits } = inject(
-    InjectionToken.PortalAuthenticationFunnelStatement,
-  ).get(
-    { periodStart },
-  );
+  const { authentications, landingVisits } = emit(GetAuthenticationFunnel, { periodStart });
   return json(authentications / landingVisits);
 };

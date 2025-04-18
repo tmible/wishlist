@@ -1,18 +1,12 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { GetAuthenticationFunnel } from '$lib/server/db/portal/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 
 describe('portal authenticationFunnel endpoint', () => {
-  let authenticationFunnelStatement;
-
-  beforeAll(() => {
-    authenticationFunnelStatement = { get: vi.fn() };
-    vi.mocked(inject).mockReturnValue(authenticationFunnelStatement);
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -26,22 +20,22 @@ describe('portal authenticationFunnel endpoint', () => {
       },
     });
     expect(response.status).toEqual(400);
-    expect(await response.text()).toEqual('missing periodStart parameter');
+    await expect(response.text()).resolves.toBe('missing periodStart parameter');
   });
 
-  it('should run SQL statement', () => {
-    authenticationFunnelStatement.get.mockReturnValue({});
+  it('should emit event', () => {
+    vi.mocked(emit).mockReturnValueOnce({});
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(authenticationFunnelStatement.get).toHaveBeenCalled();
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetAuthenticationFunnel, { periodStart: 'param' });
   });
 
-  it('should return SQL statement run result', () => {
+  it('should return event result', () => {
     const authentications = Math.random();
     const landingVisits = Math.random();
-    authenticationFunnelStatement.get.mockReturnValue({ authentications, landingVisits });
+    vi.mocked(emit).mockReturnValueOnce({ authentications, landingVisits });
     expect(
       GET({ url: { searchParams: { get: () => 'param' } } }),
-    ).toEqual(
+    ).toBe(
       authentications / landingVisits,
     );
   });

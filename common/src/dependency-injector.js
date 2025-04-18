@@ -13,10 +13,17 @@ const providers = new Map();
  * @function provide
  * @param {InjectionToken} token Токен внедрения
  * @param {unknown} value Предоставляемое значение
+ * @returns {void}
  */
-export const provide = (token, value) => {
-  providers.set(token, value);
-};
+export const provide = (token, value) => providers.set(token, value);
+
+/**
+ * Разрыз ассоциации значения с токеном внедрения
+ * @function deprive
+ * @param {InjectionToken} token Токен внедрения
+ * @returns {void}
+ */
+export const deprive = (token) => providers.delete(token);
 
 /**
  * Предоставление значения по токену внедрения

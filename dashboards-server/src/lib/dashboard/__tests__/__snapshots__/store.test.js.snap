@@ -1,0 +1,121 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard / store > auto update > should auto update displayed charts 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 1,
+}
+`;
+
+exports[`dashboard / store > subscribe > on first subscriber > if there is initial data > should not reuse initial data 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 1,
+}
+`;
+
+exports[`dashboard / store > subscribe > on first subscriber > if there is initial data > should set initial data and fetch missing data 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 initial data",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 1,
+}
+`;
+
+exports[`dashboard / store > subscribe > on first subscriber > if there is no initial data > should fetch all charts data 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 1,
+}
+`;
+
+exports[`dashboard / store > updateChartsSelection > should fetch missing data 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": false,
+    },
+    "chart 3" => {
+      "data": "chart 3 data from network for period 9",
+      "isDisplayed": true,
+    },
+  },
+  "period": 1,
+}
+`;
+
+exports[`dashboard / store > updatePeriod > should fetch data if it wasn't used since last auto update 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 8",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 8",
+      "isDisplayed": true,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 2,
+}
+`;

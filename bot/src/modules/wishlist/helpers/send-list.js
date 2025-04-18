@@ -5,7 +5,7 @@ import manageListsMessages from '@tmible/wishlist-bot/helpers/messaging/manage-l
 
 /**
  * @typedef {import('telegraf').Context} Context
- * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
+ * @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus
  * @typedef {
  *   import('@tmible/wishlist-bot/helpers/messaging/manage-lists-messages').SendListOptions
  * } SendListOptions

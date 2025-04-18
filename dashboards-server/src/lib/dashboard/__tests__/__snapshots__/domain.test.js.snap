@@ -1,0 +1,64 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard / domain > should build dashboard in maximal variant 1`] = `
+{
+  "charts": Map {
+    0 => {
+      "data": undefined,
+      "isDisplayed": false,
+      "label": "0",
+    },
+    1 => {
+      "data": undefined,
+      "isDisplayed": true,
+      "label": "1",
+    },
+  },
+  "initialData": {
+    "0": "initial",
+    "1": "data",
+  },
+  "period": 3600000,
+}
+`;
+
+exports[`dashboard / domain > should build dashboard in minimal variant 1`] = `
+{
+  "charts": Map {},
+  "initialData": {},
+  "period": 86400000,
+}
+`;
+
+exports[`dashboard / domain > should build doughnut dashboard 1`] = `
+{
+  "charts": Map {
+    "key" => {
+      "data": undefined,
+      "isDisplayed": true,
+      "label": "label",
+    },
+  },
+  "initialData": {},
+  "period": 86400000,
+}
+`;
+
+exports[`dashboard / domain > should build line dashboard 1`] = `
+{
+  "charts": Map {
+    0 => {
+      "data": undefined,
+      "isDisplayed": true,
+      "label": "0",
+    },
+    1 => {
+      "data": undefined,
+      "isDisplayed": false,
+      "label": "1",
+    },
+  },
+  "initialData": {},
+  "period": 86400000,
+}
+`;

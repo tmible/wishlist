@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
 import { provide } from '@tmible/wishlist-common/dependency-injector';
+import { subscribe } from '@tmible/wishlist-common/event-bus';
 import {
   initTheme,
   isDarkTheme,
@@ -10,13 +11,19 @@ import {
 import { readable, writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
-import { InjectionToken } from '$lib/architecture/injection-token';
-import { isAuthenticated } from '$lib/store/is-authenticated.js';
+import { ThemeService } from '$lib/theme-service-injection-token.js';
+import { Navigate } from '$lib/user/events.js';
+import {
+  NetworkService as UserNetworkService,
+  Store as UserStore,
+} from '$lib/user/injection-tokens.js';
+import * as userNetworkService from '$lib/user/network.service.js';
+import { user } from '$lib/user/store.js';
+import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 import Layout from '../+layout.svelte';
 
-vi.mock('$app/navigation');
-vi.mock('$app/stores', () => ({ page: readable({ url: { pathname: '' } }) }));
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock(
   '@tmible/wishlist-common/theme-service',
   () => ({
@@ -26,6 +33,9 @@ vi.mock(
     updateTheme: vi.fn(),
   }),
 );
+vi.mock('$app/navigation');
+vi.mock('$app/stores', () => ({ page: readable({ url: { pathname: '' } }) }));
+vi.mock('$lib/user/use-cases/check-authentication.js');
 
 describe('layout', () => {
   beforeEach(() => {
@@ -37,7 +47,6 @@ describe('layout', () => {
         configurable: true,
       },
     );
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ json: vi.fn(() => 'response') }));
   });
 
   afterEach(() => {
@@ -46,39 +55,67 @@ describe('layout', () => {
     cleanup();
   });
 
-  it('should provide theme service on create', () => {
+  it('should provide theme service', () => {
     render(Layout);
     expect(
-      provide,
+      vi.mocked(provide),
     ).toHaveBeenCalledWith(
-      InjectionToken.ThemeService,
+      ThemeService,
       { isDarkTheme, subscribeToTheme, updateTheme },
     );
   });
 
-  describe('on mount', () => {
+  it('should provide user store', () => {
+    render(Layout);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(UserStore, user);
+  });
+
+  it('should provide user network service', () => {
+    render(Layout);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(UserNetworkService, userNetworkService);
+  });
+
+  describe('Navigate event', () => {
+    let eventHandler;
+
     beforeEach(() => {
-      vi.spyOn(vi.mocked(isAuthenticated), 'set').mockImplementation(vi.fn());
+      vi.mocked(subscribe).mockImplementation((event, handler) => eventHandler = handler);
       render(Layout);
     });
 
-    it('should fetch authentication status', () => {
-      expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/isAuthenticated');
+    it('should subscribe to Navigate event', () => {
+      expect(vi.mocked(subscribe)).toHaveBeenCalledWith(Navigate, expect.any(Function));
     });
 
-    it('should set authentication status to store', () => {
-      expect(vi.mocked(isAuthenticated.set)).toHaveBeenCalledWith('response');
+    it('should not navigate to current page or subpage', () => {
+      eventHandler('');
+      expect(vi.mocked(goto)).not.toHaveBeenCalled();
+    });
+
+    it('should not navigate to current page or subpage', () => {
+      eventHandler('route');
+      expect(vi.mocked(goto)).toHaveBeenCalledWith('route');
+    });
+  });
+
+  describe('on mount', () => {
+    beforeEach(() => {
+      render(Layout);
     });
 
     it('should init theme store', () => {
       expect(vi.mocked(initTheme)).toHaveBeenCalled();
+    });
+
+    it('should check authentication', () => {
+      expect(vi.mocked(checkAuthentication)).toHaveBeenCalled();
     });
   });
 
   it('should not redirect if browser is false', async () => {
     vi.resetModules();
     vi.doMock('$app/environment', () => ({ browser: false }));
-    vi.doMock('$lib/store/is-authenticated.js', () => ({ isAuthenticated: writable(true) }));
+    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: true }) }));
     render(await import('../+layout.svelte').then((module) => module.default));
     expect(goto).not.toHaveBeenCalled();
   });
@@ -86,7 +123,7 @@ describe('layout', () => {
   it('should not redirect if isAuthenticated is null', async () => {
     vi.resetModules();
     vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/is-authenticated.js', () => ({ isAuthenticated: writable(null) }));
+    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: null }) }));
     render(await import('../+layout.svelte').then((module) => module.default));
     expect(goto).not.toHaveBeenCalled();
   });
@@ -94,7 +131,7 @@ describe('layout', () => {
   it('should redirect to /login', async () => {
     vi.resetModules();
     vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/is-authenticated.js', () => ({ isAuthenticated: writable(false) }));
+    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: false }) }));
     vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/dashboards' } }) }));
     render(await import('../+layout.svelte').then((module) => module.default));
     expect(goto).toHaveBeenCalledWith('/login');
@@ -103,7 +140,7 @@ describe('layout', () => {
   it('should redirect to /dashboards', async () => {
     vi.resetModules();
     vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/store/is-authenticated.js', () => ({ isAuthenticated: writable(true) }));
+    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: true }) }));
     vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/login' } }) }));
     render(await import('../+layout.svelte').then((module) => module.default));
     expect(goto).toHaveBeenCalledWith('/dashboards');

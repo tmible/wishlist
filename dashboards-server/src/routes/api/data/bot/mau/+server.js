@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { GetMAU } from '$lib/server/db/bot/events.js';
 
 /**
  * Получение из БД с логами метрики MAU бота для каждого дня указанного периода
@@ -11,6 +11,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-
-  return json(inject(InjectionToken.BotMAUStatement).all({ periodStart, periodEnd: Date.now() }));
+  return json(emit(GetMAU, { periodStart, periodEnd: Date.now() }));
 };

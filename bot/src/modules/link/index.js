@@ -9,7 +9,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
  * @typedef {
  *   import('@tmible/wishlist-bot/architecture/configure-modules').ModuleConfigureFunction
  * } ModuleConfigureFunction
- * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
+ * @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus
  */
 
 /**

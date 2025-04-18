@@ -68,7 +68,7 @@ Svelte компонент -- заголовок столбца таблицы с
       </label>
       {#if $filters[accessor]}
         <Button
-          class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"
+          class="p-0 h-auto right-[6px] translate-y-[6px] cursor-pointer absolute"
           variant="ghost"
           on:click={() => {
             filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));

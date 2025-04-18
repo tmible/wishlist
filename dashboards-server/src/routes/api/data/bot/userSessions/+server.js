@@ -1,9 +1,9 @@
 import { json } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { GetUserSessions } from '$lib/server/db/bot/events.js';
 
 /**
  * Получение из БД с логами всех полученных ботом обновлений
  * @type {import('./$types').RequestHandler}
  */
-export const GET = () => json(inject(InjectionToken.BotUserSessionsStatement).all());
+export const GET = () => json(emit(GetUserSessions));

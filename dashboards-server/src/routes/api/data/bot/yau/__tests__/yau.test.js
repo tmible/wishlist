@@ -1,16 +1,14 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { GetYAU } from '$lib/server/db/bot/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 
-describe('yau endpoint', () => {
-  let yauStatement;
-
-  beforeAll(() => {
-    yauStatement = { all: vi.fn() };
-    vi.mocked(inject).mockReturnValue(yauStatement);
+describe('bot yau endpoint', () => {
+  beforeEach(() => {
+    vi.spyOn(Date, 'now').mockReturnValue('now');
   });
 
   afterEach(() => {
@@ -26,16 +24,21 @@ describe('yau endpoint', () => {
       },
     });
     expect(response.status).toEqual(400);
-    expect(await response.text()).toEqual('missing periodStart parameter');
+    await expect(response.text()).resolves.toBe('missing periodStart parameter');
   });
 
-  it('should run SQL statement', () => {
+  it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(yauStatement.all).toHaveBeenCalled();
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      GetYAU,
+      { periodStart: 'param', periodEnd: 'now' },
+    );
   });
 
-  it('should return SQL statement run result', () => {
-    yauStatement.all.mockReturnValue('yau');
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toEqual('yau');
+  it('should return event result', () => {
+    vi.mocked(emit).mockReturnValueOnce('yau');
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('yau');
   });
 });

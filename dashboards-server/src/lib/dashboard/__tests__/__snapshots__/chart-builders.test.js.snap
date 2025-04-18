@@ -1,0 +1,739 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard / chart builders > for dark theme > should build activeUsers chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "data": [
+          3,
+        ],
+        "label": "chart 1",
+        "pointHitRadius": 10,
+      },
+      {
+        "data": [],
+        "label": "chart 2",
+        "pointHitRadius": 10,
+      },
+    ],
+    "labels": [
+      2,
+    ],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "min": 0,
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for dark theme > should build activeUsers chart without data 1`] = `
+{
+  "data": {
+    "datasets": [],
+    "labels": [],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "min": 0,
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for dark theme > should build time chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "data": [
+          3,
+        ],
+        "label": "chart 1",
+        "pointHitRadius": 10,
+      },
+      {
+        "data": [],
+        "label": "chart 2",
+        "pointHitRadius": 10,
+      },
+    ],
+    "labels": [
+      2,
+    ],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY H:mm:ss.SSS",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "min": 0,
+        "title": {
+          "display": true,
+          "text": "мс",
+        },
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for dark theme > should build time chart without data 1`] = `
+{
+  "data": {
+    "datasets": [],
+    "labels": [],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY H:mm:ss.SSS",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "hsl(--secondary)",
+        },
+        "min": 0,
+        "title": {
+          "display": true,
+          "text": "мс",
+        },
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for light theme > should build activeUsers chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "data": [
+          3,
+        ],
+        "label": "chart 1",
+        "pointHitRadius": 10,
+      },
+      {
+        "data": [],
+        "label": "chart 2",
+        "pointHitRadius": 10,
+      },
+    ],
+    "labels": [
+      2,
+    ],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "min": 0,
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for light theme > should build activeUsers chart without data 1`] = `
+{
+  "data": {
+    "datasets": [],
+    "labels": [],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "min": 0,
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for light theme > should build time chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "data": [
+          3,
+        ],
+        "label": "chart 1",
+        "pointHitRadius": 10,
+      },
+      {
+        "data": [],
+        "label": "chart 2",
+        "pointHitRadius": 10,
+      },
+    ],
+    "labels": [
+      2,
+    ],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY H:mm:ss.SSS",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "min": 0,
+        "title": {
+          "display": true,
+          "text": "мс",
+        },
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > for light theme > should build time chart without data 1`] = `
+{
+  "data": {
+    "datasets": [],
+    "labels": [],
+  },
+  "options": {
+    "plugins": {
+      "annotation": {
+        "annotations": {
+          "annotation": {
+            "borderColor": "hsl(--foreground)",
+            "borderDash": [
+              6,
+              6,
+            ],
+            "borderDashOffset": 0,
+            "borderWidth": 2,
+            "label": {
+              "content": [Function],
+              "display": true,
+              "position": "end",
+            },
+            "scaleID": "y",
+            "type": "line",
+            "value": [Function],
+          },
+        },
+      },
+    },
+    "scales": {
+      "x": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "max": "now",
+        "min": 0,
+        "ticks": {
+          "autoSkipPadding": 20,
+          "maxRotation": 0,
+        },
+        "time": {
+          "displayFormats": {
+            "day": "DD.MM",
+            "hour": "HH:00",
+            "minute": "HH:mm",
+          },
+          "minUnit": "minute",
+          "tooltipFormat": "D.MM.YYYY H:mm:ss.SSS",
+        },
+        "type": "time",
+      },
+      "y": {
+        "grid": {
+          "color": "rgba(0,0,0,0.1)",
+        },
+        "min": 0,
+        "title": {
+          "display": true,
+          "text": "мс",
+        },
+      },
+    },
+  },
+  "type": "line",
+}
+`;
+
+exports[`dashboard / chart builders > should build authenticationFunnel chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "backgroundColor": [
+          "--success-color",
+          "--error-color",
+        ],
+        "data": [
+          0.5,
+          0.5,
+        ],
+      },
+    ],
+    "labels": [
+      "аутентификации",
+      "уходы",
+    ],
+  },
+  "options": {
+    "borderColor": "hsl(--background)",
+    "cutout": "50%",
+    "plugins": {
+      "legend": {
+        "display": false,
+      },
+      "tooltip": {
+        "callbacks": {
+          "label": [Function],
+        },
+      },
+    },
+  },
+  "type": "doughnut",
+}
+`;
+
+exports[`dashboard / chart builders > should build authenticationFunnel chart without data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "backgroundColor": [
+          "--success-color",
+          "--error-color",
+        ],
+        "data": [
+          1,
+        ],
+      },
+    ],
+    "labels": [
+      "аутентификации",
+      "уходы",
+    ],
+  },
+  "options": {
+    "borderColor": "--success-color",
+    "cutout": "100%",
+    "plugins": {
+      "legend": {
+        "display": false,
+      },
+      "tooltip": {
+        "callbacks": {
+          "label": [Function],
+        },
+      },
+    },
+  },
+  "type": "doughnut",
+}
+`;
+
+exports[`dashboard / chart builders > should build successRate chart with data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "backgroundColor": [
+          "--success-color",
+          "--error-color",
+        ],
+        "data": [
+          0.5,
+          0.5,
+        ],
+      },
+    ],
+    "labels": [
+      "success rate",
+      "error rate",
+    ],
+  },
+  "options": {
+    "borderColor": "hsl(--background)",
+    "cutout": "50%",
+    "plugins": {
+      "legend": {
+        "display": false,
+      },
+      "tooltip": {
+        "callbacks": {
+          "label": [Function],
+        },
+      },
+    },
+  },
+  "type": "doughnut",
+}
+`;
+
+exports[`dashboard / chart builders > should build successRate chart without data 1`] = `
+{
+  "data": {
+    "datasets": [
+      {
+        "backgroundColor": [
+          "--success-color",
+          "--error-color",
+        ],
+        "data": [
+          1,
+        ],
+      },
+    ],
+    "labels": [
+      "success rate",
+      "error rate",
+    ],
+  },
+  "options": {
+    "borderColor": "--success-color",
+    "cutout": "100%",
+    "plugins": {
+      "legend": {
+        "display": false,
+      },
+      "tooltip": {
+        "callbacks": {
+          "label": [Function],
+        },
+      },
+    },
+  },
+  "type": "doughnut",
+}
+`;

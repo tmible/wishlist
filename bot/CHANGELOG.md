@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.4.11 Великолепный серебряный меч (2025-04-18)
+<img width="128" height="128" src="release-images/3.4.11.png"/>
+
+https://github.com/tmible/wishlist/compare/7fdd3bc..master
+
+
 ## 3.4.10 Бескрайний горизонт (2025-03-25)
 <img width="128" height="128" src="release-images/3.4.10.png"/>
 
-https://github.com/tmible/wishlist/compare/701cfb0..master
+https://github.com/tmible/wishlist/compare/701cfb0..7fdd3bc
 
 
 ## 3.4.9 Утренний туман (2025-03-19)

@@ -13,7 +13,7 @@ import { persistentSession } from '@tmible/wishlist-bot/persistent-session';
  * @typedef {import('telegraf').Chat} Chat
  * @typedef {import('telegraf').MiddlewareFn} MiddlewareFn
  * @typedef {import('classic-level').ClassicLevel} ClassicLevel
- * @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus
+ * @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus
  */
 
 /**

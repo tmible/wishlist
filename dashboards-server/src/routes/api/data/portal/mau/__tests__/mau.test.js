@@ -1,16 +1,14 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { GetMAU } from '$lib/server/db/portal/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
-vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('@tmible/wishlist-common/event-bus');
 
 describe('portal mau endpoint', () => {
-  let mauStatement;
-
-  beforeAll(() => {
-    mauStatement = { all: vi.fn() };
-    vi.mocked(inject).mockReturnValue(mauStatement);
+  beforeEach(() => {
+    vi.spyOn(Date, 'now').mockReturnValue('now');
   });
 
   afterEach(() => {
@@ -26,16 +24,21 @@ describe('portal mau endpoint', () => {
       },
     });
     expect(response.status).toEqual(400);
-    expect(await response.text()).toEqual('missing periodStart parameter');
+    await expect(response.text()).resolves.toBe('missing periodStart parameter');
   });
 
-  it('should run SQL statement', () => {
+  it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(mauStatement.all).toHaveBeenCalled();
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      GetMAU,
+      { periodStart: 'param', periodEnd: 'now' },
+    );
   });
 
-  it('should return SQL statement run result', () => {
-    mauStatement.all.mockReturnValue('mau');
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toEqual('mau');
+  it('should return event result', () => {
+    vi.mocked(emit).mockReturnValueOnce('mau');
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('mau');
   });
 });

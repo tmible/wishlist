@@ -1,7 +1,7 @@
 import Events from '@tmible/wishlist-bot/architecture/events';
 import UseridOrUsernameRegExp from '@tmible/wishlist-bot/constants/userid-or-username-regexp';
 
-/** @typedef {import('@tmible/wishlist-bot/architecture/event-bus').EventBus} EventBus */
+/** @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus */
 
 /**
  * Получение идентификатора и имени пользователя из пользовательского ввода

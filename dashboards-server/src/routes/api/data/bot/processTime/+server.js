@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { emit } from '@tmible/wishlist-common/event-bus';
+import { GetProcessTime } from '$lib/server/db/bot/events.js';
 
 /**
  * Получение из БД с логами метрики времени, потраченного ботом с получения обновления
@@ -12,5 +12,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  return json(inject(InjectionToken.BotProcessTimeStatement).all(periodStart));
+  return json(emit(GetProcessTime, periodStart));
 };
