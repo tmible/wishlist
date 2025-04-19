@@ -3,7 +3,7 @@
   import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
   import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
   import { onDestroy, onMount } from 'svelte';
-  import { Switch } from '$lib/components/ui/switch';
+  import { Switch } from 'bits-ui';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
   import * as cssService from './css.service.js';
   import { GradientVariant } from './domain.js';
@@ -75,8 +75,8 @@
   });
 </script>
 
-<Switch
-  --bg-color={isGradient ? undefined : cssService.constructStyle(nextGradient ?? {})}
-  aria-label="Переключить градиент"
+<Switch.Root
+  class={isGradient ? '' : `bg-[${cssService.constructStyle(nextGradient ?? {})}]`}
   bind:checked={isGradient}
+  aria-label="Переключить градиент"
 />

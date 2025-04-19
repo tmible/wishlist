@@ -17,8 +17,6 @@ export default [
       "**/pnpm-lock.yaml",
       "**/package-lock.json",
       "**/yarn.lock",
-      // Externally added components
-      "src/lib/components/ui",
     ],
   },
   ...js,

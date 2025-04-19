@@ -6,8 +6,6 @@
   import annotationPlugin from 'chartjs-plugin-annotation';
   import { page } from '$app/state';
   import ThemeSwitch from '$lib/components/theme-switch.svelte';
-  import { Button } from '$lib/components/ui/button';
-  import * as Card from '$lib/components/ui/card';
   import {
     NetworkFactory as DashboardNetworkFactory,
     StoreFactory as DashboardStoreFactory,
@@ -54,8 +52,8 @@
 
 {#if $user.isAuthenticated}
   <div class="mb-9 flex items-center justify-between mx-4 md:mx-0">
-    <Card.Root>
-      <Card.Content class="flex items-center gap-4 py-2 md:py-2 px-4 md:px-4">
+    <div>
+      <div class="flex items-center gap-4 py-2 md:py-2 px-4 md:px-4">
         {#each navigationMenu as { path, label, healthKey } (healthKey)}
           <a
             class="flex items-center gap-1 hover:text-foreground transition-colors"
@@ -67,12 +65,12 @@
             {label}
           </a>
         {/each}
-      </Card.Content>
-    </Card.Root>
+      </div>
+    </div>
     <div class="flex items-center gap-4">
       <GradientSwitch />
       <ThemeSwitch />
-      <Button variant="secondary" on:click={() => logout(true)}>Выйти</Button>
+      <button variant="secondary" onclick={() => logout(true)}>Выйти</button>
     </div>
   </div>
   {@render children?.()}

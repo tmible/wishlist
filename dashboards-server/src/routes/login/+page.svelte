@@ -2,9 +2,6 @@
 <script>
   import { enhance } from '$app/forms';
   import ThemeSwitch from '$lib/components/theme-switch.svelte';
-  import { Button } from '$lib/components/ui/button';
-  import { Input } from '$lib/components/ui/input';
-  import { Label } from '$lib/components/ui/label';
   import GradientSwitch from '$lib/gradient/switch.svelte';
   import { user } from '$lib/user/store.js';
   import { login } from '$lib/user/use-cases/login.js';
@@ -34,8 +31,8 @@
   </div>
   <form class="flex flex-col m-auto" method="POST" use:enhance>
     <div class="mb-2">
-      <Label class="mb-2" for="login">Логин</Label>
-      <Input
+      <label class="mb-2" for="login">Логин</label>
+      <input
         id="login"
         name="login"
         class={form?.error ? 'border-red-600' : ''}
@@ -46,8 +43,8 @@
       {#if form?.error} <span class="text-sm text-red-600">Неверный логин или пароль</span> {/if}
     </div>
     <div class="mb-9">
-      <Label class="mb-2" for="password">Пароль</Label>
-      <Input
+      <label class="mb-2" for="password">Пароль</label>
+      <input
         id="password"
         name="password"
         class={form?.error ? 'border-red-600' : ''}
@@ -58,6 +55,6 @@
       />
       {#if form?.error} <span class="text-sm text-red-600">Неверный логин или пароль</span> {/if}
     </div>
-    <Button type="submit">Войти</Button>
+    <button type="submit">Войти</button>
   </form>
 {/if}

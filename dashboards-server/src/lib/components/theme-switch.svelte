@@ -2,8 +2,9 @@
 <script>
   import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { onMount } from 'svelte';
-  import { Switch } from '$lib/components/ui/switch';
+  import { Switch } from 'bits-ui';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
+  import { Moon, SunDim } from 'lucide-svelte';
 
   // Внедрение сервиса управления темой
   const { isDarkTheme, updateTheme, subscribeToTheme } = inject(ThemeService);
@@ -21,8 +22,15 @@
   $effect(() => updateTheme(isDark));
 </script>
 
-<Switch
-  --thumb-icon={isDark ? 'url("/moon.svg")' : 'url("/sun.svg")'}
-  aria-label="Переключить тему"
+<Switch.Root
   bind:checked={isDark}
-/>
+  aria-label="Переключить тему"
+>
+  <Switch.Thumb>
+    {#if isDark}
+      <Moon />
+    {:else}
+      <SunDim />
+    {/if}
+  </Switch.Thumb>
+</Switch.Root>

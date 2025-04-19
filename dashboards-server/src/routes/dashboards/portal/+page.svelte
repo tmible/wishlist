@@ -1,6 +1,5 @@
 <!-- Svelte компонент -- страница с дашбордами портала -->
 <script>
-  import * as Card from '$lib/components/ui/card';
   import { PERIOD } from '$lib/constants/period.const.js';
   import Dashboard from '$lib/dashboard/dashboard.svelte';
   import HealthDashboard from '$lib/health/dashboard.svelte';
@@ -25,8 +24,8 @@
 {#if $user.isAuthenticated}
   <HealthDashboard service="portal" />
   <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
-    <Card.Root>
-      <Card.Content class="pt-3 md:pt-6">
+    <div>
+      <div class="pt-3 md:pt-6">
         <Dashboard
           service="portal"
           config={{
@@ -39,10 +38,10 @@
             }],
           }}
         />
-      </Card.Content>
-    </Card.Root>
-    <Card.Root>
-      <Card.Content class="pt-3 md:pt-6">
+      </div>
+    </div>
+    <div>
+      <div class="pt-3 md:pt-6">
         <Dashboard
           service="portal"
           config={{
@@ -62,10 +61,10 @@
             }],
           }}
         />
-      </Card.Content>
-    </Card.Root>
-    <Card.Root>
-      <Card.Content class="pt-3 md:pt-6">
+      </div>
+    </div>
+    <div>
+      <div class="pt-3 md:pt-6">
         <Dashboard
           service="portal"
           config={{
@@ -75,10 +74,10 @@
             label: [ 'Success rate' ],
           }}
         />
-      </Card.Content>
-    </Card.Root>
-    <Card.Root>
-      <Card.Content class="pt-3 md:pt-6">
+      </div>
+    </div>
+    <div>
+      <div class="pt-3 md:pt-6">
         <Dashboard
           service="portal"
           config={{
@@ -88,7 +87,7 @@
             label: [ 'Воронка', 'аутентификации' ],
           }}
         />
-      </Card.Content>
-    </Card.Root>
+      </div>
+    </div>
   </div>
 {/if}

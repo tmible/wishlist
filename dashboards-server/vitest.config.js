@@ -13,7 +13,6 @@ export default defineConfig(({ mode }) => ({
       exclude: [
         ...configDefaults.coverage.exclude,
         'src/**/*.const.{js,ts}',
-        'src/lib/components/ui/**',
       ],
     },
   },

@@ -1,14 +1,12 @@
 <!-- Svelte компонент -- таблица со всеми обновлениями, полученными ботом -->
 <script>
+  import { Pagination } from 'bits-ui';
   import dayjs from 'dayjs';
   import isBetween from 'dayjs/plugin/isBetween';
   import objectSupport from 'dayjs/plugin/objectSupport';
   import { readable } from 'svelte/store';
   import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
   import { addColumnFilters, addPagination } from 'svelte-headless-table/plugins';
-  import * as Card from '$lib/components/ui/card';
-  import * as Pagination from '$lib/components/ui/pagination';
-  import * as Table from '$lib/components/ui/table';
   import FilterButton from './filter-button.svelte';
   import TableHeaderFilter from './table-header-filter.svelte';
 
@@ -155,47 +153,33 @@
   });
 </script>
 
-<Card.Root>
-  <Card.Content class="pt-3 md:pt-6">
+<div>
+  <div class="pt-3 md:pt-6">
     <div class="rounded-md border mb-3 bg-card">
-      <Table.Root {...$tableAttrs}>
-        <Table.Header class="bg-secondary h-20">
+      <table {...$tableAttrs}>
+        <thead class="bg-secondary h-20">
           {#each $headerRows as headerRow (headerRow.id)}
-            <Subscribe rowAttrs={headerRow.attrs()}>
-              <Table.Row>
-                {#each headerRow.cells as cell (cell.id)}
-                  <Subscribe attrs={cell.attrs()} props={cell.props()}>
-                    {#snippet children({ attrs })}
-                      <Table.Head {...attrs}>
-                        <Render of={cell.render()} />
-                      </Table.Head>
-                    {/snippet}
-                  </Subscribe>
-                {/each}
-              </Table.Row>
-            </Subscribe>
+            <tr {...headerRow.attrs()}>
+              {#each headerRow.cells as cell (cell.id)}
+                <th {...cell.attrs()} props={cell.props()}>
+                  {cell.render()}
+                </th>
+              {/each}
+            </tr>
           {/each}
-        </Table.Header>
-        <Table.Body {...$tableBodyAttrs}>
+        </thead>
+        <tbody {...$tableBodyAttrs}>
           {#each $pageRows as row (row.id)}
-            <Subscribe rowAttrs={row.attrs()}>
-              {#snippet children({ rowAttrs })}
-                <Table.Row {...rowAttrs}>
-                  {#each row.cells as cell (cell.id)}
-                    <Subscribe attrs={cell.attrs()}>
-                      {#snippet children({ attrs })}
-                        <Table.Cell {...attrs}>
-                          <Render of={cell.render()} />
-                        </Table.Cell>
-                      {/snippet}
-                    </Subscribe>
-                  {/each}
-                </Table.Row>
-              {/snippet}
-            </Subscribe>
+            <tr {...row.attrs()}>
+              {#each row.cells as cell (cell.id)}
+                <td {...cell.attrs()}>
+                  {cell.render()}
+                </td>
+              {/each}
+            </tr>
           {/each}
-        </Table.Body>
-      </Table.Root>
+        </tbody>
+      </table>
     </div>
 
     <Pagination.Root
@@ -204,32 +188,18 @@
       perPage={10}
     >
       {#snippet children({ pages, currentPage })}
-        <Pagination.Content>
-          <Pagination.Item>
-            <Pagination.PrevButton on:click={() => $pageIndex -= 1} />
-          </Pagination.Item>
-          {#each pages as page (page.key)}
-            {#if page.type === 'ellipsis'}
-              <Pagination.Item>
-                <Pagination.Ellipsis />
-              </Pagination.Item>
-            {:else}
-              <Pagination.Item isVisible={currentPage === page.value}>
-                <Pagination.Link
-                  {page}
-                  isActive={currentPage === page.value}
-                  on:click={() => $pageIndex = page.value - 1}
-                >
-                  {page.value}
-                </Pagination.Link>
-              </Pagination.Item>
-            {/if}
-          {/each}
-          <Pagination.Item>
-            <Pagination.NextButton on:click={() => $pageIndex += 1} />
-          </Pagination.Item>
-        </Pagination.Content>
+        <Pagination.PrevButton />
+        {#each pages as page (page.key)}
+          {#if page.type === 'ellipsis'}
+            ...
+          {:else}
+            <Pagination.Page {page}>
+              {page.value}
+            </Pagination.Page>
+          {/if}
+        {/each}
+        <Pagination.NextButton />
       {/snippet}
     </Pagination.Root>
-  </Card.Content>
-</Card.Root>
+  </div>
+</div>

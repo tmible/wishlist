@@ -3,10 +3,8 @@ Svelte компонент -- заголовок столбца таблицы с
 полем ввода для фильтрации строк по значениям столбца
 -->
 <script>
-  import Cross2 from 'svelte-radix/Cross2.svelte';
-  import { Button } from '$lib/components/ui/button';
-  import { DateRangePicker } from '$lib/components/ui/date-range-picker';
-  import { Input } from '$lib/components/ui/input';
+  import X from 'lucide-svelte/icons/x';
+  import { DateRangePicker } from 'bits-ui';
 
   /** @typedef {import('svelte/store').Writable} Writable */
   /** @typedef {import('svelte-headless-table').Id} Id */
@@ -38,36 +36,36 @@ Svelte компонент -- заголовок столбца таблицы с
         bind:value={$filters[accessor]}
       >
         {#if $filters[accessor]}
-          <Button
+          <button
             class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"
             variant="ghost"
-            on:click={() => {
+            onclick={() => {
               filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
             }}
           >
-            <Cross2 />
-          </Button>
+            <X />
+          </button>
         {/if}
       </DateRangePicker>
     {:else}
       <!-- eslint-disable-next-line svelte/valid-compile -- input внутри Input -->
       <label>
         <span class="block mb-1">{label}</span>
-        <Input
+        <input
           class={$filters[accessor] ? 'pr-8 absolute' : 'absolute'}
           bind:value={$filters[accessor]}
         />
       </label>
       {#if $filters[accessor]}
-        <Button
+        <button
           class="p-0 h-auto right-[6px] translate-y-[6px] cursor-pointer absolute"
           variant="ghost"
-          on:click={() => {
+          onclick={() => {
             filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
           }}
         >
-          <Cross2 />
-        </Button>
+          <X />
+        </button>
       {/if}
     {/if}
   </div>

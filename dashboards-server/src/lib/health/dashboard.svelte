@@ -1,6 +1,5 @@
 <!-- Svelte компонент -- дашборд здоровья сервиса -->
 <script>
-  import * as Card from '$lib/components/ui/card';
   import { health } from './store.js';
 
   /** @typedef {'bot' | 'portal' | 'hub'} Service */
@@ -57,8 +56,8 @@
   ]]);
 </script>
 
-<Card.Root class="mb-6">
-  <Card.Content class="pt-3 md:pt-6 flex flex-wrap items-center gap-6">
+<div class="mb-6">
+  <div class="pt-3 md:pt-6 flex flex-wrap items-center gap-6">
     {new Date($health.date).toLocaleString()}
     {#each Object.entries(expectedProperties.get(service)) as [ key, label ] (key)}
       <div class="flex items-center gap-2">
@@ -71,5 +70,5 @@
         {label}
       </div>
     {/each}
-  </Card.Content>
-</Card.Root>
+  </div>
+</div>

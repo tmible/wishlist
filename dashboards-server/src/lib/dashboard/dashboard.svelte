@@ -3,8 +3,7 @@
   import { deprive, inject } from '@tmible/wishlist-common/dependency-injector';
   import { Chart } from 'chart.js/auto';
   import { onMount } from 'svelte';
-  import { Label } from '$lib/components/ui/label';
-  import * as Select from '$lib/components/ui/select';
+  import { Select } from "bits-ui";
   import { PERIOD } from '$lib/constants/period.const.js';
   import { skipFirstCall } from '$lib/skip-first-call.js';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
@@ -70,17 +69,27 @@
 
   /**
    * Выбранный период отображения для дашборда
-   * @type {{ value: PERIOD | number, label: string }}
+   * @type {PERIOD | number}
    */
   let periodSelected = $state();
+
+  /**
+   * Выбранный период отображения для дашборда
+   * @type {string}
+   */
+  let periodSelectedLabel = $derived(
+    periodOptions.find(({ value }) => value === periodSelected)?.label
+  );
 
   /**
    * Выбранные для отображения графики
    * @type {{ value: string, label: string }[]}
    */
-  const selectedCharts = $derived(Array.from($store?.charts.entries() ?? [])
-    .filter(([, { isDisplayed } ]) => isDisplayed)
-    .map(([ key, { label } ]) => ({ value: key, label })));
+  let selectedCharts = $derived(
+    Array.from($store?.charts.entries() ?? [])
+      .filter(([, { isDisplayed } ]) => isDisplayed)
+      .map(([ key ]) => key)
+  );
 
   /**
    * Ширина кнопки, открывающей выпадающее меню для выбора отображаемых графиков
@@ -101,17 +110,6 @@
   let shouldAnimateUpdate;
 
   /**
-   * Обновление [выбранного периода]{@link periodSelected} и получение данных по нему из хранилища
-   * @function onPeriodSelectedChange
-   * @param {typeof periodSelected} selected Выбранный период
-   * @returns {void}
-   */
-  const onPeriodSelectedChange = (selected) => {
-    periodSelected = selected;
-    store.updatePeriod(selected.value);
-  };
-
-  /**
    * [Построение нового конфига]{@link ChartBuilders} и обновление дашборда
    * @function buildChart
    * @param {boolean} withData Признак необходимости обновления данных
@@ -123,7 +121,7 @@
     const chartConfig = ChartBuilders[config.key](
       Array.from($store.charts.values()).filter(({ isDisplayed }) => isDisplayed),
       Date.now() - $store.period,
-      periodSelected.value,
+      periodSelected,
     );
 
     if (withData) {
@@ -140,7 +138,7 @@
    */
   onMount(() => {
     store = inject(`${service} ${config.key} store`);
-    periodSelected = periodOptions.find(({ value }) => value === $store.period);
+    periodSelected = $store.period;
     chartsSelectWidth = (
       Array.from($store.charts.values()).reduce(
         (longestLabelLength, { label }) => Math.max(label.length, longestLabelLength),
@@ -152,7 +150,7 @@
     const chartConfig = ChartBuilders[config.key](
       Array.from($store.charts.values()).filter(({ isDisplayed }) => isDisplayed),
       Date.now() - $store.period,
-      periodSelected.value,
+      periodSelected,
     );
 
     dashboard = new Chart(dashboardCanvas, chartConfig);
@@ -179,44 +177,55 @@
     class:md:mb-0={config.type === 'doughnut'}
   >
 
-    <Label class="flex items-center mr-4">
+    <label class="flex items-center mr-4">
       <span class="mr-2">период:</span>
       <Select.Root
-        selected={periodSelected}
-        onSelectedChange={onPeriodSelectedChange}
-        preventScroll={false}
+        type="single"
+        items={periodOptions}
+        bind:value={periodSelected}
+        onValueChange={store?.updatePeriod}
       >
 
         <Select.Trigger class="min-w-[112px]">
-          <Select.Value />
+          {periodSelectedLabel}
         </Select.Trigger>
 
-        <Select.Content>
-          {#each periodOptions as { value, label } (value)}
-            <Select.Item {value} {label} />
-          {/each}
-        </Select.Content>
+        <Select.Portal>
+          <Select.Content side="bottom" align="center" sideOffset={8} strategy="fixed">
+            {#each periodOptions as { value, label } (value)}
+              <Select.Item {value} {label} />
+            {/each}
+          </Select.Content>
+        </Select.Portal>
 
       </Select.Root>
-    </Label>
+    </label>
 
     {#if $store?.charts.size > 1}
       <Select.Root
-        multiple
-        selected={selectedCharts}
-        onSelectedChange={store.updateChartsSelection}
-        preventScroll={false}
+        type="multiple"
+        items={
+          Array.from(
+            $store?.charts.entries() ?? [],
+          ).map(
+            ([ key, { label } ]) => ({ value: key, label }),
+          )
+        }
+        bind:value={selectedCharts}
+        onValueChange={store?.updateChartsSelection}
       >
 
         <Select.Trigger style={`width: ${chartsSelectWidth}px;`}>
           Графики
         </Select.Trigger>
 
-        <Select.Content>
-          {#each $store.charts.entries() as [ key, { label } ] (key)}
-            <Select.Item value={key} {label} />
-          {/each}
-        </Select.Content>
+        <Select.Portal>
+          <Select.Content>
+            {#each $store.charts.entries() as [ key, { label } ] (key)}
+              <Select.Item value={key} {label} />
+            {/each}
+          </Select.Content>
+        </Select.Portal>
 
       </Select.Root>
     {/if}
