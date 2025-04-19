@@ -1,8 +1,10 @@
 <script>
+	import { createBubbler } from 'svelte/legacy';
+
+	const bubble = createBubbler();
 	import { cn } from "$lib/components/ui/utils.js";
-	let className = undefined;
-	export let value = undefined;
-	export { className as class };
+	let { class: className = undefined, value = $bindable(undefined), ...rest } = $props();
+	
 </script>
 
 <input
@@ -11,19 +13,19 @@
 		className
 	)}
 	bind:value
-	on:blur
-	on:change
-	on:click
-	on:focus
-	on:focusin
-	on:focusout
-	on:keydown
-	on:keypress
-	on:keyup
-	on:mouseover
-	on:mouseenter
-	on:mouseleave
-	on:paste
-	on:input
-	{...$$restProps}
+	onblur={bubble('blur')}
+	onchange={bubble('change')}
+	onclick={bubble('click')}
+	onfocus={bubble('focus')}
+	onfocusin={bubble('focusin')}
+	onfocusout={bubble('focusout')}
+	onkeydown={bubble('keydown')}
+	onkeypress={bubble('keypress')}
+	onkeyup={bubble('keyup')}
+	onmouseover={bubble('mouseover')}
+	onmouseenter={bubble('mouseenter')}
+	onmouseleave={bubble('mouseleave')}
+	onpaste={bubble('paste')}
+	oninput={bubble('input')}
+	{...rest}
 />

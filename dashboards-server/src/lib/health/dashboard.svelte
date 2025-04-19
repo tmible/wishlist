@@ -6,10 +6,12 @@
   /** @typedef {'bot' | 'portal' | 'hub'} Service */
 
   /**
-   * Ключ сервиса в объекте с данными о проверке здороья сервисов
-   * @type {Service}
+   * @typedef {object} Props
+   * @property {Service} service Ключ сервиса в объекте с данными о проверке здороья сервисов
    */
-  export let service;
+
+  /** @type {Props} */
+  const { service } = $props();
 
   /**
    * Подписи к метрикам здоровья сервисов

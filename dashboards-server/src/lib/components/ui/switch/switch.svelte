@@ -1,9 +1,8 @@
 <script>
 	import { Switch as SwitchPrimitive } from "bits-ui";
 	import { cn } from "$lib/components/ui/utils.js";
-	let className = undefined;
-	export let checked = undefined;
-	export { className as class };
+	let { class: className = undefined, checked = $bindable(undefined), ...rest } = $props();
+	
 </script>
 
 <SwitchPrimitive.Root
@@ -13,7 +12,7 @@
 		className
 	)}
 	style="background-image: var(--bg-color); background-repeat: no-repeat; background-position: center; background-clip: padding-box;"
-	{...$$restProps}
+	{...rest}
 	on:click
 	on:keydown
 >

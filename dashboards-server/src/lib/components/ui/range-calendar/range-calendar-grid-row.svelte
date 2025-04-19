@@ -1,10 +1,10 @@
 <script>
 	import { RangeCalendar as RangeCalendarPrimitive } from "bits-ui";
 	import { cn } from "$lib/components/ui/utils.js";
-	let className = undefined;
-	export { className as class };
+	let { class: className = undefined, children, ...rest } = $props();
+	
 </script>
 
-<RangeCalendarPrimitive.GridRow class={cn("flex", className)} {...$$restProps}>
-	<slot />
+<RangeCalendarPrimitive.GridRow class={cn("flex", className)} {...rest}>
+	{@render children?.()}
 </RangeCalendarPrimitive.GridRow>

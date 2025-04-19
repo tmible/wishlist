@@ -3,20 +3,24 @@
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/components/ui/utils.js";
 	import ChevronLeft from "svelte-radix/ChevronLeft.svelte";
-	let className = undefined;
-	export { className as class };
+	let { class: className = undefined, children, ...rest } = $props();
+	
+
+	const children_render = $derived(children);
 </script>
 
-<PaginationPrimitive.PrevButton asChild let:builder>
-	<Button
-		variant="ghost"
-		class={cn("gap-1 px-2.5", className)}
-		builders={[builder]}
-		on:click
-		{...$$restProps}
-	>
-		<slot>
-			<ChevronLeft class="h-4 w-4" />
-		</slot>
-	</Button>
+<PaginationPrimitive.PrevButton asChild >
+	{#snippet children({ builder })}
+		<Button
+			variant="ghost"
+			class={cn("gap-1 px-2.5", className)}
+			builders={[builder]}
+			on:click
+			{...rest}
+		>
+			{#if children_render}{@render children_render()}{:else}
+				<ChevronLeft class="h-4 w-4" />
+			{/if}
+		</Button>
+	{/snippet}
 </PaginationPrimitive.PrevButton>

@@ -3,16 +3,13 @@
   import { Button } from '$lib/components/ui/button';
 
   /**
-   * Значение ячейки
-   * @type {unknown}
+   * @typedef {object} Props
+   * @property {unknown} value Значение ячейки
+   * @property {(event: Event) => void} onClick Обработчк клика
    */
-  export let value;
 
-  /**
-   * Обработчк клика
-   * @type {(event: Event) => void}
-   */
-  export let onClick;
+  /** @type {Props} */
+  const { value, onClick } = $props();
 </script>
 
 <Button class="p-0" variant="link" on:click={onClick}>

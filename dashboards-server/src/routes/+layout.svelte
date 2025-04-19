@@ -12,7 +12,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
   import { Navigate } from '$lib/user/events.js';
   import {
@@ -23,6 +23,14 @@
   import { user } from '$lib/user/store.js';
   import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 
+  /**
+   * @typedef {object} Props
+   * @property {import('svelte').Snippet} [children] Дочерние компоненты
+   */
+
+  /** @type {Props} */
+  const { children } = $props();
+
   // Регистрация сервиса управления темой в сервисе внедрения зависмостей
   provide(ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
 
@@ -32,7 +40,7 @@
   subscribe(
     Navigate,
     (route) => {
-      if ($page.url.pathname.startsWith(route)) {
+      if (page.url.pathname.startsWith(route)) {
         return;
       }
       goto(route);
@@ -43,13 +51,15 @@
    * В браузере проверка аутентифицированностии пользователя и его
    * перенаправление на соответствующую статусу аутентификации страницу
    */
-  $: if (browser && $user.isAuthenticated !== null) {
-    if (!$user.isAuthenticated && $page.url.pathname.startsWith('/dashboards')) {
-      goto('/login');
-    } else if ($user.isAuthenticated && $page.url.pathname === '/login') {
-      goto('/dashboards');
+  $effect(() => {
+    if (browser && $user.isAuthenticated !== null) {
+      if (!$user.isAuthenticated && page.url.pathname.startsWith('/dashboards')) {
+        goto('/login');
+      } else if ($user.isAuthenticated && page.url.pathname === '/login') {
+        goto('/dashboards');
+      }
     }
-  }
+  });
 
   // Инициализация темы, запрос статуса аутентификации пользователя
   onMount(() => {
@@ -63,15 +73,7 @@
   <!-- eslint-disable svelte/indent -- Всё как должно быть -->
   <script>
     (() => {
-      let fromLocalStorage = localStorage.getItem('theme');
-      // TODO временное решение для поддержки старого формата хранения темы
-      try {
-        fromLocalStorage = JSON.parse(fromLocalStorage);
-      } catch(e) {
-        if (!/Unexpected token '.', ".+" is not valid JSON/.test(e.message)) {
-          throw e;
-        }
-      }
+      let fromLocalStorage = JSON.parse(localStorage.getItem('theme'));
       const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
       let theme;
 
@@ -100,5 +102,5 @@
 </svelte:head>
 
 {#if $user.isAuthenticated !== null}
-  <slot></slot>
+  {@render children?.()}
 {/if}

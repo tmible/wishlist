@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/svelte';
+import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ThemeSwitch from '../theme-switch.svelte';
@@ -15,6 +15,7 @@ vi.mock(
 
 describe('theme switch', () => {
   afterEach(() => {
+    cleanup();
     vi.restoreAllMocks();
   });
 

@@ -48,22 +48,19 @@
   }];
 
   /**
-   * Сервис, данные которого отображаются в дашборде
-   * @type {'bot' | 'portal'}
+   * @typedef {object} Props
+   * @property {'bot' | 'portal'} service Сервис, данные которого отображаются в дашборде
+   * @property {DashboardConfig} config Конфиг для постройки дашборда
    */
-  export let service;
 
-  /**
-   * Конфиг для постройки дашборда
-   * @type {DashboardConfig}
-   */
-  export let config;
+  /** @type {Props} */
+  const { service, config } = $props();
 
   /**
    * Хранилище данных дашборда
    * @type {import('./store.js').Store}
    */
-  let store;
+  let store = $state();
 
   /**
    * Дашборд
@@ -75,27 +72,27 @@
    * Выбранный период отображения для дашборда
    * @type {{ value: PERIOD | number, label: string }}
    */
-  let periodSelected;
+  let periodSelected = $state();
 
   /**
    * Выбранные для отображения графики
    * @type {{ value: string, label: string }[]}
    */
-  $: selectedCharts = Array.from($store?.charts.entries() ?? [])
+  const selectedCharts = $derived(Array.from($store?.charts.entries() ?? [])
     .filter(([, { isDisplayed } ]) => isDisplayed)
-    .map(([ key, { label } ]) => ({ value: key, label }));
+    .map(([ key, { label } ]) => ({ value: key, label })));
 
   /**
    * Ширина кнопки, открывающей выпадающее меню для выбора отображаемых графиков
    * @type {number}
    */
-  let chartsSelectWidth;
+  let chartsSelectWidth = $state();
 
   /**
    * HTML-элемент для отображения графиков
    * @type {HTMLCanvasElement}
    */
-  let dashboardCanvas;
+  let dashboardCanvas = $state();
 
   /**
    * Критерий необходимости применения анимации при обновлении графиков дашборда

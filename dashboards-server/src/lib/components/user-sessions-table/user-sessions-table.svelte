@@ -30,10 +30,12 @@
   dayjs.extend(objectSupport);
 
   /**
-   * Данные для отображения
-   * @type {TableData[]}
+   * @typedef {object} Props
+   * @property {TableData[]} data Данные для отображения
    */
-  export let data;
+
+  /** @type {Props} */
+  const { data } = $props();
 
   /**
    * Значения фильтров столбцов
@@ -145,12 +147,12 @@
   ({ filterValues } = pluginStates.colFilter);
   const { pageIndex } = pluginStates.page;
 
-  /**
-   * Обновление пагинации при фильтрации строк таблицы
-   */
-  $: if (pageIndex) {
-    $pageIndex = Math.min($pageIndex, Math.floor(($rows?.length ?? 0) / 10));
-  }
+  // Обновление пагинации при фильтрации строк таблицы
+  $effect(() => {
+    if (pageIndex) {
+      $pageIndex = Math.min($pageIndex, Math.floor(($rows?.length ?? 0) / 10));
+    }
+  });
 </script>
 
 <Card.Root>
@@ -162,10 +164,12 @@
             <Subscribe rowAttrs={headerRow.attrs()}>
               <Table.Row>
                 {#each headerRow.cells as cell (cell.id)}
-                  <Subscribe attrs={cell.attrs()} props={cell.props()} let:attrs>
-                    <Table.Head {...attrs}>
-                      <Render of={cell.render()} />
-                    </Table.Head>
+                  <Subscribe attrs={cell.attrs()} props={cell.props()}>
+                    {#snippet children({ attrs })}
+                      <Table.Head {...attrs}>
+                        <Render of={cell.render()} />
+                      </Table.Head>
+                    {/snippet}
                   </Subscribe>
                 {/each}
               </Table.Row>
@@ -174,16 +178,20 @@
         </Table.Header>
         <Table.Body {...$tableBodyAttrs}>
           {#each $pageRows as row (row.id)}
-            <Subscribe rowAttrs={row.attrs()} let:rowAttrs>
-              <Table.Row {...rowAttrs}>
-                {#each row.cells as cell (cell.id)}
-                  <Subscribe attrs={cell.attrs()} let:attrs>
-                    <Table.Cell {...attrs}>
-                      <Render of={cell.render()} />
-                    </Table.Cell>
-                  </Subscribe>
-                {/each}
-              </Table.Row>
+            <Subscribe rowAttrs={row.attrs()}>
+              {#snippet children({ rowAttrs })}
+                <Table.Row {...rowAttrs}>
+                  {#each row.cells as cell (cell.id)}
+                    <Subscribe attrs={cell.attrs()}>
+                      {#snippet children({ attrs })}
+                        <Table.Cell {...attrs}>
+                          <Render of={cell.render()} />
+                        </Table.Cell>
+                      {/snippet}
+                    </Subscribe>
+                  {/each}
+                </Table.Row>
+              {/snippet}
             </Subscribe>
           {/each}
         </Table.Body>
@@ -194,34 +202,34 @@
       count={$rows.length}
       page={$pageIndex + 1}
       perPage={10}
-      let:pages
-      let:currentPage
     >
-      <Pagination.Content>
-        <Pagination.Item>
-          <Pagination.PrevButton on:click={() => $pageIndex -= 1} />
-        </Pagination.Item>
-        {#each pages as page (page.key)}
-          {#if page.type === 'ellipsis'}
-            <Pagination.Item>
-              <Pagination.Ellipsis />
-            </Pagination.Item>
-          {:else}
-            <Pagination.Item isVisible={currentPage === page.value}>
-              <Pagination.Link
-                {page}
-                isActive={currentPage === page.value}
-                on:click={() => $pageIndex = page.value - 1}
-              >
-                {page.value}
-              </Pagination.Link>
-            </Pagination.Item>
-          {/if}
-        {/each}
-        <Pagination.Item>
-          <Pagination.NextButton on:click={() => $pageIndex += 1} />
-        </Pagination.Item>
-      </Pagination.Content>
+      {#snippet children({ pages, currentPage })}
+        <Pagination.Content>
+          <Pagination.Item>
+            <Pagination.PrevButton on:click={() => $pageIndex -= 1} />
+          </Pagination.Item>
+          {#each pages as page (page.key)}
+            {#if page.type === 'ellipsis'}
+              <Pagination.Item>
+                <Pagination.Ellipsis />
+              </Pagination.Item>
+            {:else}
+              <Pagination.Item isVisible={currentPage === page.value}>
+                <Pagination.Link
+                  {page}
+                  isActive={currentPage === page.value}
+                  on:click={() => $pageIndex = page.value - 1}
+                >
+                  {page.value}
+                </Pagination.Link>
+              </Pagination.Item>
+            {/if}
+          {/each}
+          <Pagination.Item>
+            <Pagination.NextButton on:click={() => $pageIndex += 1} />
+          </Pagination.Item>
+        </Pagination.Content>
+      {/snippet}
     </Pagination.Root>
   </Card.Content>
 </Card.Root>

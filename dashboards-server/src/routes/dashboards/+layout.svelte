@@ -4,7 +4,7 @@
   import { provide } from '@tmible/wishlist-common/dependency-injector';
   import { Chart } from 'chart.js/auto';
   import annotationPlugin from 'chartjs-plugin-annotation';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import ThemeSwitch from '$lib/components/theme-switch.svelte';
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
@@ -18,6 +18,14 @@
   import HealthIndicator from '$lib/health/indicator.svelte';
   import { user } from '$lib/user/store.js';
   import { logout } from '$lib/user/use-cases/logout.js';
+
+  /**
+   * @typedef {object} Props
+   * @property {import('svelte').Snippet} [children] Дочерние компоненты
+   */
+
+  /** @type {Props} */
+  const { children } = $props();
 
   // Регистрация плагина аннотаций в chart.js
   Chart.register(annotationPlugin);
@@ -51,8 +59,8 @@
         {#each navigationMenu as { path, label, healthKey } (healthKey)}
           <a
             class="flex items-center gap-1 hover:text-foreground transition-colors"
-            class:text-muted-foreground={!$page.url.pathname.endsWith(path)}
-            class:text-foreground={$page.url.pathname.endsWith(path)}
+            class:text-muted-foreground={!page.url.pathname.endsWith(path)}
+            class:text-foreground={page.url.pathname.endsWith(path)}
             href={path}
           >
             <HealthIndicator service={healthKey} />
@@ -67,5 +75,5 @@
       <Button variant="secondary" on:click={() => logout(true)}>Выйти</Button>
     </div>
   </div>
-  <slot></slot>
+  {@render children?.()}
 {/if}

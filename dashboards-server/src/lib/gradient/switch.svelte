@@ -26,13 +26,13 @@
    * Признак использования градиента
    * @type {boolean}
    */
-  let isGradient = !!store.get();
+  let isGradient = $state(!!store.get());
 
   /**
    * Следующий градиент. Используется для фона компонента при отключенном градиенте
    * @type {Gradient}
    */
-  let nextGradient = nextStore.get();
+  let nextGradient = $state(nextStore.get());
 
   // Ассоциация значений с токенами внедрения и подписка на события
   provide(GradientStore, store);
@@ -61,16 +61,18 @@
   });
 
   // Смена фона
-  $: if (isGradient) {
-    setGradient();
-  } else {
-    removeGradient(
-      themeService.isDarkTheme() ? GradientVariant.DARK : GradientVariant.LIGHT,
-    );
+  $effect(() => {
+    if (isGradient) {
+      setGradient();
+    } else {
+      removeGradient(
+        themeService.isDarkTheme() ? GradientVariant.DARK : GradientVariant.LIGHT,
+      );
 
-    // trigger rerender
-    nextGradient = nextStore.get();
-  }
+      // trigger rerender
+      nextGradient = nextStore.get();
+    }
+  });
 </script>
 
 <Switch

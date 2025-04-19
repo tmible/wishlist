@@ -2,11 +2,15 @@
 	import { cn } from "$lib/components/ui/utils.js";
 	import { Select as SelectPrimitive } from "bits-ui";
 	import Check from "svelte-radix/Check.svelte";
-	let className = undefined;
-	export let value;
-	export let label = undefined;
-	export let disabled = undefined;
-	export { className as class };
+	let {
+		class: className = undefined,
+		value,
+		label = undefined,
+		disabled = undefined,
+		children,
+		...rest
+	} = $props();
+	
 </script>
 
 <SelectPrimitive.Item
@@ -17,7 +21,7 @@
 		"relative flex w-full cursor-pointer select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:opacity-50",
 		className
 	)}
-	{...$$restProps}
+	{...rest}
 	on:click
 	on:pointermove
 	on:focusin
@@ -27,7 +31,7 @@
 			<Check class="h-4 w-4" />
 		</SelectPrimitive.ItemIndicator>
 	</span>
-	<slot>
+	{#if children}{@render children()}{:else}
 		{label ? label : value}
-	</slot>
+	{/if}
 </SelectPrimitive.Item>

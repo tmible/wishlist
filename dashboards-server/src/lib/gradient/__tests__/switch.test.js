@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { render, screen } from '@testing-library/svelte';
+import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
 import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
@@ -34,6 +34,7 @@ describe('gradient / switch', () => {
   });
 
   afterEach(() => {
+    cleanup();
     vi.resetAllMocks();
   });
 

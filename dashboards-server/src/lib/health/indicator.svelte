@@ -5,22 +5,28 @@
   /** @typedef {'bot' | 'portal' | 'hub'} Service */
 
   /**
-   * Ключ сервиса в объекте с данными о проверке здороья сервисов
-   * @type {Service}
+   * @typedef {object} Props
+   * @property {Service} service Ключ сервиса в объекте с данными о проверке здороья сервисов
    */
-  export let service;
+
+  /** @type {Props} */
+  const { service } = $props();
 
   /**
    * Признак наличия у сервиса проблем
    * @type {boolean}
    */
-  $: serviceHasProblems = $health.date && Object.values($health[service]).some((value) => !value);
+  const serviceHasProblems = $derived(
+    $health.date && Object.values($health[service]).some((value) => !value),
+  );
 
   /**
    * Признак наличия у сервиса успешных проверок
    * @type {boolean}
    */
-  $: serviceHasHealthes = $health.date && Object.values($health[service]).some(Boolean);
+  const serviceHasHealthes = $derived(
+    $health.date && Object.values($health[service]).some(Boolean),
+  );
 </script>
 
 <div

@@ -5,23 +5,20 @@
   import { Switch } from '$lib/components/ui/switch';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
 
-  /**
-   * Внедрение сервиса управления темой
-   */
+  // Внедрение сервиса управления темой
   const { isDarkTheme, updateTheme, subscribeToTheme } = inject(ThemeService);
 
   /**
    * Признак использования тёмной темы
    * @type {boolean}
    */
-  let isDark = isDarkTheme();
+  let isDark = $state(isDarkTheme());
 
+  // Обновление состояния при изменении темы в сервисе
   onMount(() => subscribeToTheme((isThemeDark) => isDark = isThemeDark));
 
-  /**
-   * Смена темы
-   */
-  $: updateTheme(isDark);
+  // Смена темы
+  $effect(() => updateTheme(isDark));
 </script>
 
 <Switch

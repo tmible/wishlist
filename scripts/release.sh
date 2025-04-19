@@ -51,7 +51,7 @@ while : ; do
       --data-raw "$prompt" \
       2>/dev/null |
     jq -r ".choices[0].message.content" |
-    sed -e "s/^\"\|\"$//g"
+    sed -e "s/^[^\wа-яА-Я]*\|[^\wа-яА-Я]*$//g"
   )
   echo "Название релиза от GigaChat — $release_name"
   is_release_name_accepted=""

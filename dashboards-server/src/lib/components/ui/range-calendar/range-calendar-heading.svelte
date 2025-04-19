@@ -1,16 +1,20 @@
 <script>
 	import { RangeCalendar as RangeCalendarPrimitive } from "bits-ui";
 	import { cn } from "$lib/components/ui/utils.js";
-	let className = undefined;
-	export { className as class };
+	let { class: className = undefined, children, ...rest } = $props();
+	
+
+	const children_render = $derived(children);
 </script>
 
 <RangeCalendarPrimitive.Heading
-	let:headingValue
+	
 	class={cn("text-sm font-medium", className)}
-	{...$$restProps}
+	{...rest}
 >
-	<slot {headingValue}>
-		{headingValue}
-	</slot>
+	{#snippet children({ headingValue })}
+		{#if children_render}{@render children_render({ headingValue, })}{:else}
+			{headingValue}
+		{/if}
+	{/snippet}
 </RangeCalendarPrimitive.Heading>

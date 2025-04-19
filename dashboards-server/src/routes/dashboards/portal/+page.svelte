@@ -9,15 +9,17 @@
   /** @typedef {import('$lib/dashboard/domain.js').DashboardData} DashboardData */
 
   /**
-   * Данные для дашбордов
-   * @type {{
+   * @typedef {object} Props
+   * @property {{
    *   time: DashboardData;
    *   activeUsers: DashboardData;
    *   successRate: DashboardData;
    *   authenticationFunnel: DashboardData;
-   * }}
+   * }} data Данные для дашбордов
    */
-  export let data;
+
+  /** @type {Props} */
+  const { data } = $props();
 </script>
 
 {#if $user.isAuthenticated}

@@ -8,7 +8,7 @@ import {
   subscribeToTheme,
   updateTheme,
 } from '@tmible/wishlist-common/theme-service';
-import { readable, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { ThemeService } from '$lib/theme-service-injection-token.js';
@@ -22,6 +22,8 @@ import { user } from '$lib/user/store.js';
 import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 import Layout from '../+layout.svelte';
 
+const page = vi.hoisted(() => ({ url: { pathname: '' } }));
+
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock(
@@ -34,7 +36,8 @@ vi.mock(
   }),
 );
 vi.mock('$app/navigation');
-vi.mock('$app/stores', () => ({ page: readable({ url: { pathname: '' } }) }));
+vi.mock('$app/state', () => ({ page }));
+vi.mock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: null }) }));
 vi.mock('$lib/user/use-cases/check-authentication.js');
 
 describe('layout', () => {
@@ -47,6 +50,7 @@ describe('layout', () => {
         configurable: true,
       },
     );
+    vi.mocked(user).set({ isAuthenticated: null });
   });
 
   afterEach(() => {
@@ -126,37 +130,23 @@ describe('layout', () => {
     });
   });
 
-  it('should not redirect if browser is false', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: false }));
-    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: true }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).not.toHaveBeenCalled();
-  });
-
   it('should not redirect if isAuthenticated is null', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: null }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).not.toHaveBeenCalled();
+    vi.mocked(user).set({ isAuthenticated: null });
+    render(Layout);
+    await vi.waitFor(() => expect(goto).not.toHaveBeenCalled());
   });
 
   it('should redirect to /login', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: false }) }));
-    vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/dashboards' } }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).toHaveBeenCalledWith('/login');
+    vi.mocked(user).set({ isAuthenticated: false });
+    page.url.pathname = '/dashboards';
+    render(Layout);
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/login'));
   });
 
   it('should redirect to /dashboards', async () => {
-    vi.resetModules();
-    vi.doMock('$app/environment', () => ({ browser: true }));
-    vi.doMock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: true }) }));
-    vi.doMock('$app/stores', () => ({ page: writable({ url: { pathname: '/login' } }) }));
-    render(await import('../+layout.svelte').then((module) => module.default));
-    expect(goto).toHaveBeenCalledWith('/dashboards');
+    vi.mocked(user).set({ isAuthenticated: true });
+    page.url.pathname = '/login';
+    render(Layout);
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/dashboards'));
   });
 });

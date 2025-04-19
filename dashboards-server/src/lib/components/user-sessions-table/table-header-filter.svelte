@@ -13,28 +13,20 @@ Svelte компонент -- заголовок столбца таблицы с
   /** @typedef {import('svelte-headless-table').FilterValue} FilterValue */
 
   /**
-   * Заголовок столбца
-   * @type {string}
+   * @typedef {object} Props
+   * @property {string} label Заголовок столбца
+   * @property {Writable<Record<Id, FilterValue>>} filters Фильтры таблицы
+   * @property {string} accessor Ключ значений столбца в объекте строки или фильтров
+   * @property {'input' | 'date range'} [type] Тип фильтра
    */
-  export let label;
 
-  /**
-   * Фильтры таблицы
-   * @type {Writable<Record<Id, FilterValue>>}
-   */
-  export let filters;
-
-  /**
-   * Ключ значений столбца в объекте строки или фильтров
-   * @type {string}
-   */
-  export let accessor;
-
-  /**
-   * Тип фильтра
-   * @type {'input' | 'date range'}
-   */
-  export let type = 'input';
+  /** @type {Props} */
+  const {
+    label,
+    filters,
+    accessor,
+    type = 'input',
+  } = $props();
 </script>
 
 <div class="py-2 h-full">

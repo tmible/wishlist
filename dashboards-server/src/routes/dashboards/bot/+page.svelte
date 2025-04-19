@@ -11,15 +11,17 @@
   /** @typedef {import('$lib/components/user-sessions-table').TableData} TableData */
 
   /**
-   * Данные для дашбордов
-   * @type {{
+   * @typedef {object} Props
+   * @property {{
    *   time: DashboardData;
    *   activeUsers: DashboardData;
    *   successRate: DashboardData;
    *   userSessions: TableData[];
-   * }}
+   * }} data Данные для дашбордов
    */
-  export let data;
+
+  /** @type {Props} */
+  const { data } = $props();
 </script>
 
 {#if $user.isAuthenticated}

@@ -10,17 +10,19 @@
   import { login } from '$lib/user/use-cases/login.js';
 
   /**
-   * Форма аутентификации
-   * @type {Record<string, any>}
+   * @typedef {object} Props
+   * @property {Record<string, any>} form Форма аутентификации
    */
-  export let form;
 
-  /**
-   * Аутентификация пользователя при успешном заполнении формы
-   */
-  $: if (form?.success) {
-    login();
-  }
+  /** @type {Props} */
+  const { form } = $props();
+
+  // Аутентификация пользователя при успешном заполнении формы
+  $effect(() => {
+    if (form?.success) {
+      login();
+    }
+  });
 </script>
 
 {#if !$user.isAuthenticated}
