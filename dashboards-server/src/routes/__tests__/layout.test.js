@@ -112,6 +112,20 @@ describe('layout', () => {
     });
   });
 
+  describe('on destroy', () => {
+    let destroyTheme;
+
+    beforeEach(() => {
+      destroyTheme = vi.fn();
+      vi.mocked(initTheme).mockReturnValueOnce(destroyTheme);
+      render(Layout).unmount();
+    });
+
+    it('should destroy theme store', () => {
+      expect(destroyTheme).toHaveBeenCalled();
+    });
+  });
+
   it('should not redirect if browser is false', async () => {
     vi.resetModules();
     vi.doMock('$app/environment', () => ({ browser: false }));

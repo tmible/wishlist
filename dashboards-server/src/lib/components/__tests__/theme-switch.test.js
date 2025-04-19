@@ -6,13 +6,14 @@ import ThemeSwitch from '../theme-switch.svelte';
 
 const isDarkTheme = vi.fn();
 const updateTheme = vi.fn();
+const subscribeToTheme = vi.fn();
 
 vi.mock(
   '@tmible/wishlist-common/dependency-injector',
-  () => ({ inject: () => ({ isDarkTheme, updateTheme }) }),
+  () => ({ inject: () => ({ isDarkTheme, updateTheme, subscribeToTheme }) }),
 );
 
-describe('theme switcher', () => {
+describe('theme switch', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -27,6 +28,22 @@ describe('theme switcher', () => {
       isDarkTheme.mockReturnValue(true);
       render(ThemeSwitch);
       expect(updateTheme).toHaveBeenCalledWith(true);
+    });
+  });
+
+  describe('on mount', () => {
+    it('should subscribe to theme', () => {
+      render(ThemeSwitch);
+      expect(subscribeToTheme).toHaveBeenCalledWith(expect.any(Function));
+    });
+  });
+
+  describe('on destroy', () => {
+    it('should unsubscribe from theme', () => {
+      const unsubscribeFromTheme = vi.fn();
+      subscribeToTheme.mockReturnValueOnce(unsubscribeFromTheme);
+      render(ThemeSwitch).unmount();
+      expect(unsubscribeFromTheme).toHaveBeenCalled();
     });
   });
 

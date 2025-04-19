@@ -2,18 +2,21 @@
 <script>
   import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Moon, SunDim } from 'lucide-svelte';
+  import { onMount } from 'svelte';
   import { InjectionToken } from '$lib/architecture/injection-token';
 
   /**
    * Внедрение сервиса управления темой
    */
-  const { isDarkTheme, updateTheme } = inject(InjectionToken.ThemeService);
+  const { isDarkTheme, updateTheme, subscribeToTheme } = inject(InjectionToken.ThemeService);
 
   /**
    * Признак использования тёмной темы
    * @type {boolean}
    */
   let isDark = $state(isDarkTheme());
+
+  onMount(() => subscribeToTheme((isThemeDark) => isDark = isThemeDark));
 
   /**
    * Смена темы

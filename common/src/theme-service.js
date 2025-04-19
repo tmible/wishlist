@@ -1,22 +1,60 @@
-import { get, writable } from 'svelte/store';
-
 /** @module Сервис управления темой */
 
-/** @typedef {import('svelte/store').Writable} Writable */
-/** @typedef {import('svelte/store').Unsubscriber} Unsubscriber */
+/**
+ * @template T
+ * @typedef {(value: T) => void} Subscriber
+ */
+/** @typedef {() => void} Unsubscriber */
+/** @typedef {'light' | 'dark' | null} Theme */
 
 /**
- * Хранилище активной темы
- * @constant {Writable<'light' | 'dark' | null>}
+ * Значение хранилица
+ * @type {Theme}
  */
-const theme = writable(null);
+let theme = null;
+
+/**
+ * Подписчики хранилища
+ * @type {Map<Subscriber<Theme>, Subscriber<Theme>>}
+ */
+const subscriptions = new Map();
 
 /**
  * Определение тёмности активной темы
  * @function isDarkTheme
  * @returns {boolean} Признак тёмности темы
  */
-export const isDarkTheme = () => get(theme) === 'dark';
+export const isDarkTheme = () => theme === 'dark';
+
+/**
+ * Подписка на обновление темы
+ * @function subscribeToTheme
+ * @param {(isDark: boolean) => void} subscriber Обработчик обновления темы
+ * @returns {Unsubscriber} Функция отписки
+ */
+export const subscribeToTheme = (subscriber) => {
+  subscriptions.set(subscriber, subscriber);
+  return () => subscriptions.delete(subscriber);
+};
+
+/* eslint-disable no-secrets/no-secrets -- Просто длинное название */
+
+/**
+ * Обновление значения хранилища и оповещение подписчиков
+ * @function updateValueAndNotifySubscribers
+ * @param {Theme} newValue Новое значение
+ * @returns {void}
+ */
+/* eslint-enable no-secrets/no-secrets */
+const updateValueAndNotifySubscribers = (newValue) => {
+  if (theme === newValue) {
+    return;
+  }
+  theme = newValue;
+  for (const subscriber of subscriptions.values()) {
+    subscriber(theme === 'dark');
+  }
+};
 
 /**
  * Обновление темы
@@ -34,33 +72,53 @@ export const updateTheme = (isDark) => {
     }),
   );
   document.documentElement.dataset.theme = themeName;
-  theme.set(themeName);
+  updateValueAndNotifySubscribers(themeName);
 };
 
 /**
- * Подписка на обновление темы
- * @function subscribeToTheme
- * @param {(isDark: boolean) => void} handler Обработчик обновления темы
- * @returns {Unsubscriber} функция отписки
- */
-export const subscribeToTheme = (handler) => theme.subscribe(
-  (themeName) => handler(themeName === 'dark'),
-);
-
-/**
- * Инициализация Svelte хранилища темы
- * Если тема в localStorage была установлена при томже значении темы устройства, она сохраняется.
+ * Обновление темы в соответствии с контекстом.
+ * Если тема в localStorage была установлена при том же значении темы устройства, она сохраняется.
  * Иначе устанавливается тема, соответствующая теме устройства
- * @function initTheme
+ * @function adjustTheme
  * @returns {void}
  */
-export const initTheme = () => {
+const adjustTheme = () => {
   const fromLocalStorage = JSON.parse(localStorage.getItem('theme'));
   const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (fromLocalStorage?.windowPrefersDark === fromWindow && fromLocalStorage?.themeName) {
-    theme.set(fromLocalStorage.themeName);
+    updateValueAndNotifySubscribers(fromLocalStorage.themeName);
   } else {
     updateTheme(fromWindow);
   }
+};
+
+/**
+ * [Обновление темы в соответствии с контекстом]{@link adjustTheme}
+ * только при условии видимости документа
+ * @function adjustTheme
+ * @returns {void}
+ */
+const adjustThemeIfDocumentisVisible = () => {
+  if (document.hidden) {
+    return;
+  }
+  adjustTheme();
+};
+
+/**
+ * [Обновление темы в соответствии с контекстом]{@link adjustTheme},
+ * добавление прослушивателей событий фокуса и изменения видимости документа
+ * @function initTheme
+ * @returns {Unsubscriber} Функция удаления прослушивателей событий
+ */
+export const initTheme = () => {
+  adjustTheme();
+  window.addEventListener('focus', adjustTheme);
+  document.addEventListener('visibilitychange', adjustThemeIfDocumentisVisible);
+  return () => {
+    theme = null;
+    window.removeEventListener('focus', adjustTheme);
+    document.removeEventListener('visibilitychange', adjustThemeIfDocumentisVisible);
+  };
 };

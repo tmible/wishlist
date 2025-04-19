@@ -92,6 +92,20 @@ describe('layout', () => {
     });
   });
 
+  describe('on destroy', () => {
+    let destroyTheme;
+
+    beforeEach(() => {
+      destroyTheme = vi.fn();
+      vi.mocked(initTheme).mockReturnValueOnce(destroyTheme);
+      render(Layout).unmount();
+    });
+
+    it('should destroy theme store', () => {
+      expect(destroyTheme).toHaveBeenCalled();
+    });
+  });
+
   it('should not redirect if isAuthenticated is null', async () => {
     vi.mocked(user).set({ isAuthenticated: null });
     render(Layout);

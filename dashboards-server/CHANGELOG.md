@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.2.10 Изменчивая грация. (2025-04-19)
+<img width="128" height="128" src="release-images/1.2.10.png"/>
+
+https://github.com/tmible/wishlist/compare/654b07c..master
+
+
 ## 1.2.9 Могучее облако (2025-04-18)
 <img width="128" height="128" src="release-images/1.2.9.png"/>
 
-https://github.com/tmible/wishlist/compare/7fdd3bc..master
+https://github.com/tmible/wishlist/compare/7fdd3bc..654b07c
 
 
 ## 1.2.8 Зимняя стужа (2025-03-25)

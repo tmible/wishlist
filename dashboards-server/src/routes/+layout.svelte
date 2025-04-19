@@ -51,10 +51,11 @@
     }
   }
 
-  // Инициализация темы, pапрос статуса аутентификации пользователя
-  onMount(async () => {
-    initTheme();
-    await checkAuthentication();
+  // Инициализация темы, запрос статуса аутентификации пользователя
+  onMount(() => {
+    const destroyTheme = initTheme();
+    checkAuthentication();
+    return destroyTheme;
   });
 </script>
 

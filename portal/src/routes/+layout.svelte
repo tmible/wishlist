@@ -46,12 +46,20 @@
   /**
    * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
    */
-  onMount(async () => {
-    user.set({
-      ...$user,
-      ...await fetch('/api/user').then((response) => response.json()),
-    });
-    initTheme();
+  onMount(() => {
+    fetch(
+      '/api/user',
+    ).then(
+      (response) => response.json(),
+    ).then(
+      (fetched) => {
+        user.set({
+          ...$user,
+          ...fetched,
+        });
+      },
+    );
+    return initTheme();
   });
 </script>
 
