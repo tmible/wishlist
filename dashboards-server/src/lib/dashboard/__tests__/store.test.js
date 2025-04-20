@@ -30,8 +30,8 @@ describe('dashboard / store', () => {
     it('should immediately call subscription', () => {
       const subscriber = vi.fn();
       const unsubscribe = createStore('initial value', vi.fn()).subscribe(subscriber);
-      expect(subscriber).toHaveBeenCalledWith('initial value');
       unsubscribe();
+      expect(subscriber).toHaveBeenCalledWith('initial value');
     });
 
     describe('on first subscriber', () => {
@@ -84,16 +84,16 @@ describe('dashboard / store', () => {
             vi.fn((storeValue) => value = storeValue),
           );
           await vi.advanceTimersToNextTimerAsync();
-          expect(value).toMatchSnapshot();
           unsubscribe();
           vi.useRealTimers();
+          expect(value).toMatchSnapshot();
         });
       });
 
       it('should set auto update interval', () => {
         const unsubscribe = createStore('initial value', vi.fn()).subscribe(vi.fn());
-        expect(vi.mocked(setInterval)).toHaveBeenCalled();
         unsubscribe();
+        expect(vi.mocked(setInterval)).toHaveBeenCalled();
       });
     });
 
@@ -124,9 +124,9 @@ describe('dashboard / store', () => {
       await vi.advanceTimersToNextTimerAsync();
       store.updatePeriod(2);
       await vi.advanceTimersToNextTimerAsync();
-      expect(value).toMatchSnapshot();
       unsubscribe();
       vi.useRealTimers();
+      expect(value).toMatchSnapshot();
     });
 
     it('should not fetch data if it was used since last auto update', async () => {
@@ -140,9 +140,9 @@ describe('dashboard / store', () => {
       fetchDataStub.mockClear();
       store.updatePeriod(1);
       await vi.advanceTimersToNextTimerAsync();
-      expect(fetchDataStub).not.toHaveBeenCalled();
       unsubscribe();
       vi.useRealTimers();
+      expect(fetchDataStub).not.toHaveBeenCalled();
     });
   });
 
@@ -154,11 +154,25 @@ describe('dashboard / store', () => {
       vi.stubGlobal('setInterval', vi.fn());
       const unsubscribe = store.subscribe(vi.fn((storeValue) => value = storeValue));
       await vi.advanceTimersToNextTimerAsync();
-      store.updateChartsSelection([{ value: 'chart 1' }, { value: 'chart 3' }]);
+      store.updateChartsSelection([ 'chart 1', 'chart 3' ]);
       await vi.advanceTimersToNextTimerAsync();
-      expect(value).toMatchSnapshot();
       unsubscribe();
       vi.useRealTimers();
+      expect(value).toMatchSnapshot();
+    });
+
+    it('should notify subscribers even though no data is missing', async () => {
+      let value;
+      const store = createStore(initialValue, fetchDataStub);
+      vi.useFakeTimers();
+      vi.stubGlobal('setInterval', vi.fn());
+      const unsubscribe = store.subscribe(vi.fn((storeValue) => value = storeValue));
+      await vi.advanceTimersToNextTimerAsync();
+      store.updateChartsSelection([ 'chart 1' ]);
+      await vi.advanceTimersToNextTimerAsync();
+      unsubscribe();
+      vi.useRealTimers();
+      expect(value).toMatchSnapshot();
     });
   });
 
@@ -172,9 +186,9 @@ describe('dashboard / store', () => {
       const unsubscribe = store.subscribe(vi.fn((storeValue) => value = storeValue));
       await vi.advanceTimersToNextTimerAsync();
       await vi.advanceTimersToNextTimerAsync();
-      expect(value).toMatchSnapshot();
       unsubscribe();
       vi.useRealTimers();
+      expect(value).toMatchSnapshot();
     });
 
     it('should clear periods cache', async () => {
@@ -189,9 +203,9 @@ describe('dashboard / store', () => {
       fetchDataStub.mockClear();
       store.updatePeriod(1);
       await vi.advanceTimersToNextTimerAsync();
-      expect(fetchDataStub).toHaveBeenCalled();
       unsubscribe();
       vi.useRealTimers();
+      expect(fetchDataStub).toHaveBeenCalled();
     });
   });
 });

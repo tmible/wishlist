@@ -52,25 +52,25 @@
 
 {#if $user.isAuthenticated}
   <div class="mb-9 flex items-center justify-between mx-4 md:mx-0">
-    <div>
-      <div class="flex items-center gap-4 py-2 md:py-2 px-4 md:px-4">
-        {#each navigationMenu as { path, label, healthKey } (healthKey)}
-          <a
-            class="flex items-center gap-1 hover:text-foreground transition-colors"
-            class:text-muted-foreground={!page.url.pathname.endsWith(path)}
-            class:text-foreground={page.url.pathname.endsWith(path)}
-            href={path}
-          >
-            <HealthIndicator service={healthKey} />
-            {label}
-          </a>
-        {/each}
-      </div>
+    <div class="plate flex items-center gap-4 py-2 px-4">
+      {#each navigationMenu as { path, label, healthKey } (healthKey)}
+        <a
+          class={(
+            page.url.pathname.endsWith(path) ?
+              'flex items-center gap-1 text-base-content hover:text-base-content' :
+              'flex items-center gap-1 text-base-content/50 hover:text-base-content'
+          )}
+          href={path}
+        >
+          <HealthIndicator service={healthKey} />
+          {label}
+        </a>
+      {/each}
     </div>
     <div class="flex items-center gap-4">
       <GradientSwitch />
       <ThemeSwitch />
-      <button variant="secondary" onclick={() => logout(true)}>Выйти</button>
+      <button class="btn btn-secondary btn-sm shadow-sm" onclick={() => logout(true)}>Выйти</button>
     </div>
   </div>
   {@render children?.()}

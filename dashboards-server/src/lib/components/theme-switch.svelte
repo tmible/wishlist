@@ -1,10 +1,9 @@
 <!-- Svelte компонент -- переключатель цветовой темы -->
 <script>
   import { inject } from '@tmible/wishlist-common/dependency-injector';
-  import { onMount } from 'svelte';
-  import { Switch } from 'bits-ui';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
   import { Moon, SunDim } from 'lucide-svelte';
+  import { onMount } from 'svelte';
+  import { ThemeService } from '$lib/theme-service-injection-token.js';
 
   // Внедрение сервиса управления темой
   const { isDarkTheme, updateTheme, subscribeToTheme } = inject(ThemeService);
@@ -22,15 +21,8 @@
   $effect(() => updateTheme(isDark));
 </script>
 
-<Switch.Root
-  bind:checked={isDark}
-  aria-label="Переключить тему"
->
-  <Switch.Thumb>
-    {#if isDark}
-      <Moon />
-    {:else}
-      <SunDim />
-    {/if}
-  </Switch.Thumb>
-</Switch.Root>
+<label class="toggle bg-base-100 text-base-content">
+  <input type="checkbox" bind:checked={isDark}>
+  <SunDim class="p-0 w-full h-full" aria-label="enabled" />
+  <Moon class="p-0 w-full h-full" aria-label="disabled" />
+</label>

@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@import "open-color/open-color.css";
+@plugin "daisyui/theme" {
+  name: "light";
+  --color-base-100: var(--oc-gray-0);
+  --color-base-200: var(--oc-gray-1);
+  --color-base-300: var(--oc-gray-2);
+  --color-base-content: var(--oc-gray-8);
+  --color-primary: var(--oc-gray-9);
+  --color-primary-content: var(--oc-gray-3);
+  --color-secondary: var(--oc-gray-1);
+  --color-secondary-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-9);
+  --radius-box: 0.75rem;
+  --radius-field: 0.5rem;
+
+  --color-success: var(--oc-green-7);
+  --color-warning: var(--oc-yellow-7);
+  --color-error: var(--oc-red-7);
+}
+@plugin "daisyui/theme" {
+  name: "dark";
+  --color-base-100: var(--oc-gray-9);
+  --color-base-200: var(--oc-gray-8);
+  --color-base-300: var(--oc-gray-7);
+  --color-base-content: var(--oc-gray-4);
+  --color-primary: var(--oc-gray-0);
+  --color-primary-content: var(--oc-gray-9);
+  --color-secondary: var(--oc-gray-8);
+  --color-secondary-content: var(--oc-gray-0);
+  --color-error: var(--oc-red-6);
+  --radius-box: 0.75rem;
+  --radius-field: 0.5rem;
+
+  --color-success: var(--oc-green-5);
+  --color-warning: var(--oc-yellow-5);
+  --color-error: var(--oc-red-5);
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-undefined: var(--oc-gray-6);
+}
+
+@layer components {
+  .plate {
+    @apply rounded-box;
+    @apply bg-base-100;
+    @apply border;
+    @apply border-base-content/10;
+    @apply shadow-md;
+  }
+
+  .select-options-list, .popover {
+    @apply shadow-xl;
+    @apply p-1;
+    @apply border;
+    @apply border-base-content/25;
+    @apply bg-base-100;
+    @apply rounded-field;
+  }
+
+  .select-options-list {
+    @apply menu;
+    @apply menu-sm;
+    @apply w-[var(--bits-select-anchor-width)];
+  }
+
+  .popover {
+    @apply min-w-[var(--bits-popover-anchor-width)];
+  }
+}
+
+* {
+  @apply transition-colors;
+}
+
+:root {
+  /* disable in favour of using bits-ui ScrollArea */
+  scrollbar-gutter: auto;
+}
+
+.input::placeholder {
+  color: color-mix(in oklch, var(--color-base-content) 50%, #0000);
+}
+
+@layer components {
+  .dashboards > *:nth-last-child(1):nth-child(odd) {
+    @apply xl:col-start-1;
+    @apply xl:col-end-3;
+  }
+}

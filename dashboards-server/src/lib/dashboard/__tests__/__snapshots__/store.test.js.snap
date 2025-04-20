@@ -100,6 +100,26 @@ exports[`dashboard / store > updateChartsSelection > should fetch missing data 1
 }
 `;
 
+exports[`dashboard / store > updateChartsSelection > should notify subscribers even though no data is missing 1`] = `
+{
+  "charts": Map {
+    "chart 1" => {
+      "data": "chart 1 data from network for period 9",
+      "isDisplayed": true,
+    },
+    "chart 2" => {
+      "data": "chart 2 data from network for period 9",
+      "isDisplayed": false,
+    },
+    "chart 3" => {
+      "data": undefined,
+      "isDisplayed": false,
+    },
+  },
+  "period": 1,
+}
+`;
+
 exports[`dashboard / store > updatePeriod > should fetch data if it wasn't used since last auto update 1`] = `
 {
   "charts": Map {

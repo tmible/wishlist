@@ -31,8 +31,8 @@
 
 <div
   class="w-2 h-2 rounded-full"
-  class:success-bg={!serviceHasProblems}
-  class:warning-bg={serviceHasProblems && serviceHasHealthes}
-  class:error-bg={!serviceHasHealthes}
-  class:undefined-bg={!$health[service]}
+  class:bg-success={!serviceHasProblems}
+  class:bg-warning={serviceHasProblems && serviceHasHealthes}
+  class:bg-error={!serviceHasHealthes}
+  class:bg-undefined={!$health[service]}
 ></div>

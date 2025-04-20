@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.3.0 Могучие каменные башни (2025-04-21)
+<img width="128" height="128" src="release-images/1.3.0.png"/>
+
+https://github.com/tmible/wishlist/compare/2197c5e..master
+
+
 ## 1.2.11 Сверкающий океан (2025-04-19)
 <img width="128" height="128" src="release-images/1.2.11.png"/>
 
-https://github.com/tmible/wishlist/compare/201e4f0..master
+https://github.com/tmible/wishlist/compare/201e4f0..2197c5e
 
 
 ## 1.2.10 Изменчивая грация. (2025-04-19)

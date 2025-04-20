@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextStore, store } from '../store.js';
 
 describe('gradient / store', () => {
@@ -30,19 +30,58 @@ describe('gradient / store', () => {
   });
 
   describe('next store', () => {
+    let unsubscribe;
+
+    beforeEach(() => {
+      unsubscribe = undefined;
+    });
+
+    afterEach(() => {
+      unsubscribe?.();
+      nextStore.delete();
+    });
+
+    it('should unsubscribe from value', () => {
+      const subscriber = vi.fn();
+      const randomValue = Math.random();
+      unsubscribe = nextStore.subscribe(subscriber);
+      subscriber.mockClear();
+      unsubscribe();
+      nextStore.set(randomValue);
+      expect(subscriber).not.toHaveBeenCalled();
+    });
+
     it('should get initial value', () => {
       expect(nextStore.get()).toBe(undefined);
     });
 
     it('should set value', () => {
-      nextStore.set('gradient');
-      expect(nextStore.get()).toBe('gradient');
+      const randomValue = Math.random();
+      nextStore.set(randomValue);
+      expect(nextStore.get()).toBe(randomValue);
+    });
+
+    it('should notify subscribers on value set', () => {
+      const subscriber = vi.fn();
+      const randomValue = Math.random();
+      unsubscribe = nextStore.subscribe(subscriber);
+      nextStore.set(randomValue);
+      expect(subscriber).toHaveBeenCalledWith(randomValue);
     });
 
     it('should delete value', () => {
       nextStore.set('gradient');
       nextStore.delete();
       expect(nextStore.get()).toBe(undefined);
+    });
+
+    it('should notify subscribers on value delete', () => {
+      const subscriber = vi.fn();
+      const randomValue = Math.random();
+      nextStore.set(randomValue);
+      unsubscribe = nextStore.subscribe(subscriber);
+      nextStore.delete();
+      expect(subscriber).toHaveBeenCalledWith(undefined);
     });
   });
 });

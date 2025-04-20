@@ -3,7 +3,6 @@
   import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
   import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
   import { onDestroy, onMount } from 'svelte';
-  import { Switch } from 'bits-ui';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
   import * as cssService from './css.service.js';
   import { GradientVariant } from './domain.js';
@@ -28,12 +27,6 @@
    */
   let isGradient = $state(!!store.get());
 
-  /**
-   * Следующий градиент. Используется для фона компонента при отключенном градиенте
-   * @type {Gradient}
-   */
-  let nextGradient = $state(nextStore.get());
-
   // Ассоциация значений с токенами внедрения и подписка на события
   provide(GradientStore, store);
   provide(NextGradientStore, nextStore);
@@ -47,11 +40,9 @@
   });
 
   // Затемнение или осветление градиента при смене темы
-  onMount(() => {
-    themeService.subscribeToTheme(
-      (isDark) => adjustGradient(isDark ? GradientVariant.DARK : GradientVariant.LIGHT),
-    );
-  });
+  onMount(() => themeService.subscribeToTheme(
+    (isDark) => adjustGradient(isDark ? GradientVariant.DARK : GradientVariant.LIGHT),
+  ));
 
   onDestroy(() => {
     deprive(GradientStore);
@@ -68,15 +59,16 @@
       removeGradient(
         themeService.isDarkTheme() ? GradientVariant.DARK : GradientVariant.LIGHT,
       );
-
-      // trigger rerender
-      nextGradient = nextStore.get();
     }
   });
 </script>
 
-<Switch.Root
-  class={isGradient ? '' : `bg-[${cssService.constructStyle(nextGradient ?? {})}]`}
-  bind:checked={isGradient}
-  aria-label="Переключить градиент"
-/>
+<!-- eslint-disable svelte/no-inline-styles --
+  Генерируемый случаным образом в процессе выполнения стиль -->
+<label
+  style:background={isGradient ? null : cssService.constructStyle($nextStore ?? {})}
+  class="toggle bg-base-100 text-base-content"
+>
+  <!-- eslint-enable svelte/no-inline-styles -->
+  <input type="checkbox" bind:checked={isGradient}>
+</label>

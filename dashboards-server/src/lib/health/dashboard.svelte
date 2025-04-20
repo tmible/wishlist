@@ -57,15 +57,15 @@
 </script>
 
 <div class="mb-6">
-  <div class="pt-3 md:pt-6 flex flex-wrap items-center gap-6">
+  <div class="plate flex flex-wrap items-center gap-6 p-3 md:p-6">
     {new Date($health.date).toLocaleString()}
     {#each Object.entries(expectedProperties.get(service)) as [ key, label ] (key)}
       <div class="flex items-center gap-2">
         <div
           class="w-4 h-4 rounded-full"
-          class:success-bg={$health[service]?.[key]}
-          class:error-bg={$health[service] && !$health[service][key]}
-          class:undefined-bg={!$health[service]}
+          class:bg-success={$health[service]?.[key]}
+          class:bg-error={$health[service] && !$health[service][key]}
+          class:bg-undefined={!$health[service]}
         ></div>
         {label}
       </div>

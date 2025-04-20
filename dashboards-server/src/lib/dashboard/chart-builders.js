@@ -24,28 +24,28 @@ import { ThemeService } from '$lib/theme-service-injection-token.js';
 const GRID_LIGHT_COLOR = 'rgba(0,0,0,0.1)';
 
 /**
- * Получение значения CSS переменной
- * @function getStyleVariable
- * @param {string} variable Название переменной
- * @returns {string} Значение переменной
+ * Получение hex цвета из CSS переменной
+ * @function getColorFromStyles
+ * @param {string} colorName Название цвета
+ * @returns {string} hex цвет
  */
-const getStyleVariable = (variable) => browser && getComputedStyle(
+const getColorFromStyles = (colorName) => browser && getComputedStyle(
   document.documentElement,
 ).getPropertyValue(
-  `--${variable}`,
+  `--color-${colorName}`,
 );
 
 /**
  * Цвет успеха
  * @type {string}
  */
-const successColor = getStyleVariable('success-color');
+const successColor = getColorFromStyles('success');
 
 /**
  * Цвет ошибки
  * @type {string}
  */
-const errorColor = getStyleVariable('error-color');
+const errorColor = getColorFromStyles('error');
 
 /**
  * Нахождение медианы в массиве точек графика
@@ -58,14 +58,6 @@ const median = (ctx) => {
   const half = Math.floor(values.length / 2);
   return (values.length % 2 === 1 ? values[half] : (values[half - 1] + values[half]) / 2);
 };
-
-/**
- * Получение HSL цвета из CSS переменной
- * @function getColorFromStyles
- * @param {string} colorName Название цвета
- * @returns {string} HSL цвет
- */
-const getColorFromStyles = (colorName) => `hsl(${getStyleVariable(colorName)})`;
 
 /**
  * Построение конфига для дашборда с графиком в виде кольца
@@ -135,7 +127,7 @@ const line = (labels, charts, periodStart, yScaleOptions, tooltipFormat, periodS
           annotations: {
             annotation: {
               type: 'line',
-              borderColor: getColorFromStyles('foreground'),
+              borderColor: getColorFromStyles('base-content'),
               borderDash: [ 6, 6 ],
               borderDashOffset: 0,
               borderWidth: 2,
@@ -222,7 +214,7 @@ export const ChartBuilders = {
       [ 'success rate', 'error rate' ],
       successRate ? [ successRate, (1 - successRate) ] : [ 1 ],
       [ successColor, errorColor ],
-      successRate ? getColorFromStyles('background') : successColor,
+      successRate ? getColorFromStyles('base-100') : successColor,
       successRate ? '50%' : '100%',
     );
   },
@@ -232,7 +224,7 @@ export const ChartBuilders = {
       [ 'аутентификации', 'уходы' ],
       authenticationFunnel ? [ authenticationFunnel, (1 - authenticationFunnel) ] : [ 1 ],
       [ successColor, errorColor ],
-      authenticationFunnel ? getColorFromStyles('background') : successColor,
+      authenticationFunnel ? getColorFromStyles('base-100') : successColor,
       authenticationFunnel ? '50%' : '100%',
     );
   },

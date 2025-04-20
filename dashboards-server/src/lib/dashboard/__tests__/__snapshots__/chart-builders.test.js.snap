@@ -26,7 +26,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -48,7 +48,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
     "scales": {
       "x": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "max": "now",
         "min": 0,
@@ -69,7 +69,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
       },
       "y": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "min": 0,
       },
@@ -90,7 +90,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -112,7 +112,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
     "scales": {
       "x": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "max": "now",
         "min": 0,
@@ -133,7 +133,7 @@ exports[`dashboard / chart builders > for dark theme > should build activeUsers 
       },
       "y": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "min": 0,
       },
@@ -169,7 +169,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -191,7 +191,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
     "scales": {
       "x": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "max": "now",
         "min": 0,
@@ -212,7 +212,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
       },
       "y": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "min": 0,
         "title": {
@@ -237,7 +237,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -259,7 +259,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
     "scales": {
       "x": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "max": "now",
         "min": 0,
@@ -280,7 +280,7 @@ exports[`dashboard / chart builders > for dark theme > should build time chart w
       },
       "y": {
         "grid": {
-          "color": "hsl(--secondary)",
+          "color": "--color-secondary",
         },
         "min": 0,
         "title": {
@@ -320,7 +320,7 @@ exports[`dashboard / chart builders > for light theme > should build activeUsers
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -384,7 +384,7 @@ exports[`dashboard / chart builders > for light theme > should build activeUsers
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -463,7 +463,7 @@ exports[`dashboard / chart builders > for light theme > should build time chart 
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -531,7 +531,7 @@ exports[`dashboard / chart builders > for light theme > should build time chart 
       "annotation": {
         "annotations": {
           "annotation": {
-            "borderColor": "hsl(--foreground)",
+            "borderColor": "--color-base-content",
             "borderDash": [
               6,
               6,
@@ -594,8 +594,8 @@ exports[`dashboard / chart builders > should build authenticationFunnel chart wi
     "datasets": [
       {
         "backgroundColor": [
-          "--success-color",
-          "--error-color",
+          "--color-success",
+          "--color-error",
         ],
         "data": [
           0.5,
@@ -609,7 +609,7 @@ exports[`dashboard / chart builders > should build authenticationFunnel chart wi
     ],
   },
   "options": {
-    "borderColor": "hsl(--background)",
+    "borderColor": "--color-base-100",
     "cutout": "50%",
     "plugins": {
       "legend": {
@@ -632,8 +632,8 @@ exports[`dashboard / chart builders > should build authenticationFunnel chart wi
     "datasets": [
       {
         "backgroundColor": [
-          "--success-color",
-          "--error-color",
+          "--color-success",
+          "--color-error",
         ],
         "data": [
           1,
@@ -646,7 +646,7 @@ exports[`dashboard / chart builders > should build authenticationFunnel chart wi
     ],
   },
   "options": {
-    "borderColor": "--success-color",
+    "borderColor": "--color-success",
     "cutout": "100%",
     "plugins": {
       "legend": {
@@ -669,8 +669,8 @@ exports[`dashboard / chart builders > should build successRate chart with data 1
     "datasets": [
       {
         "backgroundColor": [
-          "--success-color",
-          "--error-color",
+          "--color-success",
+          "--color-error",
         ],
         "data": [
           0.5,
@@ -684,7 +684,7 @@ exports[`dashboard / chart builders > should build successRate chart with data 1
     ],
   },
   "options": {
-    "borderColor": "hsl(--background)",
+    "borderColor": "--color-base-100",
     "cutout": "50%",
     "plugins": {
       "legend": {
@@ -707,8 +707,8 @@ exports[`dashboard / chart builders > should build successRate chart without dat
     "datasets": [
       {
         "backgroundColor": [
-          "--success-color",
-          "--error-color",
+          "--color-success",
+          "--color-error",
         ],
         "data": [
           1,
@@ -721,7 +721,7 @@ exports[`dashboard / chart builders > should build successRate chart without dat
     ],
   },
   "options": {
-    "borderColor": "--success-color",
+    "borderColor": "--color-success",
     "cutout": "100%",
     "plugins": {
       "legend": {

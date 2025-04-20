@@ -24,70 +24,62 @@
 {#if $user.isAuthenticated}
   <HealthDashboard service="portal" />
   <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
-    <div>
-      <div class="pt-3 md:pt-6">
-        <Dashboard
-          service="portal"
-          config={{
-            key: 'time',
-            type: 'line',
-            initialData: data.time,
-            chartConfigs: [{
-              key: 'responseTime',
-              label: 'Время ответа',
-            }],
-          }}
-        />
-      </div>
+    <div class="plate p-3 md:p-6">
+      <Dashboard
+        service="portal"
+        config={{
+          key: 'time',
+          type: 'line',
+          initialData: data.time,
+          chartConfigs: [{
+            key: 'responseTime',
+            label: 'Время ответа',
+          }],
+        }}
+      />
     </div>
-    <div>
-      <div class="pt-3 md:pt-6">
-        <Dashboard
-          service="portal"
-          config={{
-            key: 'activeUsers',
-            type: 'line',
-            period: PERIOD.WEEK,
-            initialData: data.activeUsers,
-            chartConfigs: [{
-              key: 'dau',
-              label: 'Уникальные пользователи за сутки',
-            }, {
-              key: 'mau',
-              label: 'Уникальные пользователи за месяц',
-            }, {
-              key: 'yau',
-              label: 'Уникальные пользователи за год',
-            }],
-          }}
-        />
-      </div>
+    <div class="plate p-3 md:p-6">
+      <Dashboard
+        service="portal"
+        config={{
+          key: 'activeUsers',
+          type: 'line',
+          period: PERIOD.WEEK,
+          initialData: data.activeUsers,
+          chartConfigs: [{
+            key: 'dau',
+            label: 'Уникальные пользователи за сутки',
+          }, {
+            key: 'mau',
+            label: 'Уникальные пользователи за месяц',
+          }, {
+            key: 'yau',
+            label: 'Уникальные пользователи за год',
+          }],
+        }}
+      />
     </div>
-    <div>
-      <div class="pt-3 md:pt-6">
-        <Dashboard
-          service="portal"
-          config={{
-            key: 'successRate',
-            type: 'doughnut',
-            initialData: data.successRate,
-            label: [ 'Success rate' ],
-          }}
-        />
-      </div>
+    <div class="plate p-3 md:p-6">
+      <Dashboard
+        service="portal"
+        config={{
+          key: 'successRate',
+          type: 'doughnut',
+          initialData: data.successRate,
+          label: [ 'Success rate' ],
+        }}
+      />
     </div>
-    <div>
-      <div class="pt-3 md:pt-6">
-        <Dashboard
-          service="portal"
-          config={{
-            key: 'authenticationFunnel',
-            type: 'doughnut',
-            initialData: data.authenticationFunnel,
-            label: [ 'Воронка', 'аутентификации' ],
-          }}
-        />
-      </div>
+    <div class="plate p-3 md:p-6">
+      <Dashboard
+        service="portal"
+        config={{
+          key: 'authenticationFunnel',
+          type: 'doughnut',
+          initialData: data.authenticationFunnel,
+          label: [ 'Воронка', 'аутентификации' ],
+        }}
+      />
     </div>
   </div>
 {/if}

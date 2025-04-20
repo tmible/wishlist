@@ -3,6 +3,7 @@ import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
 import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
+import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeService } from '$lib/theme-service-injection-token.js';
 import * as cssService from '../css.service.js';
@@ -20,7 +21,13 @@ vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('../css.service.js');
 vi.mock('../favicon.service.js');
-vi.mock('../store.js');
+vi.mock(
+  '../store.js',
+  () => ({
+    store: { get: vi.fn(), set: vi.fn(), delete: vi.fn() },
+    nextStore: writable(null),
+  }),
+);
 vi.mock('../use-cases/adjust-gradient.js');
 vi.mock('../use-cases/remove-gradient.js');
 vi.mock('../use-cases/set-gradient.js');
@@ -47,11 +54,6 @@ describe('gradient / switch', () => {
     it('should get gradient from store', () => {
       render(GradientSwitch);
       expect(vi.mocked(store.get)).toHaveBeenCalled();
-    });
-
-    it('should get next gradient from store', () => {
-      render(GradientSwitch);
-      expect(vi.mocked(nextStore.get)).toHaveBeenCalled();
     });
 
     it('should provide gradient store', () => {
@@ -150,9 +152,16 @@ describe('gradient / switch', () => {
   });
 
   describe('on destory', () => {
+    let themeUnsubscriber;
+
     beforeEach(() => {
-      const { unmount } = render(GradientSwitch);
-      unmount();
+      themeUnsubscriber = vi.fn();
+      themeService.subscribeToTheme.mockReturnValueOnce(themeUnsubscriber);
+      render(GradientSwitch).unmount();
+    });
+
+    it('should unsubscribe from theme', () => {
+      expect(themeUnsubscriber).toHaveBeenCalled();
     });
 
     it('should deprive gradient store', () => {
@@ -173,10 +182,10 @@ describe('gradient / switch', () => {
   });
 
   it('should construct style for switch background', async () => {
-    vi.mocked(nextStore.get).mockReturnValue('next gradient');
+    vi.mocked(nextStore).set('next gradient');
     const user = userEvent.setup();
     render(GradientSwitch);
-    const toggler = screen.getByRole('switch');
+    const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     await user.click(toggler);
     expect(vi.mocked(cssService.constructStyle)).toHaveBeenCalledWith('next gradient');
@@ -186,7 +195,7 @@ describe('gradient / switch', () => {
     themeService.isDarkTheme.mockReturnValue(false);
     const user = userEvent.setup();
     render(GradientSwitch);
-    const toggler = screen.getByRole('switch');
+    const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     await user.click(toggler);
     expect(vi.mocked(removeGradient)).toHaveBeenCalledWith(GradientVariant.LIGHT);
@@ -196,7 +205,7 @@ describe('gradient / switch', () => {
     themeService.isDarkTheme.mockReturnValue(true);
     const user = userEvent.setup();
     render(GradientSwitch);
-    const toggler = screen.getByRole('switch');
+    const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     await user.click(toggler);
     expect(vi.mocked(removeGradient)).toHaveBeenCalledWith(GradientVariant.DARK);
@@ -205,7 +214,7 @@ describe('gradient / switch', () => {
   it('should set gradient on switch toggle', async () => {
     const user = userEvent.setup();
     render(GradientSwitch);
-    const toggler = screen.getByRole('switch');
+    const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     expect(vi.mocked(setGradient)).toHaveBeenCalled();
   });

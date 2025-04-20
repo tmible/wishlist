@@ -52,7 +52,7 @@ describe('theme switch', () => {
     isDarkTheme.mockReturnValue(false);
     const user = userEvent.setup();
     render(ThemeSwitch);
-    const toggler = screen.getByRole('switch');
+    const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     expect(updateTheme).toHaveBeenCalledWith(true);
   });

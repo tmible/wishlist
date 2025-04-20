@@ -23,38 +23,40 @@
 </script>
 
 {#if !$user.isAuthenticated}
-  <div class="self-end flex mr-4 md:mr-0">
-    <div class="mr-4">
-      <GradientSwitch />
-    </div>
+  <div class="self-end flex gap-4 mr-4 md:mr-0">
+    <GradientSwitch />
     <ThemeSwitch />
   </div>
   <form class="flex flex-col m-auto" method="POST" use:enhance>
-    <div class="mb-2">
-      <label class="mb-2" for="login">Логин</label>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend text-sm">Логин</legend>
       <input
-        id="login"
         name="login"
-        class={form?.error ? 'border-red-600' : ''}
+        class="input"
+        class:input-error={form?.error}
         placeholder="логин"
         required
         autocomplete="username"
-      />
-      {#if form?.error} <span class="text-sm text-red-600">Неверный логин или пароль</span> {/if}
-    </div>
-    <div class="mb-9">
-      <label class="mb-2" for="password">Пароль</label>
+      >
+      {#if form?.error}
+        <span class="text-sm text-error">Неверный логин или пароль</span>
+      {/if}
+    </fieldset>
+    <fieldset class="fieldset mb-9">
+      <legend class="fieldset-legend text-sm">Пароль</legend>
       <input
-        id="password"
         name="password"
-        class={form?.error ? 'border-red-600' : ''}
+        class="input"
+        class:input-error={form?.error}
         placeholder="пароль"
         required
         type="password"
         autocomplete="current-password"
-      />
-      {#if form?.error} <span class="text-sm text-red-600">Неверный логин или пароль</span> {/if}
-    </div>
-    <button type="submit">Войти</button>
+      >
+      {#if form?.error}
+        <span class="text-sm text-error">Неверный логин или пароль</span>
+      {/if}
+    </fieldset>
+    <button class="btn btn-primary" type="submit">Войти</button>
   </form>
 {/if}

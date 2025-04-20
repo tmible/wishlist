@@ -1,6 +1,6 @@
 <!-- Svelte компонент -- общая для всех страниц разметка -->
 <script>
-  import '../app.pcss';
+  import '../app.css';
   import { provide } from '@tmible/wishlist-common/dependency-injector';
   import { subscribe } from '@tmible/wishlist-common/event-bus';
   import {

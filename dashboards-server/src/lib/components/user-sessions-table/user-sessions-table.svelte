@@ -4,6 +4,8 @@
   import dayjs from 'dayjs';
   import isBetween from 'dayjs/plugin/isBetween';
   import objectSupport from 'dayjs/plugin/objectSupport';
+  import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+  import ChevronRight from 'lucide-svelte/icons/chevron-right';
   import { readable } from 'svelte/store';
   import { createRender, createTable, Render, Subscribe } from 'svelte-headless-table';
   import { addColumnFilters, addPagination } from 'svelte-headless-table/plugins';
@@ -11,6 +13,7 @@
   import TableHeaderFilter from './table-header-filter.svelte';
 
   /** @typedef {import('svelte/store').Writable} Writable */
+  /** @typedef {import('svelte-headless-table').Table} Table */
   /** @typedef {import('svelte-headless-table').Id} Id */
   /** @typedef {import('svelte-headless-table').FilterValue} FilterValue */
 
@@ -85,7 +88,7 @@
   });
 
   /**
-   * Таблицы с обновлениями, полученными ботом
+   * Таблица с обновлениями, полученными ботом
    * @type {Table}
    */
   const userSessionsTable = createTable(
@@ -153,53 +156,76 @@
   });
 </script>
 
-<div>
-  <div class="pt-3 md:pt-6">
-    <div class="rounded-md border mb-3 bg-card">
-      <table {...$tableAttrs}>
-        <thead class="bg-secondary h-20">
-          {#each $headerRows as headerRow (headerRow.id)}
-            <tr {...headerRow.attrs()}>
-              {#each headerRow.cells as cell (cell.id)}
-                <th {...cell.attrs()} props={cell.props()}>
-                  {cell.render()}
-                </th>
-              {/each}
-            </tr>
-          {/each}
-        </thead>
-        <tbody {...$tableBodyAttrs}>
-          {#each $pageRows as row (row.id)}
-            <tr {...row.attrs()}>
+<div class="rounded-md border border-inherit mb-3">
+  <table class="table table-sm" {...$tableAttrs}>
+    <thead class="bg-base-300">
+      {#each $headerRows as headerRow (headerRow.id)}
+        <Subscribe rowAttrs={headerRow.attrs()}>
+          <tr>
+            {#each headerRow.cells as cell (cell.id)}
+              <Subscribe attrs={cell.attrs()} props={cell.props()}>
+                {#snippet children({ attrs })}
+                  <th {...attrs}>
+                    <Render of={cell.render()} />
+                  </th>
+                {/snippet}
+              </Subscribe>
+            {/each}
+          </tr>
+        </Subscribe>
+      {/each}
+    </thead>
+    <tbody {...$tableBodyAttrs}>
+      {#each $pageRows as row (row.id)}
+        <Subscribe rowAttrs={row.attrs()}>
+          {#snippet children({ rowAttrs })}
+            <tr class="hover:bg-base-200" {...rowAttrs}>
               {#each row.cells as cell (cell.id)}
-                <td {...cell.attrs()}>
-                  {cell.render()}
-                </td>
+                <Subscribe attrs={cell.attrs()}>
+                  {#snippet children({ attrs })}
+                    <td class="text-sm" {...attrs}>
+                      <Render of={cell.render()} />
+                    </td>
+                  {/snippet}
+                </Subscribe>
               {/each}
             </tr>
-          {/each}
-        </tbody>
-      </table>
-    </div>
-
-    <Pagination.Root
-      count={$rows.length}
-      page={$pageIndex + 1}
-      perPage={10}
-    >
-      {#snippet children({ pages, currentPage })}
-        <Pagination.PrevButton />
-        {#each pages as page (page.key)}
-          {#if page.type === 'ellipsis'}
-            ...
-          {:else}
-            <Pagination.Page {page}>
-              {page.value}
-            </Pagination.Page>
-          {/if}
-        {/each}
-        <Pagination.NextButton />
-      {/snippet}
-    </Pagination.Root>
-  </div>
+          {/snippet}
+        </Subscribe>
+      {/each}
+    </tbody>
+  </table>
 </div>
+
+<Pagination.Root
+  class="flex justify-center items-center gap-1"
+  count={$rows.length}
+  perPage={10}
+  bind:page={() => $pageIndex + 1, (pageNumber) => $pageIndex = pageNumber - 1}
+>
+  {#snippet children({ pages, currentPage })}
+    <Pagination.PrevButton class="btn btn-square btn-ghost">
+      <ChevronLeft />
+    </Pagination.PrevButton>
+    {#each pages as page (page.key)}
+      {#if page.type === 'ellipsis'}
+        <span class="w-10 text-center pointer-events-none">...</span>
+      {:else}
+        <Pagination.Page
+          class={(
+            currentPage === page.value ?
+              'btn btn-ghost bg-primary text-primary-content' :
+              'btn btn-ghost'
+          )}
+          {page}
+          onclick={() => $pageIndex = page.value - 1}
+        >
+          {page.value}
+        </Pagination.Page>
+      {/if}
+    {/each}
+    <Pagination.NextButton class="btn btn-square btn-ghost">
+      <ChevronRight />
+    </Pagination.NextButton>
+  {/snippet}
+</Pagination.Root>

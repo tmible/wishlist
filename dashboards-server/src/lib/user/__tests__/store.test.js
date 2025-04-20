@@ -15,14 +15,14 @@ describe('user / store', () => {
   });
 
   it('should immideately invoke subscriber', () => {
-    expect(subscription).toHaveBeenCalled();
     unsubscribe();
+    expect(subscription).toHaveBeenCalled();
   });
 
   it('should invoke subscriber on value change', () => {
     user.patch({ key: 'value' });
-    expect(subscription).toHaveBeenCalledWith(expect.objectContaining({ key: 'value' }));
     unsubscribe();
+    expect(subscription).toHaveBeenCalledWith(expect.objectContaining({ key: 'value' }));
   });
 
   it('should unsubscribe', () => {

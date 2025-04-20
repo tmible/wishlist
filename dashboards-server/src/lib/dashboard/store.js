@@ -222,16 +222,22 @@ export const createStore = (initialValue, fetchData) => {
      * Обновление признака отображения графиков,
      * [запрос]{@link fetcher} [недостающих данных]{@link collectNoDataCharts}
      * @function updateChartsSelection
-     * @param {{ value: string }[]} displayedCharts
-     *   Идентификаторы выбранных для отображения графиков
+     * @param {string[]} displayedCharts Идентификаторы выбранных для отображения графиков
      * @returns {Promise<void>}
      * @async
      */
     updateChartsSelection: async (displayedCharts) => {
       for (const [chartKey, chart] of value.charts.entries()) {
-        chart.isDisplayed = !!displayedCharts.some(({ value }) => value === chartKey);
+        chart.isDisplayed = displayedCharts.includes(chartKey);
       }
-      await fetcher(collectNoDataCharts());
+      const noData = collectNoDataCharts();
+      if (noData.length > 0) {
+        await fetcher(noData);
+      } else {
+        for (const subscription of subscriptions.values()) {
+          subscription(value);
+        }
+      }
     },
   };
 };

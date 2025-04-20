@@ -1,9 +1,10 @@
 <!-- Svelte компонент -- дашборд -->
 <script>
   import { deprive, inject } from '@tmible/wishlist-common/dependency-injector';
+  import { Select } from 'bits-ui';
   import { Chart } from 'chart.js/auto';
+  import Check from 'lucide-svelte/icons/check';
   import { onMount } from 'svelte';
-  import { Select } from "bits-ui";
   import { PERIOD } from '$lib/constants/period.const.js';
   import { skipFirstCall } from '$lib/skip-first-call.js';
   import { ThemeService } from '$lib/theme-service-injection-token.js';
@@ -77,8 +78,8 @@
    * Выбранный период отображения для дашборда
    * @type {string}
    */
-  let periodSelectedLabel = $derived(
-    periodOptions.find(({ value }) => value === periodSelected)?.label
+  const periodSelectedLabel = $derived(
+    periodOptions.find(({ value }) => value === periodSelected)?.label,
   );
 
   /**
@@ -88,7 +89,7 @@
   let selectedCharts = $derived(
     Array.from($store?.charts.entries() ?? [])
       .filter(([, { isDisplayed } ]) => isDisplayed)
-      .map(([ key ]) => key)
+      .map(([ key ]) => key),
   );
 
   /**
@@ -182,19 +183,36 @@
       <Select.Root
         type="single"
         items={periodOptions}
-        bind:value={periodSelected}
         onValueChange={store?.updatePeriod}
+        bind:value={periodSelected}
       >
 
-        <Select.Trigger class="min-w-[112px]">
+        <Select.Trigger class="select select-sm select-bordered cursor-pointer min-w-[112px]">
           {periodSelectedLabel}
         </Select.Trigger>
 
         <Select.Portal>
           <Select.Content side="bottom" align="center" sideOffset={8} strategy="fixed">
-            {#each periodOptions as { value, label } (value)}
-              <Select.Item {value} {label} />
-            {/each}
+            {#snippet child({ wrapperProps, props })}
+              <div {...wrapperProps}>
+                <ul class="select-options-list" {...props}>
+                  {#each periodOptions as { value, label } (value)}
+                    <Select.Item {value} {label}>
+                      {#snippet child({ props, selected })}
+                        <li {...props}>
+                          <div class="flex justify-between cursor-pointer">
+                            {label}
+                            {#if selected}
+                              <Check class="w-4 h-4" />
+                            {/if}
+                          </div>
+                        </li>
+                      {/snippet}
+                    </Select.Item>
+                  {/each}
+                </ul>
+              </div>
+            {/snippet}
           </Select.Content>
         </Select.Portal>
 
@@ -204,26 +222,45 @@
     {#if $store?.charts.size > 1}
       <Select.Root
         type="multiple"
-        items={
+        items={(
           Array.from(
             $store?.charts.entries() ?? [],
-          ).map(
             ([ key, { label } ]) => ({ value: key, label }),
           )
-        }
-        bind:value={selectedCharts}
+        )}
         onValueChange={store?.updateChartsSelection}
+        bind:value={selectedCharts}
       >
 
-        <Select.Trigger style={`width: ${chartsSelectWidth}px;`}>
+        <Select.Trigger
+          style={`width: ${chartsSelectWidth}px;`}
+          class="select select-sm select-bordered cursor-pointer"
+        >
           Графики
         </Select.Trigger>
 
         <Select.Portal>
-          <Select.Content>
-            {#each $store.charts.entries() as [ key, { label } ] (key)}
-              <Select.Item value={key} {label} />
-            {/each}
+          <Select.Content side="bottom" align="center" sideOffset={8} strategy="fixed">
+            {#snippet child({ wrapperProps, props })}
+              <div {...wrapperProps}>
+                <ul class="select-options-list" {...props}>
+                  {#each $store.charts.entries() as [ key, { label } ] (key)}
+                    <Select.Item value={key} {label}>
+                      {#snippet child({ props, selected })}
+                        <li {...props}>
+                          <div class="flex justify-between cursor-pointer">
+                            {label}
+                            {#if selected}
+                              <Check class="w-4 h-4" />
+                            {/if}
+                          </div>
+                        </li>
+                      {/snippet}
+                    </Select.Item>
+                  {/each}
+                </ul>
+              </div>
+            {/snippet}
           </Select.Content>
         </Select.Portal>
 
@@ -245,7 +282,7 @@
       >
         {#each config.label as line, i (line)}
           <text
-            class="text-xl fill-[hsl(var(--foreground))]"
+            class="text-xl fill-(--color-base-content)"
             x="50%"
             y={21 + (21 * i)}
             text-anchor="middle"

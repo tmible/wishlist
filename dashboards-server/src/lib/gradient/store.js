@@ -28,11 +28,33 @@ export const store = {
 let nextGradient;
 
 /**
- * Хранилище следующего градиента
+ * Подписчики хранилища следующего градиента
+ * @type {Map<(value: Gradient) => void, (value: Gradient) => void>}
+ */
+const nextGradientSubscriptions = new Map();
+
+/**
+ * Svelte совместимое хранилище следующего градиента
  * @type {Store<Gradient>}
+ * @implements {import('svelte').Readable}
  */
 export const nextStore = {
+  subscribe: (subscriber) => {
+    subscriber(nextGradient);
+    nextGradientSubscriptions.set(subscriber, subscriber);
+    return () => nextGradientSubscriptions.delete(subscriber, subscriber);
+  },
   get: () => nextGradient,
-  set: (gradient) => nextGradient = gradient,
-  delete: () => nextGradient = undefined,
+  set: (gradient) => {
+    nextGradient = gradient;
+    for (const subscriber of nextGradientSubscriptions.values()) {
+      subscriber(nextGradient);
+    }
+  },
+  delete: () => {
+    nextGradient = undefined;
+    for (const subscriber of nextGradientSubscriptions.values()) {
+      subscriber(nextGradient);
+    }
+  },
 };

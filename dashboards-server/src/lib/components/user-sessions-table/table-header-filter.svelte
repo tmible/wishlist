@@ -3,8 +3,11 @@ Svelte компонент -- заголовок столбца таблицы с
 полем ввода для фильтрации строк по значениям столбца
 -->
 <script>
-  import X from 'lucide-svelte/icons/x';
   import { DateRangePicker } from 'bits-ui';
+  import Calendar from 'lucide-svelte/icons/calendar';
+  import ChevronLeft from 'lucide-svelte/icons/chevron-left';
+  import ChevronRight from 'lucide-svelte/icons/chevron-right';
+  import X from 'lucide-svelte/icons/x';
 
   /** @typedef {import('svelte/store').Writable} Writable */
   /** @typedef {import('svelte-headless-table').Id} Id */
@@ -25,48 +28,133 @@ Svelte компонент -- заголовок столбца таблицы с
     accessor,
     type = 'input',
   } = $props();
+
+  /**
+   * Корневой элемент элемента управления для выбора диапазона дат
+   * @type {HTMLDivElement | null}
+   */
+  let dateRangePickerRoot = $state(null);
 </script>
 
+{#snippet clearButton()}
+  {#if (
+    $filters[accessor] &&
+    (typeof $filters[accessor] !== 'object' || JSON.stringify($filters[accessor]) !== '{}')
+  )}
+    <button
+      class="cursor-pointer hover:text-base-content"
+      onclick={() => {
+        filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
+      }}
+    >
+      <X />
+    </button>
+  {/if}
+{/snippet}
+
 <div class="py-2 h-full">
-  <div class="relative">
-    {#if type === 'date range'}
-      <p class="mb-1">{label}</p>
-      <DateRangePicker
-        class={$filters[accessor] ? 'pr-8 absolute w-fit' : 'absolute w-fit'}
+  <span class="block mb-1">{label}</span>
+  {#if type === 'date range'}
+    <DateRangePicker.Root
+      class="input input-sm"
+      locale="ru-RU"
+      weekdayFormat="short"
+      disableDaysOutsideMonth={true}
+      bind:ref={dateRangePickerRoot}
+      bind:value={$filters[accessor]}
+    >
+      {#snippet input(type, className = '')}
+        <DateRangePicker.Input class={className} {type}>
+          {#snippet children({ segments })}
+            {#each segments.entries() as [ i, { part, value } ] (i)}
+              <DateRangePicker.Segment {part}>
+                {value}
+              </DateRangePicker.Segment>
+            {/each}
+          {/snippet}
+        </DateRangePicker.Input>
+      {/snippet}
+      {@render input('start')}
+      ‒
+      {@render input('end', 'mr-auto')}
+      <DateRangePicker.Trigger class="cursor-pointer hover:text-base-content">
+        <Calendar class="w-5 h-5" />
+      </DateRangePicker.Trigger>
+      {@render clearButton()}
+      <DateRangePicker.Content
+        class="popover text-base-content"
+        sideOffset={8}
+        customAnchor={dateRangePickerRoot}
+      >
+        <DateRangePicker.Calendar>
+          {#snippet children({ months, weekdays })}
+            <DateRangePicker.Header class="max-w-full flex items-center justify-between">
+              <DateRangePicker.PrevButton class="btn btn-sm btn-square btn-ghost">
+                <ChevronLeft class="w-5 h-5" />
+              </DateRangePicker.PrevButton>
+              <DateRangePicker.Heading />
+              <DateRangePicker.NextButton class="btn btn-sm btn-square btn-ghost">
+                <ChevronRight class="w-5 h-5" />
+              </DateRangePicker.NextButton>
+            </DateRangePicker.Header>
+            {#each months as month (`${month.value.month}.${month.value.year}`)}
+              <DateRangePicker.Grid class="mx-auto border-separate border-spacing-y-2">
+                <DateRangePicker.GridHead>
+                  <DateRangePicker.GridRow>
+                    {#each weekdays as day (day)}
+                      <DateRangePicker.HeadCell>
+                        {day}
+                      </DateRangePicker.HeadCell>
+                    {/each}
+                  </DateRangePicker.GridRow>
+                </DateRangePicker.GridHead>
+                <DateRangePicker.GridBody>
+                  {#each month.weeks as weekDates (`${weekDates[0].day}.${weekDates[0].month}`)}
+                    <DateRangePicker.GridRow>
+                      {#each weekDates as date (date.day)}
+                        <!-- eslint-disable @stylistic/js/max-len -- Длинный класс -->
+                        <DateRangePicker.Cell
+                          class="
+                            data-disabled:cursor-default
+                            not-data-disabled:cursor-pointer
+                            not-data-disabled:not-data-selection-start:not-data-selection-end:hover:bg-base-200
+                            data-selected:bg-base-200/50
+                            data-selection-start:bg-primary
+                            data-selection-end:bg-primary
+                            data-selection-start:text-primary-content
+                            data-selection-end:text-primary-content
+                            first:rounded-l-field
+                            last:rounded-r-field
+                            data-selection-start:rounded-l-field
+                            data-selection-end:rounded-r-field
+                            not-data-selected:rounded-field
+                            data-outside-month:text-base-content/50
+                          "
+                          {date}
+                          month={month.value}
+                        >
+                          <!-- eslint-enable @stylistic/js/max-len -->
+                          <DateRangePicker.Day>
+                            {date.day}
+                          </DateRangePicker.Day>
+                        </DateRangePicker.Cell>
+                      {/each}
+                    </DateRangePicker.GridRow>
+                  {/each}
+                </DateRangePicker.GridBody>
+              </DateRangePicker.Grid>
+            {/each}
+          {/snippet}
+        </DateRangePicker.Calendar>
+      </DateRangePicker.Content>
+    </DateRangePicker.Root>
+  {:else}
+    <label class="input input-sm">
+      <input
+        class:pr-8={$filters[accessor]}
         bind:value={$filters[accessor]}
       >
-        {#if $filters[accessor]}
-          <button
-            class="p-0 h-auto right-[6px] top-[6px] cursor-pointer absolute"
-            variant="ghost"
-            onclick={() => {
-              filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
-            }}
-          >
-            <X />
-          </button>
-        {/if}
-      </DateRangePicker>
-    {:else}
-      <!-- eslint-disable-next-line svelte/valid-compile -- input внутри Input -->
-      <label>
-        <span class="block mb-1">{label}</span>
-        <input
-          class={$filters[accessor] ? 'pr-8 absolute' : 'absolute'}
-          bind:value={$filters[accessor]}
-        />
-      </label>
-      {#if $filters[accessor]}
-        <button
-          class="p-0 h-auto right-[6px] translate-y-[6px] cursor-pointer absolute"
-          variant="ghost"
-          onclick={() => {
-            filters.update((filtersValue) => ({ ...filtersValue, [accessor]: '' }));
-          }}
-        >
-          <X />
-        </button>
-      {/if}
-    {/if}
-  </div>
+      {@render clearButton()}
+    </label>
+  {/if}
 </div>
