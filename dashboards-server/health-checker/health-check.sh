@@ -70,7 +70,7 @@ echo -n "\"service\":" >> $file
 check_systemd_service_status wishlist-hub
 echo -n ",\"socket\":" >> $file
 socket_path=$(cat ../../hub/.env | grep SOCKET_PATH | cut -d "=" -f 2)
-check_unix_socket_status $(cd -- $(dirname $socket_path); pwd -P )/$(basename $socket_path)
+check_unix_socket_status $(cd -- ../$(dirname $socket_path); pwd -P )/$(basename $socket_path)
 echo -n "}" >> $file
 
 echo "}" >> $file
