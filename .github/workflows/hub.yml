@@ -76,6 +76,7 @@ jobs:
           # pnpm end
           pnpm add -g pnpm@$(pnpm pkg get engines.pnpm | tr -d "\"")
           nvm install $(pnpm pkg get engines.node | tr -d "\"")
+          pnpm pkg delete devDependencies.@tmible/eslint-config-wishlist
           pnpm install --prod
           pnpm start:background
           pnpm restart:background

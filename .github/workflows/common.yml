@@ -47,6 +47,8 @@ jobs:
         working-directory: common
     steps:
     - uses: actions/checkout@v4
+    - name: remove tests
+      run: find ./src/ -type d -name __tests__ -exec rm -rf {} +
     - uses: ./.github/actions/setup
       with:
         working-directory: common
