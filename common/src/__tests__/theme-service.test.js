@@ -279,6 +279,7 @@ describe('theme service', () => {
     it('should not update value for subscribers if it is the same', () => {
       const handler = vi.fn();
       unsubscriber = subscribeToTheme(handler);
+      handler.mockClear();
       updateTheme(true);
       updateTheme(true);
       expect(handler).toHaveBeenCalledTimes(1);
@@ -288,7 +289,14 @@ describe('theme service', () => {
   it('should subscribe to theme', () => {
     const handler = vi.fn();
     unsubscriber = subscribeToTheme(handler);
+    handler.mockClear();
     updateTheme(false);
+    expect(handler).toHaveBeenCalledWith(false);
+  });
+
+  it('should immidiately call subscriber', () => {
+    const handler = vi.fn();
+    unsubscriber = subscribeToTheme(handler);
     expect(handler).toHaveBeenCalledWith(false);
   });
 });

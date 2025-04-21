@@ -159,7 +159,7 @@
     const themeUnsubscriber = inject(
       ThemeService,
     ).subscribeToTheme(
-      () => buildChart(),
+      skipFirstCall(() => buildChart()),
     );
     return () => {
       storeUnsubscriber();

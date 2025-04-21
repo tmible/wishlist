@@ -6,13 +6,13 @@
   import { ThemeService } from '$lib/theme-service-injection-token.js';
 
   // Внедрение сервиса управления темой
-  const { isDarkTheme, updateTheme, subscribeToTheme } = inject(ThemeService);
+  const { updateTheme, subscribeToTheme } = inject(ThemeService);
 
   /**
    * Признак использования тёмной темы
    * @type {boolean}
    */
-  let isDark = $state(isDarkTheme());
+  let isDark = $state();
 
   // Обновление состояния при изменении темы в сервисе
   onMount(() => subscribeToTheme((isThemeDark) => isDark = isThemeDark));

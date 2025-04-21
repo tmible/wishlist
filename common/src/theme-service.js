@@ -33,6 +33,7 @@ export const isDarkTheme = () => theme === 'dark';
  * @returns {Unsubscriber} Функция отписки
  */
 export const subscribeToTheme = (subscriber) => {
+  subscriber(theme === 'dark');
   subscriptions.set(subscriber, subscriber);
   return () => subscriptions.delete(subscriber);
 };

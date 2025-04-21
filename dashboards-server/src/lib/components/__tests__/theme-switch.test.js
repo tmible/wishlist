@@ -4,32 +4,18 @@ import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ThemeSwitch from '../theme-switch.svelte';
 
-const isDarkTheme = vi.fn();
 const updateTheme = vi.fn();
 const subscribeToTheme = vi.fn();
 
 vi.mock(
   '@tmible/wishlist-common/dependency-injector',
-  () => ({ inject: () => ({ isDarkTheme, updateTheme, subscribeToTheme }) }),
+  () => ({ inject: () => ({ updateTheme, subscribeToTheme }) }),
 );
 
 describe('theme switch', () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
-  });
-
-  describe('on create', () => {
-    it('should check theme', () => {
-      render(ThemeSwitch);
-      expect(isDarkTheme).toHaveBeenCalled();
-    });
-
-    it('should update theme', () => {
-      isDarkTheme.mockReturnValue(true);
-      render(ThemeSwitch);
-      expect(updateTheme).toHaveBeenCalledWith(true);
-    });
   });
 
   describe('on mount', () => {
@@ -49,9 +35,11 @@ describe('theme switch', () => {
   });
 
   it('should toggle theme', async () => {
-    isDarkTheme.mockReturnValue(false);
+    let handler;
+    subscribeToTheme.mockImplementationOnce((themeHandler) => handler = themeHandler);
     const user = userEvent.setup();
     render(ThemeSwitch);
+    handler(false);
     const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
     expect(updateTheme).toHaveBeenCalledWith(true);

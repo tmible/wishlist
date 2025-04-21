@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.3.1 Небесная гармония (2025-04-21)
+<img width="128" height="128" src="release-images/1.3.1.png"/>
+
+https://github.com/tmible/wishlist/compare/c847256..master
+
+
 ## 1.3.0 Могучие каменные башни (2025-04-21)
 <img width="128" height="128" src="release-images/1.3.0.png"/>
 
-https://github.com/tmible/wishlist/compare/2197c5e..master
+https://github.com/tmible/wishlist/compare/2197c5e..c847256
 
 
 ## 1.2.11 Сверкающий океан (2025-04-19)

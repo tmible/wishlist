@@ -159,6 +159,9 @@ describe('dashboard / dashboard', () => {
           },
         );
         render(Dashboard, { service, config });
+
+        // first call to get through skipFirstCall
+        themeSubscriber();
         vi.mocked(ChartBuilders[config.key]).mockClear();
         vi.mocked(
           ChartBuilders[config.key],

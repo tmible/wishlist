@@ -5,22 +5,19 @@
   import { onMount } from 'svelte';
   import { InjectionToken } from '$lib/architecture/injection-token';
 
-  /**
-   * Внедрение сервиса управления темой
-   */
-  const { isDarkTheme, updateTheme, subscribeToTheme } = inject(InjectionToken.ThemeService);
+  // Внедрение сервиса управления темой
+  const { updateTheme, subscribeToTheme } = inject(InjectionToken.ThemeService);
 
   /**
    * Признак использования тёмной темы
    * @type {boolean}
    */
-  let isDark = $state(isDarkTheme());
+  let isDark = $state();
 
+  // Обновление состояния при изменении темы в сервисе
   onMount(() => subscribeToTheme((isThemeDark) => isDark = isThemeDark));
 
-  /**
-   * Смена темы
-   */
+  // Смена темы
   $effect(() => updateTheme(isDark));
 </script>
 

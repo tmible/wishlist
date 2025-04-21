@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.2 Морская Пучина (2025-04-21)
+<img width="128" height="128" src="release-images/1.4.2.png"/>
+
+https://github.com/tmible/wishlist/compare/c847256..master
+
+
 ## 1.4.1 Безмятежное сияние утра (2025-04-19)
 <img width="128" height="128" src="release-images/1.4.1.png"/>
 
-https://github.com/tmible/wishlist/compare/654b07c..master
+https://github.com/tmible/wishlist/compare/654b07c..c847256
 
 
 ## 1.4.0 Кровавый Июль (2025-04-18)

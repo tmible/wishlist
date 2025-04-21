@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.20 Океанская глубоководная впадина (2025-04-21)
+<img width="128" height="128" src="release-images/1.4.20.png"/>
+
+https://github.com/tmible/wishlist/compare/c847256..master
+
+
 ## 1.4.19 Великолепный ландшафт (2025-04-19)
 <img width="128" height="128" src="release-images/1.4.19.png"/>
 
-https://github.com/tmible/wishlist/compare/654b07c..master
+https://github.com/tmible/wishlist/compare/654b07c..c847256
 
 
 ## 1.4.18 Звездное небо (2025-03-25)
