@@ -114,6 +114,7 @@
               '[]',
             )
           ),
+          initialFilterValue: { start: undefined, end: undefined },
         },
       },
     }),
@@ -156,7 +157,7 @@
   });
 </script>
 
-<div class="rounded-md border border-inherit mb-3">
+<div class="rounded-md border border-inherit mb-3 overflow-x-auto">
   <table class="table table-sm" {...$tableAttrs}>
     <thead class="bg-base-300">
       {#each $headerRows as headerRow (headerRow.id)}
