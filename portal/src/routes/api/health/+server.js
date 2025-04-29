@@ -1,5 +1,6 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { Database } from '$lib/server/db/injection-tokens.js';
+import { IPCHub } from '$lib/server/ipc-hub/injection-tokens.js';
 
 /**
  * Разлогинивание пользователя
@@ -7,8 +8,8 @@ import { InjectionToken } from '$lib/architecture/injection-token';
  */
 export const GET = () => new Response(
   JSON.stringify({
-    dbConnection: inject(InjectionToken.Database).open,
-    hubConnection: inject(InjectionToken.IPCHub).isConnected(),
+    dbConnection: inject(Database).open,
+    hubConnection: inject(IPCHub).isConnected(),
   }),
   {
     status: 200,

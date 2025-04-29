@@ -1,7 +1,4 @@
-<!--
-Svelte компонент -- парсер элементов разметки сообщения
-из телеграма в дерево для отображения в HTML
--->
+<!-- @component Парсер элементов разметки сообщения из телеграма в дерево для отображения в HTML -->
 <script>
   import { addParagraphBreakpointsToEveryBlockquote } from './add-paragraph-breakpoints-to-every-blockquote.js';
   import { entitiesToBreakpoints } from './entities-to-breakpoints.js';

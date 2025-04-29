@@ -1,7 +1,7 @@
-<!-- Svelte компонент -- тексторый редактор -->
+<!-- @component Меню форматирования текстового редактора -->
 <script>
   import { Popover } from 'bits-ui';
-  import { md } from '$lib/store/breakpoints.js';
+  import { md } from '$lib/breakpoints.js';
   import { formattingMenu } from './formatting-menu.const.js';
 
   /** @typedef {import('./formatting-menu.const.js').FormattingMenuOption} FormattingMenuOption */

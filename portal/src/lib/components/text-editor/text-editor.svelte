@@ -1,10 +1,10 @@
-<!-- Svelte компонент -- тексторый редактор -->
+<!-- @component Текстовый редактор -->
 <script>
   import { Editor } from '@tiptap/core';
   import { BubbleMenu } from '@tiptap/extension-bubble-menu';
   import { Placeholder } from '@tiptap/extension-placeholder';
   import { onDestroy, onMount } from 'svelte';
-  import { md } from '$lib/store/breakpoints.js';
+  import { md } from '$lib/breakpoints.js';
   import { textEditorConfig } from './config.const.js';
   import FormattingMenu from './formatting-menu.svelte';
 

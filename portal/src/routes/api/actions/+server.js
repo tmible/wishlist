@@ -1,5 +1,4 @@
-import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { InjectionToken } from '$lib/architecture/injection-token';
+import { addAction } from '$lib/server/actions/use-cases/add-action.js';
 
 /**
  * Сохранение действия в БД
@@ -7,7 +6,6 @@ import { InjectionToken } from '$lib/architecture/injection-token';
  */
 export const PUT = async ({ cookies, request }) => {
   const { timestamp, action } = await request.json();
-  const unknownUserUuid = cookies.get('unknownUserUuid');
-  inject(InjectionToken.AddActionStatement).run(timestamp, action, unknownUserUuid);
+  addAction(timestamp, action, cookies);
   return new Response(null, { status: 200 });
 };

@@ -1,9 +1,10 @@
-<!-- Svelte компонент -- страница быстрой очистки списка. Реализует механику свайпа карточек -->
+<!-- @component Страница быстрой очистки списка. Реализует механику свайпа карточек -->
 <script>
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { CardSwiper } from '$lib/card-swiper';
-  import { list } from '$lib/store/list';
+  import { wishlist } from '$lib/wishlist/store.js';
+  import { deleteItems } from '$lib/wishlist/use-cases/delete-items.js';
 
   /**
    * Массив идентификаторов элементов списка к удалению
@@ -12,7 +13,7 @@
   const toDelete = [];
 
   /**
-   * Отметка элемента списка к удалению при соответсвующем направлении свайпа
+   * Отметка элемента списка к удалению при соответствующем направлении свайпа
    * @typedef {import('$lib/card-swiper').Direction} Direction
    * @typedef {import('$lib/card-swiper').CardData} CardData
    * @function markListItem
@@ -34,14 +35,14 @@
    * @returns {import('$lib/card-swiper').CardData} Данные следующей карточки
    */
   const cardData = (i) => {
-    if (i === $list.length) {
+    if (i === $wishlist.length) {
       return { title: '' };
     }
-    if (i > $list.length) {
+    if (i > $wishlist.length) {
       goto('/list');
       return {};
     }
-    return { title: $list[i].name, image: '/bg.svg', id: $list[i].id };
+    return { title: $wishlist[i].name, image: '/bg.svg', id: $wishlist[i].id };
   };
 
   /**
@@ -51,31 +52,18 @@
    */
   let thresholdPassed = $state(0);
 
-  /**
-   * Возврат на главную страницу авторизованной зоны, если список пуст
-   */
+  // Возврат на главную страницу авторизованной зоны, если список пуст
   onMount(() => {
-    if (($list ?? []).length === 0) {
+    if (($wishlist ?? []).length === 0) {
       goto('/list');
     }
   });
 
-  /**
-   * Запрос на удаление элементов, карточки которых были свайпнуты вправо
-   */
-  onDestroy(async () => {
-    await fetch(
-      '/api/wishlist',
-      {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: JSON.stringify(toDelete),
-      },
-    );
-  });
+  // Запрос на удаление элементов, карточки которых были свайпнуты вправо
+  onDestroy(async () => await deleteItems(toDelete));
 </script>
 
-{#if ($list ?? []).length > 0}
+{#if ($wishlist ?? []).length > 0}
   <div class="w-dvw h-dvh md:w-1/3 mx-auto overflow-hidden">
     <CardSwiper {cardData} swiped={markListItem} bind:thresholdPassed />
     {#if thresholdPassed !== 0}

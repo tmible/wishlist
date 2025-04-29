@@ -246,8 +246,6 @@ fieldset:has(input:required) > .fieldset-legend::after {
 
 span.spoiler {
   background-image: url("/C4Zf.gif");
-  @apply bg-no-repeat;
-  @apply bg-cover;
   @apply hover:bg-none;
 }
 

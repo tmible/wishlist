@@ -5,7 +5,7 @@ import { readable } from 'svelte/store';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import TextEditor from '../text-editor.svelte';
 
-vi.mock('$lib/store/breakpoints', () => ({ md: readable(null) }));
+vi.mock('$lib/breakpoints.js', () => ({ md: readable(null) }));
 
 describe('text editor', () => {
   afterEach(() => {

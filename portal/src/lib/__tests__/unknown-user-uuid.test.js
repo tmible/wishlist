@@ -1,4 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  UNKNOWN_USER_UUID_COOKIE_NAME,
+} from '$lib/constants/unknown-user-uuid-cookie-name.const.js';
 import { initUnknownUserUuid } from '../unknown-user-uuid.js';
 
 vi.mock('$app/environment', () => ({ browser: true }));
@@ -35,7 +38,7 @@ describe('unknown user UUID', () => {
       localStorageStub.getItem.mockReturnValueOnce('unknownUserUuid from localStorage');
     },
     initializationExpectations: () => {
-      expect(localStorageStub.getItem).toHaveBeenCalledWith('unknownUserUuid');
+      expect(localStorageStub.getItem).toHaveBeenCalledWith(UNKNOWN_USER_UUID_COOKIE_NAME);
       expect(cookieGetter).not.toHaveBeenCalled();
       expect(cryptoStub.randomUUID).not.toHaveBeenCalled();
     },
@@ -47,7 +50,7 @@ describe('unknown user UUID', () => {
       cookieGetter.mockReturnValueOnce('unknownUserUuid=unknownUserUuid from cookies');
     },
     initializationExpectations: () => {
-      expect(localStorageStub.getItem).toHaveBeenCalledWith('unknownUserUuid');
+      expect(localStorageStub.getItem).toHaveBeenCalledWith(UNKNOWN_USER_UUID_COOKIE_NAME);
       expect(cookieGetter).toHaveBeenCalled();
       expect(cryptoStub.randomUUID).not.toHaveBeenCalled();
     },
@@ -60,7 +63,7 @@ describe('unknown user UUID', () => {
       cryptoStub.randomUUID.mockReturnValueOnce('unknownUserUuid from crypto');
     },
     initializationExpectations: () => {
-      expect(localStorageStub.getItem).toHaveBeenCalledWith('unknownUserUuid');
+      expect(localStorageStub.getItem).toHaveBeenCalledWith(UNKNOWN_USER_UUID_COOKIE_NAME);
       expect(cookieGetter).toHaveBeenCalled();
       expect(cryptoStub.randomUUID).toHaveBeenCalled();
     },
@@ -82,7 +85,12 @@ describe('unknown user UUID', () => {
 
       it('should store unknown user UUID in localStorage', () => {
         initUnknownUserUuid();
-        expect(localStorageStub.setItem).toHaveBeenCalledWith('unknownUserUuid', unknownUserUuid);
+        expect(
+          localStorageStub.setItem,
+        ).toHaveBeenCalledWith(
+          UNKNOWN_USER_UUID_COOKIE_NAME,
+          unknownUserUuid,
+        );
       });
 
       it('should store unknown user UUID in cookies', () => {
@@ -90,7 +98,11 @@ describe('unknown user UUID', () => {
         expect(
           cookieSetter,
         ).toHaveBeenCalledWith(
-          `unknownUserUuid=${unknownUserUuid}; path=/; max-age=525600; secure; samesite`,
+          `${
+            UNKNOWN_USER_UUID_COOKIE_NAME
+          }=${
+            unknownUserUuid
+          }; path=/; max-age=525600; secure; samesite`,
         );
       });
 
@@ -118,14 +130,23 @@ describe('unknown user UUID', () => {
         });
 
         it('should store unknown user UUID in localStorage', () => {
-          expect(localStorageStub.setItem).toHaveBeenCalledWith('unknownUserUuid', unknownUserUuid);
+          expect(
+            localStorageStub.setItem,
+          ).toHaveBeenCalledWith(
+            UNKNOWN_USER_UUID_COOKIE_NAME,
+            unknownUserUuid,
+          );
         });
 
         it('should store unknown user UUID in cookies', () => {
           expect(
             cookieSetter,
           ).toHaveBeenCalledWith(
-            `unknownUserUuid=${unknownUserUuid}; path=/; max-age=525600; secure; samesite`,
+            `${
+              UNKNOWN_USER_UUID_COOKIE_NAME
+            }=${
+              unknownUserUuid
+            }; path=/; max-age=525600; secure; samesite`,
           );
         });
 

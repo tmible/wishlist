@@ -7,14 +7,20 @@ import {
   subscribeToTheme,
   updateTheme,
 } from '@tmible/wishlist-common/theme-service';
-import { get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
-import { page } from '$app/stores';
-import { InjectionToken } from '$lib/architecture/injection-token';
-import { user } from '$lib/store/user';
+import { initActionsFeature } from '$lib/actions/initialization.js';
+import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
+import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
+import { ThemeService } from '$lib/theme-service-injection-token.js';
 import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
+import { initUserFeature } from '$lib/user/initialization.js';
+import { user } from '$lib/user/store.js';
+import { initialize } from '$lib/user/use-cases/initialize.js';
 import Layout from '../+layout.svelte';
+
+const page = vi.hoisted(() => ({ url: { pathname: '' } }));
 
 vi.mock('$app/navigation');
 vi.mock('@tmible/wishlist-common/dependency-injector');
@@ -27,14 +33,12 @@ vi.mock(
     updateTheme: vi.fn(),
   }),
 );
-vi.mock('$app/stores', () => ({ page: writable({ url: { pathname: '' } }) }));
-vi.mock('$lib/store/user', () => ({ user: writable({ isAuthenticated: null }) }));
+vi.mock('$app/state', () => ({ page }));
+vi.mock('$lib/actions/initialization.js');
 vi.mock('$lib/unknown-user-uuid');
-
-vi.stubGlobal(
-  'fetch',
-  vi.fn().mockResolvedValue({ json: vi.fn(() => ({ response: 'response' })) }),
-);
+vi.mock('$lib/user/initialization.js');
+vi.mock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: null }) }));
+vi.mock('$lib/user/use-cases/initialize.js');
 
 describe('layout', () => {
   beforeEach(() => {
@@ -47,6 +51,8 @@ describe('layout', () => {
       },
     );
     vi.mocked(user).set({ isAuthenticated: null });
+    vi.mocked(initUserFeature).mockReturnValue(vi.fn());
+    vi.mocked(initActionsFeature).mockReturnValue(vi.fn());
   });
 
   afterEach(() => {
@@ -60,9 +66,19 @@ describe('layout', () => {
     expect(
       vi.mocked(provide),
     ).toHaveBeenCalledWith(
-      InjectionToken.ThemeService,
+      ThemeService,
       { isDarkTheme, subscribeToTheme, updateTheme },
     );
+  });
+
+  it('should init user feature', () => {
+    render(Layout);
+    expect(vi.mocked(initUserFeature)).toHaveBeenCalled();
+  });
+
+  it('should init actions feature', () => {
+    render(Layout);
+    expect(vi.mocked(initActionsFeature)).toHaveBeenCalled();
   });
 
   it('should initialize unknown user UUID', () => {
@@ -72,37 +88,43 @@ describe('layout', () => {
 
   describe('on mount', () => {
     beforeEach(() => {
-      vi.spyOn(vi.mocked(user), 'set').mockImplementationOnce(vi.fn());
       render(Layout);
-    });
-
-    it('should fetch user', () => {
-      expect(vi.mocked(fetch)).toHaveBeenCalledWith('/api/user');
-    });
-
-    it('should set user to store', () => {
-      expect(vi.mocked(user.set)).toHaveBeenCalledWith({
-        ...get(vi.mocked(user)),
-        response: 'response',
-      });
     });
 
     it('should init theme store', () => {
       expect(vi.mocked(initTheme)).toHaveBeenCalled();
     });
+
+    it('should initialize user', () => {
+      expect(vi.mocked(initialize)).toHaveBeenCalled();
+    });
   });
 
   describe('on destroy', () => {
     let destroyTheme;
+    let destroyUserFeature;
+    let destroyActionsFeature;
 
     beforeEach(() => {
       destroyTheme = vi.fn();
+      destroyUserFeature = vi.fn();
+      destroyActionsFeature = vi.fn();
       vi.mocked(initTheme).mockReturnValueOnce(destroyTheme);
+      vi.mocked(initUserFeature).mockReturnValueOnce(destroyUserFeature);
+      vi.mocked(initActionsFeature).mockReturnValueOnce(destroyActionsFeature);
       render(Layout).unmount();
     });
 
     it('should destroy theme store', () => {
       expect(destroyTheme).toHaveBeenCalled();
+    });
+
+    it('should destroy user feature', () => {
+      expect(destroyUserFeature).toHaveBeenCalled();
+    });
+
+    it('should destroy actions feature', () => {
+      expect(destroyActionsFeature).toHaveBeenCalled();
     });
   });
 
@@ -114,15 +136,15 @@ describe('layout', () => {
 
   it('should redirect to /', async () => {
     vi.mocked(user).set({ isAuthenticated: false });
-    vi.mocked(page).set({ url: { pathname: '/list' } });
+    page.url.pathname = AUTHENTICATED_ROUTE;
     render(Layout);
-    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/'));
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith(UNAUTHENTICATED_ROUTE));
   });
 
   it('should redirect to /list', async () => {
     vi.mocked(user).set({ isAuthenticated: true });
-    vi.mocked(page).set({ url: { pathname: '/' } });
+    page.url.pathname = UNAUTHENTICATED_ROUTE;
     render(Layout);
-    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/list'));
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith(AUTHENTICATED_ROUTE));
   });
 });

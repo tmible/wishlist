@@ -1,11 +1,9 @@
-import { randomUUID } from 'node:crypto';
 import { redirect } from '@sveltejs/kit';
-import { inject } from '@tmible/wishlist-common/dependency-injector';
 import sha256 from '@tmible/wishlist-common/sha-256';
 import { env } from '$env/dynamic/private';
-import { InjectionToken } from '$lib/architecture/injection-token';
-import { UNKNOWN_USER_UUID_COOKIE_NAME } from '$lib/constants/unknown-user-uuid-cookie-name.const';
-import { generateAndStoreAuthTokens } from '$lib/server/generate-and-store-auth-tokens';
+import { addAction } from '$lib/server/actions/use-cases/add-action.js';
+import { generateAndStoreAuthTokens } from '$lib/server/user/generate-and-store-auth-tokens.js';
+import { addUser } from '$lib/server/user/use-cases/add-user.js';
 
 /**
  * Вычисление HMAC-SHA256 подписи
@@ -72,21 +70,6 @@ const checkAuthorization = async (searchParams) => {
 };
 
 /**
- * Сохранение в БД с логами события успешной аутентификации
- * @function saveAuthenticationAction
- * @param {import('./$types').Cookies} cookies Куки файлы запроса и ответа
- * @returns {void}
- */
-const saveAuthenticationAction = (cookies) => {
-  let unknownUserUuid = cookies.get(UNKNOWN_USER_UUID_COOKIE_NAME);
-  if (unknownUserUuid === undefined) {
-    unknownUserUuid = randomUUID();
-    cookies.set(UNKNOWN_USER_UUID_COOKIE_NAME, unknownUserUuid);
-  }
-  inject(InjectionToken.AddActionStatement).run(Date.now(), 'authentication', unknownUserUuid);
-};
-
-/**
  * Проверка подлинности запроса, аутентификация пользователя, выпуск и запись
  * в cookie файлы access и refresh токенов аутентификации
  * @type {import('./$types').RequestHandler}
@@ -104,12 +87,9 @@ export const GET = async ({ cookies, url }) => {
     return new Response('missing id parameter', { status: 400 });
   }
 
-  inject(InjectionToken.AddUserStatement).run({
-    userid,
-    username: url.searchParams.get('username') ?? null,
-  });
+  addUser(userid, url.searchParams.get('username') ?? null);
 
-  saveAuthenticationAction(cookies);
+  addAction(Date.now(), 'authentication', cookies);
 
   await generateAndStoreAuthTokens(cookies, userid);
 

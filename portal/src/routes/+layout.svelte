@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- общая для всех страниц разметка -->
+<!-- @component Общая для всех страниц разметка -->
 <script>
   import '../app.css';
   import { provide } from '@tmible/wishlist-common/dependency-injector';
@@ -8,12 +8,17 @@
     subscribeToTheme,
     updateTheme,
   } from '@tmible/wishlist-common/theme-service';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { InjectionToken } from '$lib/architecture/injection-token';
-  import { user } from '$lib/store/user';
+  import { page } from '$app/state';
+  import { initActionsFeature } from '$lib/actions/initialization.js';
+  import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
+  import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
+  import { ThemeService } from '$lib/theme-service-injection-token.js';
   import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
+  import { initUserFeature } from '$lib/user/initialization.js';
+  import { user } from '$lib/user/store.js';
+  import { initialize } from '$lib/user/use-cases/initialize.js';
 
   /**
    * @typedef {object} Props
@@ -24,7 +29,21 @@
   const { children } = $props();
 
   // Регистрация сервиса управления темой в сервисе внедрения зависмостей
-  provide(InjectionToken.ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+  provide(ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+
+  /**
+   * Регистрация зависисмостей и подписка на события для работы с пользователем
+   * Функция освобождения зависимостей и отписки от событий
+   * @type {() => void}
+   */
+  const destroyUserFeature = initUserFeature();
+
+  /**
+   * Регистрация зависисмостей для работы с действиями
+   * Функция освобождения зависимостей
+   * @type {() => void}
+   */
+  const destroyActionsFeature = initActionsFeature();
 
   // Инициализация идентификатора неаутентифицированного пользователя
   initUnknownUserUuid();
@@ -35,31 +54,24 @@
    */
   $effect(() => {
     if ($user.isAuthenticated !== null) {
-      if (!$user.isAuthenticated && $page.url.pathname.startsWith('/list')) {
-        goto('/');
-      } else if ($user.isAuthenticated && $page.url.pathname === '/') {
-        goto('/list');
+      if (!$user.isAuthenticated && page.url.pathname.startsWith(AUTHENTICATED_ROUTE)) {
+        goto(UNAUTHENTICATED_ROUTE);
+      } else if ($user.isAuthenticated && page.url.pathname === UNAUTHENTICATED_ROUTE) {
+        goto(AUTHENTICATED_ROUTE);
       }
     }
   });
 
-  /**
-   * Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
-   */
+  // Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
   onMount(() => {
-    fetch(
-      '/api/user',
-    ).then(
-      (response) => response.json(),
-    ).then(
-      (fetched) => {
-        user.set({
-          ...$user,
-          ...fetched,
-        });
-      },
-    );
-    return initTheme();
+    const destroyTheme = initTheme();
+    initialize();
+    return destroyTheme;
+  });
+
+  onDestroy(() => {
+    destroyUserFeature();
+    destroyActionsFeature();
   });
 </script>
 
@@ -67,15 +79,7 @@
   <!-- eslint-disable svelte/indent -- Всё как должно быть -->
   <script>
     (() => {
-      let fromLocalStorage = localStorage.getItem('theme');
-      // TODO временное решение для поддержки старого формата хранения темы
-      try {
-        fromLocalStorage = JSON.parse(fromLocalStorage);
-      } catch(e) {
-        if (!/Unexpected token '.', ".+" is not valid JSON/.test(e.message)) {
-          throw e;
-        }
-      }
+      const fromLocalStorage = JSON.parse(localStorage.getItem('theme'));
       const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
       let theme;
 

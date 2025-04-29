@@ -30,8 +30,8 @@ describe('cards', () => {
     fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
     fireEvent.touchStart(container.firstChild, { touches: [{ screenY: 0 }] });
     fireEvent.touchEnd(container.firstChild, { changedTouches: [{ screenY: 1 }] });
-    expect(classList.add).toHaveBeenCalledTimes(2);
     vi.useRealTimers();
+    expect(classList.add).toHaveBeenCalledTimes(2);
   });
 
   describe('on overswipe up', () => {
@@ -234,8 +234,8 @@ describe('cards', () => {
       vi.useFakeTimers();
       render(CardsSwiper);
       vi.advanceTimersByTime(2000);
-      expect(classList.remove).toHaveBeenCalledWith('welcome-animation');
       vi.useRealTimers();
+      expect(classList.remove).toHaveBeenCalledWith('welcome-animation');
     });
 
     it('should select cards', () => {

@@ -1,13 +1,13 @@
 <script>
-  const { isSkeleton, listItem } = $props();
+  const { isSkeleton, item } = $props();
 </script>
 
 {#if isSkeleton}
   <span>Skeleton mock</span>
 {/if}
 
-{#if listItem}
-  <span>List item mock</span>
+{#if item}
+  <span>Item mock</span>
 {/if}
 
 Mock

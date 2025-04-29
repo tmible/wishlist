@@ -1,0 +1,43 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`logger / create logging middleware > middleware > should log request 1`] = `
+[
+  {
+    "requestUuid": "random UUID",
+    "unknownUserUuid": "unknown user UUID",
+  },
+  "request method pathname; cookie: name=value; body: body",
+]
+`;
+
+exports[`logger / create logging middleware > middleware > should log request alternatively 1`] = `
+[
+  {
+    "requestUuid": "random UUID",
+    "unknownUserUuid": null,
+  },
+  "request method pathname; cookie: name=value; body: null",
+]
+`;
+
+exports[`logger / create logging middleware > middleware > should log response 1`] = `
+[
+  {
+    "requestUuid": "random UUID",
+    "unknownUserUuid": "unknown user UUID",
+    "userid": null,
+  },
+  "response status; body: null",
+]
+`;
+
+exports[`logger / create logging middleware > middleware > should log response alternatively 1`] = `
+[
+  {
+    "requestUuid": "random UUID",
+    "unknownUserUuid": "unknown user UUID",
+    "userid": "userid",
+  },
+  "response status; body: null",
+]
+`;

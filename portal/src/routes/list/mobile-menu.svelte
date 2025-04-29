@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- мобильное меню портала -->
+<!-- @component Мобильное меню портала -->
 <script>
   import { DropdownMenu } from 'bits-ui';
   import Ellipsis from 'lucide-svelte/icons/ellipsis';

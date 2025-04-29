@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`wishlist / statements / insert description entities > subscriber if there are entities > should prepare statement 1`] = `
+[
+  "INSERT INTO description_entities VALUES ($itemId, ?, ?, ?, ?),($itemId, ?, ?, ?, NULL)",
+]
+`;
+
+exports[`wishlist / statements / insert description entities > subscriber if there are entities > should run statement on event emit 1`] = `
+[
+  "type",
+  "offset",
+  "length",
+  "{"any":"other"}",
+  "type",
+  "offset",
+  "length",
+  {
+    "itemId": "id",
+  },
+]
+`;

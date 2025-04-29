@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`wishlist / statements / update item > subscriber > should prepare statement 1`] = `
+[
+  "UPDATE list SET name = 'name', description = null WHERE id = ? AND userid = ?",
+]
+`;

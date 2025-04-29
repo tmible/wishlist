@@ -1,209 +1,70 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { InjectionToken } from '$lib/architecture/injection-token';
-import { ACCESS_TOKEN_COOKIE_NAME } from '$lib/constants/access-token-cookie-name.const';
-import { REFRESH_TOKEN_COOKIE_NAME } from '$lib/constants/refresh-token-cookie-name.const';
-import { initDB } from '$lib/server/db';
-import { connectToIPCHub } from '$lib/server/ipc-hub-connection';
-import { initLogger } from '$lib/server/logger';
-import { initLogsDB } from '$lib/server/logs-db';
-import { reissueAuthTokens } from '$lib/server/reissue-auth-tokens';
+import { initActionsFeature } from '$lib/server/actions/initialization.js';
+import { initCategoriesFeature } from '$lib/server/categories/initialization.js';
+import { chainMiddlewares } from '$lib/server/chain-middlewares.js';
+import { initDB } from '$lib/server/db/initialization.js';
+import { connect } from '$lib/server/ipc-hub/use-cases/connect.js';
+import { initLogger } from '$lib/server/logger/initialization.js';
+import { Logger } from '$lib/server/logger/injection-tokens.js';
+import { getLoggingMiddleware } from '$lib/server/logger/use-cases/get-logging-middleware.js';
+import { initDB as initLogsDB } from '$lib/server/logs-db/initialization.js';
+import { authenticationMiddleware } from '$lib/server/user/authentication-middleware.js';
+import { initUserFeature } from '$lib/server/user/initialization.js';
+import { initWishlistFeature } from '$lib/server/wishlist/initialization.js';
 
-const resolve = vi.fn();
-vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('@tmible/wishlist-common/dependency-injector');
-vi.mock('jsonwebtoken');
-vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
-vi.mock('$lib/server/db');
-vi.mock('$lib/server/ipc-hub-connection');
-vi.mock('$lib/server/logger');
-vi.mock('$lib/server/logs-db');
-vi.mock('$lib/server/reissue-auth-tokens');
+vi.mock('$lib/server/actions/initialization.js');
+vi.mock('$lib/server/categories/initialization.js');
+vi.mock('$lib/server/chain-middlewares.js');
+vi.mock('$lib/server/db/initialization.js');
+vi.mock('$lib/server/ipc-hub/use-cases/connect.js');
+vi.mock('$lib/server/logger/initialization.js');
+vi.mock('$lib/server/logger/use-cases/get-logging-middleware.js');
+vi.mock('$lib/server/logs-db/initialization.js');
+vi.mock('$lib/server/user/initialization.js');
+vi.mock('$lib/server/wishlist/initialization.js');
 
 describe('server hooks', () => {
   afterEach(() => {
-    vi.unstubAllGlobals();
     vi.clearAllMocks();
     vi.resetModules();
   });
 
-  describe('auth middleware', () => {
-    let handle;
+  describe('handler', () => {
     let event;
+    let resolve;
+    let handle;
 
-    it('should resolve if pathname doesn\'t start with /api', async () => {
-      event = { url: { pathname: 'pathname' } };
-      ({ handle } = await import('../hooks.server.js'));
-      resolve.mockResolvedValueOnce('resolve');
-      await expect(handle({ event, resolve })).resolves.toBe('resolve');
+    beforeEach(() => {
+      event = { url: { pathname: '' } };
+      resolve = vi.fn();
     });
 
-    describe('if pathname starts with /api', () => {
-      const logger = { info: vi.fn() };
+    it('should chain middlewares', async () => {
+      vi.mocked(getLoggingMiddleware).mockReturnValueOnce('logging middleware');
+      ({ handle } = await import('../hooks.server.js'));
+      expect(
+        vi.mocked(chainMiddlewares),
+      ).toHaveBeenCalledWith(
+        'logging middleware',
+        authenticationMiddleware,
+      );
+    });
 
-      beforeEach(async () => {
-        event = {
-          url: { pathname: '/api' },
-          cookies: {
-            get: () => 'unknownUserUuid',
-            getAll: () => [{ name: 'cookie 1', value: 'value 1' }],
-          },
-          locals: {},
-          request: {
-            body: 'body',
-            clone: () => ({ text: () => Promise.resolve('body') }),
-            method: 'method',
-          },
-        };
-        vi.stubGlobal('crypto', { randomUUID: vi.fn(() => 'randomUUID') });
-        ({ handle } = await import('../hooks.server.js'));
-        vi.mocked(inject).mockReturnValueOnce(logger);
-        resolve.mockResolvedValueOnce({
-          body: 'body',
-          clone: () => ({ text: () => Promise.resolve('body') }),
-          status: 'status',
-        });
-      });
+    it('should handle api requests', async () => {
+      event.url.pathname = '/api';
+      const chain = vi.fn();
+      vi.mocked(chainMiddlewares).mockReturnValueOnce(chain);
+      ({ handle } = await import('../hooks.server.js'));
+      handle({ event, resolve });
+      expect(chain).toHaveBeenCalledWith(event, resolve);
+    });
 
-      it('should assign request random UUID', async () => {
-        await handle({ event, resolve });
-        expect(event.locals.requestUuid).toBe('randomUUID');
-      });
-
-      it('should inject logger', async () => {
-        await handle({ event, resolve });
-        expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Logger);
-      });
-
-      it('should log request', async () => {
-        await handle({ event, resolve });
-        expect(
-          logger.info,
-        ).toHaveBeenCalledWith(
-          { requestUuid: 'randomUUID', unknownUserUuid: 'unknownUserUuid' },
-          'request method /api; cookie: cookie 1=value 1; body: body',
-        );
-      });
-
-      it('should log response', async () => {
-        await handle({ event, resolve });
-        expect(
-          logger.info,
-        ).toHaveBeenCalledWith(
-          {
-            requestUuid: 'randomUUID',
-            unknownUserUuid: 'unknownUserUuid',
-            userid: null,
-          },
-          'response status; body: body',
-        );
-      });
-
-      const failTestCases = [{
-        condition: 'starts with /api/wishlist',
-        path: '/api/wishlist/',
-      }, {
-        condition: 'equals /api/user/hash',
-        path: '/api/user/hash',
-      }];
-
-      for (const { condition, path } of failTestCases) {
-        describe(`if pathname ${condition}`, () => {
-          beforeEach(() => {
-            event.url.pathname = path;
-          });
-
-          it('should fail if there are no auth tokens in cookies', async () => {
-            event.cookies.get = () => {};
-            expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
-          });
-
-          describe('if there is access token cookie', () => {
-            beforeEach(() => {
-              event.cookies.get = () => 'jwt';
-            });
-
-            it('should verify it\'s value', async () => {
-              await handle({ event, resolve });
-              expect(jwt.verify).toHaveBeenCalledWith('jwt', 'HMAC secret');
-            });
-
-            it('should fail if verification fails', async () => {
-              vi.mocked(jwt.verify).mockImplementation(() => {
-                throw new Error('verification failed');
-              });
-              expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
-            });
-          });
-
-          describe('if there is no access token cookie, but there is refresh token cookie', () => {
-            const cookies = {
-              [ACCESS_TOKEN_COOKIE_NAME]: undefined,
-              [REFRESH_TOKEN_COOKIE_NAME]: 'refresh token',
-            };
-
-            beforeEach(() => {
-              event.cookies.get = (key) => cookies[key];
-            });
-
-            it('should reissue auth tokens', async () => {
-              await handle({ event, resolve });
-              expect(vi.mocked(reissueAuthTokens)).toHaveBeenCalledWith(event.cookies);
-            });
-
-            it('should fail if verification fails', async () => {
-              vi.mocked(reissueAuthTokens).mockImplementation(() => {
-                throw new Error('reissue failed');
-              });
-              expect(await handle({ event, resolve })).toEqual(new Response(null, { status: 401 }));
-            });
-          });
-        });
-      }
-
-      const resolveTestCases = [{
-        condition: 'pathname doesn\'t start with /api/wishlist/ and is not /api/user/hash',
-        setUp: () => {
-          event.url.path = '/api';
-        },
-      }, {
-        condition: 'access token is valid',
-        setUp: () => {
-          const cookies = {
-            [ACCESS_TOKEN_COOKIE_NAME]: 'jwt',
-            [REFRESH_TOKEN_COOKIE_NAME]: undefined,
-          };
-          event.cookies.get = (key) => cookies[key];
-          event.url.path = '/api/wishlist';
-        },
-      }, {
-        condition: 'there is no access token, but refresh token is valid',
-        setUp: () => {
-          const cookies = {
-            [ACCESS_TOKEN_COOKIE_NAME]: undefined,
-            [REFRESH_TOKEN_COOKIE_NAME]: 'refresh token',
-          };
-          event.cookies.get = (key) => cookies[key];
-          event.url.path = '/api/wishlist';
-        },
-      }];
-
-      for (const { condition, setUp } of resolveTestCases) {
-        it(`should resolve if ${condition}`, async () => {
-          setUp();
-          await handle({ event, resolve });
-          expect(resolve).toHaveBeenCalledWith(event);
-        });
-      }
-
-      it('should set userid to locals', async () => {
-        event.url.pathname = '/api/wishlist';
-        event.cookies.get = () => 'token';
-        vi.mocked(jwt.verify).mockResolvedValueOnce({ userid: 'userid' });
-        await handle({ event, resolve });
-        expect(event.locals.userid).toBe('userid');
-      });
+    it('should handle other requests', async () => {
+      ({ handle } = await import('../hooks.server.js'));
+      handle({ event, resolve });
+      expect(resolve).toHaveBeenCalledWith(event);
     });
   });
 
@@ -220,20 +81,17 @@ describe('server hooks', () => {
     };
     const logger = { error: vi.fn() };
 
-    let handleError;
-
     beforeEach(async () => {
-      ({ handleError } = await import('../hooks.server.js'));
+      const { handleError } = await import('../hooks.server.js');
       vi.mocked(inject).mockReturnValueOnce(logger);
+      handleError({ error, event });
     });
 
     it('should inject logger', () => {
-      handleError({ error, event });
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(InjectionToken.Logger);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(Logger);
     });
 
     it('should log error', () => {
-      handleError({ error, event });
       expect(
         logger.error,
       ).toHaveBeenCalledWith(
@@ -264,6 +122,26 @@ describe('server hooks', () => {
 
   it('should connect to IPC hub', async () => {
     await import('../hooks.server.js');
-    expect(vi.mocked(connectToIPCHub)).toHaveBeenCalled();
+    expect(vi.mocked(connect)).toHaveBeenCalled();
+  });
+
+  it('should init actions feature', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initActionsFeature)).toHaveBeenCalled();
+  });
+
+  it('should init user feature', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initUserFeature)).toHaveBeenCalled();
+  });
+
+  it('should init categories feature', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initCategoriesFeature)).toHaveBeenCalled();
+  });
+
+  it('should init wishlist feature', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initWishlistFeature)).toHaveBeenCalled();
   });
 });

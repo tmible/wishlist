@@ -14,7 +14,7 @@ vi.mock(
 
 describe('theme switcher', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
     cleanup();
   });
 

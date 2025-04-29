@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.21 Могучее величество (2025-04-29)
+<img width="128" height="128" src="release-images/1.4.21.png"/>
+
+https://github.com/tmible/wishlist/compare/e96990e..master
+
+
 ## 1.4.20 Океанская глубоководная впадина (2025-04-21)
 <img width="128" height="128" src="release-images/1.4.20.png"/>
 
-https://github.com/tmible/wishlist/compare/c847256..master
+https://github.com/tmible/wishlist/compare/c847256..e96990e
 
 
 ## 1.4.19 Великолепный ландшафт (2025-04-19)

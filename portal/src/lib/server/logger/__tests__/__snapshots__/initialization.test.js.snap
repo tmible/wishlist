@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`logger / initialization > should initalize logger 1`] = `
+[
+  {
+    "level": "debug",
+  },
+  [
+    "pino.transport",
+    {
+      "targets": [
+        {
+          "level": "info",
+          "target": "/import/meta/dirname/pino-sqlite-transport.worker.js",
+        },
+        {
+          "level": "debug",
+          "options": {
+            "destination": 1,
+          },
+          "target": "pino-pretty",
+        },
+      ],
+      "worker": {
+        "env": {
+          "LOGS_DB_FILE_PATH": "LOGS_DB_FILE_PATH",
+          "LOGS_DB_MIGRATIONS_PATH": "LOGS_DB_MIGRATIONS_PATH",
+        },
+      },
+    },
+  ],
+]
+`;

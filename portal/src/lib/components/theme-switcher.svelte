@@ -1,12 +1,12 @@
-<!-- Svelte компонент -- переключатель цветовой темы -->
+<!-- @component Переключатель цветовой темы -->
 <script>
   import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Moon, SunDim } from 'lucide-svelte';
   import { onMount } from 'svelte';
-  import { InjectionToken } from '$lib/architecture/injection-token';
+  import { ThemeService } from '$lib/theme-service-injection-token.js';
 
   // Внедрение сервиса управления темой
-  const { updateTheme, subscribeToTheme } = inject(InjectionToken.ThemeService);
+  const { updateTheme, subscribeToTheme } = inject(ThemeService);
 
   /**
    * Признак использования тёмной темы

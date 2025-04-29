@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- десктопное меню портала -->
+<!-- @component Десктопное меню портала -->
 <script>
   import { DropdownMenu } from 'bits-ui';
   import { cubicOut } from 'svelte/easing';

@@ -1,6 +1,5 @@
-<!-- Svelte компонент -- меню портала -->
+<!-- @component Меню портала -->
 <script>
-  import { post } from '@tmible/wishlist-common/post';
   import Bot from 'lucide-svelte/icons/bot';
   import Eraser from 'lucide-svelte/icons/eraser';
   import LayoutGrid from 'lucide-svelte/icons/layout-grid';
@@ -9,9 +8,9 @@
   import Plus from 'lucide-svelte/icons/plus';
   import User from 'lucide-svelte/icons/user';
   import Users from 'lucide-svelte/icons/users';
-  import { goto } from '$app/navigation';
-  import { list } from '$lib/store/list';
-  import { user } from '$lib/store/user';
+  import { logout } from '$lib/user/use-cases/logout.js';
+  import { wishlist } from '$lib/wishlist/store.js';
+  import { shareLink } from '$lib/wishlist/use-cases/share-link.js';
   import DesktopMenu from './desktop-menu.svelte';
   import LayoutListMove from './layout-list-move.svelte';
   import MobileMenu from './mobile-menu.svelte';
@@ -63,37 +62,6 @@
   } = $props();
 
   /**
-   * Формирование ссылки на список пользователя в диалоге с ботом или для групп, в которых есть бот.
-   * По возможности вызов меню "Поделиться", иначе копирование ссылки в буфер обмена и индикация
-   * в интерфейсе
-   * @function shareLink
-   * @param {HTMLElement} currentTarget Цель события клика по кнопке получения ссылки
-   * @param {boolean} isLinkForGroups Признак необходимости формирования ссылки для групп
-   * @returns {void}
-   * @async
-   */
-  const shareLink = async (currentTarget, isLinkForGroups) => {
-    if ($user.hash === null) {
-      user.set({
-        ...$user,
-        hash: await fetch('/api/user/hash').then((response) => response.text()),
-      });
-    }
-
-    const link = `https://t.me/tmible_wishlist_bot?start${
-      isLinkForGroups ? 'group' : ''
-    }=${$user.hash}`;
-
-    try {
-      await navigator.share({ url: link });
-    } catch {
-      await navigator.clipboard.writeText(link);
-      currentTarget.classList.add('clicked', 'relative');
-      setTimeout(() => currentTarget.classList.remove('clicked', 'relative'), 1000);
-    }
-  };
-
-  /**
    * Пункты меню
    * @type {MenuItem[]}
    */
@@ -107,13 +75,13 @@
     label: 'Изменить порядок',
     testId: 'reorder',
     onClick: reorder,
-    condition: ($list ?? []).length > 0,
+    condition: ($wishlist ?? []).length > 0,
   }, {
     icon: Eraser,
     label: 'Быстрая очистка',
     testId: 'clear',
     onClick: clear,
-    condition: ($list ?? []).length > 0,
+    condition: ($wishlist ?? []).length > 0,
   }, {
     icon: LayoutGrid,
     label: 'Управлять категориями',
@@ -143,13 +111,7 @@
     icon: LogOut,
     label: 'Выйти',
     testId: 'logout',
-    onClick: async () => {
-      const response = await post('/api/logout');
-      if (response.ok) {
-        user.set({ ...$user, id: null, isAuthenticated: false });
-        goto('/');
-      }
-    },
+    onClick: logout,
   }]);
 </script>
 
