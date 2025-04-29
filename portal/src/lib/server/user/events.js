@@ -4,34 +4,34 @@
  * Событие добавления
  * @constant {string}
  */
-export const AddUser = 'add user';
+export const AddUser = {};
 
 /**
  * Событие получения хэша
  * @constant {string}
  */
-export const GetUserHash = 'get user hash SERVER';
+export const GetUserHash = {};
 
 /**
  * Событие установки хэша
  * @constant {string}
  */
-export const SetUserHash = 'set user hash';
+export const SetUserHash = {};
 
 /**
  * Событие сохранения refresh токена аутентификации
  * @constant {string}
  */
-export const StoreRefreshToken = 'store refresh token';
+export const StoreRefreshToken = {};
 
 /**
  * Событие получения refresh токена аутентификации
  * @constant {string}
  */
-export const GetRefreshToken = 'get refresh token';
+export const GetRefreshToken = {};
 
 /**
  * Событие удаления refresh токена аутентификации
  * @constant {string}
  */
-export const DeleteRefreshToken = 'delete refresh token';
+export const DeleteRefreshToken = {};

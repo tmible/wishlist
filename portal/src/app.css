@@ -267,7 +267,11 @@ body:has(.sortable-fallback) * {
   transform: rotate(7deg);
 }
 
-@keyframes invisible {
+.sortable-ghost {
+   @apply opacity-50;
+ }
+
+ @keyframes invisible {
   0% {
     visibility: visible;
   }

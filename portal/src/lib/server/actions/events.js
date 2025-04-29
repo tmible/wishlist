@@ -4,4 +4,4 @@
  * Событие добавления действия
  * @constant {string}
  */
-export const AddAction = 'add action';
+export const AddAction = {};

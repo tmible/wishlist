@@ -4,10 +4,10 @@
  * Событие выполнения транзакции
  * @constant {string}
  */
-export const RunTransaction = 'run transaction';
+export const RunTransaction = {};
 
 /**
  * Событие выполнения SQL выражения с проверкой авторизации
  * @constant {string}
  */
-export const RunStatementAuthorized = 'run statement authorized';
+export const RunStatementAuthorized = {};

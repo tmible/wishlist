@@ -4,22 +4,22 @@
  * Событие получения категорий
  * @constant {string}
  */
-export const GetCategories = 'get categories';
+export const GetCategories = {};
 
 /**
  * Событие добавления категории
  * @constant {string}
  */
-export const AddCategory = 'add category';
+export const AddCategory = {};
 
 /**
  * Событие обновления категории
  * @constant {string}
  */
-export const UpdateCategory = 'update category';
+export const UpdateCategory = {};
 
 /**
  * Событие удаления категории
  * @constant {string}
  */
-export const DeleteCategory = 'delete category';
+export const DeleteCategory = {};

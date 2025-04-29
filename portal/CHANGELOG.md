@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.22 Жгучая сапфировая роза (2025-04-29)
+<img width="128" height="128" src="release-images/1.4.22.png"/>
+
+https://github.com/tmible/wishlist/compare/701d975..master
+
+
 ## 1.4.21 Могучее величество (2025-04-29)
 <img width="128" height="128" src="release-images/1.4.21.png"/>
 
-https://github.com/tmible/wishlist/compare/e96990e..master
+https://github.com/tmible/wishlist/compare/e96990e..701d975
 
 
 ## 1.4.20 Океанская глубоководная впадина (2025-04-21)

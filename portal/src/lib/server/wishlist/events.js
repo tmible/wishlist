@@ -4,59 +4,59 @@
  * Событие получения списка
  * @constant {string}
  */
-export const GetWishlist = 'get wishlist';
+export const GetWishlist = {};
 
 /**
  * Событие добавления элемента к списку
  * @constant {string}
  */
-export const AddItem = 'add item';
+export const AddItem = {};
 
 /**
  * Событие сохранения элементов разметки описания
  * @constant {string}
  */
-export const InsertDescriptionEntities = 'insert description entities';
+export const InsertDescriptionEntities = {};
 
 /**
  * Событие получения элемента
  * @constant {string}
  */
-export const GetItem = 'get item';
+export const GetItem = {};
 
 /**
  * Событие получения функции, подсчитывающей количество элементов списка желаний,
  * принадлежащих пользователю, среди указанных
  * @constant {string}
  */
-export const GetWishlistItemsCounter = 'get wishlist items counter';
+export const GetWishlistItemsCounter = {};
 
 /**
  * Событие переупорядочивания списка
  * @constant {string}
  */
-export const ReorderWishlist = 'reorder wishlist';
+export const ReorderWishlist = {};
 
 /**
  * Событие удаления нескольких элементов из списка
  * @constant {string}
  */
-export const DeleteItems = 'delete items';
+export const DeleteItems = {};
 
 /**
  * Событие обновления элемента списка
  * @constant {string}
  */
-export const UpdateItem = 'update item';
+export const UpdateItem = {};
 
 /**
  * Событие удаления элементов разметки описания
  * @constant {string}
  */
-export const DeleteDescriptionEntities = 'delete description entities';
+export const DeleteDescriptionEntities = {};
 
 /**
  * Событие удаления одного элемента из списка
  * @constant {string}
  */
-export const DeleteItem = 'delete item';
+export const DeleteItem = {};
