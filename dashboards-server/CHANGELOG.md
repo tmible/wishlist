@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.0 Изменчивая уравновешенность (2025-05-02)
+<img width="128" height="128" src="release-images/1.5.0.png"/>
+
+https://github.com/tmible/wishlist/compare/a868d06..master
+
+
 ## 1.4.0 Звездное небо (2025-05-01)
 <img width="128" height="128" src="release-images/1.4.0.png"/>
 
-https://github.com/tmible/wishlist/compare/c6d1d7b..master
+https://github.com/tmible/wishlist/compare/c6d1d7b..a868d06
 
 
 ## 1.3.2 Энергичный перфекционист (2025-04-21)

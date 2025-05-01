@@ -269,7 +269,7 @@
 
   </div>
 
-  <div class="relative">
+  <div class="relative aspect-2/1">
     <canvas bind:this={dashboardCanvas}></canvas>
     {#if config.type === 'doughnut'}
       <svg

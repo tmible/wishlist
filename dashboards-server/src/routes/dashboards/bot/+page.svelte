@@ -1,5 +1,6 @@
 <!-- @component Страница с дашбордами бота -->
 <script>
+  import GridScalePlate from '$lib/components/grid-scale-plate.svelte';
   import UserSessionsTable from '$lib/components/user-sessions-table';
   import { PERIOD } from '$lib/constants/period.const.js';
   import Dashboard from '$lib/dashboard/dashboard.svelte';
@@ -25,8 +26,8 @@
 
 {#if $user.isAuthenticated}
   <HealthDashboard service="bot" />
-  <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
-    <div class="plate p-3 md:p-6">
+  <div class="dashboards flex flex-wrap -m-3 mb-9">
+    <GridScalePlate>
       <Dashboard
         service="bot"
         config={{
@@ -45,8 +46,8 @@
           }],
         }}
       />
-    </div>
-    <div class="plate p-3 md:p-6">
+    </GridScalePlate>
+    <GridScalePlate>
       <Dashboard
         service="bot"
         config={{
@@ -66,8 +67,8 @@
           }],
         }}
       />
-    </div>
-    <div class="plate p-3 md:p-6">
+    </GridScalePlate>
+    <GridScalePlate>
       <Dashboard
         service="bot"
         config={{
@@ -77,7 +78,7 @@
           label: [ 'Success rate' ],
         }}
       />
-    </div>
+    </GridScalePlate>
   </div>
   <div class="plate p-3 md:p-6">
     <UserSessionsTable data={data.userSessions} />

@@ -85,10 +85,3 @@
 .input::placeholder {
   color: color-mix(in oklch, var(--color-base-content) 50%, #0000);
 }
-
-@layer components {
-  .dashboards > *:nth-last-child(1):nth-child(odd) {
-    @apply xl:col-start-1;
-    @apply xl:col-end-3;
-  }
-}
