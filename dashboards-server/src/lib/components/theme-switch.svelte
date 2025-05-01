@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- переключатель цветовой темы -->
+<!-- @component Переключатель цветовой темы -->
 <script>
   import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Moon, SunDim } from 'lucide-svelte';

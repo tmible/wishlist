@@ -44,4 +44,5 @@ export const ChartUpdateAnimation = {
   activeUsers: line,
   successRate: doughnut,
   authenticationFunnel: doughnut,
+  rps: line,
 };

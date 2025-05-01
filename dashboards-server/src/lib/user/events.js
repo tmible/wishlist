@@ -4,4 +4,4 @@
  * Событие навигации по приложению
  * @constant {string}
  */
-export const Navigate = 'navigate';
+export const Navigate = {};

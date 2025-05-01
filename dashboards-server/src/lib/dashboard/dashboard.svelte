@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- дашборд -->
+<!-- @component Дашборд -->
 <script>
   import { deprive, inject } from '@tmible/wishlist-common/dependency-injector';
   import { Select } from 'bits-ui';

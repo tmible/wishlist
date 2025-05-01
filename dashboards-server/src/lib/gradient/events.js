@@ -4,10 +4,10 @@
  * Событие применения градиента
  * @constant {string}
  */
-export const ApplyGradient = 'apply gradient';
+export const ApplyGradient = {};
 
 /**
  * Событие отключения градиента
  * @constant {string}
  */
-export const RemoveGradient = 'remove gradient';
+export const RemoveGradient = {};

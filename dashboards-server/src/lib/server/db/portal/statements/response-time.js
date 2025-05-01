@@ -24,5 +24,5 @@ export const initResponseTimeStatement = () => {
     WHERE responseTime IS NOT NULL
     ORDER BY time
   `);
-  subscribe(GetResponseTime, (...args) => statement.all(...args));
+  subscribe(GetResponseTime, (periodStart) => statement.all(periodStart));
 };

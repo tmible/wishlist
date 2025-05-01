@@ -19,7 +19,7 @@ describe('dashboard / chart builders', () => {
     vi.clearAllMocks();
   });
 
-  for (const chart of [ 'time', 'activeUsers' ]) {
+  for (const chart of [ 'time', 'activeUsers', 'rps' ]) {
     describe('for light theme', () => {
       beforeEach(() => {
         vi.mocked(inject).mockReturnValueOnce({ isDarkTheme: () => false });

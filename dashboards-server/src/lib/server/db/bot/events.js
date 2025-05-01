@@ -4,46 +4,46 @@
  * Получение времени ответа
  * @constant {string}
  */
-export const GetResponseTime = 'get bot response time';
+export const GetResponseTime = {};
 
 /**
  * Получение времени обработки обновления
  * @constant {string}
  */
-export const GetProcessTime = 'get bot process time';
+export const GetProcessTime = {};
 
 /**
  * Получение времени подотовки к обработке обновления
  * @constant {string}
  */
-export const GetStartupTime = 'get bot startup time';
+export const GetStartupTime = {};
 
 /**
  * Получение количества активных пользователей за день
  * @constant {string}
  */
-export const GetDAU = 'get bot DAU';
+export const GetDAU = {};
 
 /**
  * Получение количества активных пользователей за месяц
  * @constant {string}
  */
-export const GetMAU = 'get bot MAU';
+export const GetMAU = {};
 
 /**
  * Получение количества активных пользователей за год
  * @constant {string}
  */
-export const GetYAU = 'get bot YAU';
+export const GetYAU = {};
 
 /**
  * Получение доли успешно обработанных обновлений
  * @constant {string}
  */
-export const GetSuccessRate = 'get bot success rate';
+export const GetSuccessRate = {};
 
 /**
  * Получение всех полученных обновлений
  * @constant {string}
  */
-export const GetUserSessions = 'get bot user sessions';
+export const GetUserSessions = {};

@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- общая для всех страниц разметка -->
+<!-- @component Общая для всех страниц разметка -->
 <script>
   import '../app.css';
   import { provide } from '@tmible/wishlist-common/dependency-injector';

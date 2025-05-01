@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- страница с дашбордами -->
+<!-- @component Страница с дашбордами -->
 <script>
   import { goto } from '$app/navigation';
 

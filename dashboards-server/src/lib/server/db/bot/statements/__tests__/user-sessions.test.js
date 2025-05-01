@@ -41,7 +41,7 @@ describe('bot user sessions statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initUserSessionsStatement();
-    eventHandler('args');
-    expect(statement.all).toHaveBeenCalledWith('args');
+    eventHandler();
+    expect(statement.all).toHaveBeenCalledWith();
   });
 });

@@ -1,12 +1,16 @@
 import { emit } from '@tmible/wishlist-common/event-bus';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { GetAuthenticationFunnel } from '$lib/server/db/portal/events.js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { GetYAU } from '$lib/server/db/portal/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
 
-describe('portal authenticationFunnel endpoint', () => {
+describe('portal yau endpoint', () => {
+  beforeEach(() => {
+    vi.spyOn(Date, 'now').mockReturnValue('now');
+  });
+
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -24,19 +28,12 @@ describe('portal authenticationFunnel endpoint', () => {
   });
 
   it('should emit event', () => {
-    vi.mocked(emit).mockReturnValueOnce({});
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetAuthenticationFunnel, { periodStart: 'param' });
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetYAU, 'param', 'now');
   });
 
   it('should return event result', () => {
-    const authentications = Math.random();
-    const landingVisits = Math.random();
-    vi.mocked(emit).mockReturnValueOnce({ authentications, landingVisits });
-    expect(
-      GET({ url: { searchParams: { get: () => 'param' } } }),
-    ).toBe(
-      authentications / landingVisits,
-    );
+    vi.mocked(emit).mockReturnValueOnce('yau');
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('yau');
   });
 });

@@ -23,5 +23,5 @@ export const initProcessTimeStatement = () => {
     )
     WHERE processTime IS NOT NULL
   `);
-  subscribe(GetProcessTime, (...args) => statement.all(...args));
+  subscribe(GetProcessTime, (periodStart) => statement.all(periodStart));
 };

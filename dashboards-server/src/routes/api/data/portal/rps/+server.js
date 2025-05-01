@@ -1,9 +1,9 @@
 import { json } from '@sveltejs/kit';
 import { emit } from '@tmible/wishlist-common/event-bus';
-import { GetDAU } from '$lib/server/db/bot/events.js';
+import { GetRPS } from '$lib/server/db/portal/events.js';
 
 /**
- * Получение из БД с логами метрики DAU бота для каждого дня указанного периода
+ * Получение из БД с логами метрики RPS портала для каждой секунды указанного периода
  * @type {import('./$types').RequestHandler}
  */
 export const GET = ({ url }) => {
@@ -11,5 +11,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  return json(emit(GetDAU, periodStart, Date.now()));
+  return json(emit(GetRPS, periodStart, Date.now()));
 };

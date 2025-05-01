@@ -2,13 +2,13 @@ import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { subscribe } from '@tmible/wishlist-common/event-bus';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Database } from '../../../injection-tokens.js';
-import { GetResponseTime } from '../../events.js';
-import { initResponseTimeStatement } from '../response-time.js';
+import { GetRPS } from '../../events.js';
+import { initRPSStatement } from '../rps.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 
-describe('bot response time statement', () => {
+describe('portal RPS statement', () => {
   let db;
   let statement;
 
@@ -23,25 +23,25 @@ describe('bot response time statement', () => {
   });
 
   it('should inject database', () => {
-    initResponseTimeStatement();
+    initRPSStatement();
     expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
   });
 
   it('should prepare statement', () => {
-    initResponseTimeStatement();
+    initRPSStatement();
     expect(db.prepare).toHaveBeenCalledWith(expect.any(String));
   });
 
   it('should subscribe to event', () => {
-    initResponseTimeStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetResponseTime, expect.any(Function));
+    initRPSStatement();
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetRPS, expect.any(Function));
   });
 
   it('should run statement on event emit', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
-    initResponseTimeStatement();
-    eventHandler('start');
-    expect(statement.all).toHaveBeenCalledWith('start');
+    initRPSStatement();
+    eventHandler('start', 'end');
+    expect(statement.all).toHaveBeenCalledWith({ periodStart: 'start', periodEnd: 'end' });
   });
 });

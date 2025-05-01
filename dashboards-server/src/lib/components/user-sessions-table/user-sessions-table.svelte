@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- таблица со всеми обновлениями, полученными ботом -->
+<!-- @component Таблица со всеми обновлениями, полученными ботом -->
 <script>
   import { Pagination } from 'bits-ui';
   import dayjs from 'dayjs';

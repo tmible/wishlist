@@ -13,6 +13,7 @@ export const load = async ({ fetch }) => {
 
   const getDashboardData = createGetData('portal', fetch);
   const data = await Promise.all([
+    getDashboardData([ 'rps' ], Date.now() - PERIOD.DAY),
     getDashboardData([ 'responseTime' ], Date.now() - PERIOD.DAY),
     getDashboardData([ 'dau' ], Date.now() - PERIOD.WEEK),
     getDashboardData([ 'successRate' ], Date.now() - PERIOD.DAY),
@@ -20,17 +21,20 @@ export const load = async ({ fetch }) => {
   ]);
 
   return {
+    rps: {
+      rps: data[0][0],
+    },
     time: {
-      responseTime: data[0][0],
+      responseTime: data[1][0],
     },
     activeUsers: {
-      dau: data[1][0],
+      dau: data[2][0],
     },
     successRate: {
-      successRate: data[2][0],
+      successRate: data[3][0],
     },
     authenticationFunnel: {
-      authenticationFunnel: data[3][0],
+      authenticationFunnel: data[4][0],
     },
   };
 };

@@ -12,6 +12,6 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  const { successful, total } = emit(GetSuccessRate, { periodStart });
+  const { successful, total } = emit(GetSuccessRate, periodStart);
   return json(successful / total);
 };

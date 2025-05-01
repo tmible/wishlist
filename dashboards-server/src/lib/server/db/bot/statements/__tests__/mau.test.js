@@ -41,7 +41,7 @@ describe('bot MAU statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initMAUStatement();
-    eventHandler('args');
-    expect(statement.all).toHaveBeenCalledWith('args');
+    eventHandler('start', 'end');
+    expect(statement.all).toHaveBeenCalledWith({ periodStart: 'start', periodEnd: 'end' });
   });
 });

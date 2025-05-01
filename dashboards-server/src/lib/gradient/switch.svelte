@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- переключатель градиента на фоне страницы -->
+<!-- @component Переключатель градиента на фоне страницы -->
 <script>
   import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
   import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';

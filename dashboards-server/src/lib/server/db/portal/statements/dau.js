@@ -37,5 +37,5 @@ export const initDAUStatement = () => {
     ON (logs.timestamp / 1000 >= days.day_start AND logs.timestamp / 1000 < days.day_end)
     GROUP BY day_end
   `);
-  subscribe(GetDAU, (...args) => statement.all(...args));
+  subscribe(GetDAU, (periodStart, periodEnd) => statement.all({ periodStart, periodEnd }));
 };

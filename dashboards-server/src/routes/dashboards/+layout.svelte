@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- общая для страниц с дашбордами разметка -->
+<!-- @component Общая для страниц с дашбордами разметка -->
 <script>
   import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
   import { provide } from '@tmible/wishlist-common/dependency-injector';

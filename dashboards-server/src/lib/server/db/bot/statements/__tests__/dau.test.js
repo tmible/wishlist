@@ -41,7 +41,7 @@ describe('bot DAU statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initDAUStatement();
-    eventHandler('args');
-    expect(statement.all).toHaveBeenCalledWith('args');
+    eventHandler('start', 'end');
+    expect(statement.all).toHaveBeenCalledWith({ periodStart: 'start', periodEnd: 'end' });
   });
 });

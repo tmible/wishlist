@@ -4,34 +4,40 @@
  * Получение времени ответа
  * @constant {string}
  */
-export const GetResponseTime = 'get portal response time';
+export const GetResponseTime = {};
 
 /**
  * Получение количества активных пользователей за день
  * @constant {string}
  */
-export const GetDAU = 'get portal DAU';
+export const GetDAU = {};
 
 /**
  * Получение количества активных пользователей за месяц
  * @constant {string}
  */
-export const GetMAU = 'get portal MAU';
+export const GetMAU = {};
 
 /**
  * Получение количества активных пользователей за год
  * @constant {string}
  */
-export const GetYAU = 'get portal YAU';
+export const GetYAU = {};
 
 /**
  * Получение доли успешно обработанных серверной частью запросов
  * @constant {string}
  */
-export const GetSuccessRate = 'get portal success rate';
+export const GetSuccessRate = {};
 
 /**
  * Получение доли пользователей, прошедших аутентификацию после посещения лендинга
  * @constant {string}
  */
-export const GetAuthenticationFunnel = 'get portal authentication funnel';
+export const GetAuthenticationFunnel = {};
+
+/**
+ * Получение количества полученных серверной частью за секунду запросов
+ * @constant {string}
+ */
+export const GetRPS = {};

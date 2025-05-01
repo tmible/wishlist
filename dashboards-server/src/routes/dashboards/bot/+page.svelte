@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- страница с дашбордами бота -->
+<!-- @component Страница с дашбордами бота -->
 <script>
   import UserSessionsTable from '$lib/components/user-sessions-table';
   import { PERIOD } from '$lib/constants/period.const.js';

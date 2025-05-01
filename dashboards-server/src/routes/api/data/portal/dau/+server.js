@@ -11,5 +11,5 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  return json(emit(GetDAU, { periodStart, periodEnd: Date.now() }));
+  return json(emit(GetDAU, periodStart, Date.now()));
 };

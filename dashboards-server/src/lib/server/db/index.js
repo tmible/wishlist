@@ -18,6 +18,7 @@ import {
   initDAUStatement as initPortalDAUStatement,
   initMAUStatement as initPortalMAUStatement,
   initResponseTimeStatement as initPortalResponseTimeStatement,
+  initRPSStatement as initPortalRPSStatement,
   initSuccessRateStatement as initPortalSuccessRateStatement,
   initYAUStatement as initPortalYAUStatement,
 } from './portal/statements';
@@ -50,4 +51,5 @@ export const initDB = () => {
   initPortalYAUStatement();
   initPortalSuccessRateStatement();
   initPortalAuthenticationFunnelStatement();
+  initPortalRPSStatement();
 };

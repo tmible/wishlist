@@ -1,12 +1,12 @@
 import { emit } from '@tmible/wishlist-common/event-bus';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GetYAU } from '$lib/server/db/bot/events.js';
+import { GetRPS } from '$lib/server/db/portal/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
 
-describe('bot yau endpoint', () => {
+describe('portal rps endpoint', () => {
   beforeEach(() => {
     vi.spyOn(Date, 'now').mockReturnValue('now');
   });
@@ -29,16 +29,11 @@ describe('bot yau endpoint', () => {
 
   it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(
-      vi.mocked(emit),
-    ).toHaveBeenCalledWith(
-      GetYAU,
-      { periodStart: 'param', periodEnd: 'now' },
-    );
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetRPS, 'param', 'now');
   });
 
   it('should return event result', () => {
-    vi.mocked(emit).mockReturnValueOnce('yau');
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('yau');
+    vi.mocked(emit).mockReturnValueOnce('rps');
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('rps');
   });
 });

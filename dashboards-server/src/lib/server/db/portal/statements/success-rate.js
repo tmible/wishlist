@@ -28,5 +28,5 @@ export const initSuccessRateStatement = () => {
     LEFT JOIN errors
     ON starts.requestUuid = errors.requestUuid
   `);
-  subscribe(GetSuccessRate, (...args) => statement.get(...args));
+  subscribe(GetSuccessRate, (periodStart) => statement.get({ periodStart }));
 };

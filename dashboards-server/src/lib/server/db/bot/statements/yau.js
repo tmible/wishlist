@@ -41,5 +41,5 @@ export const initYAUStatement = () => {
     ON (logs.time / 1000 >= years.year_start AND logs.time / 1000 < years.year_end)
     GROUP BY year_end
   `);
-  subscribe(GetYAU, (...args) => statement.all(...args));
+  subscribe(GetYAU, (periodStart, periodEnd) => statement.all({ periodStart, periodEnd }));
 };

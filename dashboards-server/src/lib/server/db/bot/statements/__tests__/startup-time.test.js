@@ -41,7 +41,7 @@ describe('bot startup time statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initStartupTimeStatement();
-    eventHandler('args');
-    expect(statement.all).toHaveBeenCalledWith('args');
+    eventHandler('start');
+    expect(statement.all).toHaveBeenCalledWith('start');
   });
 });

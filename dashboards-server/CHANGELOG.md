@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.0 Звездное небо (2025-05-01)
+<img width="128" height="128" src="release-images/1.4.0.png"/>
+
+https://github.com/tmible/wishlist/compare/c6d1d7b..master
+
+
 ## 1.3.2 Энергичный перфекционист (2025-04-21)
 <img width="128" height="128" src="release-images/1.3.2.png"/>
 
-https://github.com/tmible/wishlist/compare/73142d0..master
+https://github.com/tmible/wishlist/compare/73142d0..c6d1d7b
 
 
 ## 1.3.1 Небесная гармония (2025-04-21)

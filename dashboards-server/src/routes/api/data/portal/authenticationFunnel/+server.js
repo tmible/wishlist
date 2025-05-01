@@ -13,6 +13,6 @@ export const GET = ({ url }) => {
   if (!periodStart) {
     return new Response('missing periodStart parameter', { status: 400 });
   }
-  const { authentications, landingVisits } = emit(GetAuthenticationFunnel, { periodStart });
+  const { authentications, landingVisits } = emit(GetAuthenticationFunnel, periodStart);
   return json(authentications / landingVisits);
 };

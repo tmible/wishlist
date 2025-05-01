@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- страница с формой аутентификации -->
+<!-- @component Страница с формой аутентификации -->
 <script>
   import { enhance } from '$app/forms';
   import ThemeSwitch from '$lib/components/theme-switch.svelte';

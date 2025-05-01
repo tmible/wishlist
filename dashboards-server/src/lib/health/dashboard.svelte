@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- дашборд здоровья сервиса -->
+<!-- @component Дашборд здоровья сервиса -->
 <script>
   import { health } from './store.js';
 

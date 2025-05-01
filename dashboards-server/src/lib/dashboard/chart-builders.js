@@ -228,4 +228,12 @@ export const ChartBuilders = {
       authenticationFunnel ? '50%' : '100%',
     );
   },
+  rps: (charts, periodStart, periodSelected) => line(
+    charts[0]?.data?.map((item) => item.timestamp) ?? [],
+    charts,
+    periodStart,
+    {},
+    'D.MM.YYYY H:mm:ss',
+    periodSelected,
+  ),
 };

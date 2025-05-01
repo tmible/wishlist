@@ -23,5 +23,5 @@ export const initStartupTimeStatement = () => {
     )
     WHERE startupTime IS NOT NULL
   `);
-  subscribe(GetStartupTime, (...args) => statement.all(...args));
+  subscribe(GetStartupTime, (periodStart) => statement.all(periodStart));
 };

@@ -1,16 +1,12 @@
 import { emit } from '@tmible/wishlist-common/event-bus';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GetMAU } from '$lib/server/db/bot/events.js';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { GetSuccessRate } from '$lib/server/db/bot/events.js';
 import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
 
-describe('bot mau endpoint', () => {
-  beforeEach(() => {
-    vi.spyOn(Date, 'now').mockReturnValue('now');
-  });
-
+describe('bot successRate endpoint', () => {
   afterEach(() => {
     vi.clearAllMocks();
   });
@@ -28,17 +24,15 @@ describe('bot mau endpoint', () => {
   });
 
   it('should emit event', () => {
+    vi.mocked(emit).mockReturnValueOnce({});
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(
-      vi.mocked(emit),
-    ).toHaveBeenCalledWith(
-      GetMAU,
-      { periodStart: 'param', periodEnd: 'now' },
-    );
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetSuccessRate, 'param');
   });
 
   it('should return event result', () => {
-    vi.mocked(emit).mockReturnValueOnce('mau');
-    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe('mau');
+    const successful = Math.random();
+    const total = Math.random();
+    vi.mocked(emit).mockReturnValueOnce({ successful, total });
+    expect(GET({ url: { searchParams: { get: () => 'param' } } })).toBe(successful / total);
   });
 });

@@ -46,7 +46,7 @@ describe('portal authentication funnel statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initAuthenticationFunnelStatement();
-    eventHandler('args');
-    expect(statement.get).toHaveBeenCalledWith('args');
+    eventHandler('start');
+    expect(statement.get).toHaveBeenCalledWith({ periodStart: 'start' });
   });
 });

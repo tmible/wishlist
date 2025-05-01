@@ -16,5 +16,5 @@ export const initUserSessionsStatement = () => {
     WHERE level = 30 AND msg = 'start processing update'
     ORDER BY time DESC
   `);
-  subscribe(GetUserSessions, (...args) => statement.all(...args));
+  subscribe(GetUserSessions, () => statement.all());
 };

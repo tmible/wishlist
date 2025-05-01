@@ -41,7 +41,7 @@ describe('portal YAU statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initYAUStatement();
-    eventHandler('args');
-    expect(statement.all).toHaveBeenCalledWith('args');
+    eventHandler('start', 'end');
+    expect(statement.all).toHaveBeenCalledWith({ periodStart: 'start', periodEnd: 'end' });
   });
 });

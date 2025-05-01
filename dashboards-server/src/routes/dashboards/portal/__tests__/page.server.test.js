@@ -62,6 +62,7 @@ describe('dashboards/portal endpoint', () => {
 
     it('should return fetched data', async () => {
       getDashboardData
+        .mockReturnValueOnce([ 'rps' ])
         .mockReturnValueOnce([ 'responseTime' ])
         .mockReturnValueOnce([ 'dau' ])
         .mockReturnValueOnce([ 'successRate' ])
@@ -69,6 +70,9 @@ describe('dashboards/portal endpoint', () => {
       await expect(
         load({ fetch: 'fetch' }),
       ).resolves.toEqual({
+        rps: {
+          rps: 'rps',
+        },
         time: {
           responseTime: 'responseTime',
         },

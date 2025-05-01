@@ -1,4 +1,4 @@
-<!-- Svelte компонент -- страница с дашбордами портала -->
+<!-- @component Страница с дашбордами портала -->
 <script>
   import { PERIOD } from '$lib/constants/period.const.js';
   import Dashboard from '$lib/dashboard/dashboard.svelte';
@@ -24,6 +24,20 @@
 {#if $user.isAuthenticated}
   <HealthDashboard service="portal" />
   <div class="dashboards grid gap-6 grid-cols-1 xl:grid-cols-2 mb-9">
+    <div class="plate p-3 md:p-6">
+      <Dashboard
+        service="portal"
+        config={{
+          key: 'rps',
+          type: 'line',
+          initialData: data.rps,
+          chartConfigs: [{
+            key: 'rps',
+            label: 'Запросов в секунду',
+          }],
+        }}
+      />
+    </div>
     <div class="plate p-3 md:p-6">
       <Dashboard
         service="portal"

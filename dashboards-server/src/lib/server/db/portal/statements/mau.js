@@ -41,5 +41,5 @@ export const initMAUStatement = () => {
     ON (logs.timestamp / 1000 >= months.month_start AND logs.timestamp / 1000 < months.month_end)
     GROUP BY month_end
   `);
-  subscribe(GetMAU, (...args) => statement.all(...args));
+  subscribe(GetMAU, (periodStart, periodEnd) => statement.all({ periodStart, periodEnd }));
 };

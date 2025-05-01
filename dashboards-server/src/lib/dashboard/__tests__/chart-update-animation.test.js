@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ChartUpdateAnimation } from '../chart-update-animation.js';
 
 describe('dashboard / chart update animation', () => {
-  for (const chart of [ 'time', 'activeUsers' ]) {
+  for (const chart of [ 'time', 'activeUsers', 'rps' ]) {
     describe(`${chart} chart`, () => {
       it('should return true if there is no previous data', () => {
         expect(

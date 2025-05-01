@@ -30,5 +30,5 @@ export const initAuthenticationFunnelStatement = () => {
     LEFT JOIN authentications
     ON landingVisits.unknownUserUuid = authentications.unknownUserUuid
   `);
-  subscribe(GetAuthenticationFunnel, (...args) => statement.get(...args));
+  subscribe(GetAuthenticationFunnel, (periodStart) => statement.get({ periodStart }));
 };

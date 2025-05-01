@@ -41,7 +41,7 @@ describe('bot success rate statement', () => {
     let eventHandler;
     vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
     initSuccessRateStatement();
-    eventHandler('args');
-    expect(statement.get).toHaveBeenCalledWith('args');
+    eventHandler('start');
+    expect(statement.get).toHaveBeenCalledWith({ periodStart: 'start' });
   });
 });
