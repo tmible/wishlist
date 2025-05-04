@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { getPage } from '$lib/bot-user-updates/network.service.js';
 import { PERIOD } from '$lib/constants/period.const.js';
 import { createGetData } from '$lib/dashboard/network.service.js';
-import { getData } from '$lib/get-data.js';
 import { load } from '../+page.js';
 
 let browserMock;
 
+vi.mock('$lib/bot-user-updates/network.service.js');
 vi.mock('$lib/dashboard/network.service.js');
-vi.mock('$lib/get-data.js', () => ({ getData: vi.fn() }));
 vi.mock(
   '$app/environment',
   () => ({
@@ -34,6 +34,7 @@ describe('dashboards/bot endpoint', () => {
       vi.spyOn(Date, 'now').mockReturnValue(0);
       browserMock = true;
       getDashboardData = vi.fn().mockReturnValue([]);
+      vi.mocked(getPage).mockReturnValue([]);
       vi.mocked(createGetData).mockReturnValueOnce(getDashboardData);
     });
 
@@ -59,7 +60,7 @@ describe('dashboards/bot endpoint', () => {
 
     it('should get user sessions data', async () => {
       await load({ fetch: 'fetch' });
-      expect(vi.mocked(getData)).toHaveBeenCalledWith('/api/data/bot/userSessions', 'fetch');
+      expect(vi.mocked(getPage)).toHaveBeenCalledWith({}, 'fetch');
     });
 
     it('should return fetched data', async () => {
@@ -67,7 +68,7 @@ describe('dashboards/bot endpoint', () => {
         .mockReturnValueOnce([ 'responseTime' ])
         .mockReturnValueOnce([ 'dau' ])
         .mockReturnValueOnce([ 'successRate' ]);
-      vi.mocked(getData).mockReturnValueOnce('userSessions');
+      vi.mocked(getPage).mockReturnValueOnce([ 'botUserUpdates' ]);
       await expect(
         load({ fetch: 'fetch' }),
       ).resolves.toEqual({
@@ -80,7 +81,7 @@ describe('dashboards/bot endpoint', () => {
         successRate: {
           successRate: 'successRate',
         },
-        userSessions: 'userSessions',
+        botUserUpdates: 'botUserUpdates',
       });
     });
   });

@@ -1,0 +1,3 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`bot user updates / filtersToString > should return filters string 1`] = `" AND simple1 = filter AND range1 >= start AND range1 <= end AND range2 >= only AND range3 <= only"`;

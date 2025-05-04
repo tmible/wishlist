@@ -2,12 +2,12 @@
 
 /**
  * Событие применения градиента
- * @constant {string}
+ * @constant {{}}
  */
 export const ApplyGradient = {};
 
 /**
  * Событие отключения градиента
- * @constant {string}
+ * @constant {{}}
  */
 export const RemoveGradient = {};

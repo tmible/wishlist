@@ -12,7 +12,6 @@ describe('logout endpoint', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should delete cookie', async () => {

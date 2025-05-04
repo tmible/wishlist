@@ -29,7 +29,6 @@ describe('login endpoint', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should use timig safe equality check', async () => {

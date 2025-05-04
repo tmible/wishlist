@@ -2,6 +2,6 @@
 
 /**
  * Токен внедрения БД
- * @constant {string}
+ * @constant {{}}
  */
-export const Database = 'database';
+export const Database = {};

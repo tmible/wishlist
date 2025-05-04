@@ -2,12 +2,12 @@
 
 /**
  * Токен внедрения фабричного метода хранилища
- * @constant {string}
+ * @constant {{}}
  */
-export const StoreFactory = 'dashboard store factory';
+export const StoreFactory = {};
 
 /**
  * Токен внедрения фабричного метода функции запроса данных
- * @constant {string}
+ * @constant {{}}
  */
-export const NetworkFactory = 'dashboard network factory';
+export const NetworkFactory = {};

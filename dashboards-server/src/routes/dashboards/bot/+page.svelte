@@ -1,14 +1,16 @@
 <!-- @component Страница с дашбордами бота -->
 <script>
+  import BotUserUpdatesTable from '$lib/bot-user-updates/table.svelte';
   import GridScalePlate from '$lib/components/grid-scale-plate.svelte';
-  import UserSessionsTable from '$lib/components/user-sessions-table';
   import { PERIOD } from '$lib/constants/period.const.js';
   import Dashboard from '$lib/dashboard/dashboard.svelte';
   import HealthDashboard from '$lib/health/dashboard.svelte';
   import { user } from '$lib/user/store.js';
 
   /** @typedef {import('$lib/dashboard/domain.js').DashboardData} DashboardData */
-  /** @typedef {import('$lib/components/user-sessions-table').TableData} TableData */
+  /**
+   * @typedef {import('$lib/user-sessions/network.service.js').BotUserUpdatesDTO} BotUserUpdatesDTO
+   */
 
   /**
    * @typedef {object} Props
@@ -16,7 +18,7 @@
    *   time: DashboardData;
    *   activeUsers: DashboardData;
    *   successRate: DashboardData;
-   *   userSessions: TableData[];
+   *   botUserUpdates: BotUserUpdatesDTO;
    * }} data Данные для дашбордов
    */
 
@@ -81,6 +83,6 @@
     </GridScalePlate>
   </div>
   <div class="plate p-3 md:p-6">
-    <UserSessionsTable data={data.userSessions} />
+    <BotUserUpdatesTable data={data.botUserUpdates} />
   </div>
 {/if}

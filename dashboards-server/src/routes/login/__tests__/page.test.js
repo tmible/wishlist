@@ -14,7 +14,7 @@ vi.mock('$lib/user/use-cases/login.js');
 
 describe('login', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('on form success', () => {

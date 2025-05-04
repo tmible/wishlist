@@ -11,6 +11,6 @@
   const { value, onClick } = $props();
 </script>
 
-<button class="btn btn-link p-0 no-underline hover:underline" onclick={onClick}>
+<button class="btn h-0 btn-link p-0 no-underline hover:underline" onclick={onClick}>
   {value}
 </button>

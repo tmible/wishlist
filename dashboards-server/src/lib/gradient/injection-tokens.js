@@ -2,12 +2,12 @@
 
 /**
  * Токен внедрения хранилища градиента
- * @constant {string}
+ * @constant {{}}
  */
-export const GradientStore = 'gradient store';
+export const GradientStore = {};
 
 /**
  * Токен внедрения хранилища следующего градиента
- * @constant {string}
+ * @constant {{}}
  */
-export const NextGradientStore = 'next gradient store';
+export const NextGradientStore = {};

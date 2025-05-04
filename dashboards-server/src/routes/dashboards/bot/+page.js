@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
+import { getPage } from '$lib/bot-user-updates/network.service.js';
 import { PERIOD } from '$lib/constants/period.const.js';
 import { createGetData } from '$lib/dashboard/network.service.js';
-import { getData } from '$lib/get-data.js';
 
 /**
  * Загрузка данных для дашбордов бота
@@ -17,7 +17,7 @@ export const load = async ({ fetch }) => {
     getDashboardData([ 'responseTime' ], Date.now() - PERIOD.DAY),
     getDashboardData([ 'dau' ], Date.now() - PERIOD.WEEK),
     getDashboardData([ 'successRate' ], Date.now() - PERIOD.DAY),
-    getData('/api/data/bot/userSessions', fetch),
+    getPage({}, fetch),
   ]);
 
   return {
@@ -30,6 +30,6 @@ export const load = async ({ fetch }) => {
     successRate: {
       successRate: data[2][0],
     },
-    userSessions: data[3],
+    botUserUpdates: data[3][0],
   };
 };

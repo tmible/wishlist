@@ -7,7 +7,6 @@ vi.mock('@sveltejs/kit', () => ({ redirect: vi.fn() }));
 describe('404 page', () => {
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should redirect to /login', () => {

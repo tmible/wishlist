@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`bot user updates / statements / count > subscriber > should prepare statement 1`] = `
+[
+  "
+  SELECT COUNT(*) AS total
+  FROM 'bot.logs'
+  WHERE level = 30 AND msg = 'start processing update' AND time < ?filters string
+",
+]
+`;

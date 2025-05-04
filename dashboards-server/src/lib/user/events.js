@@ -2,6 +2,6 @@
 
 /**
  * Событие навигации по приложению
- * @constant {string}
+ * @constant {{}}
  */
 export const Navigate = {};

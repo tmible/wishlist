@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`bot user updates / statements / get > subscriber > should prepare statement 1`] = `
+[
+  "
+  SELECT time, chatId, userid, updateType, updatePayload
+  FROM 'bot.logs'
+  WHERE level = 30 AND msg = 'start processing update' AND time < ?filters string
+  ORDER BY time DESC
+  LIMIT 10
+  OFFSET ? * 10
+",
+]
+`;

@@ -16,7 +16,6 @@ describe('isAuthenticated endpoint', () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.restoreAllMocks();
   });
 
   it('should return false if there is no cookie', async () => {
@@ -34,7 +33,7 @@ describe('isAuthenticated endpoint', () => {
     });
 
     it('should return false if verification fails', async () => {
-      vi.spyOn(jwt, 'verify').mockImplementation(() => {
+      vi.spyOn(jwt, 'verify').mockImplementationOnce(() => {
         throw new Error('verification failed');
       });
       expect(await GET({ cookies })).toEqual(false);

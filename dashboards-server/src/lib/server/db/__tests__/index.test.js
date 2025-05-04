@@ -9,7 +9,6 @@ import {
   initResponseTimeStatement as initBotResponseTimeStatement,
   initStartupTimeStatement as initBotStartupTimeStatement,
   initSuccessRateStatement as initBotSuccessRateStatement,
-  initUserSessionsStatement as initBotUserSessionsStatement,
   initYAUStatement as initBotYAUStatement,
 } from '../bot/statements';
 import { initDB } from '../index.js';
@@ -105,11 +104,6 @@ describe('db', () => {
   it('should init bot success rate statement', () => {
     initDB();
     expect(vi.mocked(initBotSuccessRateStatement)).toHaveBeenCalled();
-  });
-
-  it('should init bot user sessions statement', () => {
-    initDB();
-    expect(vi.mocked(initBotUserSessionsStatement)).toHaveBeenCalled();
   });
 
   it('should init bot YAU statement', () => {

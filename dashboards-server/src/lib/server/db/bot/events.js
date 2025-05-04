@@ -2,48 +2,42 @@
 
 /**
  * Получение времени ответа
- * @constant {string}
+ * @constant {{}}
  */
 export const GetResponseTime = {};
 
 /**
  * Получение времени обработки обновления
- * @constant {string}
+ * @constant {{}}
  */
 export const GetProcessTime = {};
 
 /**
  * Получение времени подотовки к обработке обновления
- * @constant {string}
+ * @constant {{}}
  */
 export const GetStartupTime = {};
 
 /**
  * Получение количества активных пользователей за день
- * @constant {string}
+ * @constant {{}}
  */
 export const GetDAU = {};
 
 /**
  * Получение количества активных пользователей за месяц
- * @constant {string}
+ * @constant {{}}
  */
 export const GetMAU = {};
 
 /**
  * Получение количества активных пользователей за год
- * @constant {string}
+ * @constant {{}}
  */
 export const GetYAU = {};
 
 /**
  * Получение доли успешно обработанных обновлений
- * @constant {string}
+ * @constant {{}}
  */
 export const GetSuccessRate = {};
-
-/**
- * Получение всех полученных обновлений
- * @constant {string}
- */
-export const GetUserSessions = {};

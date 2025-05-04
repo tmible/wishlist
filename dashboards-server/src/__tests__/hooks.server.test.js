@@ -1,11 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { initBotUserUpdatesFeature } from '$lib/server/bot-user-updates/initialization.js';
 import { initDB } from '$lib/server/db';
 
 const resolve = vi.fn();
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('jsonwebtoken');
+vi.mock('$lib/server/bot-user-updates/initialization.js');
 vi.mock('$lib/server/db');
 
 describe('server hooks', () => {
@@ -71,10 +73,15 @@ describe('server hooks', () => {
         expect(resolve).toHaveBeenCalledWith(event);
       });
     }
+  });
 
-    it('should init DB', async () => {
-      await import('../hooks.server.js');
-      expect(vi.mocked(initDB)).toHaveBeenCalled();
-    });
+  it('should init DB', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initDB)).toHaveBeenCalled();
+  });
+
+  it('should init bot user updates feature', async () => {
+    await import('../hooks.server.js');
+    expect(vi.mocked(initBotUserUpdatesFeature)).toHaveBeenCalled();
   });
 });

@@ -9,7 +9,6 @@ import {
   initResponseTimeStatement as initBotResponseTimeStatement,
   initStartupTimeStatement as initBotStartupTimeStatement,
   initSuccessRateStatement as initBotSuccessRateStatement,
-  initUserSessionsStatement as initBotUserSessionsStatement,
   initYAUStatement as initBotYAUStatement,
 } from './bot/statements';
 import { Database as DatabaseInjectionToken } from './injection-tokens.js';
@@ -42,7 +41,6 @@ export const initDB = () => {
   initBotDAUStatement();
   initBotMAUStatement();
   initBotYAUStatement();
-  initBotUserSessionsStatement();
   initBotSuccessRateStatement();
 
   initPortalResponseTimeStatement();

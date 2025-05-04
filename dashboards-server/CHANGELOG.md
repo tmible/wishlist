@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.1 Железная независимость (2025-05-04)
+<img width="128" height="128" src="release-images/1.5.1.png"/>
+
+https://github.com/tmible/wishlist/compare/a6015f0..master
+
+
 ## 1.5.0 Изменчивая уравновешенность (2025-05-02)
 <img width="128" height="128" src="release-images/1.5.0.png"/>
 
-https://github.com/tmible/wishlist/compare/a868d06..master
+https://github.com/tmible/wishlist/compare/a868d06..a6015f0
 
 
 ## 1.4.0 Звездное небо (2025-05-01)

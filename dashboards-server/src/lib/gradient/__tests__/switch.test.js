@@ -42,7 +42,7 @@ describe('gradient / switch', () => {
 
   afterEach(() => {
     cleanup();
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('on create', () => {

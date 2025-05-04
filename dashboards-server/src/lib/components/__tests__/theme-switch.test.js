@@ -15,7 +15,7 @@ vi.mock(
 describe('theme switch', () => {
   afterEach(() => {
     cleanup();
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('on mount', () => {
