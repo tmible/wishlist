@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.4.23 Весёлая бабочка (2025-05-05)
+<img width="128" height="128" src="release-images/1.4.23.png"/>
+
+https://github.com/tmible/wishlist/compare/2c4a4e5..master
+
+
 ## 1.4.22 Жгучая сапфировая роза (2025-04-29)
 <img width="128" height="128" src="release-images/1.4.22.png"/>
 
-https://github.com/tmible/wishlist/compare/701d975..master
+https://github.com/tmible/wishlist/compare/701d975..2c4a4e5
 
 
 ## 1.4.21 Могучее величество (2025-04-29)

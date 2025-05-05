@@ -7,6 +7,10 @@ import * as networkService from '../network.service.js';
 import { botUserUpdates } from '../store.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock(
+  '../injection-tokens.js',
+  () => ({ Cache: 'cache', NetworkService: 'network service', Store: 'store' }),
+);
 
 describe('bot user updates / initialization', () => {
   let destroyBotUserUpdatesFeature;
@@ -20,15 +24,15 @@ describe('bot user updates / initialization', () => {
   });
 
   it('should provide store', () => {
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(Store, botUserUpdates);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(vi.mocked(Store), botUserUpdates);
   });
 
   it('should provide network service', () => {
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(NetworkService, networkService);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(vi.mocked(NetworkService), networkService);
   });
 
   it('should provide cache', () => {
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(Cache, cache);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(vi.mocked(Cache), cache);
   });
 
   describe('on destroy', () => {
@@ -37,15 +41,15 @@ describe('bot user updates / initialization', () => {
     });
 
     it('should deprive store', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(Store);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(Store));
     });
 
     it('should deprive network service', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should deprive cache', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(Cache);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(Cache));
     });
   });
 });

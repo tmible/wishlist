@@ -1,12 +1,12 @@
 <!-- @component Диалог с категориями -->
 <script>
+  import ScrollArea from '@tmible/wishlist-ui/scroll-area';
   import { Dialog } from 'bits-ui';
   import Pencil from 'lucide-svelte/icons/pencil';
   import Save from 'lucide-svelte/icons/save';
   import Trash2 from 'lucide-svelte/icons/trash-2';
   import Undo2 from 'lucide-svelte/icons/undo-2';
   import X from 'lucide-svelte/icons/x';
-  import ScrollArea from '$lib/components/scroll-area.svelte';
   import { categories } from './store.js';
   import { createCategory } from './use-cases/create-category.js';
   import { deleteCategory as deleteCategoryUseCase } from './use-cases/delete-category.js';

@@ -20,6 +20,7 @@ vi.mock('$lib/server/chain-middlewares.js');
 vi.mock('$lib/server/db/initialization.js');
 vi.mock('$lib/server/ipc-hub/use-cases/connect.js');
 vi.mock('$lib/server/logger/initialization.js');
+vi.mock('$lib/server/logger/injection-tokens.js', () => ({ Logger: 'logger' }));
 vi.mock('$lib/server/logger/use-cases/get-logging-middleware.js');
 vi.mock('$lib/server/logs-db/initialization.js');
 vi.mock('$lib/server/user/initialization.js');
@@ -88,7 +89,7 @@ describe('server hooks', () => {
     });
 
     it('should inject logger', () => {
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Logger);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Logger));
     });
 
     it('should log error', () => {

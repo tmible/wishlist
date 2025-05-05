@@ -5,6 +5,7 @@ import { NetworkService } from '../injection-tokens.js';
 import * as networkService from '../network.service.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../injection-tokens.js', () => ({ NetworkService: 'network service' }));
 
 describe('actions / initialization', () => {
   let destroyActionsFeature;
@@ -27,7 +28,7 @@ describe('actions / initialization', () => {
     });
 
     it('should deprive network service', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
   });
 });

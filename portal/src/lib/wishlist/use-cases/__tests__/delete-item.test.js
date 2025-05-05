@@ -4,6 +4,7 @@ import { NetworkService, Store } from '../../injection-tokens.js';
 import { deleteItem } from '../delete-item.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { deleteItem: vi.fn() };
 const storeMock = { delete: vi.fn() };
@@ -20,7 +21,7 @@ describe('wishlist / use cases / delete item', () => {
 
   it('should inject wishlist network service', async () => {
     await deleteItem('item');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should delete item via network', async () => {
@@ -36,7 +37,7 @@ describe('wishlist / use cases / delete item', () => {
     });
 
     it('should inject wishlist store', () => {
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
     });
 
     it('should delete item from store', () => {

@@ -5,10 +5,11 @@ import { Logger } from '$lib/server/logger/injection-tokens.js';
 import { IPCHub } from '../../injection-tokens.js';
 import { connect } from '../connect.js';
 
-
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('node:net');
 vi.mock('$env/static/private', () => ({ HUB_SOCKET_PATH: 'HUB_SOCKET_PATH' }));
+vi.mock('$lib/server/logger/injection-tokens.js', () => ({ Logger: 'logger' }));
+vi.mock('../../injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
 
 describe('IPC hub / use cases / connect to IPC hub', () => {
   let socket;
@@ -32,7 +33,7 @@ describe('IPC hub / use cases / connect to IPC hub', () => {
 
   it('should inject logger', () => {
     connect();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Logger);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Logger));
   });
 
   it('should connect to socket', () => {
@@ -61,7 +62,7 @@ describe('IPC hub / use cases / connect to IPC hub', () => {
     expect(
       vi.mocked(provide),
     ).toHaveBeenCalledWith(
-      IPCHub,
+      vi.mocked(IPCHub),
       {
         isConnected: expect.any(Function),
         sendMessage: expect.any(Function),

@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { strict as assert } from 'node:assert';
+import { describe, it } from 'node:test';
 import descriptionEntitiesReducer from '../description-entities-reducer.js';
 
 describe('description entities reducer', () => {
   it('should add current to accum', () => {
-    expect(
+    assert.deepEqual(
       descriptionEntitiesReducer([], { id: 'id', other: 'property' }),
-    ).toEqual(
       [{ id: 'id', other: 'property', descriptionEntities: [] }],
     );
   });
@@ -19,9 +19,8 @@ describe('description entities reducer', () => {
       length: 0,
       additional: null,
     };
-    expect(
+    assert.deepEqual(
       descriptionEntitiesReducer([], current),
-    ).toEqual(
       [{
         id: 'id',
         other: 'property',
@@ -39,9 +38,8 @@ describe('description entities reducer', () => {
       length: 0,
       additional: '{ "additional": "property" }',
     };
-    expect(
+    assert.deepEqual(
       descriptionEntitiesReducer([], current),
-    ).toEqual(
       [{
         id: 'id',
         other: 'property',
@@ -53,9 +51,8 @@ describe('description entities reducer', () => {
   it('should add entities to existing entry', () => {
     const accum = [{ id: 'id', other: 'property', descriptionEntities: [] }];
     const current = { id: 'id', type: 'type', offset: 0, length: 0, additional: null };
-    expect(
+    assert.deepEqual(
       descriptionEntitiesReducer(accum, current),
-    ).toEqual(
       [{
         id: 'id',
         other: 'property',
@@ -73,9 +70,8 @@ describe('description entities reducer', () => {
       length: 0,
       additional: '{ "additional": "property" }',
     };
-    expect(
+    assert.deepEqual(
       descriptionEntitiesReducer(accum, current),
-    ).toEqual(
       [{
         id: 'id',
         other: 'property',

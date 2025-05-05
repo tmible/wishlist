@@ -2,6 +2,6 @@
 
 /**
  * Событие добавления действия
- * @constant {string}
+ * @constant {{}}
  */
 export const AddAction = {};

@@ -5,6 +5,7 @@ import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/portal/events.js', () => ({ GetResponseTime: 'get response time' }));
 
 describe('portal responseTime endpoint', () => {
   afterEach(() => {
@@ -25,7 +26,7 @@ describe('portal responseTime endpoint', () => {
 
   it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetResponseTime, 'param');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetResponseTime), 'param');
   });
 
   it('should return event result', () => {

@@ -4,6 +4,7 @@ import { createLoggingMiddleware } from '../create-logging-middleware.js';
 import { Logger } from '../injection-tokens.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../injection-tokens.js', () => ({ Logger: 'logger' }));
 
 describe('logger / create logging middleware', () => {
   afterEach(() => {
@@ -12,7 +13,7 @@ describe('logger / create logging middleware', () => {
 
   it('should inject logger', () => {
     createLoggingMiddleware();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Logger);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Logger));
   });
 
   it('should return middleware', () => {

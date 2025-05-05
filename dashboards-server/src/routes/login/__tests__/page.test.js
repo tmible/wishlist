@@ -4,12 +4,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { login } from '$lib/user/use-cases/login.js';
 import Login from '../+page.svelte';
 
-vi.mock('$lib/gradient/switch.svelte', async () => ({
-  default: await import('./mock.svelte').then((module) => module.default),
-}));
-vi.mock('$lib/components/theme-switch.svelte', async () => ({
-  default: await import('./mock.svelte').then((module) => module.default),
-}));
+vi.mock(
+  '@tmible/wishlist-ui/theme/switch',
+  async () => await import('./mock.svelte'),
+);
+vi.mock(
+  '$lib/gradient/switch.svelte',
+  async () => await import('./mock.svelte'),
+);
 vi.mock('$lib/user/use-cases/login.js');
 
 describe('login', () => {

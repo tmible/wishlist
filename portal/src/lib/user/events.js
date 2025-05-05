@@ -2,12 +2,12 @@
 
 /**
  * Событие навигации по приложению
- * @constant {string}
+ * @constant {{}}
  */
 export const Navigate = {};
 
 /**
  * Событие получения хэша
- * @constant {string}
+ * @constant {{}}
  */
 export const GetUserHash = {};

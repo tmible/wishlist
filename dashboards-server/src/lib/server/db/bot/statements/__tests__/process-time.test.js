@@ -7,6 +7,8 @@ import { initProcessTimeStatement } from '../process-time.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetProcessTime: 'get process time' }));
 
 describe('bot process time statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('bot process time statement', () => {
 
   it('should inject database', () => {
     initProcessTimeStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,17 @@ describe('bot process time statement', () => {
 
   it('should subscribe to event', () => {
     initProcessTimeStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetProcessTime, expect.any(Function));
+    expect(
+
+      vi.mocked(subscribe),
+
+    ).toHaveBeenCalledWith(
+
+      vi.mocked(GetProcessTime),
+
+      expect.any(Function),
+
+    );
   });
 
   it('should run statement on event emit', () => {

@@ -7,6 +7,7 @@ import { Database } from '../injection-tokens.js';
 import { runStatementAuthorized } from '../run-statement-authorized.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../injection-tokens.js', () => ({ Database: 'database' }));
 
 describe('DB / run statement authorized', () => {
   let db;
@@ -30,7 +31,7 @@ describe('DB / run statement authorized', () => {
 
   it('shoud inject DB', () => {
     runStatementAuthorized();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('shoud run transaction', () => {

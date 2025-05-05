@@ -11,6 +11,9 @@ import { deleteItems } from '../delete-items.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/ipc-hub/injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
+vi.mock('$lib/server/db/events.js', () => ({ RunStatementAuthorized: 'run statement authorized' }));
+vi.mock('../../events.js', () => ({ DeleteItems: 'delete items' }));
 
 const ipcHubMock = { sendMessage: vi.fn() };
 
@@ -29,7 +32,13 @@ describe('wishlist / use cases / delete items', () => {
 
   it('should emit RunStatementAuthorized event', () => {
     deleteItems('userid', [ 1, 2, 3 ]);
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(RunStatementAuthorized, expect.any(Function), 3);
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      vi.mocked(RunStatementAuthorized),
+      expect.any(Function),
+      3,
+    );
   });
 
   describe('statement', () => {
@@ -39,13 +48,13 @@ describe('wishlist / use cases / delete items', () => {
     });
 
     it('should emit DeleteItems event', () => {
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(DeleteItems, 'userid', [ 'id' ]);
+      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(DeleteItems), 'userid', [ 'id' ]);
     });
   });
 
   it('should inject IPC hub', () => {
     deleteItems('userid', [ 'id' ]);
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(IPCHub);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(IPCHub));
   });
 
   it('should send message to IPC hub', () => {

@@ -8,6 +8,8 @@ import { login } from '../login.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
+vi.mock('../../injection-tokens.js', () => ({ Store: 'store' }));
 
 const storeMock = { patch: vi.fn() };
 
@@ -22,7 +24,7 @@ describe('user / use cases / login', () => {
 
   it('should inject user store', () => {
     login();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should patch user in store', () => {
@@ -32,6 +34,6 @@ describe('user / use cases / login', () => {
 
   it('should emit Navigate event', () => {
     login();
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(Navigate, AUTHENTICATED_ROUTE);
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(Navigate), AUTHENTICATED_ROUTE);
   });
 });

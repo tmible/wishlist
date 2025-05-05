@@ -11,7 +11,7 @@ import {
   initSuccessRateStatement as initBotSuccessRateStatement,
   initYAUStatement as initBotYAUStatement,
 } from '../bot/statements';
-import { initDB } from '../index.js';
+import { initDB } from '../initialization.js';
 import { Database as DatabaseInjectionToken } from '../injection-tokens.js';
 import {
   initAuthenticationFunnelStatement as initPortalAuthenticationFunnelStatement,
@@ -33,6 +33,7 @@ vi.mock(
   }),
 );
 vi.mock('../bot/statements');
+vi.mock('../injection-tokens.js', () => ({ Database: 'database' }));
 vi.mock('../portal/statements');
 
 describe('db', () => {
@@ -59,7 +60,7 @@ describe('db', () => {
 
   it('should provide database', () => {
     initDB();
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(DatabaseInjectionToken, db);
+    expect(vi.mocked(provide)).toHaveBeenCalledWith(vi.mocked(DatabaseInjectionToken), db);
   });
 
   it('should set close listener', () => {

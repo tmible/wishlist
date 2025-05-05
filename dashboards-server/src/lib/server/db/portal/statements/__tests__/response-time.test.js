@@ -7,6 +7,8 @@ import { initResponseTimeStatement } from '../response-time.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetResponseTime: 'get response time' }));
 
 describe('portal response time statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal response time statement', () => {
 
   it('should inject database', () => {
     initResponseTimeStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,12 @@ describe('portal response time statement', () => {
 
   it('should subscribe to event', () => {
     initResponseTimeStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetResponseTime, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(GetResponseTime),
+      expect.any(Function),
+    );
   });
 
   it('should run statement on event emit', () => {

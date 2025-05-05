@@ -7,6 +7,8 @@ import { initAddActionStatement } from '../add-action.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/logs-db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ AddAction: 'add action' }));
 
 describe('actions / statements / add action', () => {
   let db;
@@ -24,7 +26,7 @@ describe('actions / statements / add action', () => {
 
   it('should inject database', () => {
     initAddActionStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('actions / statements / add action', () => {
 
   it('should subscribe to event', () => {
     initAddActionStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(AddAction, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(AddAction), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

@@ -1,17 +1,10 @@
 <!-- @component Общая для страниц с дашбордами разметка -->
 <script>
-  import 'chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.esm';
-  import { provide } from '@tmible/wishlist-common/dependency-injector';
-  import { Chart } from 'chart.js/auto';
-  import annotationPlugin from 'chartjs-plugin-annotation';
+  import ScrollArea from '@tmible/wishlist-ui/scroll-area';
+  import ThemeSwitch from '@tmible/wishlist-ui/theme/switch';
+  import { onDestroy } from 'svelte';
   import { page } from '$app/state';
-  import ThemeSwitch from '$lib/components/theme-switch.svelte';
-  import {
-    NetworkFactory as DashboardNetworkFactory,
-    StoreFactory as DashboardStoreFactory,
-  } from '$lib/dashboard/injection-tokens.js';
-  import { createGetData } from '$lib/dashboard/network.service.js';
-  import { createStore as dashboardStoreFactory } from '$lib/dashboard/store.js';
+  import { initDashboardFeature } from '$lib/dashboard/initialization.js';
   import GradientSwitch from '$lib/gradient/switch.svelte';
   import HealthIndicator from '$lib/health/indicator.svelte';
   import { user } from '$lib/user/store.js';
@@ -24,13 +17,6 @@
 
   /** @type {Props} */
   const { children } = $props();
-
-  // Регистрация плагина аннотаций в chart.js
-  Chart.register(annotationPlugin);
-
-  // Регистрация фабрик дашборда в сервисе внедрения зависмостей
-  provide(DashboardStoreFactory, dashboardStoreFactory);
-  provide(DashboardNetworkFactory, createGetData);
 
   /**
    * Меню для навигации по дашбордам сервисов
@@ -48,30 +34,45 @@
     label: 'Хаб',
     healthKey: 'hub',
   }];
+
+  /**
+   * Регистрация зависисмостей для работы с дашбордами
+   * Функция освобождения зависимостей
+   * @type {() => void}
+   */
+  const destroyDashboardFeature = initDashboardFeature();
+
+  onDestroy(() => {
+    destroyDashboardFeature();
+  });
 </script>
 
 {#if $user.isAuthenticated}
-  <div class="mb-9 flex items-center justify-between mx-4 md:mx-0">
-    <div class="plate flex items-center gap-4 py-2 px-4">
-      {#each navigationMenu as { path, label, healthKey } (healthKey)}
-        <a
-          class={(
+  <ScrollArea viewportClasses="flex flex-col max-h-dvh w-full h-hull m-0 py-9 px-1 md:px-9">
+    <div class="mb-9 flex items-center justify-between mx-4 md:mx-0">
+      <div class="plate flex items-center gap-4 py-2 px-4">
+        {#each navigationMenu as { path, label, healthKey } (healthKey)}
+          <a
+            class={(
             page.url.pathname.endsWith(path) ?
               'flex items-center gap-1 text-base-content hover:text-base-content' :
               'flex items-center gap-1 text-base-content/50 hover:text-base-content'
-          )}
-          href={path}
-        >
-          <HealthIndicator service={healthKey} />
-          {label}
-        </a>
-      {/each}
+            )}
+            href={path}
+          >
+            <HealthIndicator service={healthKey} />
+            {label}
+          </a>
+        {/each}
+      </div>
+      <div class="flex items-center gap-4">
+        <GradientSwitch />
+        <ThemeSwitch />
+        <button class="btn btn-secondary btn-sm shadow-sm" onclick={() => logout(true)}>
+          Выйти
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-4">
-      <GradientSwitch />
-      <ThemeSwitch />
-      <button class="btn btn-secondary btn-sm shadow-sm" onclick={() => logout(true)}>Выйти</button>
-    </div>
-  </div>
-  {@render children?.()}
+    {@render children?.()}
+  </ScrollArea>
 {/if}

@@ -1,23 +1,12 @@
 // @vitest-environment jsdom
 import { cleanup, render } from '@testing-library/svelte';
-import { provide } from '@tmible/wishlist-common/dependency-injector';
-import { subscribe } from '@tmible/wishlist-common/event-bus';
-import {
-  initTheme,
-  isDarkTheme,
-  subscribeToTheme,
-  updateTheme,
-} from '@tmible/wishlist-common/theme-service';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { initThemeFeature } from '@tmible/wishlist-ui/theme/initialization';
+import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
 import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
-import { ThemeService } from '$lib/theme-service-injection-token.js';
-import { Navigate } from '$lib/user/events.js';
-import {
-  NetworkService as UserNetworkService,
-  Store as UserStore,
-} from '$lib/user/injection-tokens.js';
-import * as userNetworkService from '$lib/user/network.service.js';
+import { initUserFeature } from '$lib/user/initialization.js';
 import { user } from '$lib/user/store.js';
 import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 import Layout from '../+layout.svelte';
@@ -25,20 +14,15 @@ import Layout from '../+layout.svelte';
 const page = vi.hoisted(() => ({ url: { pathname: '' } }));
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
-vi.mock('@tmible/wishlist-common/event-bus');
-vi.mock(
-  '@tmible/wishlist-common/theme-service',
-  () => ({
-    initTheme: vi.fn(),
-    isDarkTheme: vi.fn(),
-    subscribeToTheme: vi.fn(),
-    updateTheme: vi.fn(),
-  }),
-);
+vi.mock('@tmible/wishlist-ui/theme/initialization');
+vi.mock('@tmible/wishlist-ui/theme/injection-tokens', () => ({ ThemeService: 'theme service' }));
 vi.mock('$app/navigation');
 vi.mock('$app/state', () => ({ page }));
+vi.mock('$lib/user/initialization.js');
 vi.mock('$lib/user/store.js', () => ({ user: writable({ isAuthenticated: null }) }));
 vi.mock('$lib/user/use-cases/check-authentication.js');
+
+const initTheme = vi.fn().mockReturnValue(vi.fn());
 
 describe('layout', () => {
   beforeEach(() => {
@@ -50,6 +34,9 @@ describe('layout', () => {
         configurable: true,
       },
     );
+    vi.mocked(inject).mockReturnValueOnce({ initTheme });
+    vi.mocked(initUserFeature).mockReturnValue(vi.fn());
+    vi.mocked(initThemeFeature).mockReturnValue(vi.fn());
     vi.mocked(user).set({ isAuthenticated: null });
   });
 
@@ -59,47 +46,14 @@ describe('layout', () => {
     cleanup();
   });
 
-  it('should provide theme service', () => {
+  it('should init theme feature', () => {
     render(Layout);
-    expect(
-      vi.mocked(provide),
-    ).toHaveBeenCalledWith(
-      ThemeService,
-      { isDarkTheme, subscribeToTheme, updateTheme },
-    );
+    expect(vi.mocked(initThemeFeature)).toHaveBeenCalled();
   });
 
-  it('should provide user store', () => {
+  it('should init user feature', () => {
     render(Layout);
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(UserStore, user);
-  });
-
-  it('should provide user network service', () => {
-    render(Layout);
-    expect(vi.mocked(provide)).toHaveBeenCalledWith(UserNetworkService, userNetworkService);
-  });
-
-  describe('Navigate event', () => {
-    let eventHandler;
-
-    beforeEach(() => {
-      vi.mocked(subscribe).mockImplementation((event, handler) => eventHandler = handler);
-      render(Layout);
-    });
-
-    it('should subscribe to Navigate event', () => {
-      expect(vi.mocked(subscribe)).toHaveBeenCalledWith(Navigate, expect.any(Function));
-    });
-
-    it('should not navigate to current page or subpage', () => {
-      eventHandler('');
-      expect(vi.mocked(goto)).not.toHaveBeenCalled();
-    });
-
-    it('should not navigate to current page or subpage', () => {
-      eventHandler('route');
-      expect(vi.mocked(goto)).toHaveBeenCalledWith('route');
-    });
+    expect(vi.mocked(initUserFeature)).toHaveBeenCalled();
   });
 
   describe('on mount', () => {
@@ -107,8 +61,12 @@ describe('layout', () => {
       render(Layout);
     });
 
-    it('should init theme store', () => {
-      expect(vi.mocked(initTheme)).toHaveBeenCalled();
+    it('should inject theme service', () => {
+      expect(vi.mocked(inject)).toHaveBeenCalled(vi.mocked(ThemeService));
+    });
+
+    it('should init theme', () => {
+      expect(initTheme).toHaveBeenCalled();
     });
 
     it('should check authentication', () => {
@@ -117,16 +75,25 @@ describe('layout', () => {
   });
 
   describe('on destroy', () => {
-    let destroyTheme;
-
-    beforeEach(() => {
-      destroyTheme = vi.fn();
-      vi.mocked(initTheme).mockReturnValueOnce(destroyTheme);
+    it('should destroy theme', () => {
+      const destroyTheme = vi.fn();
+      initTheme.mockReturnValueOnce(destroyTheme);
       render(Layout).unmount();
+      expect(destroyTheme).toHaveBeenCalled();
     });
 
-    it('should destroy theme store', () => {
-      expect(destroyTheme).toHaveBeenCalled();
+    it('should destroy theme feature', () => {
+      const destroyThemeFeature = vi.fn();
+      vi.mocked(initThemeFeature).mockReturnValueOnce(destroyThemeFeature);
+      render(Layout).unmount();
+      expect(destroyThemeFeature).toHaveBeenCalled();
+    });
+
+    it('should destroy user feature', () => {
+      const destroyUserFeature = vi.fn();
+      vi.mocked(initUserFeature).mockReturnValueOnce(destroyUserFeature);
+      render(Layout).unmount();
+      expect(destroyUserFeature).toHaveBeenCalled();
     });
   });
 

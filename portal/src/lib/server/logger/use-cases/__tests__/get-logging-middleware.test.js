@@ -4,6 +4,7 @@ import { CreateLoggingMiddleware } from '../../events.js';
 import { getLoggingMiddleware } from '../get-logging-middleware.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ CreateLoggingMiddleware: 'create logging middleware' }));
 
 describe('logger / use cases / get logging middleware', () => {
   afterEach(() => {

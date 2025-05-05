@@ -7,6 +7,8 @@ import { initSuccessRateStatement } from '../success-rate.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetSuccessRate: 'get success rate' }));
 
 describe('portal success rate statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal success rate statement', () => {
 
   it('should inject database', () => {
     initSuccessRateStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,12 @@ describe('portal success rate statement', () => {
 
   it('should subscribe to event', () => {
     initSuccessRateStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetSuccessRate, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(GetSuccessRate),
+      expect.any(Function),
+    );
   });
 
   it('should run statement on event emit', () => {

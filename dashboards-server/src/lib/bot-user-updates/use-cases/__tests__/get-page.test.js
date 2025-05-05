@@ -4,6 +4,10 @@ import { Cache, NetworkService, Store } from '../../injection-tokens.js';
 import { getPage } from '../get-page.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock(
+  '../../injection-tokens.js',
+  () => ({ Cache: 'cache', NetworkService: 'network service', Store: 'store' }),
+);
 
 const cacheMock = { get: vi.fn(), set: vi.fn() };
 const networkServiceMock = { getPage: vi.fn() };
@@ -21,12 +25,12 @@ describe('bot user updates / use cases / get page', () => {
 
   it('should inject cache', async () => {
     await getPage();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Cache);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Cache));
   });
 
   it('should inject store', async () => {
     await getPage();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should get page from cache', async () => {
@@ -50,7 +54,7 @@ describe('bot user updates / use cases / get page', () => {
 
     it('should inject network service', async () => {
       await getPage();
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should get page via network', async () => {

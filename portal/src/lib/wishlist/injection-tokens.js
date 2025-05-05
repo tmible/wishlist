@@ -2,18 +2,18 @@
 
 /**
  * Токен внедрения хранилища
- * @constant {string}
+ * @constant {{}}
  */
-export const Store = 'wishlist store';
+export const Store = {};
 
 /**
  * Токен внедрения сетевого сервиса
- * @constant {string}
+ * @constant {{}}
  */
-export const NetworkService = 'wishlist network service';
+export const NetworkService = {};
 
 /**
  * Токен внедрения сервиса ссылок
- * @constant {string}
+ * @constant {{}}
  */
-export const LinkService = 'wishlist link service';
+export const LinkService = {};

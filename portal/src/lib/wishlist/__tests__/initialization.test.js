@@ -7,6 +7,10 @@ import * as networkService from '../network.service.js';
 import { wishlist } from '../store.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock(
+  '../injection-tokens.js',
+  () => ({ LinkService: 'link service', NetworkService: 'network service', Store: 'store' }),
+);
 
 describe('wishlist / initialization', () => {
   let destroyWishlistFeature;
@@ -37,15 +41,15 @@ describe('wishlist / initialization', () => {
     });
 
     it('should deprive store', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(Store);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(Store));
     });
 
     it('should deprive network service', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should deprive link service', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(LinkService);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(LinkService));
     });
   });
 });

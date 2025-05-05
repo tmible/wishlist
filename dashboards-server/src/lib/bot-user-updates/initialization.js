@@ -43,6 +43,6 @@ export const initBotUserUpdatesFeature = () => {
   return () => {
     deprive(NetworkService);
     deprive(Store);
-    provide(Cache);
+    deprive(Cache);
   };
 };

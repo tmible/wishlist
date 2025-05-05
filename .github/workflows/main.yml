@@ -17,15 +17,19 @@ jobs:
     needs: common-files
     uses: ./.github/workflows/common.yml
     secrets: inherit
+  ui:
+    needs: common
+    uses: ./.github/workflows/ui.yml
+    secrets: inherit
   bot:
     needs: [hub, common]
     uses: ./.github/workflows/bot.yml
     secrets: inherit
   portal:
-    needs: [hub, common]
+    needs: [hub, ui]
     uses: ./.github/workflows/portal.yml
     secrets: inherit
   dashboards-server:
-    needs: common
+    needs: ui
     uses: ./.github/workflows/dashboards-server.yml
     secrets: inherit

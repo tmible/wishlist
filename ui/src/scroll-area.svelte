@@ -27,15 +27,12 @@
       hover:w-3
       touch-none
       select-none
-      rounded-full
-      border-l
-      border-l-transparent
       p-px
       transition-all
     "
     {orientation}
   >
-    <ScrollArea.Thumb class="bg-gray-5 dark:bg-gray-4 flex-1 rounded-full" />
+    <ScrollArea.Thumb class="bg-gray-6 dark:bg-gray-4 flex-1 rounded-full" />
   </ScrollArea.Scrollbar>
 {/snippet}
 

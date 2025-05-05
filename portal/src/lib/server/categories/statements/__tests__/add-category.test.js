@@ -7,6 +7,8 @@ import { initAddCategoryStatement } from '../add-category.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ AddCategory: 'add category' }));
 
 describe('categories / statements / add category', () => {
   let db;
@@ -24,7 +26,7 @@ describe('categories / statements / add category', () => {
 
   it('should inject database', () => {
     initAddCategoryStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('categories / statements / add category', () => {
 
   it('should subscribe to event', () => {
     initAddCategoryStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(AddCategory, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(AddCategory), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

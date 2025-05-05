@@ -1,12 +1,8 @@
 <!-- @component Переключатель цветовой темы -->
 <script>
-  import { inject } from '@tmible/wishlist-common/dependency-injector';
   import { Moon, SunDim } from 'lucide-svelte';
   import { onMount } from 'svelte';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
-
-  // Внедрение сервиса управления темой
-  const { updateTheme, subscribeToTheme } = inject(ThemeService);
+  import { subscribeToTheme, updateTheme } from './service.js';
 
   /**
    * Признак использования тёмной темы

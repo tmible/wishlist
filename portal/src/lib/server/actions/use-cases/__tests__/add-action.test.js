@@ -9,6 +9,7 @@ import { addAction } from '../add-action.js';
 
 vi.mock('node:crypto');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ AddAction: 'add action' }));
 
 const cookies = {
   get: vi.fn(),
@@ -31,7 +32,7 @@ describe('actions / use cases / add action', () => {
       expect(
         vi.mocked(emit),
       ).toHaveBeenCalledWith(
-        AddAction,
+        vi.mocked(AddAction),
         'timestamp',
         'action',
         'unknownUserUuid',
@@ -59,7 +60,7 @@ describe('actions / use cases / add action', () => {
       expect(
         vi.mocked(emit),
       ).toHaveBeenCalledWith(
-        AddAction,
+        vi.mocked(AddAction),
         'timestamp',
         'action',
         'random UUID',

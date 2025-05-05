@@ -11,6 +11,8 @@ import { initialize } from '../initialize.js';
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('../../domain.js');
+vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkUser = 'network user';
 
@@ -36,7 +38,7 @@ describe('user / use cases / initialize', () => {
 
   it('should inject network service', async () => {
     await initialize();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should get user via network', async () => {
@@ -51,7 +53,7 @@ describe('user / use cases / initialize', () => {
 
   it('should inject user store', async () => {
     await initialize();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should set user in store', async () => {
@@ -64,7 +66,7 @@ describe('user / use cases / initialize', () => {
     expect(
       vi.mocked(emit),
     ).toHaveBeenCalledWith(
-      Navigate,
+      vi.mocked(Navigate),
       createdUser.isAuthenticated ? AUTHENTICATED_ROUTE : UNAUTHENTICATED_ROUTE,
     );
   });

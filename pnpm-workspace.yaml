@@ -5,3 +5,4 @@ packages:
   - "common"
   - "hub"
   - "eslint-config"
+  - "ui"

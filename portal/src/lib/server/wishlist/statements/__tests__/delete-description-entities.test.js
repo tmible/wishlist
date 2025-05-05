@@ -7,6 +7,8 @@ import { initDeleteDescriptionEntitiesStatement } from '../delete-description-en
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ DeleteDescriptionEntities: 'delete description entities' }));
 
 describe('wishlist / statements / delete description entities', () => {
   let db;
@@ -24,7 +26,7 @@ describe('wishlist / statements / delete description entities', () => {
 
   it('should inject database', () => {
     initDeleteDescriptionEntitiesStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -37,7 +39,7 @@ describe('wishlist / statements / delete description entities', () => {
     expect(
       vi.mocked(subscribe),
     ).toHaveBeenCalledWith(
-      DeleteDescriptionEntities,
+      vi.mocked(DeleteDescriptionEntities),
       expect.any(Function),
     );
   });

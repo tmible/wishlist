@@ -7,6 +7,8 @@ import { initRPSStatement } from '../rps.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetRPS: 'get RPS' }));
 
 describe('portal RPS statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal RPS statement', () => {
 
   it('should inject database', () => {
     initRPSStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('portal RPS statement', () => {
 
   it('should subscribe to event', () => {
     initRPSStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetRPS, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetRPS), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

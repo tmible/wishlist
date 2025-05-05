@@ -2,61 +2,61 @@
 
 /**
  * Событие получения списка
- * @constant {string}
+ * @constant {{}}
  */
 export const GetWishlist = {};
 
 /**
  * Событие добавления элемента к списку
- * @constant {string}
+ * @constant {{}}
  */
 export const AddItem = {};
 
 /**
  * Событие сохранения элементов разметки описания
- * @constant {string}
+ * @constant {{}}
  */
 export const InsertDescriptionEntities = {};
 
 /**
  * Событие получения элемента
- * @constant {string}
+ * @constant {{}}
  */
 export const GetItem = {};
 
 /**
  * Событие получения функции, подсчитывающей количество элементов списка желаний,
  * принадлежащих пользователю, среди указанных
- * @constant {string}
+ * @constant {{}}
  */
 export const GetWishlistItemsCounter = {};
 
 /**
  * Событие переупорядочивания списка
- * @constant {string}
+ * @constant {{}}
  */
 export const ReorderWishlist = {};
 
 /**
  * Событие удаления нескольких элементов из списка
- * @constant {string}
+ * @constant {{}}
  */
 export const DeleteItems = {};
 
 /**
  * Событие обновления элемента списка
- * @constant {string}
+ * @constant {{}}
  */
 export const UpdateItem = {};
 
 /**
  * Событие удаления элементов разметки описания
- * @constant {string}
+ * @constant {{}}
  */
 export const DeleteDescriptionEntities = {};
 
 /**
  * Событие удаления одного элемента из списка
- * @constant {string}
+ * @constant {{}}
  */
 export const DeleteItem = {};

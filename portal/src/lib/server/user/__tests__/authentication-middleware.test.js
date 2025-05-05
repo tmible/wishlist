@@ -15,6 +15,7 @@ vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('jsonwebtoken');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
+vi.mock('../events.js', () => ({ GetRefreshToken: 'get refresh token' }));
 vi.mock('../generate-and-store-auth-tokens.js');
 
 describe('user / authentication middleware', () => {
@@ -96,7 +97,12 @@ describe('user / authentication middleware', () => {
 
         it('should emit GetRefreshToken event', async () => {
           await authenticationMiddleware(event, () => {});
-          expect(vi.mocked(emit)).toHaveBeenCalledWith(GetRefreshToken, 'unknown user UUID');
+          expect(
+            vi.mocked(emit),
+          ).toHaveBeenCalledWith(
+            vi.mocked(GetRefreshToken),
+            'unknown user UUID',
+          );
         });
 
         const reissueAuthTokensFailTestCases = [{

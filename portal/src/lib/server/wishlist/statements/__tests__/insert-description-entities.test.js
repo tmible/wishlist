@@ -8,6 +8,8 @@ import { initInsertDescriptionEntitiesStatement } from '../insert-description-en
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ InsertDescriptionEntities: 'insert description entities' }));
 
 describe('wishlist / statements / insert description entities', () => {
   let db;
@@ -28,7 +30,7 @@ describe('wishlist / statements / insert description entities', () => {
     expect(
       vi.mocked(subscribe),
     ).toHaveBeenCalledWith(
-      InsertDescriptionEntities,
+      vi.mocked(InsertDescriptionEntities),
       expect.any(Function),
     );
   });
@@ -47,7 +49,7 @@ describe('wishlist / statements / insert description entities', () => {
 
     it('should inject database', () => {
       eventHandler('userid', [ 1, 2, 3 ]);
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
     });
 
     it('should prepare statement', () => {

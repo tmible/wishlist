@@ -7,6 +7,8 @@ import { initDAUStatement } from '../dau.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetDAU: 'get DAU' }));
 
 describe('bot DAU statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('bot DAU statement', () => {
 
   it('should inject database', () => {
     initDAUStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('bot DAU statement', () => {
 
   it('should subscribe to event', () => {
     initDAUStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetDAU, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetDAU), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

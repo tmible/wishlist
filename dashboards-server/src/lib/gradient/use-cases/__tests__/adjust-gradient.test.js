@@ -9,6 +9,11 @@ import { adjustGradient } from '../adjust-gradient.js';
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('../../domain.js');
+vi.mock('../../events.js', () => ({ ApplyGradient: 'apply gradient' }));
+vi.mock(
+  '../../injection-tokens.js',
+  () => ({ GradientStore: 'gradient store', NextGradientStore: 'next gradient store' }),
+);
 
 const variant = 'variant';
 const storeMock = { get: vi.fn(), set: vi.fn() };
@@ -25,7 +30,7 @@ describe('gradient / use cases / adjust gradient', () => {
 
   it('should inject gradient store', () => {
     adjustGradient(variant);
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(GradientStore);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(GradientStore));
   });
 
   it('should get gradient from store', () => {
@@ -53,13 +58,13 @@ describe('gradient / use cases / adjust gradient', () => {
 
     it('should emit ApplyGradient event', () => {
       adjustGradient(variant);
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(ApplyGradient, gradient);
+      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(ApplyGradient), gradient);
     });
   });
 
   it('should inject next gradient store', () => {
     adjustGradient(variant);
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NextGradientStore);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NextGradientStore));
   });
 
   it('should get next gradient from store', () => {

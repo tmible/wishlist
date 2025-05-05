@@ -11,6 +11,9 @@ import { reorderWishlist } from '../reorder-wishlist.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/events.js', () => ({ RunStatementAuthorized: 'run statement authorized' }));
+vi.mock('$lib/server/ipc-hub/injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
+vi.mock('../../events.js', () => ({ ReorderWishlist: 'reorder wishlist' }));
 
 const ipcHubMock = { sendMessage: vi.fn() };
 
@@ -29,7 +32,13 @@ describe('wishlist / use cases / reorder wishlist', () => {
 
   it('should emit RunStatementAuthorized event', () => {
     reorderWishlist('userid', [ 1, 2, 3 ]);
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(RunStatementAuthorized, expect.any(Function), 3);
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      vi.mocked(RunStatementAuthorized),
+      expect.any(Function),
+      3,
+    );
   });
 
   describe('statement', () => {
@@ -39,13 +48,19 @@ describe('wishlist / use cases / reorder wishlist', () => {
     });
 
     it('should emit ReorderWishlist event', () => {
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(ReorderWishlist, 'userid', [ 'patch' ]);
+      expect(
+        vi.mocked(emit),
+      ).toHaveBeenCalledWith(
+        vi.mocked(ReorderWishlist),
+        'userid',
+        [ 'patch' ],
+      );
     });
   });
 
   it('should inject IPC hub', () => {
     reorderWishlist('userid', [ 'patch' ]);
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(IPCHub);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(IPCHub));
   });
 
   it('should send message to IPC hub', () => {

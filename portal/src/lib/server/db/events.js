@@ -2,12 +2,12 @@
 
 /**
  * Событие выполнения транзакции
- * @constant {string}
+ * @constant {{}}
  */
 export const RunTransaction = {};
 
 /**
  * Событие выполнения SQL выражения с проверкой авторизации
- * @constant {string}
+ * @constant {{}}
  */
 export const RunStatementAuthorized = {};

@@ -8,6 +8,15 @@ import { addItem } from '../add-item.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/ipc-hub/injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
+vi.mock(
+  '../../events.js',
+  () => ({
+    AddItem: 'add item',
+    GetItem: 'get item',
+    InsertDescriptionEntities: 'insert description entities',
+  }),
+);
 
 const ipcHubMock = { sendMessage: vi.fn() };
 
@@ -22,7 +31,7 @@ describe('wishlist / use cases / add item', () => {
 
   it('should emit RunTransaction event', () => {
     addItem('userid', 'item');
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(RunTransaction, expect.any(Function));
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(RunTransaction), expect.any(Function));
   });
 
   describe('transaction', () => {
@@ -37,27 +46,27 @@ describe('wishlist / use cases / add item', () => {
     });
 
     it('should emit AddItem event', () => {
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(AddItem, 'userid', item);
+      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(AddItem), 'userid', item);
     });
 
     it('should emit InsertDescriptionEntities event', () => {
       expect(
         vi.mocked(emit),
       ).toHaveBeenCalledWith(
-        InsertDescriptionEntities,
+        vi.mocked(InsertDescriptionEntities),
         'id',
         'description entities',
       );
     });
 
     it('should emit GetItem event', () => {
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(GetItem, 'id');
+      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetItem), 'id');
     });
   });
 
   it('should inject IPC hub', () => {
     addItem('userid', 'item');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(IPCHub);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(IPCHub));
   });
 
   it('should send message to IPC hub', () => {

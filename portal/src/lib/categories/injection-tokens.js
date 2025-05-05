@@ -2,12 +2,12 @@
 
 /**
  * Токен внедрения хранилища
- * @constant {string}
+ * @constant {{}}
  */
-export const Store = 'categories store';
+export const Store = {};
 
 /**
  * Токен внедрения сетевого сервиса
- * @constant {string}
+ * @constant {{}}
  */
-export const NetworkService = 'categories network service';
+export const NetworkService = {};

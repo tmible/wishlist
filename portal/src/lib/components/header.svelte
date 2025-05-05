@@ -1,5 +1,5 @@
 <script>
-  import ThemeSwitcher from '$lib/components/theme-switcher.svelte';
+  import ThemeSwitch from '@tmible/wishlist-ui/theme/switch';
 </script>
 
 <header class="navbar">
@@ -11,6 +11,6 @@
     </a>
   </div>
   <div class="mr-4">
-    <ThemeSwitcher />
+    <ThemeSwitch />
   </div>
 </header>

@@ -1,14 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { initBotUserUpdatesFeature } from '$lib/server/bot-user-updates/initialization.js';
-import { initDB } from '$lib/server/db';
+import { initDB } from '$lib/server/db/initialization.js';
 
 const resolve = vi.fn();
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
 vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('jsonwebtoken');
 vi.mock('$lib/server/bot-user-updates/initialization.js');
-vi.mock('$lib/server/db');
+vi.mock('$lib/server/db/initialization.js');
 
 describe('server hooks', () => {
   afterEach(() => {

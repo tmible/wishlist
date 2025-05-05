@@ -8,6 +8,7 @@ import { DeleteRefreshToken } from '../../events.js';
 import { logout } from '../logout.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ DeleteRefreshToken: 'delete refresh token' }));
 
 const cookies = { get: vi.fn(), delete: vi.fn() };
 
@@ -29,7 +30,7 @@ describe('user / use cases / logout', () => {
   it('should emit DeleteRefreshToken event', () => {
     cookies.get.mockReturnValueOnce('refresh token');
     logout(cookies);
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(DeleteRefreshToken, 'refresh token');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(DeleteRefreshToken), 'refresh token');
   });
 
   it('should delete refresh token cookie', () => {

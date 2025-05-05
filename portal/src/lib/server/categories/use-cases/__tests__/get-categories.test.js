@@ -4,6 +4,7 @@ import { GetCategories } from '../../events.js';
 import { getCategories } from '../get-categories.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ GetCategories: 'get categories' }));
 
 describe('categories / use cases / get categories', () => {
   afterEach(() => {
@@ -12,7 +13,7 @@ describe('categories / use cases / get categories', () => {
 
   it('should emit GetCategories event', () => {
     getCategories('userid');
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetCategories, 'userid');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetCategories), 'userid');
   });
 
   it('should return GetCategories event result', () => {

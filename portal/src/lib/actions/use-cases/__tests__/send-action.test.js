@@ -4,6 +4,7 @@ import { NetworkService } from '../../injection-tokens.js';
 import { sendAction } from '../send-action.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service' }));
 
 const networkServiceMock = { sendAction: vi.fn() };
 
@@ -18,7 +19,7 @@ describe('actions / use cases / send action', () => {
 
   it('should inject network service', async () => {
     await sendAction('action');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should send action via network', async () => {

@@ -15,6 +15,7 @@ vi.mock(
     LOGS_DB_MIGRATIONS_PATH: 'LOGS_DB_MIGRATIONS_PATH',
   }),
 );
+vi.mock('../injection-tokens.js', () => ({ Database: 'database' }));
 
 describe('logs DB / initialization', () => {
   let db;

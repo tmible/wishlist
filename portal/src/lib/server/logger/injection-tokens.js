@@ -2,6 +2,6 @@
 
 /**
  * Токен внедрения логгера
- * @constant {string}
+ * @constant {{}}
  */
-export const Logger = 'logger';
+export const Logger = {};

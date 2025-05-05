@@ -6,6 +6,7 @@ import { addItem } from '../add-item.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('../../domain.js');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { addItem: vi.fn() };
 const storeMock = { get: vi.fn(), add: vi.fn() };
@@ -22,7 +23,7 @@ describe('wishlist / use cases / add item', () => {
 
   it('should inject wishlist store', async () => {
     await addItem('formData');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should get item from store', async () => {
@@ -38,7 +39,7 @@ describe('wishlist / use cases / add item', () => {
 
   it('should inject wishlist network service', async () => {
     await addItem('formData');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should add item via network', async () => {

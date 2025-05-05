@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { initTheme, isDarkTheme, subscribeToTheme, updateTheme } from '../theme-service.js';
+import { initTheme, isDarkTheme, subscribeToTheme, updateTheme } from '../service.js';
 
 const localStorageStub = { getItem: vi.fn(), setItem: vi.fn() };
 
@@ -14,7 +14,7 @@ vi.stubGlobal(
   },
 );
 
-describe('theme service', () => {
+describe('theme / service', () => {
   let destroyTheme;
   let unsubscriber;
 

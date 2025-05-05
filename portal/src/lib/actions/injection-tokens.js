@@ -2,6 +2,6 @@
 
 /**
  * Токен внедрения сетевого сервиса
- * @constant {string}
+ * @constant {{}}
  */
-export const NetworkService = 'actions network service';
+export const NetworkService = {};

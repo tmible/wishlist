@@ -5,6 +5,10 @@ import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock(
+  '$lib/server/db/portal/events.js',
+  () => ({ GetAuthenticationFunnel: 'get authentication funnel' }),
+);
 
 describe('portal authenticationFunnel endpoint', () => {
   afterEach(() => {
@@ -26,7 +30,7 @@ describe('portal authenticationFunnel endpoint', () => {
   it('should emit event', () => {
     vi.mocked(emit).mockReturnValueOnce({});
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetAuthenticationFunnel, 'param');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetAuthenticationFunnel), 'param');
   });
 
   it('should return event result', () => {

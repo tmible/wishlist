@@ -2,6 +2,6 @@
 
 /**
  * Токен внедрения IPC хаба
- * @constant {string}
+ * @constant {{}}
  */
-export const IPCHub = 'IPC hub';
+export const IPCHub = {};

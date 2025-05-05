@@ -2,24 +2,24 @@
 
 /**
  * Событие получения категорий
- * @constant {string}
+ * @constant {{}}
  */
 export const GetCategories = {};
 
 /**
  * Событие добавления категории
- * @constant {string}
+ * @constant {{}}
  */
 export const AddCategory = {};
 
 /**
  * Событие обновления категории
- * @constant {string}
+ * @constant {{}}
  */
 export const UpdateCategory = {};
 
 /**
  * Событие удаления категории
- * @constant {string}
+ * @constant {{}}
  */
 export const DeleteCategory = {};

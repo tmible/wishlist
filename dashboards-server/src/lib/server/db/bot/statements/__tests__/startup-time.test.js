@@ -7,6 +7,8 @@ import { initStartupTimeStatement } from '../startup-time.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetStartupTime: 'get startup time' }));
 
 describe('bot startup time statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('bot startup time statement', () => {
 
   it('should inject database', () => {
     initStartupTimeStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,17 @@ describe('bot startup time statement', () => {
 
   it('should subscribe to event', () => {
     initStartupTimeStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetStartupTime, expect.any(Function));
+    expect(
+
+      vi.mocked(subscribe),
+
+    ).toHaveBeenCalledWith(
+
+      vi.mocked(GetStartupTime),
+
+      expect.any(Function),
+
+    );
   });
 
   it('should run statement on event emit', () => {

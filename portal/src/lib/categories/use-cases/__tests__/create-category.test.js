@@ -4,6 +4,7 @@ import { NetworkService, Store } from '../../injection-tokens.js';
 import { createCategory } from '../create-category.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { createCategory: vi.fn() };
 const storeMock = { add: vi.fn() };
@@ -20,7 +21,7 @@ describe('categories / use cases / create category', () => {
 
   it('should inject categories network service', async () => {
     await createCategory({ category: 'to create' });
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should create category via network', async () => {
@@ -36,7 +37,7 @@ describe('categories / use cases / create category', () => {
     });
 
     it('should inject categories store', () => {
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
     });
 
     it('should add category to store', () => {

@@ -1,16 +1,13 @@
 // @vitest-environment jsdom
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
-import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
-import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
 import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ThemeService } from '$lib/theme-service-injection-token.js';
 import * as cssService from '../css.service.js';
 import { GradientVariant } from '../domain.js';
-import { ApplyGradient, RemoveGradient } from '../events.js';
-import * as faviconService from '../favicon.service.js';
-import { GradientStore, NextGradientStore } from '../injection-tokens.js';
+import { initGradientFeature } from '../initialization.js';
 import { nextStore, store } from '../store.js';
 import GradientSwitch from '../switch.svelte';
 import { adjustGradient } from '../use-cases/adjust-gradient.js';
@@ -18,9 +15,9 @@ import { removeGradient } from '../use-cases/remove-gradient.js';
 import { setGradient } from '../use-cases/set-gradient.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
-vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('@tmible/wishlist-ui/theme/injection-tokens', () => ({ ThemeService: 'theme service' }));
 vi.mock('../css.service.js');
-vi.mock('../favicon.service.js');
+vi.mock('../initialization.js');
 vi.mock(
   '../store.js',
   () => ({
@@ -38,6 +35,7 @@ describe('gradient / switch', () => {
   beforeEach(() => {
     themeService = { isDarkTheme: vi.fn(), subscribeToTheme: vi.fn() };
     vi.mocked(inject).mockReturnValueOnce(themeService);
+    vi.mocked(initGradientFeature).mockReturnValue(vi.fn());
   });
 
   afterEach(() => {
@@ -48,7 +46,7 @@ describe('gradient / switch', () => {
   describe('on create', () => {
     it('should inject theme service', () => {
       render(GradientSwitch);
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(ThemeService);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(ThemeService));
     });
 
     it('should get gradient from store', () => {
@@ -56,70 +54,9 @@ describe('gradient / switch', () => {
       expect(vi.mocked(store.get)).toHaveBeenCalled();
     });
 
-    it('should provide gradient store', () => {
+    it('should init gradient feature', () => {
       render(GradientSwitch);
-      expect(vi.mocked(provide)).toHaveBeenCalledWith(GradientStore, store);
-    });
-
-    it('should provide next gradient store', () => {
-      render(GradientSwitch);
-      expect(vi.mocked(provide)).toHaveBeenCalledWith(NextGradientStore, nextStore);
-    });
-
-    it('should subscribe to ApplyGradient event', () => {
-      render(GradientSwitch);
-      expect(vi.mocked(subscribe)).toHaveBeenCalledWith(ApplyGradient, expect.any(Function));
-    });
-
-    describe('ApplyGradient event', () => {
-      let eventHandler;
-
-      beforeEach(() => {
-        subscribe.mockImplementation((event, handler) => {
-          if (event === ApplyGradient) {
-            eventHandler = handler;
-          }
-        });
-        render(GradientSwitch);
-      });
-
-      it('should invoke CSS service on ApplyGradient event', () => {
-        eventHandler('gradient');
-        expect(vi.mocked(cssService.applyGradient)).toHaveBeenCalledWith('gradient');
-      });
-
-      it('should invoke favicon service on ApplyGradient event', () => {
-        eventHandler('gradient');
-        expect(vi.mocked(faviconService.applyGradient)).toHaveBeenCalledWith('gradient');
-      });
-    });
-
-    it('should subscribe to RemoveGradient event', () => {
-      render(GradientSwitch);
-      expect(vi.mocked(subscribe)).toHaveBeenCalledWith(RemoveGradient, expect.any(Function));
-    });
-
-    describe('RemoveGradient event', () => {
-      let eventHandler;
-
-      beforeEach(() => {
-        subscribe.mockImplementation((event, handler) => {
-          if (event === RemoveGradient) {
-            eventHandler = handler;
-          }
-        });
-        render(GradientSwitch);
-      });
-
-      it('should invoke CSS service on RemoveGradient event', () => {
-        eventHandler('gradient');
-        expect(vi.mocked(cssService.removeGradient)).toHaveBeenCalledWith('gradient');
-      });
-
-      it('should invoke favicon service on RemoveGradient event', () => {
-        eventHandler('gradient');
-        expect(vi.mocked(faviconService.removeGradient)).toHaveBeenCalledWith('gradient');
-      });
+      expect(vi.mocked(initGradientFeature)).toHaveBeenCalled();
     });
   });
 
@@ -152,32 +89,18 @@ describe('gradient / switch', () => {
   });
 
   describe('on destory', () => {
-    let themeUnsubscriber;
-
-    beforeEach(() => {
-      themeUnsubscriber = vi.fn();
+    it('should unsubscribe from theme', () => {
+      const themeUnsubscriber = vi.fn();
       themeService.subscribeToTheme.mockReturnValueOnce(themeUnsubscriber);
       render(GradientSwitch).unmount();
-    });
-
-    it('should unsubscribe from theme', () => {
       expect(themeUnsubscriber).toHaveBeenCalled();
     });
 
-    it('should deprive gradient store', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(GradientStore);
-    });
-
-    it('should deprive next gradient store', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(NextGradientStore);
-    });
-
-    it('should unsubscribe from ApplyGradient event', () => {
-      expect(vi.mocked(unsubscribe)).toHaveBeenCalledWith(ApplyGradient);
-    });
-
-    it('should unsubscribe from RemoveGradient event', () => {
-      expect(vi.mocked(unsubscribe)).toHaveBeenCalledWith(RemoveGradient);
+    it('should destroy gradient feature', () => {
+      const destroyGradientFeature = vi.fn();
+      vi.mocked(initGradientFeature).mockReturnValueOnce(destroyGradientFeature);
+      render(GradientSwitch).unmount();
+      expect(destroyGradientFeature).toHaveBeenCalled();
     });
   });
 

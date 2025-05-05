@@ -6,6 +6,7 @@ import { getUserHash } from '../get-user-hash.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('@tmible/wishlist-common/sha-256');
+vi.mock('../../events.js', () => ({ GetUserHash: 'get user hash', SetUserHash: 'set user hash' }));
 
 describe('user / use cases / get user hash', () => {
   afterEach(() => {
@@ -14,7 +15,7 @@ describe('user / use cases / get user hash', () => {
 
   it('should emit GetUserHash event', async () => {
     await getUserHash('userid');
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetUserHash, 'userid');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetUserHash), 'userid');
   });
 
   describe('if there is no hash', () => {
@@ -30,7 +31,7 @@ describe('user / use cases / get user hash', () => {
 
     it('should set hash', async () => {
       await getUserHash('userid');
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(SetUserHash, 'hash', 'userid');
+      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(SetUserHash), 'hash', 'userid');
     });
   });
 

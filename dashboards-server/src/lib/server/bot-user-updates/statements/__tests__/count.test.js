@@ -8,6 +8,8 @@ import { initCountBotUserUpdatesStatement } from '../count.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ CountBotUserUpdates: 'count bot user updates' }));
 vi.mock('../../filters-to-string.js');
 
 describe('bot user updates / statements / count', () => {
@@ -26,7 +28,12 @@ describe('bot user updates / statements / count', () => {
 
   it('should subscribe to event', () => {
     initCountBotUserUpdatesStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(CountBotUserUpdates, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(CountBotUserUpdates),
+      expect.any(Function),
+    );
   });
 
   describe('subscriber', () => {
@@ -39,7 +46,7 @@ describe('bot user updates / statements / count', () => {
 
     it('should inject database', () => {
       eventHandler('timeLock', 'filters');
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
     });
 
     it('should prepare statement', () => {

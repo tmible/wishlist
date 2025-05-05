@@ -7,6 +7,8 @@ import { initAuthenticationFunnelStatement } from '../authentication-funnel.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetAuthenticationFunnel: 'get authentication funnel' }));
 
 describe('portal authentication funnel statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal authentication funnel statement', () => {
 
   it('should inject database', () => {
     initAuthenticationFunnelStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -37,7 +39,7 @@ describe('portal authentication funnel statement', () => {
     expect(
       vi.mocked(subscribe),
     ).toHaveBeenCalledWith(
-      GetAuthenticationFunnel,
+      vi.mocked(GetAuthenticationFunnel),
       expect.any(Function),
     );
   });

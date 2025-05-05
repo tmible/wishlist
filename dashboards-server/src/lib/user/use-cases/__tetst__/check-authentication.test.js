@@ -9,6 +9,8 @@ import { checkAuthentication } from '../check-authentication.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { checkAuthentication: vi.fn() };
 const storeMock = { patch: vi.fn() };
@@ -28,7 +30,7 @@ describe('user / use cases / check authentication', () => {
 
   it('should inject network service', async () => {
     await checkAuthentication();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
   });
 
   it('should check authentication via network', async () => {
@@ -38,7 +40,7 @@ describe('user / use cases / check authentication', () => {
 
   it('should inject user store', async () => {
     await checkAuthentication();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should patch user in store', async () => {
@@ -51,7 +53,7 @@ describe('user / use cases / check authentication', () => {
     expect(
       vi.mocked(emit),
     ).toHaveBeenCalledWith(
-      Navigate,
+      vi.mocked(Navigate),
       isAuthenticated ? AUTHENTICATED_ROUTE : UNAUTHENTICATED_ROUTE,
     );
   });

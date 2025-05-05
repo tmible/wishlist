@@ -1,9 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { basename, resolve } from 'node:path';
+import { describe, it, snapshot } from 'node:test';
 import arrayToOrderedJSON from '../array-to-ordered-json.js';
 
+snapshot.setResolveSnapshotPath(
+  (testFile) => resolve(testFile, '../__snapshots__', `${basename(testFile)}.snapshot`),
+);
+
 describe('arrayToOrderedJSON', () => {
-  it('should convert array to ordered JSON', () => {
-    expect(
+  it('should convert array to ordered JSON', ({ assert }) => {
+    assert.snapshot(
       arrayToOrderedJSON([{
         property1: 0,
         property2: 0,
@@ -22,6 +27,6 @@ describe('arrayToOrderedJSON', () => {
         property1: 1,
         property2: 1,
       }].sort(() => Math.random() - 0.5)),
-    ).toMatchSnapshot();
+    );
   });
 });

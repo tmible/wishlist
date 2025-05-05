@@ -1,13 +1,13 @@
 <!-- @component Дашборд -->
 <script>
   import { deprive, inject } from '@tmible/wishlist-common/dependency-injector';
+  import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
   import { Select } from 'bits-ui';
   import { Chart } from 'chart.js/auto';
   import Check from 'lucide-svelte/icons/check';
   import { onMount } from 'svelte';
   import { PERIOD } from '$lib/constants/period.const.js';
   import { skipFirstCall } from '$lib/skip-first-call.js';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
   import { ChartBuilders } from './chart-builders.js';
   import { ChartUpdateAnimation } from './chart-update-animation.js';
   import { createDashboard } from './use-cases/create-dashboard.js';

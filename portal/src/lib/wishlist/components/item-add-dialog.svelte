@@ -1,8 +1,8 @@
 <!-- @component Диалог с формой для добавления нового элемента списка -->
 <script>
+  import ScrollArea from '@tmible/wishlist-ui/scroll-area';
   import { Dialog } from 'bits-ui';
   import X from 'lucide-svelte/icons/x';
-  import ScrollArea from '$lib/components/scroll-area.svelte';
   import ItemForm from './item-form.svelte';
 
   /**

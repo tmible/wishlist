@@ -6,6 +6,10 @@ import { createDashboard } from '../create-dashboard.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('../../domain.js');
+vi.mock(
+  '../../injection-tokens.js',
+  () => ({ NetworkFactory: 'network factory', StoreFactory: 'store factory' }),
+);
 
 describe('dashboard / use cases / create dashboard', () => {
   const factorySpy = vi.fn();
@@ -25,7 +29,7 @@ describe('dashboard / use cases / create dashboard', () => {
 
   it('should inject network factory', () => {
     createDashboard('service', 'config');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkFactory);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkFactory));
   });
 
   it('should invoke network factory', () => {
@@ -35,7 +39,7 @@ describe('dashboard / use cases / create dashboard', () => {
 
   it('should inject store factory', () => {
     createDashboard('service', 'config');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(StoreFactory);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(StoreFactory));
   });
 
   it('should invoke store factory', () => {

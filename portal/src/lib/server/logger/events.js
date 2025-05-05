@@ -2,6 +2,6 @@
 
 /**
  * Событие создания промежуточного обработчика, логирующего запросы и ответы
- * @constant {string}
+ * @constant {{}}
  */
 export const CreateLoggingMiddleware = {};

@@ -7,6 +7,8 @@ import { initDeleteRefreshTokenStatement } from '../delete-refresh-token.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ DeleteRefreshToken: 'delete refresh token' }));
 
 describe('user / statements / delete refresh token', () => {
   let db;
@@ -24,7 +26,7 @@ describe('user / statements / delete refresh token', () => {
 
   it('should inject database', () => {
     initDeleteRefreshTokenStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,12 @@ describe('user / statements / delete refresh token', () => {
 
   it('should subscribe to event', () => {
     initDeleteRefreshTokenStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(DeleteRefreshToken, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(DeleteRefreshToken),
+      expect.any(Function),
+    );
   });
 
   it('should run statement on event emit', () => {

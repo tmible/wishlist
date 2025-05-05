@@ -1,12 +1,12 @@
 <!-- @component Страница со списком желаний, главная страница авторизованной зоны -->
 <script>
+  import ScrollArea from '@tmible/wishlist-ui/scroll-area';
   import * as Sortable from 'sortablejs';
   import { getContext } from 'svelte';
   import { goto } from '$app/navigation';
   import CategoriesDialog from '$lib/categories/dialog.svelte';
   import Header from '$lib/components/header.svelte';
   import ModalPortal from '$lib/components/modal-portal.svelte';
-  import ScrollArea from '$lib/components/scroll-area.svelte';
   import WishlistItemAddDialog from '$lib/wishlist/components/item-add-dialog.svelte';
   import WishlistItemCard from '$lib/wishlist/components/item-card.svelte';
   import WishlistItemDeleteAlert from '$lib/wishlist/components/item-delete-alert.svelte';

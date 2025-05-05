@@ -7,6 +7,8 @@ import { initMAUStatement } from '../mau.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetMAU: 'get MAU' }));
 
 describe('portal MAU statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal MAU statement', () => {
 
   it('should inject database', () => {
     initMAUStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('portal MAU statement', () => {
 
   it('should subscribe to event', () => {
     initMAUStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetMAU, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetMAU), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

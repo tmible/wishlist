@@ -7,6 +7,8 @@ import { initReorderWishlistStatement } from '../reorder-wishlist.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ ReorderWishlist: 'reorder wishlist' }));
 
 describe('wishlist / statements / reorder wishlist', () => {
   let db;
@@ -24,7 +26,12 @@ describe('wishlist / statements / reorder wishlist', () => {
 
   it('should subscribe to event', () => {
     initReorderWishlistStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(ReorderWishlist, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(ReorderWishlist),
+      expect.any(Function),
+    );
   });
 
   describe('subscriber', () => {
@@ -41,7 +48,7 @@ describe('wishlist / statements / reorder wishlist', () => {
 
     it('should inject database', () => {
       eventHandler('userid', [{ id: 'id', order: 'order' }]);
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
     });
 
     it('should prepare statement', () => {

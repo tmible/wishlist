@@ -19,6 +19,7 @@ vi.mock('node:util', () => ({ promisify: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('jsonwebtoken');
 vi.mock('$env/dynamic/private', () => ({ env: { HMAC_SECRET: 'HMAC secret' } }));
+vi.mock('../events.js', () => ({ StoreRefreshToken: 'store refresh token' }));
 
 describe('user / generateAndStoreAuthTokens', () => {
   afterEach(() => {
@@ -61,7 +62,7 @@ describe('user / generateAndStoreAuthTokens', () => {
     expect(
       vi.mocked(emit),
     ).toHaveBeenCalledWith(
-      StoreRefreshToken,
+      vi.mocked(StoreRefreshToken),
       'refresh token',
       `now${REFRESH_TOKEN_EXPIRATION * 1000}`,
       userid,

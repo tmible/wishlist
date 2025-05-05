@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '$env/dynamic/private';
 import { AUTH_TOKEN_COOKIE_NAME } from '$lib/constants/auth-token-cookie-name.const.js';
 import { initBotUserUpdatesFeature } from '$lib/server/bot-user-updates/initialization.js';
-import { initDB } from '$lib/server/db/index.js';
+import { initDB } from '$lib/server/db/initialization.js';
 
 /**
  * Промежуточный обработчик, возвращающий ошибку, если в запросе нет cookie-файла, содержащего

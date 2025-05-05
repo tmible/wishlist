@@ -4,6 +4,7 @@ import { NetworkService, Store } from '../../injection-tokens.js';
 import { reorderList } from '../reorder-list.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { reorderList: vi.fn() };
 const storeMock = { reorder: vi.fn() };
@@ -21,7 +22,7 @@ describe('wishlist / use cases / reorder list', () => {
   describe('if there are items in patch', () => {
     it('should inject wishlist network service', async () => {
       await reorderList([ 1, 2, 3 ]);
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should reorder list via network', async () => {
@@ -37,7 +38,7 @@ describe('wishlist / use cases / reorder list', () => {
       });
 
       it('should inject wishlist store', () => {
-        expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+        expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
       });
 
       it('should reorder list in store', () => {

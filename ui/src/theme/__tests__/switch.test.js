@@ -2,46 +2,41 @@
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import ThemeSwitcher from '../theme-switcher.svelte';
+import { subscribeToTheme, updateTheme } from '../service.js';
+import ThemeSwitch from '../switch.svelte';
 
-const updateTheme = vi.fn();
-const subscribeToTheme = vi.fn();
+vi.mock('../service.js');
 
-vi.mock(
-  '@tmible/wishlist-common/dependency-injector',
-  () => ({ inject: () => ({ updateTheme, subscribeToTheme }) }),
-);
-
-describe('theme switcher', () => {
+describe('theme / switch', () => {
   afterEach(() => {
-    vi.clearAllMocks();
     cleanup();
+    vi.clearAllMocks();
   });
 
   describe('on mount', () => {
     it('should subscribe to theme', () => {
-      render(ThemeSwitcher);
-      expect(subscribeToTheme).toHaveBeenCalledWith(expect.any(Function));
+      render(ThemeSwitch);
+      expect(vi.mocked(subscribeToTheme)).toHaveBeenCalledWith(expect.any(Function));
     });
   });
 
   describe('on destroy', () => {
     it('should unsubscribe from theme', () => {
       const unsubscribeFromTheme = vi.fn();
-      subscribeToTheme.mockReturnValueOnce(unsubscribeFromTheme);
-      render(ThemeSwitcher).unmount();
+      vi.mocked(subscribeToTheme).mockReturnValueOnce(unsubscribeFromTheme);
+      render(ThemeSwitch).unmount();
       expect(unsubscribeFromTheme).toHaveBeenCalled();
     });
   });
 
   it('should toggle theme', async () => {
     let handler;
-    subscribeToTheme.mockImplementationOnce((themeHandler) => handler = themeHandler);
+    vi.mocked(subscribeToTheme).mockImplementationOnce((themeHandler) => handler = themeHandler);
     const user = userEvent.setup();
-    render(ThemeSwitcher);
+    render(ThemeSwitch);
     handler(false);
     const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
-    expect(updateTheme).toHaveBeenCalledWith(true);
+    expect(vi.mocked(updateTheme)).toHaveBeenCalledWith(true);
   });
 });

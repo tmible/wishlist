@@ -1,20 +1,15 @@
 <!-- @component Общая для всех страниц разметка -->
 <script>
   import '../app.css';
-  import { provide } from '@tmible/wishlist-common/dependency-injector';
-  import {
-    initTheme,
-    isDarkTheme,
-    subscribeToTheme,
-    updateTheme,
-  } from '@tmible/wishlist-common/theme-service';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
+  import { initThemeFeature } from '@tmible/wishlist-ui/theme/initialization';
+  import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { initActionsFeature } from '$lib/actions/initialization.js';
   import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
   import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
   import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
   import { initUserFeature } from '$lib/user/initialization.js';
   import { user } from '$lib/user/store.js';
@@ -28,8 +23,12 @@
   /** @type {Props} */
   const { children } = $props();
 
-  // Регистрация сервиса управления темой в сервисе внедрения зависмостей
-  provide(ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+  /*
+   * Регистрация зависисмостей для работы с темой
+   * Функция освобождения зависимостей
+   * @type {() => void}
+   */
+  const destoryThemeFeature = initThemeFeature();
 
   /**
    * Регистрация зависисмостей и подписка на события для работы с пользователем
@@ -64,12 +63,13 @@
 
   // Запрос статуса аутентификации пользователя, инициализация Svelte хранилища темы
   onMount(() => {
-    const destroyTheme = initTheme();
+    const destroyTheme = inject(ThemeService).initTheme();
     initialize();
     return destroyTheme;
   });
 
   onDestroy(() => {
+    destoryThemeFeature();
     destroyUserFeature();
     destroyActionsFeature();
   });

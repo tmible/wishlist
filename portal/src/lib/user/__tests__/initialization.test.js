@@ -11,6 +11,8 @@ import { getHash } from '../use-cases/get-hash.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../events.js', () => ({ GetUserHash: 'get user hash', Navigate: 'navigate' }));
+vi.mock('../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 describe('user / initialization', () => {
   let destroyUserFeature;
@@ -32,11 +34,11 @@ describe('user / initialization', () => {
   });
 
   it('should subscribe to Navigate event', () => {
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(Navigate, goto);
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(Navigate), goto);
   });
 
   it('should subscribe to GetUserHash event', () => {
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetUserHash, getHash);
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetUserHash), getHash);
   });
 
   describe('on destroy', () => {
@@ -45,11 +47,11 @@ describe('user / initialization', () => {
     });
 
     it('should deprive store', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(Store);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(Store));
     });
 
     it('should deprive network service', () => {
-      expect(vi.mocked(deprive)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should unsubscribe from Navigate event', () => {

@@ -2,12 +2,12 @@
 
 /**
  * Токен внедрения БД
- * @constant {string}
+ * @constant {{}}
  */
-export const Database = 'wishlist database';
+export const Database = {};
 
 /**
  * SQL выражение для посчёта изменений
- * @constant {string}
+ * @constant {{}}
  */
-export const ChangesStatement = 'changes statement';
+export const ChangesStatement = {};

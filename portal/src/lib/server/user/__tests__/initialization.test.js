@@ -11,6 +11,7 @@ import { initSetUserHashStatement } from '../statements/set-user-hash.js';
 import { initStoreRefreshTokenStatement } from '../statements/store-refresh-token.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../injection-tokens.js', () => ({ JWTService: 'jwt service' }));
 vi.mock('../jwt.service.js');
 vi.mock('../statements/add-user.js');
 vi.mock('../statements/delete-refresh-token.js');

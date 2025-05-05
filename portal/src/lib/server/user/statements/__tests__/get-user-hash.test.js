@@ -7,6 +7,8 @@ import { initGetUserHashStatement } from '../get-user-hash.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetUserHash: 'get user hash' }));
 
 describe('user / statements / get user hash', () => {
   let db;
@@ -24,7 +26,7 @@ describe('user / statements / get user hash', () => {
 
   it('should inject database', () => {
     initGetUserHashStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('user / statements / get user hash', () => {
 
   it('should subscribe to event', () => {
     initGetUserHashStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetUserHash, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetUserHash), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

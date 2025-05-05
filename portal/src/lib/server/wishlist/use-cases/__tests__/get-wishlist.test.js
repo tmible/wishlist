@@ -4,6 +4,7 @@ import { GetWishlist } from '../../events.js';
 import { getWishlist } from '../get-wishlist.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ GetWishlist: 'get wishlist' }));
 
 describe('wishlist / use cases / get wishlist', () => {
   afterEach(() => {
@@ -12,7 +13,7 @@ describe('wishlist / use cases / get wishlist', () => {
 
   it('should emit GetWishlist event', () => {
     getWishlist('userid');
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetWishlist, 'userid');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetWishlist), 'userid');
   });
 
   it('should return wishlist', () => {

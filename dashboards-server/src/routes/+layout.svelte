@@ -1,25 +1,14 @@
 <!-- @component Общая для всех страниц разметка -->
 <script>
   import '../app.css';
-  import { provide } from '@tmible/wishlist-common/dependency-injector';
-  import { subscribe } from '@tmible/wishlist-common/event-bus';
-  import {
-    initTheme,
-    isDarkTheme,
-    subscribeToTheme,
-    updateTheme,
-  } from '@tmible/wishlist-common/theme-service';
-  import { onMount } from 'svelte';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
+  import { initThemeFeature } from '@tmible/wishlist-ui/theme/initialization';
+  import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
+  import { onDestroy, onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
-  import { Navigate } from '$lib/user/events.js';
-  import {
-    NetworkService as UserNetworkService,
-    Store as UserStore,
-  } from '$lib/user/injection-tokens.js';
-  import * as userNetworkService from '$lib/user/network.service.js';
+  import { initUserFeature } from '$lib/user/initialization.js';
   import { user } from '$lib/user/store.js';
   import { checkAuthentication } from '$lib/user/use-cases/check-authentication.js';
 
@@ -31,21 +20,19 @@
   /** @type {Props} */
   const { children } = $props();
 
-  // Регистрация сервиса управления темой в сервисе внедрения зависмостей
-  provide(ThemeService, { isDarkTheme, subscribeToTheme, updateTheme });
+  /*
+   * Регистрация зависисмостей для работы с темой
+   * Функция освобождения зависимостей
+   * @type {() => void}
+   */
+  const destoryThemeFeature = initThemeFeature();
 
-  // Регистрация зависисмостей и подписка на события для работы с пользователем
-  provide(UserStore, user);
-  provide(UserNetworkService, userNetworkService);
-  subscribe(
-    Navigate,
-    (route) => {
-      if (page.url.pathname.startsWith(route)) {
-        return;
-      }
-      goto(route);
-    },
-  );
+  /**
+   * Регистрация зависисмостей и подписка на события для работы с пользователем
+   * Функция освобождения зависимостей и отписки от событий
+   * @type {() => void}
+   */
+  const destroyUserFeature = initUserFeature();
 
   /**
    * В браузере проверка аутентифицированностии пользователя и его
@@ -63,9 +50,14 @@
 
   // Инициализация темы, запрос статуса аутентификации пользователя
   onMount(() => {
-    const destroyTheme = initTheme();
+    const destroyTheme = inject(ThemeService).initTheme();
     checkAuthentication();
     return destroyTheme;
+  });
+
+  onDestroy(() => {
+    destoryThemeFeature();
+    destroyUserFeature();
   });
 </script>
 

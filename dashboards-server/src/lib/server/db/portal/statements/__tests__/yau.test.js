@@ -7,6 +7,8 @@ import { initYAUStatement } from '../yau.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../../injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetYAU: 'get YAU' }));
 
 describe('portal YAU statement', () => {
   let db;
@@ -24,7 +26,7 @@ describe('portal YAU statement', () => {
 
   it('should inject database', () => {
     initYAUStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('portal YAU statement', () => {
 
   it('should subscribe to event', () => {
     initYAUStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetYAU, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetYAU), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

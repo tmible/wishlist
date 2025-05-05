@@ -18,6 +18,8 @@ vi.mock(
     LOGS_DB_MIGRATIONS_PATH: 'LOGS_DB_MIGRATIONS_PATH',
   }),
 );
+vi.mock('../events.js', () => ({ CreateLoggingMiddleware: 'create logging middleware' }));
+vi.mock('../injection-tokens.js', () => ({ Logger: 'logger' }));
 
 describe('logger / initialization', () => {
   afterEach(() => {
@@ -47,7 +49,7 @@ describe('logger / initialization', () => {
     expect(
       vi.mocked(subscribe),
     ).toHaveBeenCalledWith(
-      CreateLoggingMiddleware,
+      vi.mocked(CreateLoggingMiddleware),
       createLoggingMiddleware,
     );
   });

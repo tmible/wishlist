@@ -4,6 +4,7 @@ import { Database } from '../injection-tokens.js';
 import { runTransaction } from '../run-transaction.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('../injection-tokens.js', () => ({ Database: 'database' }));
 
 describe('DB / run transaction', () => {
   let db;
@@ -19,7 +20,7 @@ describe('DB / run transaction', () => {
 
   it('shoud inject DB', () => {
     runTransaction();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('shoud run transaction', () => {

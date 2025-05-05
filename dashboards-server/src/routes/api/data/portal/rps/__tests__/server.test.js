@@ -5,6 +5,7 @@ import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/portal/events.js', () => ({ GetRPS: 'get RPS' }));
 
 describe('portal rps endpoint', () => {
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('portal rps endpoint', () => {
 
   it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetRPS, 'param', 'now');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetRPS), 'param', 'now');
   });
 
   it('should return event result', () => {

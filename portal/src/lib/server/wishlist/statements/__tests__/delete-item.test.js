@@ -7,6 +7,8 @@ import { initDeleteItemStatements } from '../delete-item.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ DeleteItem: 'delete item' }));
 
 describe('wishlist / statements / delete item', () => {
   let db;
@@ -24,7 +26,7 @@ describe('wishlist / statements / delete item', () => {
 
   it('should inject database', () => {
     initDeleteItemStatements();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,7 @@ describe('wishlist / statements / delete item', () => {
 
   it('should subscribe to event', () => {
     initDeleteItemStatements();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(DeleteItem, expect.any(Function));
+    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(DeleteItem), expect.any(Function));
   });
 
   it('should run statement on event emit', () => {

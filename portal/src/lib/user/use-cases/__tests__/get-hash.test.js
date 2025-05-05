@@ -6,6 +6,7 @@ import { getHash } from '../get-hash.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('../../domain.js');
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { getHash: vi.fn() };
 const storeMock = { get: vi.fn(), set: vi.fn() };
@@ -27,7 +28,7 @@ describe('user / use cases / get hash', () => {
 
   it('should inject user store', async () => {
     await getHash();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should get user from store', async () => {
@@ -47,7 +48,7 @@ describe('user / use cases / get hash', () => {
 
     it('should inject network service', async () => {
       await getHash();
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should get hash via network', async () => {

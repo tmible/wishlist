@@ -19,6 +19,11 @@ vi.mock(
     WISHLIST_DB_MIGRATIONS_PATH: 'WISHLIST_DB_MIGRATIONS_PATH',
   }),
 );
+vi.mock(
+  '../events.js',
+  () => ({ RunStatementAuthorized: 'run statement authorized', RunTransaction: 'run transaction' }),
+);
+vi.mock('../injection-tokens.js', () => ({ Database: 'database' }));
 
 describe('DB / initialization', () => {
   let db;
@@ -68,7 +73,7 @@ describe('DB / initialization', () => {
     expect(
       vi.mocked(subscribe),
     ).toHaveBeenCalledWith(
-      RunStatementAuthorized,
+      vi.mocked(RunStatementAuthorized),
       runStatementAuthorized,
     );
   });

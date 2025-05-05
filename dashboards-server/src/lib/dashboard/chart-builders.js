@@ -1,7 +1,7 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
 import { browser } from '$app/environment';
 import { PERIOD } from '$lib/constants/period.const.js';
-import { ThemeService } from '$lib/theme-service-injection-token.js';
 
 /** @typedef {import('chart.js').ChartConfiguration} ChartConfiguration */
 /** @typedef {import('./domain.js').Dashboard} Dashboard */

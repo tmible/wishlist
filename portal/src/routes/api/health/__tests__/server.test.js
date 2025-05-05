@@ -5,6 +5,8 @@ import { IPCHub } from '$lib/server/ipc-hub/injection-tokens.js';
 import { GET } from '../+server.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('$lib/server/ipc-hub/injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
 
 describe('health endpoint', () => {
   let db;

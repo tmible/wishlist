@@ -7,6 +7,8 @@ import { shareLink } from '../share-link.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/user/events.js', () => ({ GetUserHash: 'get user hash' }));
+vi.mock('../../injection-tokens.js', () => ({ LinkService: 'link service' }));
 
 const linkServiceMock = { shareLink: vi.fn() };
 
@@ -21,7 +23,7 @@ describe('wishlist / use cases / share link', () => {
 
   it('should inject wishlist link service', async () => {
     await shareLink('current target', 'is link for groups');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(LinkService);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(LinkService));
   });
 
   it('should emit GetUserHash event', async () => {

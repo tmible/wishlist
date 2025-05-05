@@ -8,13 +8,15 @@ import { logout } from '../logout.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
+vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { logout: vi.fn() };
 const storeMock = { patch: vi.fn() };
 
 const runGeneralTests = () => {
   it('should inject user store', () => {
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Store);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Store));
   });
 
   it('should patch user in store', () => {
@@ -22,7 +24,7 @@ const runGeneralTests = () => {
   });
 
   it('should emit Navigate event', () => {
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(Navigate, UNAUTHENTICATED_ROUTE);
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(Navigate), UNAUTHENTICATED_ROUTE);
   });
 };
 
@@ -57,7 +59,7 @@ describe('user / use cases / logout', () => {
 
     it('should inject user network service', async () => {
       await logout(true);
-      expect(vi.mocked(inject)).toHaveBeenCalledWith(NetworkService);
+      expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(NetworkService));
     });
 
     it('should logout via network', async () => {

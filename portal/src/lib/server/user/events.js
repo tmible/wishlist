@@ -2,36 +2,36 @@
 
 /**
  * Событие добавления
- * @constant {string}
+ * @constant {{}}
  */
 export const AddUser = {};
 
 /**
  * Событие получения хэша
- * @constant {string}
+ * @constant {{}}
  */
 export const GetUserHash = {};
 
 /**
  * Событие установки хэша
- * @constant {string}
+ * @constant {{}}
  */
 export const SetUserHash = {};
 
 /**
  * Событие сохранения refresh токена аутентификации
- * @constant {string}
+ * @constant {{}}
  */
 export const StoreRefreshToken = {};
 
 /**
  * Событие получения refresh токена аутентификации
- * @constant {string}
+ * @constant {{}}
  */
 export const GetRefreshToken = {};
 
 /**
  * Событие удаления refresh токена аутентификации
- * @constant {string}
+ * @constant {{}}
  */
 export const DeleteRefreshToken = {};

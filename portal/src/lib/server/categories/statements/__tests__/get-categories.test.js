@@ -7,6 +7,8 @@ import { initGetCategoriesStatement } from '../get-categories.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/injection-tokens.js', () => ({ Database: 'database' }));
+vi.mock('../../events.js', () => ({ GetCategories: 'get categories' }));
 
 describe('categories / statements / get categories', () => {
   let db;
@@ -24,7 +26,7 @@ describe('categories / statements / get categories', () => {
 
   it('should inject database', () => {
     initGetCategoriesStatement();
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(Database);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(Database));
   });
 
   it('should prepare statement', () => {
@@ -34,7 +36,12 @@ describe('categories / statements / get categories', () => {
 
   it('should subscribe to event', () => {
     initGetCategoriesStatement();
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(GetCategories, expect.any(Function));
+    expect(
+      vi.mocked(subscribe),
+    ).toHaveBeenCalledWith(
+      vi.mocked(GetCategories),
+      expect.any(Function),
+    );
   });
 
   it('should run statement on event emit', () => {

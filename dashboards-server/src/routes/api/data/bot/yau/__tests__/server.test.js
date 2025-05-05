@@ -5,6 +5,7 @@ import { GET } from '../+server.js';
 
 vi.mock('@sveltejs/kit', () => ({ json: (original) => original }));
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock('$lib/server/db/bot/events.js', () => ({ GetYAU: 'get YAU' }));
 
 describe('bot yau endpoint', () => {
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('bot yau endpoint', () => {
 
   it('should emit event', () => {
     GET({ url: { searchParams: { get: () => 'param' } } });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetYAU, 'param', 'now');
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(GetYAU), 'param', 'now');
   });
 
   it('should return event result', () => {

@@ -11,6 +11,22 @@ import { updateItem } from '../update-item.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock(
+  '$lib/server/db/events.js',
+  () => ({
+    RunStatementAuthorized: 'run statement authorized',
+    RunTransaction: 'run transaction',
+  }),
+);
+vi.mock('$lib/server/ipc-hub/injection-tokens.js', () => ({ IPCHub: 'ipc hub' }));
+vi.mock(
+  '../../events.js',
+  () => ({
+    DeleteDescriptionEntities: 'delete description entities',
+    InsertDescriptionEntities: 'insert description entities',
+    UpdateItem: 'update item',
+  }),
+);
 
 const ipcHubMock = { sendMessage: vi.fn() };
 
@@ -33,7 +49,7 @@ describe('wishlist / use cases / update item', () => {
 
   it('should emit RunTransaction event', () => {
     updateItem('userid', 'id', { name: 'name' });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(RunTransaction, expect.any(Function));
+    expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(RunTransaction), expect.any(Function));
   });
 
   describe('transaction', () => {
@@ -54,7 +70,7 @@ describe('wishlist / use cases / update item', () => {
         expect(
           vi.mocked(emit),
         ).toHaveBeenCalledWith(
-          RunStatementAuthorized,
+          vi.mocked(RunStatementAuthorized),
           expect.any(Function),
           1,
         );
@@ -70,7 +86,7 @@ describe('wishlist / use cases / update item', () => {
           expect(
             vi.mocked(emit),
           ).toHaveBeenCalledWith(
-            UpdateItem,
+            vi.mocked(UpdateItem),
             'userid',
             'id',
             [ 'name' ],
@@ -87,14 +103,14 @@ describe('wishlist / use cases / update item', () => {
       });
 
       it('should emit DeleteDescriptionEntities event', () => {
-        expect(vi.mocked(emit)).toHaveBeenCalledWith(DeleteDescriptionEntities, 'id');
+        expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(DeleteDescriptionEntities), 'id');
       });
 
       it('should emit InsertDescriptionEntities event', () => {
         expect(
           vi.mocked(emit),
         ).toHaveBeenCalledWith(
-          InsertDescriptionEntities,
+          vi.mocked(InsertDescriptionEntities),
           'id',
           'description entities',
         );
@@ -104,7 +120,7 @@ describe('wishlist / use cases / update item', () => {
 
   it('should inject IPC hub', () => {
     updateItem('userid', 'id', { name: 'name' });
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(IPCHub);
+    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(IPCHub));
   });
 
   it('should send message to IPC hub', () => {

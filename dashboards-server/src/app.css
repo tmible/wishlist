@@ -1,6 +1,12 @@
 @import "tailwindcss";
-@plugin "daisyui";
 @import "open-color/open-color.css";
+@import "@tmible/wishlist-ui/open-color.css";
+
+@source "../node_modules/@tmible/wishlist-ui";
+
+@plugin "tailwindcss-animate";
+@plugin "daisyui";
+
 @plugin "daisyui/theme" {
   name: "light";
   --color-base-100: var(--oc-gray-0);
@@ -19,6 +25,7 @@
   --color-warning: var(--oc-yellow-7);
   --color-error: var(--oc-red-7);
 }
+
 @plugin "daisyui/theme" {
   name: "dark";
   --color-base-100: var(--oc-gray-9);

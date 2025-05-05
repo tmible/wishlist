@@ -4,6 +4,13 @@ import { CountBotUserUpdates, GetBotUserUpdates } from '../../events.js';
 import { getBotUserUpdates } from '../get.js';
 
 vi.mock('@tmible/wishlist-common/event-bus');
+vi.mock(
+  '../../events.js',
+  () => ({
+    CountBotUserUpdates: 'count bot user updates',
+    GetBotUserUpdates: 'get bot user updates',
+  }),
+);
 vi.mock('../statements/count.js');
 vi.mock('../statements/get.js');
 
@@ -24,12 +31,25 @@ describe('bot user updates / use cases / get', () => {
 
   it('should emit GetBotUserUpdates event', () => {
     getBotUserUpdates({ timeLock: 'timeLock', index: 'index', filters: 'filters' });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetBotUserUpdates, 'timeLock', 'index', 'filters');
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      vi.mocked(GetBotUserUpdates),
+      'timeLock',
+      'index',
+      'filters',
+    );
   });
 
   it('should emit CountBotUserUpdates event', () => {
     getBotUserUpdates({ timeLock: 'timeLock', index: 'index', filters: 'filters' });
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(CountBotUserUpdates, 'timeLock', 'filters');
+    expect(
+      vi.mocked(emit),
+    ).toHaveBeenCalledWith(
+      vi.mocked(CountBotUserUpdates),
+      'timeLock',
+      'filters',
+    );
   });
 
   describe('retry until page is not empty', () => {

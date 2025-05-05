@@ -2,6 +2,6 @@
 
 /**
  * Токен внедрения серивиса работы с JWT
- * @constant {string}
+ * @constant {{}}
  */
-export const JWTService = 'user JWT service';
+export const JWTService = {};

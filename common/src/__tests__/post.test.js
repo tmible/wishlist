@@ -1,28 +1,33 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { strict as assert } from 'node:assert';
+import { afterEach, beforeEach, describe, it, mock } from 'node:test';
 import { post } from '../post.js';
 
-vi.stubGlobal('fetch', vi.fn());
-
 describe('post', () => {
+  beforeEach(() => {
+    mock.method(globalThis, 'fetch', mock.fn());
+  });
+
   afterEach(() => {
-    vi.clearAllMocks();
-    vi.restoreAllMocks();
+    mock.reset();
   });
 
   it('should fetch', async () => {
     await post('path');
-    expect(fetch).toHaveBeenCalledWith(
-      'path',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json;charset=utf-8' },
-        body: '{}',
-      },
+    assert.deepEqual(
+      fetch.mock.calls[0].arguments,
+      [
+        'path',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json;charset=utf-8' },
+          body: '{}',
+        },
+      ],
     );
   });
 
   it('should return answer', async () => {
-    fetch.mockReturnValue(Promise.resolve('response'));
-    expect(await post('path')).toEqual('response');
+    fetch.mock.mockImplementationOnce(() => Promise.resolve('response'));
+    assert.equal(await post('path'), 'response');
   });
 });

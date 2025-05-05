@@ -1,14 +1,11 @@
 <!-- @component Переключатель градиента на фоне страницы -->
 <script>
-  import { deprive, inject, provide } from '@tmible/wishlist-common/dependency-injector';
-  import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
+  import { inject } from '@tmible/wishlist-common/dependency-injector';
+  import { ThemeService } from '@tmible/wishlist-ui/theme/injection-tokens';
   import { onDestroy, onMount } from 'svelte';
-  import { ThemeService } from '$lib/theme-service-injection-token.js';
   import * as cssService from './css.service.js';
   import { GradientVariant } from './domain.js';
-  import { ApplyGradient, RemoveGradient } from './events.js';
-  import * as faviconService from './favicon.service.js';
-  import { GradientStore, NextGradientStore } from './injection-tokens.js';
+  import { initGradientFeature } from './initialization.js';
   import { nextStore, store } from './store.js';
   import { adjustGradient } from './use-cases/adjust-gradient.js';
   import { removeGradient } from './use-cases/remove-gradient.js';
@@ -27,17 +24,12 @@
    */
   let isGradient = $state(!!store.get());
 
-  // Ассоциация значений с токенами внедрения и подписка на события
-  provide(GradientStore, store);
-  provide(NextGradientStore, nextStore);
-  subscribe(ApplyGradient, (gradient) => {
-    cssService.applyGradient(gradient);
-    faviconService.applyGradient(gradient);
-  });
-  subscribe(RemoveGradient, (gradient) => {
-    cssService.removeGradient(gradient);
-    faviconService.removeGradient(gradient);
-  });
+  /**
+   * Регистрация зависисмостей и подписка на события для работы с градиентом
+   * Функция освобождения зависимостей и отписки от событий
+   * @type {() => void}
+   */
+  const destroyGradientFeature = initGradientFeature();
 
   // Затемнение или осветление градиента при смене темы
   onMount(() => themeService.subscribeToTheme(
@@ -45,10 +37,7 @@
   ));
 
   onDestroy(() => {
-    deprive(GradientStore);
-    deprive(NextGradientStore);
-    unsubscribe(ApplyGradient);
-    unsubscribe(RemoveGradient);
+    destroyGradientFeature();
   });
 
   // Смена фона
