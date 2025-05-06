@@ -74,3 +74,26 @@ check_unix_socket_status $(cd -- ../$(dirname $socket_path); pwd -P )/$(basename
 echo -n "}" >> $file
 
 echo "}" >> $file
+
+fails=$(jq -r --argjson dictionary "$(cat $(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)/dictionary.json)" '
+  walk(
+    if type == "object" then
+      with_entries(select(
+        ((.value | type) == "object" and (.value | length) > 0) or
+        .value == false
+      ))
+    else
+      .
+    end
+  ) |
+  paths |
+  join(".") as $paths |
+  $dictionary |
+  getpath([$paths])
+' $file)
+
+if [[ $fails == "" ]]; then
+  curl "https://hc-ping.com/$HEALTHCHECKS_IO_UUID" --proxy $HTTP_PROXY 2>/dev/null
+else
+  curl -X POST "https://hc-ping.com/$HEALTHCHECKS_IO_UUID/fail" --data-raw "$fails" --proxy $HTTP_PROXY 2>/dev/null
+fi

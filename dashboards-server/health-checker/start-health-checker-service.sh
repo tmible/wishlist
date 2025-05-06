@@ -9,6 +9,10 @@ Description=Tmible's wishlist health checker
 ExecStart=$directory/health-check.sh
 User=$user
 Group=$user
+$(
+  cat $directory/.env |
+  sed -e "s/^/Environment=/"
+)
 WorkingDirectory=$directory
 " > $directory/wishlist-health-checker.service
 
