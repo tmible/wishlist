@@ -9,6 +9,15 @@ check_systemd_service_status() {
   fi
 }
 
+check_periodic_systemd_service_status() {
+  is_active=$(systemctl is-active $1)
+  if [[ $is_active == "active" || $is_active == "inactive" ]]; then
+    echo -n "true" >> $file
+  else
+    echo -n "false" >> $file
+  fi
+}
+
 check_localhost_status() {
   (echo $'\x1d'; echo "quit") | telnet localhost $1 > /dev/null 2>&1
   if [[ $? == 0 ]]; then
@@ -71,6 +80,13 @@ check_systemd_service_status wishlist-hub
 echo -n ",\"socket\":" >> $file
 socket_path=$(cat ../../hub/.env | grep SOCKET_PATH | cut -d "=" -f 2)
 check_unix_socket_status $(cd -- ../$(dirname $socket_path); pwd -P )/$(basename $socket_path)
+echo -n "}," >> $file
+
+echo -n "\"refreshTokensCleaner\":{" >> $file
+echo -n "\"timer\":" >> $file
+check_systemd_service_status wishlist-refresh-tokens-cleaner.timer
+echo -n ",\"service\":" >> $file
+check_periodic_systemd_service_status wishlist-refresh-tokens-cleaner
 echo -n "}" >> $file
 
 echo "}" >> $file

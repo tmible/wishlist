@@ -30,9 +30,9 @@
     label: 'Портал',
     healthKey: 'portal',
   }, {
-    path: '/dashboards/hub',
-    label: 'Хаб',
-    healthKey: 'hub',
+    path: '/dashboards/other',
+    label: 'Остальное',
+    healthKey: 'other',
   }];
 
   /**

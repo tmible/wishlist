@@ -27,7 +27,9 @@
 </script>
 
 {#if $user.isAuthenticated}
-  <HealthDashboard service="bot" />
+  <div class="plate mb-6 p-3 md:p-6">
+    <HealthDashboard service="bot" />
+  </div>
   <div class="dashboards flex flex-wrap -m-3 mb-9">
     <GridScalePlate>
       <Dashboard

@@ -2,7 +2,7 @@
 <script>
   import { health } from './store.js';
 
-  /** @typedef {'bot' | 'portal' | 'hub'} Service */
+  /** @typedef {'bot' | 'portal' | 'other'} Service */
 
   /**
    * @typedef {object} Props

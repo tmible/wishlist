@@ -1,11 +1,14 @@
 import { get } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { authInterceptor } from '$lib/auth-interceptor.js';
+import { addOtherService } from '../domain.js';
 import { health } from '../store.js';
 
 vi.stubGlobal('fetch', vi.fn().mockResolvedValue());
 vi.mock('$lib/auth-interceptor.js');
+vi.mock('../domain.js');
 vi.mocked(authInterceptor).mockResolvedValue({ json: vi.fn() });
+vi.mocked(addOtherService).mockImplementation((original) => original);
 
 describe('health / store', () => {
   beforeEach(() => {
@@ -25,6 +28,8 @@ describe('health / store', () => {
       bot: null,
       portal: null,
       hub: null,
+      refreshTokensCleaner: null,
+      other: null,
     });
   });
 
