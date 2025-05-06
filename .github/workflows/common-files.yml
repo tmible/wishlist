@@ -31,7 +31,7 @@ jobs:
       run: |
         find . -mindepth 1 -maxdepth 1 \
           -type f -exec rm -rf {} + -or \
-          -type d -not \( -name 'deploy' -or -name 'logs-db-migrations' -or -name 'wishlist-db-migrations' -or -name 'health-checker' \) -exec rm -rf {} +
+          -type d -not \( -name 'deploy' -or -name 'logs-db-migrations' -or -name 'wishlist-db-migrations' \) -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
       with:
@@ -41,4 +41,3 @@ jobs:
         TARGET: ${{ secrets.REMOTE_TARGET }}
         SCRIPT_AFTER: |
           ${{ secrets.REMOTE_TARGET }}/deploy/start-auto-update-service.sh
-          ${{ secrets.REMOTE_TARGET }}/health-checker/start-health-checker-service.sh

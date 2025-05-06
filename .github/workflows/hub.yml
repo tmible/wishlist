@@ -52,7 +52,7 @@ jobs:
     - name: remove unnecessary files
       run: |
         find . -mindepth 1 -maxdepth 1 \
-          -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
+          -type f -not \( -name 'package.json' \) -exec rm -rf {} + -or \
           -type d -not -name 'src' -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main

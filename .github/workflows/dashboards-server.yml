@@ -33,7 +33,7 @@ jobs:
     - uses: ./.github/actions/lint
       with:
         working-directory: dashboards-server
-        requires-common: true
+        requires-ui: true
 
   tests:
     needs: changes
@@ -44,7 +44,7 @@ jobs:
     - uses: ./.github/actions/test
       with:
         working-directory: dashboards-server
-        requires-common: true
+        requires-ui: true
 
   deploy:
     needs: [lint, tests]
@@ -57,9 +57,9 @@ jobs:
     - uses: ./.github/actions/setup
       with:
         working-directory: dashboards-server
-    - name: build common
+    - name: build ui
       run: pnpm package
-      working-directory: common
+      working-directory: ui
     - name: build
       env:
         LOGS_DB_FILE_PATH: ${{ vars.DASHBOARDS_SERVER_LOGS_DB_FILE_PATH }}
@@ -69,7 +69,7 @@ jobs:
     - name: remove unnecessary files
       run: |
         find . -mindepth 1 -maxdepth 1 \
-          -type f -not \( -name 'package.json' -or -name 'pnpm-lock.yaml' \) -exec rm -rf {} + -or \
+          -type f -not \( -name 'package.json' \) -exec rm -rf {} + -or \
           -type d -not -name 'build' -exec rm -rf {} +
     - name: deploy
       uses: easingthemes/ssh-deploy@main
