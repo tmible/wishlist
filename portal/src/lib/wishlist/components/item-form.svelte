@@ -99,8 +99,8 @@
   };
 </script>
 
-<form class="prose" method="POST" onsubmit={handleFormSubmit}>
-  <div class="flex flex-col gap-2 mb-6">
+<form class="prose flex flex-col grow-1" method="POST" onsubmit={handleFormSubmit}>
+  <div class="flex flex-col gap-2 grow-1 mb-6">
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Название</legend>
       <input
