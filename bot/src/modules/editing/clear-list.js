@@ -1,4 +1,4 @@
-import ListItemState from '@tmible/wishlist-common/constants/list-item-state';
+import clearWishlistItemsComparator from '@tmible/wishlist-common/clear-wishlist-items-comparator';
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { Format, Markup } from 'telegraf';
 import Events from '@tmible/wishlist-bot/architecture/events';
@@ -14,12 +14,6 @@ import isChatGroup from '@tmible/wishlist-bot/helpers/is-chat-group';
 /** @typedef {import('@tmible/wishlist-bot/store/editing/get-list').OwnListItem} OwnListItem */
 /** @typedef {import('telegraf').Context} Context */
 /** @typedef {import('@tmible/wishlist-common/event-bus').EventBus} EventBus */
-
-/**
- * Подмножество состояний элемента списка, обозначающих наличие намерения подарить его
- * @constant {Set<ListItemState>}
- */
-const PLANNED_PRESENTS_STATES = new Set([ ListItemState.BOOKED, ListItemState.COOPERATIVE ]);
 
 /**
  * Встроенная клавиатура для сообщения с названем подарка для очистки списка
@@ -45,20 +39,12 @@ const clearListCommandHandler = async (eventBus, ctx) => {
     return;
   }
 
-  const list = eventBus.emit(Events.Editing.GetList, ctx.from.id).sort((a, b) => {
-    const isAPlanned = PLANNED_PRESENTS_STATES.has(a.state) ? 1 : 0;
-    const isBPlanned = PLANNED_PRESENTS_STATES.has(b.state) ? 1 : 0;
-
-    if (a.isExternal !== b.isExternal) {
-      return b.isExternal - a.isExternal;
-    }
-
-    if (isAPlanned !== isBPlanned) {
-      return isBPlanned - isAPlanned;
-    }
-
-    return a.id - b.id;
-  });
+  const list = eventBus.emit(
+    Events.Editing.GetList,
+    ctx.from.id,
+  ).sort(
+    clearWishlistItemsComparator,
+  );
 
   if (list.length === 0) {
     await ctx.reply('Ваш список пуст');

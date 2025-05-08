@@ -1,16 +1,25 @@
 <!-- @component Страница быстрой очистки списка. Реализует механику свайпа карточек -->
 <script>
+  import clearWishlistItemsComparator from '@tmible/wishlist-common/clear-wishlist-items-comparator';
   import { onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { CardSwiper } from '$lib/card-swiper';
   import { wishlist } from '$lib/wishlist/store.js';
   import { deleteItems } from '$lib/wishlist/use-cases/delete-items.js';
 
+  /** @typedef {import('$lib/wishlist/domain.js').OwnWishlistItem} OwnWishlistItem */
+
   /**
    * Массив идентификаторов элементов списка к удалению
    * @type {number[]}
    */
   const toDelete = [];
+
+  /**
+   * Список желаний пользователя, отсортированный для быстрой очистки
+   * @type {OwnWishlistItem[]}
+   */
+  const wishlistSorted = $derived($wishlist.toSorted(clearWishlistItemsComparator));
 
   /**
    * Отметка элемента списка к удалению при соответствующем направлении свайпа
@@ -42,7 +51,12 @@
       goto('/list');
       return {};
     }
-    return { title: $wishlist[i].name, image: '/bg.svg', id: $wishlist[i].id };
+    return {
+      title: wishlistSorted[i].name,
+      image: '/bg.svg',
+      id: wishlistSorted[i].id,
+      description: wishlistSorted[i].isExternal ? 'сюрприз' : '',
+    };
   };
 
   /**

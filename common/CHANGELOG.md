@@ -1,9 +1,15 @@
 # Changelog
 
+## 2.1.0 Приятный собеседник (2025-05-08)
+<img width="128" height="128" src="release-images/2.1.0.png"/>
+
+https://github.com/tmible/wishlist/compare/35fde19..master
+
+
 ## 2.0.0 Оглушительная тишина (2025-05-05)
 <img width="128" height="128" src="release-images/2.0.0.png"/>
 
-https://github.com/tmible/wishlist/compare/2c4a4e5..master
+https://github.com/tmible/wishlist/compare/2c4a4e5..35fde19
 
 
 ## 1.4.2 Морская Пучина (2025-04-21)

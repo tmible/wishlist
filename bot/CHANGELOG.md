@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.5.1 Векторное пространство (2025-05-08)
+<img width="128" height="128" src="release-images/3.5.1.png"/>
+
+https://github.com/tmible/wishlist/compare/35fde19..master
+
+
 ## 3.5.0 Огромная Вселенная (2025-05-08)
 <img width="128" height="128" src="release-images/3.5.0.png"/>
 
-https://github.com/tmible/wishlist/compare/409dd08..master
+https://github.com/tmible/wishlist/compare/409dd08..35fde19
 
 
 ## 3.4.11 Великолепный серебряный меч (2025-04-18)
