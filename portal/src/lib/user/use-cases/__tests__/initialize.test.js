@@ -1,17 +1,12 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { emit } from '@tmible/wishlist-common/event-bus';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
-import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
 import { createUser } from '../../domain.js';
-import { Navigate } from '../../events.js';
 import { NetworkService, Store } from '../../injection-tokens.js';
 import { initialize } from '../initialize.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('../../domain.js');
-vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
 vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkUser = 'network user';
@@ -59,15 +54,5 @@ describe('user / use cases / initialize', () => {
   it('should set user in store', async () => {
     await initialize();
     expect(storeMock.set).toHaveBeenCalledWith(createdUser);
-  });
-
-  it('should emit Navigate event', async () => {
-    await initialize();
-    expect(
-      vi.mocked(emit),
-    ).toHaveBeenCalledWith(
-      vi.mocked(Navigate),
-      createdUser.isAuthenticated ? AUTHENTICATED_ROUTE : UNAUTHENTICATED_ROUTE,
-    );
   });
 });

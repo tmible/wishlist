@@ -61,30 +61,46 @@ describe('editing/clear-list module', () => {
     describe('if list is not empty', () => {
       const list = [{
         state: ListItemState.FREE,
-        name: 'name 3',
-        id: 3,
+        name: 'name 4',
+        id: 4,
+        isExternal: 0,
       }, {
         state: ListItemState.FREE,
-        name: 'name 2',
-        id: 2,
+        name: 'name 3',
+        id: 3,
+        isExternal: 0,
       }, {
-        state: ListItemState.BOOKED,
+        state: ListItemState.FREE,
         name: 'name 1',
         id: 1,
+        isExternal: 1,
+      }, {
+        state: ListItemState.BOOKED,
+        name: 'name 2',
+        id: 2,
+        isExternal: 0,
       }];
 
       const sortedList = [{
-        state: ListItemState.BOOKED,
+        state: ListItemState.FREE,
         name: 'name 1',
         id: 1,
+        isExternal: 1,
       }, {
-        state: ListItemState.FREE,
+        state: ListItemState.BOOKED,
         name: 'name 2',
         id: 2,
+        isExternal: 0,
       }, {
         state: ListItemState.FREE,
         name: 'name 3',
         id: 3,
+        isExternal: 0,
+      }, {
+        state: ListItemState.FREE,
+        name: 'name 4',
+        id: 4,
+        isExternal: 0,
       }];
 
       beforeEach(async () => {

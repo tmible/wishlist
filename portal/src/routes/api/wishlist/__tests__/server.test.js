@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { protectedEndpoint } from '$lib/server/protected-endpoint.js';
 import { addItem } from '$lib/server/wishlist/use-cases/add-item.js';
+import { addItemExternally } from '$lib/server/wishlist/use-cases/add-item-externally.js';
 import { deleteItems } from '$lib/server/wishlist/use-cases/delete-items.js';
 import { getWishlist } from '$lib/server/wishlist/use-cases/get-wishlist.js';
 import { reorderWishlist } from '$lib/server/wishlist/use-cases/reorder-wishlist.js';
@@ -10,6 +11,7 @@ import { DELETE, GET, PATCH, POST } from '../+server.js';
 vi.mock('@sveltejs/kit');
 vi.mock('$lib/server/protected-endpoint.js');
 vi.mock('$lib/server/wishlist/use-cases/add-item.js');
+vi.mock('$lib/server/wishlist/use-cases/add-item-externally.js');
 vi.mock('$lib/server/wishlist/use-cases/delete-items.js');
 vi.mock('$lib/server/wishlist/use-cases/get-wishlist.js');
 vi.mock('$lib/server/wishlist/use-cases/reorder-wishlist.js');
@@ -40,21 +42,52 @@ describe('wishlist endpoint', () => {
 
   describe('POST', () => {
     let request;
+    let url;
 
     beforeEach(() => {
       request = { json: vi.fn().mockResolvedValueOnce('item') };
     });
 
-    it('should add item', async () => {
-      await POST({ locals, request });
-      expect(vi.mocked(addItem)).toHaveBeenCalledWith('userid', 'item');
+    describe('without wishlist search parameter', () => {
+      beforeEach(() => {
+        url = { searchParams: { get: vi.fn() } };
+      });
+
+      it('should add item', async () => {
+        await POST({ locals, request, url });
+        expect(vi.mocked(addItem)).toHaveBeenCalledWith('userid', 'item');
+      });
+
+      it('should return success', async () => {
+        vi.mocked(addItem).mockReturnValueOnce({ added: 'item' });
+        const response = await POST({ locals, request, url });
+        expect(response.status).toBe(201);
+        await expect(response.json()).resolves.toEqual({ added: 'item' });
+      });
     });
 
-    it('should return success', async () => {
-      vi.mocked(addItem).mockReturnValueOnce({ added: 'item' });
-      const response = await POST({ locals, request });
-      expect(response.status).toBe(201);
-      await expect(response.json()).resolves.toEqual({ added: 'item' });
+    describe('with wishlist search parameter', () => {
+      beforeEach(() => {
+        url = { searchParams: { get: vi.fn(() => 'target user hash') } };
+      });
+
+      it('should add item', async () => {
+        await POST({ locals, request, url });
+        expect(
+          vi.mocked(addItemExternally),
+        ).toHaveBeenCalledWith(
+          'target user hash',
+          'item',
+          'userid',
+        );
+      });
+
+      it('should return success', async () => {
+        vi.mocked(addItem).mockReturnValueOnce({ added: 'item' });
+        const response = await POST({ locals, request, url });
+        expect(response.status).toBe(201);
+        expect(response.body).toBe(null);
+      });
     });
   });
 

@@ -156,6 +156,12 @@ describe('resendListsMessages', () => {
           Markup.inlineKeyboard([
             [ Markup.button.callback('Обновить', 'update_list userid') ],
             [ Markup.button.callback('Отправить новые сообщения', 'force_list userid') ],
+            [
+              Markup.button.login(
+                'Добавить сюрприз',
+                'https://wishlist.tmible.ru/api/authSuccess?continue=/add?wishlist=undefined',
+              ),
+            ],
           ]),
         ],
       );

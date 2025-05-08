@@ -1,8 +1,7 @@
 import { deprive, provide } from '@tmible/wishlist-common/dependency-injector';
 import { subscribe, unsubscribe } from '@tmible/wishlist-common/event-bus';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { goto } from '$app/navigation';
-import { GetUserHash, Navigate } from '../events.js';
+import { GetUserHash } from '../events.js';
 import { initUserFeature } from '../initialization.js';
 import { NetworkService, Store } from '../injection-tokens.js';
 import * as networkService from '../network.service.js';
@@ -11,7 +10,7 @@ import { getHash } from '../use-cases/get-hash.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
 vi.mock('@tmible/wishlist-common/event-bus');
-vi.mock('../events.js', () => ({ GetUserHash: 'get user hash', Navigate: 'navigate' }));
+vi.mock('../events.js', () => ({ GetUserHash: 'get user hash' }));
 vi.mock('../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 describe('user / initialization', () => {
@@ -33,10 +32,6 @@ describe('user / initialization', () => {
     expect(vi.mocked(provide)).toHaveBeenCalledWith(NetworkService, networkService);
   });
 
-  it('should subscribe to Navigate event', () => {
-    expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(Navigate), goto);
-  });
-
   it('should subscribe to GetUserHash event', () => {
     expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(GetUserHash), getHash);
   });
@@ -52,10 +47,6 @@ describe('user / initialization', () => {
 
     it('should deprive network service', () => {
       expect(vi.mocked(deprive)).toHaveBeenCalledWith(vi.mocked(NetworkService));
-    });
-
-    it('should unsubscribe from Navigate event', () => {
-      expect(vi.mocked(unsubscribe)).toHaveBeenCalledWith(Navigate);
     });
 
     it('should unsubscribe from GetUserHash event', () => {

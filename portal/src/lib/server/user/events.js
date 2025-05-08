@@ -35,3 +35,9 @@ export const GetRefreshToken = {};
  * @constant {{}}
  */
 export const DeleteRefreshToken = {};
+
+/**
+ * Событие получения идентификатора пользователя по хэшу
+ * @constant {{}}
+ */
+export const GetUseridByHash = {};

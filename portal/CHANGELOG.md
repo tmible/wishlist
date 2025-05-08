@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.0 Великолепный малахитовый браслет (2025-05-08)
+<img width="128" height="128" src="release-images/1.5.0.png"/>
+
+https://github.com/tmible/wishlist/compare/409dd08..master
+
+
 ## 1.4.23 Весёлая бабочка (2025-05-05)
 <img width="128" height="128" src="release-images/1.4.23.png"/>
 
-https://github.com/tmible/wishlist/compare/2c4a4e5..master
+https://github.com/tmible/wishlist/compare/2c4a4e5..409dd08
 
 
 ## 1.4.22 Жгучая сапфировая роза (2025-04-29)

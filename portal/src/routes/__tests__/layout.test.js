@@ -7,8 +7,6 @@ import { writable } from 'svelte/store';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { goto } from '$app/navigation';
 import { initActionsFeature } from '$lib/actions/initialization.js';
-import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
-import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
 import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
 import { initUserFeature } from '$lib/user/initialization.js';
 import { user } from '$lib/user/store.js';
@@ -121,23 +119,17 @@ describe('layout', () => {
     });
   });
 
-  it('should not redirect if isAuthenticated is null', async () => {
-    vi.mocked(user).set({ isAuthenticated: null });
-    render(Layout);
-    await vi.waitFor(() => expect(goto).not.toHaveBeenCalled());
-  });
-
   it('should redirect to /', async () => {
     vi.mocked(user).set({ isAuthenticated: false });
-    page.url.pathname = AUTHENTICATED_ROUTE;
+    page.url.pathname = '/list';
     render(Layout);
-    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith(UNAUTHENTICATED_ROUTE));
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/'));
   });
 
   it('should redirect to /list', async () => {
     vi.mocked(user).set({ isAuthenticated: true });
-    page.url.pathname = UNAUTHENTICATED_ROUTE;
+    page.url.pathname = '/';
     render(Layout);
-    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith(AUTHENTICATED_ROUTE));
+    await vi.waitFor(() => expect(goto).toHaveBeenCalledWith('/list'));
   });
 });

@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { categories } from '$lib/categories/store.js';
 import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
 import { addItem } from '../../use-cases/add-item.js';
+import { addItemExternally } from '../../use-cases/add-item-externally.js';
 import { editItem } from '../../use-cases/edit-item.js';
 import ItemForm from '../item-form.svelte';
 
@@ -18,6 +19,7 @@ vi.mock(
 );
 vi.mock('$lib/tiptap-to-telegram.js');
 vi.mock('../../use-cases/add-item.js');
+vi.mock('../../use-cases/add-item-externally.js');
 vi.mock('../../use-cases/edit-item.js');
 vi.mock(
   '$lib/categories/select.svelte',
@@ -61,9 +63,18 @@ describe('wishlist / components / item form', () => {
     expect(onfinish).toHaveBeenCalled();
   });
 
+  it('should dispatch cancel event on cancel button click', async () => {
+    const oncancel = vi.fn();
+    const user = userEvent.setup();
+    render(ItemForm, { oncancel });
+    await user.click(screen.getByText('Отмена', { selector: 'button' }));
+    expect(oncancel).toHaveBeenCalled();
+  });
+
   describe('on submit button click', () => {
     const props = $state({
       onfinish: vi.fn(),
+      onsuccess: vi.fn(),
     });
 
     let form;
@@ -100,9 +111,21 @@ describe('wishlist / components / item form', () => {
       expect(vi.mocked(addItem)).toHaveBeenCalled();
     });
 
+    it('should add item externally', () => {
+      props.targetUserHash = 'hash';
+      fireEvent.submit(form);
+      delete props.targetUserHash;
+      expect(vi.mocked(addItemExternally)).toHaveBeenCalledWith(expect.any(Object), 'hash');
+    });
+
     it('should dispatch finish event', async () => {
       fireEvent.submit(form);
       await vi.waitFor(() => expect(props.onfinish).toHaveBeenCalled());
+    });
+
+    it('should dispatch success event', async () => {
+      fireEvent.submit(form);
+      await vi.waitFor(() => expect(props.onsuccess).toHaveBeenCalled());
     });
 
     it('should set description', () => {

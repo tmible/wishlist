@@ -1,16 +1,11 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import { emit } from '@tmible/wishlist-common/event-bus';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
 import { logoutUser } from '../../domain.js';
-import { Navigate } from '../../events.js';
 import { NetworkService, Store } from '../../injection-tokens.js';
 import { logout } from '../logout.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
-vi.mock('@tmible/wishlist-common/event-bus');
 vi.mock('../../domain.js');
-vi.mock('../../events.js', () => ({ Navigate: 'navigate' }));
 vi.mock('../../injection-tokens.js', () => ({ NetworkService: 'network service', Store: 'store' }));
 
 const networkServiceMock = { logout: vi.fn() };
@@ -59,10 +54,6 @@ describe('user / use cases / logout', () => {
 
     it('should set user in store', () => {
       expect(storeMock.set).toHaveBeenCalledWith('logged out user');
-    });
-
-    it('should emit Navigate event', () => {
-      expect(vi.mocked(emit)).toHaveBeenCalledWith(vi.mocked(Navigate), UNAUTHENTICATED_ROUTE);
     });
   });
 });

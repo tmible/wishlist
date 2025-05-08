@@ -45,12 +45,28 @@ describe('wishlist / network service', () => {
       );
     });
 
-    it('should fetch item creation', async () => {
+    it('should fetch item creation without target user hash', async () => {
       await addItem({ descriptionEntities: [], category: { id: 1 }, name: 'name' });
       expect(
         vi.mocked(fetch),
       ).toHaveBeenCalledWith(
         '/api/wishlist',
+        {
+          method: 'POST',
+          body: JSON.stringify({ descriptionEntities: [], name: 'name', categoryId: 1 }),
+        },
+      );
+    });
+
+    it('should fetch item creation with target user hash', async () => {
+      await addItem(
+        { descriptionEntities: [], category: { id: 1 }, name: 'name' },
+        'target user hash',
+      );
+      expect(
+        vi.mocked(fetch),
+      ).toHaveBeenCalledWith(
+        '/api/wishlist?wishlist=target user hash',
         {
           method: 'POST',
           body: JSON.stringify({ descriptionEntities: [], name: 'name', categoryId: 1 }),

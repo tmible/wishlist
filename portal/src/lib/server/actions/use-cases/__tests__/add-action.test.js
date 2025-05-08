@@ -52,7 +52,13 @@ describe('actions / use cases / add action', () => {
     });
 
     it('should store it in cookie', () => {
-      expect(cookies.set).toHaveBeenCalledWith(UNKNOWN_USER_UUID_COOKIE_NAME, 'random UUID');
+      expect(
+        cookies.set,
+      ).toHaveBeenCalledWith(
+        UNKNOWN_USER_UUID_COOKIE_NAME,
+        'random UUID',
+        { path: '/' },
+      );
     });
 
 

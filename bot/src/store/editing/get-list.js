@@ -18,6 +18,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
  * @property {number} order Порядковый номер элемента
  * @property {string | null} category Категория элемента
  * @property {Entity[]} descriptionEntities Элементы разметки текста описания подарка
+ * @property {0 | 1} isExternal Признак того, что подарок был добавлен в список не владельцем
  */
 
 /**
@@ -43,9 +44,12 @@ const prepare = () => {
       type,
       offset,
       length,
-      additional
+      additional,
+      CASE WHEN added_by IS NULL THEN FALSE ELSE TRUE END AS isExternal
     FROM (
-      SELECT id, name, description, state, "order", category_id FROM list WHERE userid = ?
+      SELECT id, name, description, state, "order", category_id, added_by
+      FROM list
+      WHERE userid = ?
     ) AS list
     LEFT JOIN description_entities ON list.id = description_entities.list_item_id
     LEFT JOIN categories ON list.category_id = categories.id

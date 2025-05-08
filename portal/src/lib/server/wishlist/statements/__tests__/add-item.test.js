@@ -39,27 +39,57 @@ describe('wishlist / statements / add item', () => {
     expect(vi.mocked(subscribe)).toHaveBeenCalledWith(vi.mocked(AddItem), expect.any(Function));
   });
 
-  it('should run statement on event emit', () => {
+  describe('on event emit', () => {
     let eventHandler;
-    vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
-    initAddItemStatement();
-    eventHandler(
-      'userid',
-      {
-        name: 'name',
-        description: 'description',
-        order: 'order',
-        categoryId: 'categoryId',
-      },
-    );
-    expect(
-      statement.get,
-    ).toHaveBeenCalledWith(
-      'userid',
-      'name',
-      'description',
-      'order',
-      'categoryId',
-    );
+
+    beforeEach(() => {
+      vi.mocked(subscribe).mockImplementationOnce((event, handler) => eventHandler = handler);
+      initAddItemStatement();
+    });
+
+    it('should run statement without addedBy', () => {
+      eventHandler(
+        'userid',
+        {
+          name: 'name',
+          description: 'description',
+          order: 'order',
+          categoryId: 'category id',
+        },
+      );
+      expect(
+        statement.get,
+      ).toHaveBeenCalledWith(
+        'userid',
+        'name',
+        'description',
+        'order',
+        'category id',
+        null,
+      );
+    });
+
+    it('should run statement with addedBy', () => {
+      eventHandler(
+        'userid',
+        {
+          name: 'name',
+          description: 'description',
+          order: 'order',
+          categoryId: 'category id',
+          addedBy: 'added by',
+        },
+      );
+      expect(
+        statement.get,
+      ).toHaveBeenCalledWith(
+        'userid',
+        'name',
+        'description',
+        'order',
+        'category id',
+        'added by',
+      );
+    });
   });
 });

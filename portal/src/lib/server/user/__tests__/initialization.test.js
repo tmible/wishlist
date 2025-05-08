@@ -7,6 +7,7 @@ import { initAddUserStatement } from '../statements/add-user.js';
 import { initDeleteRefreshTokenStatement } from '../statements/delete-refresh-token.js';
 import { initGetRefreshTokenStatement } from '../statements/get-refresh-token.js';
 import { initGetUserHashStatement } from '../statements/get-user-hash.js';
+import { initGetUseridByHashStatement } from '../statements/get-userid-by-hash.js';
 import { initSetUserHashStatement } from '../statements/set-user-hash.js';
 import { initStoreRefreshTokenStatement } from '../statements/store-refresh-token.js';
 
@@ -17,6 +18,7 @@ vi.mock('../statements/add-user.js');
 vi.mock('../statements/delete-refresh-token.js');
 vi.mock('../statements/get-refresh-token.js');
 vi.mock('../statements/get-user-hash.js');
+vi.mock('../statements/get-userid-by-hash.js');
 vi.mock('../statements/set-user-hash.js');
 vi.mock('../statements/store-refresh-token.js');
 
@@ -49,6 +51,11 @@ describe('user / initialization', () => {
   it('should init delete refresh token statement', () => {
     initUserFeature();
     expect(vi.mocked(initDeleteRefreshTokenStatement)).toHaveBeenCalled();
+  });
+
+  it('should init get userid by hash statement', () => {
+    initUserFeature();
+    expect(vi.mocked(initGetUseridByHashStatement)).toHaveBeenCalled();
   });
 
   it('should provide JWT service', () => {

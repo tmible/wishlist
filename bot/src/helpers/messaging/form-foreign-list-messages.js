@@ -26,17 +26,28 @@ import getMentionFromUseridOrUsername from '@tmible/wishlist-bot/helpers/messagi
  * @returns {Format.FmtString} Блок с упоминаниями
  */
 const formParticipantsBlock = (item) => {
-  const participantsMentions = item.participants.map(
-    (username, i) => getMentionFromUseridOrUsername(item.participantsIds[i], username),
-  );
-
   if (item.participants.length === 0) {
     return new Format.FmtString('🟢 свободен');
   }
 
+  const participantsMentions = item.participants.map(
+    (username, i) => getMentionFromUseridOrUsername(item.participantsIds[i], username),
+  );
+
   return item.state === ListItemState.BOOKED ?
     Format.join([ '🔴', 'забронирован', participantsMentions[0] ], ' ') :
     Format.join([ '🟡', 'участники:', Format.join(participantsMentions, ', ') ], ' ');
+};
+
+/**
+ * Формирование блока с упоминанием пользователя, добавившего подарок в список
+ * @function formAddedByBlock
+ * @param {ListItem} item Элемент списка желаний
+ * @returns {Format.FmtString} Блок с упоминанием
+ */
+const formAddedByBlock = (item) => {
+  const addedByMention = getMentionFromUseridOrUsername(item.addedById, item.addedBy);
+  return Format.join([ '❗️', 'добавлен:', addedByMention ], ' ');
 };
 
 /**
@@ -46,7 +57,7 @@ const formParticipantsBlock = (item) => {
  * @function formReplyMarkup
  * @param {Context} ctx Контекст
  * @param {ListItem} item Элемент списка желаний
- * @param {number} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя — владельца списка
  * @returns {Markup<InlineKeyboardMarkup>[]} Встроенная клавиатура
  */
 const formReplyMarkup = (ctx, item, userid) => {
@@ -94,7 +105,7 @@ const formReplyMarkup = (ctx, item, userid) => {
  * @function formMessages
  * @param {EventBus} eventBus Шина событий
  * @param {Context} ctx Контекст
- * @param {number} userid Идентификатор пользователя -- владельца списка
+ * @param {number} userid Идентификатор пользователя — владельца списка
  * @returns {Message[]} Сформированные сообщения
  */
 const formMessages = (eventBus, ctx, userid) => eventBus
@@ -120,6 +131,7 @@ const formMessages = (eventBus, ctx, userid) => eventBus
           ),
           ...(item.category ? [ `🔡 ${item.category}` ] : []),
           formParticipantsBlock(item),
+          ...(item.addedById ? [ formAddedByBlock(item) ] : []),
         ],
         '\n\n',
       ),

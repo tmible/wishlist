@@ -4,6 +4,8 @@ import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
 /** @typedef {import('$lib/components/telegram-entities/parser.svelte').Entity} Entity */
 /** @typedef {import('$lib/categories/domain.js').Category} Category */
 
+/** @module Домен списка желаний */
+
 /**
  * Элемент списка желаний пользователя во варианте отображения для владельца
  * @typedef {object} OwnWishlistItem
@@ -14,6 +16,7 @@ import arrayToOrderedJSON from '@tmible/wishlist-common/array-to-ordered-json';
  * @property {number} order Порядковый номер элемента
  * @property {Category | null} category Категория элемента
  * @property {Entity[]} descriptionEntities Элементы разметки текста описания подарка
+ * @property {0 | 1} isExternal Признак того, что подарок в список добавил не владелец
  */
 
 /**

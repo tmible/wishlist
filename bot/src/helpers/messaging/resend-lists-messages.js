@@ -72,7 +72,7 @@ const pinMessage = async (ctx, userid, titleMessageText) => {
 
   const messageToPin = await ctx.reply(
     titleMessageText,
-    formTitleMessageMarkup(ctx, userid),
+    await formTitleMessageMarkup(ctx, userid),
   );
 
   await tryPinning(ctx, true, messageToPin.message_id);

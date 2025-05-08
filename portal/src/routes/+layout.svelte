@@ -8,8 +8,6 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { initActionsFeature } from '$lib/actions/initialization.js';
-  import { AUTHENTICATED_ROUTE } from '$lib/constants/authenticated-route.const.js';
-  import { UNAUTHENTICATED_ROUTE } from '$lib/constants/unauthenticated-route.const.js';
   import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
   import { initUserFeature } from '$lib/user/initialization.js';
   import { user } from '$lib/user/store.js';
@@ -52,11 +50,11 @@
    * перенаправление на соответствующую статусу аутентификации страницу
    */
   $effect(() => {
-    if ($user.isAuthenticated !== null) {
-      if (!$user.isAuthenticated && page.url.pathname.startsWith(AUTHENTICATED_ROUTE)) {
-        goto(UNAUTHENTICATED_ROUTE);
-      } else if ($user.isAuthenticated && page.url.pathname === UNAUTHENTICATED_ROUTE) {
-        goto(AUTHENTICATED_ROUTE);
+    if ($user.isAuthenticated !== null && page.url.pathname !== '/add') {
+      if (!$user.isAuthenticated && page.url.pathname.startsWith('/list')) {
+        goto('/');
+      } else if ($user.isAuthenticated && page.url.pathname === '/') {
+        goto('/list');
       }
     }
   });

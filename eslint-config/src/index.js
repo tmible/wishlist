@@ -198,7 +198,7 @@ export default [
         "error",
         100,
         2,
-        { ignorePattern: "^ *import (\\{ )?\\w+( \\})? from '[-./@\\w]+';$" },
+        { ignorePattern: "^ *import (\\{ )?\\w+( \\})? from '[$-./@\\w]+';$" },
       ],
       "@stylistic/js/max-statements-per-line": "error",
       "@stylistic/js/multiline-ternary": [ "error", "always-multiline" ],

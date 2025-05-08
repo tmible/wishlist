@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.1.3 Жуткое безмолвие (2025-05-08)
+<img width="128" height="128" src="release-images/1.1.3.png"/>
+
+https://github.com/tmible/wishlist/compare/409dd08..master
+
+
 ## 1.1.2 Задумчивый романтизм (2025-03-22)
 <img width="128" height="128" src="release-images/1.1.2.png"/>
 
-https://github.com/tmible/wishlist/compare/a45bf87..master
+https://github.com/tmible/wishlist/compare/a45bf87..409dd08
 
 
 ## 1.1.1 Загадочная Голубая Дама (2025-03-19)

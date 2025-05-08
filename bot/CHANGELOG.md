@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.5.0 Огромная Вселенная (2025-05-08)
+<img width="128" height="128" src="release-images/3.5.0.png"/>
+
+https://github.com/tmible/wishlist/compare/409dd08..master
+
+
 ## 3.4.11 Великолепный серебряный меч (2025-04-18)
 <img width="128" height="128" src="release-images/3.4.11.png"/>
 
-https://github.com/tmible/wishlist/compare/7fdd3bc..master
+https://github.com/tmible/wishlist/compare/7fdd3bc..409dd08
 
 
 ## 3.4.10 Бескрайний горизонт (2025-03-25)

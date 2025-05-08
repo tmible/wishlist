@@ -23,9 +23,12 @@ export const initGetWishlistStatement = () => {
       type,
       offset,
       length,
-      additional
+      additional,
+      CASE WHEN added_by IS NULL THEN FALSE ELSE TRUE END AS isExternal
     FROM (
-      SELECT id, name, description, state, "order", category_id FROM list WHERE userid = ?
+      SELECT id, name, description, state, "order", category_id, added_by
+      FROM list
+      WHERE userid = ?
     ) AS list
     LEFT JOIN description_entities ON list.id = description_entities.list_item_id
     LEFT JOIN categories ON list.category_id = categories.id

@@ -14,35 +14,24 @@ vi.mock(
     return { ...original, getContext: vi.fn(original.getContext) };
   },
 );
+vi.mock('$lib/categories/dialog.svelte', async () => await import('./mock.svelte'));
+vi.mock('$lib/components/header.svelte', async () => await import('./mock.svelte'));
+vi.mock('$lib/components/modal-portal.svelte', async () => await import('./mock.svelte'));
 vi.mock(
-  '$lib/categories/dialog.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+  '$lib/wishlist/components/external-items-delete-alert.svelte',
+  async () => await import('./mock.svelte'),
 );
-vi.mock(
-  '$lib/components/header.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-);
-vi.mock(
-  '$lib/components/modal-portal.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-);
-vi.mock('$lib/wishlist/store.js', () => ({ wishlist: writable([]) }));
 vi.mock(
   '$lib/wishlist/components/item-add-dialog.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+  async () => await import('./mock.svelte'),
 );
-vi.mock(
-  '$lib/wishlist/components/item-card.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-);
+vi.mock('$lib/wishlist/components/item-card.svelte', async () => await import('./mock.svelte'));
 vi.mock(
   '$lib/wishlist/components/item-delete-alert.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
+  async () => await import('./mock.svelte'),
 );
-vi.mock(
-  '../menu.svelte',
-  async () => ({ default: await import('./mock.svelte').then((module) => module.default) }),
-);
+vi.mock('$lib/wishlist/store.js', () => ({ wishlist: writable([]) }));
+vi.mock('../menu.svelte', async () => await import('./mock.svelte'));
 
 describe('list page', () => {
   afterEach(() => {

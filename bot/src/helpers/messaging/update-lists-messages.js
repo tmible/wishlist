@@ -137,7 +137,7 @@ const alignItemsIds = async (messagesToEdit, messages) => {
 };
 
 /**
- * Проверка сообщения на наличие имзенений после отправки телеграму запроса на редатирование
+ * Проверка сообщения на наличие изменений после отправки Телеграму запроса на редактирование
  * Несмотря на все проверки сообщение всё ещё может быть без изменений
  * @function handleEditingError
  * @param {Error} e Полученная ошибка
@@ -159,7 +159,7 @@ const handleEditingError = (e, messageToEdit, message) => {
 /**
  * 1. Построение выравнивания последовательностей идентификаторов в отправленных ранее сообщениях
  * и отправляемых сообщениях {@link alignItemsIds}.
- * 2. На основании выравнивания редактирование или удаление сообщений с обновалением онформации
+ * 2. На основании выравнивания редактирование или удаление сообщений с обновлением информации
  * в персистентной сессии.
  * @function editMessages
  * @param {Context} ctx Контекст
@@ -240,7 +240,7 @@ const updateListsMessages = async (
       ctx.session.persistent.lists[userid].pinnedMessageId,
       undefined,
       titleMessageText,
-      formTitleMessageMarkup(ctx, userid),
+      await formTitleMessageMarkup(ctx, userid),
     );
   }
 

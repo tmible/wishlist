@@ -12,8 +12,8 @@ import { AddItem } from '../events.js';
  */
 export const initAddItemStatement = () => {
   const statement = inject(Database).prepare(`
-    INSERT INTO list (userid, name, description, state, "order", category_id)
-    VALUES (?, ?, ?, ${ListItemState.FREE}, ?, ?)
+    INSERT INTO list (userid, name, description, state, "order", category_id, added_by)
+    VALUES (?, ?, ?, ${ListItemState.FREE}, ?, ?, ?)
     RETURNING id
   `);
   subscribe(
@@ -25,7 +25,8 @@ export const initAddItemStatement = () => {
         description,
         order,
         categoryId,
+        addedBy = null,
       },
-    ) => statement.get(userid, name, description, order, categoryId),
+    ) => statement.get(userid, name, description, order, categoryId, addedBy),
   );
 };

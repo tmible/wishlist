@@ -5,6 +5,7 @@
   import TextEditor from '$lib/components/text-editor';
   import { tiptapToTelegram } from '$lib/tiptap-to-telegram.js';
   import { addItem } from '../use-cases/add-item.js';
+  import { addItemExternally } from '../use-cases/add-item-externally.js';
   import { editItem } from '../use-cases/edit-item.js';
 
   /** @typedef {import('../domain.js').OwnWishlistItem} OwnWishlistItem */
@@ -16,11 +17,16 @@
    * @property {OwnWishlistItem} [item] Элемент списка желаний
    * @property {OwnWishlistItem | null} [values] Текущие значения свойств элемента списка
    *  для подстановки в форму в режиме редактирования
-   * @property {() => void} onfinish Функция обратного вызова после завершения обработки формы
+   * @property {() => void} [onfinish] Функция обратного вызова после завершения обработки формы
+   * @property {() => void} [onsuccess]
+   *   Функция обратного вызова после успешного завершения обработки формы
+   * @property {() => void} [oncancel] Функция обратного вызова после отмены обработки формы
+   * @property {number | null} [targetUserHash] Хэш пользователя — владельца списка.
+   *   Нужен при использования формы для добавления элемента в список не владельцем
    */
 
   /** @type {Props} */
-  const { item = null, values = null, onfinish } = $props();
+  const { item = null, values = null, onfinish, onsuccess, oncancel, targetUserHash } = $props();
 
   /**
    * Идентификатор выбранной категории
@@ -52,7 +58,7 @@
    * @returns {void}
    */
   const setCategory = (formData) => {
-    if (formData.categoryId === '') {
+    if (!Object.hasOwn(formData, 'categoryId') || formData.categoryId === '') {
       formData.category = null;
     } else {
       const categoryId = Number.parseInt(formData.categoryId);
@@ -73,39 +79,58 @@
     const formData = Object.fromEntries(new FormData(event.target));
     setDescription(formData);
     setCategory(formData);
-    await (values ? editItem(item, formData) : addItem(formData));
-    onfinish();
+    if (targetUserHash) {
+      await addItemExternally(formData, targetUserHash);
+    } else {
+      await (values ? editItem(item, formData) : addItem(formData));
+    }
+    onfinish?.();
+    onsuccess?.();
+  };
+
+  /**
+   * Отмена заполнения формы
+   * @function onCancel
+   * @returns {void}
+   */
+  const onCancel = () => {
+    onfinish?.();
+    oncancel?.();
   };
 </script>
 
 <form class="prose" method="POST" onsubmit={handleFormSubmit}>
-  <fieldset class="fieldset mb-2">
-    <legend class="fieldset-legend">Название</legend>
-    <input
-      name="name"
-      class="input w-full bg-base-200"
-      required
-      type="text"
-      value={values?.name ?? ''}
-      placeholder="Название"
-    >
-  </fieldset>
-  <fieldset class="fieldset mb-2">
-    <legend class="fieldset-legend">Описание</legend>
-    <TextEditor
-      name="description"
-      className="textarea textarea-bordered w-full h-24 bg-base-200"
-      value={values?.description ?? ''}
-      placeholder="Описание"
-    />
-  </fieldset>
-  <!-- eslint-disable-next-line svelte/valid-compile -- input внутри CategorySelect -->
-  <fieldset class="fieldset mb-6">
-    <legend class="fieldset-legend">Категория</legend>
-    <CategorySelect bind:selectedCategoryId={selectedCategoryId} />
-  </fieldset>
+  <div class="flex flex-col gap-2 mb-6">
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Название</legend>
+      <input
+        name="name"
+        class="input w-full bg-base-200"
+        required
+        type="text"
+        value={values?.name ?? ''}
+        placeholder="Название"
+      >
+    </fieldset>
+    <fieldset class="fieldset">
+      <legend class="fieldset-legend">Описание</legend>
+      <TextEditor
+        name="description"
+        className="textarea textarea-bordered w-full h-24 bg-base-200"
+        value={values?.description ?? ''}
+        placeholder="Описание"
+      />
+    </fieldset>
+    {#if !targetUserHash}
+      <!-- eslint-disable-next-line svelte/valid-compile -- input внутри CategorySelect -->
+      <fieldset class="fieldset">
+        <legend class="fieldset-legend">Категория</legend>
+        <CategorySelect bind:selectedCategoryId={selectedCategoryId} />
+      </fieldset>
+    {/if}
+  </div>
   <div class="card-actions">
-    <button class="btn btn-neutral w-full md:flex-1" type="button" onclick={onfinish}>
+    <button class="btn btn-neutral w-full md:flex-1" type="button" onclick={onCancel}>
       Отмена
     </button>
     <button class="btn btn-primary w-full md:flex-1" type="submit">

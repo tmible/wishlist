@@ -76,6 +76,7 @@ const sendList = async (eventBus, ctx, passedOptions = {}) => {
 
   const messages = eventBus
     .emit(Events.Editing.GetList, userid)
+    .filter(({ isExternal }) => !isExternal)
     .map((item) => ({
       itemId: item.id,
       message: [ formText(item), formReplyMarkup(item) ],

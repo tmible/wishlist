@@ -23,7 +23,7 @@ export const addAction = (
   let unknownUserUuid = cookies.get(UNKNOWN_USER_UUID_COOKIE_NAME);
   if (unknownUserUuid === undefined) {
     unknownUserUuid = randomUUID();
-    cookies.set(UNKNOWN_USER_UUID_COOKIE_NAME, unknownUserUuid);
+    cookies.set(UNKNOWN_USER_UUID_COOKIE_NAME, unknownUserUuid, { path: '/' });
   }
   emit(AddAction, timestamp, action, unknownUserUuid);
 };

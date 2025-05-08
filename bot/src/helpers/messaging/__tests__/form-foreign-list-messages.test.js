@@ -46,6 +46,16 @@ const list = [{
   state: ListItemState.BOOKED,
   participants: [ 'anotherUser' ],
   participantsIds: [ 'anotherUserId' ],
+}, {
+  id: 6,
+  name: 'name 6',
+  description: 'description 6',
+  descriptionEntities: [],
+  state: ListItemState.FREE,
+  participants: [],
+  participantsIds: [],
+  addedBy: 'added_by',
+  addedById: 1,
 }];
 
 const emit = func();

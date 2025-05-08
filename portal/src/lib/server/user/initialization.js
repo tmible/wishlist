@@ -5,6 +5,7 @@ import { initAddUserStatement } from './statements/add-user.js';
 import { initDeleteRefreshTokenStatement } from './statements/delete-refresh-token.js';
 import { initGetRefreshTokenStatement } from './statements/get-refresh-token.js';
 import { initGetUserHashStatement } from './statements/get-user-hash.js';
+import { initGetUseridByHashStatement } from './statements/get-userid-by-hash.js';
 import { initSetUserHashStatement } from './statements/set-user-hash.js';
 import { initStoreRefreshTokenStatement } from './statements/store-refresh-token.js';
 
@@ -20,5 +21,6 @@ export const initUserFeature = () => {
   initStoreRefreshTokenStatement();
   initGetRefreshTokenStatement();
   initDeleteRefreshTokenStatement();
+  initGetUseridByHashStatement();
   provide(JWTService, jwtService);
 };

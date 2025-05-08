@@ -37,15 +37,19 @@ const formatPartialItemForServer = (partialItem) => {
 };
 
 /**
- * Добавление элемента к списку
+ * Добавление подарка к списку желаний. Если не указан targetUserHash,
+ * добавляется к списку аутентифицированного пользователя
  * @function addItem
- * @param {Partial<OwnWishlistItem>} partialItem Добавляемый элемент
- * @returns {Promise<[ OwnWishlistItem, boolean ]>} Добавленный элемент и признак успешного запроса
+ * @param {Partial<OwnWishlistItem>} partialItem Добавляемый подарок
+ * @param {string} [targetUserHash] Хэш пользователя, к списку которого добавляется подарок
+ * @returns {Promise<[ OwnWishlistItem | null, boolean ]>} Добавленный подарок при добавлении
+ *   в список аутентифицированного пользователя и признак успешного запроса
  * @async
  */
-export const addItem = async (partialItem) => {
+export const addItem = async (partialItem, targetUserHash) => {
+  const query = targetUserHash ? `?wishlist=${targetUserHash}` : '';
   const response = await fetch(
-    '/api/wishlist',
+    `/api/wishlist${query}`,
     { method: 'POST', body: JSON.stringify(formatPartialItemForServer(partialItem)) },
   );
   return [ await response.json(), response.ok ];

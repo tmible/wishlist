@@ -49,19 +49,26 @@ const prepare = () => statement = inject(InjectionToken.Database).prepare(`
     type,
     offset,
     length,
-    additional
+    additional,
+    added_by.id AS addedById,
+    added_by.name AS addedBy
   FROM (
-    SELECT id, name, description, state, "order", category_id FROM list WHERE userid = ?
+    SELECT id, name, description, state, "order", category_id, added_by
+    FROM list
+    WHERE userid = ?
   ) AS list
   LEFT JOIN (
     SELECT
       list_item_id,
-      group_concat(CASE WHEN username IS NULL THEN '' ELSE username END) as participants,
-      group_concat(participants.userid) as participants_ids
+      group_concat(CASE WHEN username IS NULL THEN '' ELSE username END) AS participants,
+      group_concat(participants.userid) AS participants_ids
     FROM participants
     JOIN usernames ON usernames.userid = participants.userid
     GROUP BY list_item_id
-  ) as participants ON list.id = participants.list_item_id
+  ) AS participants ON list.id = participants.list_item_id
+  LEFT JOIN (
+    SELECT userid as id, username as name FROM usernames
+  ) AS added_by ON list.added_by = added_by.id
   LEFT JOIN description_entities ON list.id = description_entities.list_item_id
   LEFT JOIN categories ON list.category_id = categories.id
 `);

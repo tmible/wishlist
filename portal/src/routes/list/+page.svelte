@@ -7,6 +7,7 @@
   import CategoriesDialog from '$lib/categories/dialog.svelte';
   import Header from '$lib/components/header.svelte';
   import ModalPortal from '$lib/components/modal-portal.svelte';
+  import WishlistExternalItemsDeleteAlert from '$lib/wishlist/components/external-items-delete-alert.svelte';
   import WishlistItemAddDialog from '$lib/wishlist/components/item-add-dialog.svelte';
   import WishlistItemCard from '$lib/wishlist/components/item-card.svelte';
   import WishlistItemDeleteAlert from '$lib/wishlist/components/item-delete-alert.svelte';
@@ -52,6 +53,19 @@
    * @type {boolean}
    */
   let isCategoriesDialogOpen = $state(false);
+
+  /**
+   * Признак наличия сюрпризов в списке желаний
+   * @type {boolean}
+   */
+  const hasExternalItems = $derived($wishlist.some(({ isExternal }) => isExternal));
+
+  /**
+   * Признак удаления всех сюрпризов из списка желаний.
+   * Фактически признак открытости диалога с подтверждением
+   * @type {boolean}
+   */
+  let isExternalItemsDeletionBeingConfirmed = $state(false);
 
   /**
    * Открытие диалога с подтверждением удаления элемента списка
@@ -137,6 +151,15 @@
   const openCategoriesDialog = () => {
     isCategoriesDialogOpen = true;
   };
+
+  /**
+   * Открытие диалога с подтверждением удаления всех сюрпризов из списка желаний
+   * @function deleteAllExternalItems
+   * @returns {void}
+   */
+  const deleteAllExternalItems = () => {
+    isExternalItemsDeletionBeingConfirmed = true;
+  };
 </script>
 
 <ScrollArea viewportClasses="w-full h-full max-h-dvh flex flex-col">
@@ -162,9 +185,24 @@
           </div>
         </div>
       {:else}
-        {#each $wishlist as item (item.id)}
+        {#each $wishlist.filter(({ isExternal }) => !isExternal) as item (item.id)}
           <WishlistItemCard {item} {isReorderModeOn} ondelete={deleteListItem} />
         {/each}
+        {#if hasExternalItems}
+          <div class="card bg-base-100 md:shadow-xl">
+            <div class="card-body prose">
+              <h3 class="card-title">В вашем списке есть сюрпризы</h3>
+              <p>
+                Кто-то добавил один или несколько подарков в ваш список желаний.
+                Скорее всего, это значит, что вам хотят сделать сюрприз.
+                Вы можете удалить все такие подарки
+              </p>
+              <button class="btn btn-outline btn-error" onclick={deleteAllExternalItems}>
+                Удалить все сюрпризы
+              </button>
+            </div>
+          </div>
+        {/if}
       {/if}
     {/await}
   </main>
@@ -197,3 +235,5 @@
 <CategoriesDialog bind:open={isCategoriesDialogOpen} />
 
 <WishlistItemDeleteAlert {listItemToDelete} bind:open={isDeletionBeingConfirmed} />
+
+<WishlistExternalItemsDeleteAlert bind:open={isExternalItemsDeletionBeingConfirmed} />

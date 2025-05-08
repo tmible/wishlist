@@ -46,18 +46,18 @@ const clearListCommandHandler = async (eventBus, ctx) => {
   }
 
   const list = eventBus.emit(Events.Editing.GetList, ctx.from.id).sort((a, b) => {
-    const isAPlanned = PLANNED_PRESENTS_STATES.has(a.state);
-    const isBPlanned = PLANNED_PRESENTS_STATES.has(b.state);
+    const isAPlanned = PLANNED_PRESENTS_STATES.has(a.state) ? 1 : 0;
+    const isBPlanned = PLANNED_PRESENTS_STATES.has(b.state) ? 1 : 0;
 
-    if (isAPlanned === isBPlanned) {
-      return a.id - b.id;
+    if (a.isExternal !== b.isExternal) {
+      return b.isExternal - a.isExternal;
     }
 
-    if (isAPlanned) {
-      return -1;
+    if (isAPlanned !== isBPlanned) {
+      return isBPlanned - isAPlanned;
     }
 
-    return 1;
+    return a.id - b.id;
   });
 
   if (list.length === 0) {

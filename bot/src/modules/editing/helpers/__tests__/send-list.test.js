@@ -44,6 +44,12 @@ describe('editing/send-list if chat isn\'t group', () => {
     name: 'name 2',
     description: 'description 2',
     descriptionEntities: [{ offset: 0, length: 0, type: 'type' }],
+  }, {
+    id: 3,
+    name: 'name 3',
+    description: 'description 3',
+    descriptionEntities: [],
+    isExternal: 1,
   }];
 
   it('should send list if it is not empty', async () => {
