@@ -24,6 +24,9 @@ const DefaultCommandSet = [{
   command: 'help',
   description: 'справка',
 }, {
+  command: 'support',
+  description: 'поддержка',
+}, {
   command: 'start',
   description: 'перезапустить бота',
 }];

@@ -9,6 +9,8 @@ const MessagePurposeType = numericEnum([
   'AnonymousMessageRecieverUsername',
   'AnonymousMessage',
   'AnonymousMessageAnswer',
+  'SupportMessage',
+  'SupportMessageAnswer',
 ]);
 
 export default MessagePurposeType;

@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.6.0 Загадочная Статуя (2025-05-08)
+<img width="128" height="128" src="release-images/3.6.0.png"/>
+
+https://github.com/tmible/wishlist/compare/5092840..master
+
+
 ## 3.5.1 Векторное пространство (2025-05-08)
 <img width="128" height="128" src="release-images/3.5.1.png"/>
 
-https://github.com/tmible/wishlist/compare/35fde19..master
+https://github.com/tmible/wishlist/compare/35fde19..5092840
 
 
 ## 3.5.0 Огромная Вселенная (2025-05-08)

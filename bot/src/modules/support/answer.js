@@ -14,12 +14,12 @@ import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helper
 /** @type {ModuleConfigureFunction} */
 const configure = (bot) => {
   /**
-   * При вызове действия ответа на анонимное сообщение бот отправляет
+   * При вызове действия ответа на сообщение в поддержку бот отправляет
    * сообщение-приглашение для отправки сообщения-ответа
    */
-  bot.action(/^answer ([\d-]+) ([\d-]+)$/, (ctx) => {
+  bot.action(/^support_answer ([\d-]+) ([\d-]+)$/, (ctx) => {
     ctx.session.messagePurpose = {
-      type: MessagePurposeType.AnonymousMessageAnswer,
+      type: MessagePurposeType.SupportMessageAnswer,
       payload: {
         answerChatId: Number.parseInt(ctx.match[1]),
         answerToMessageId: Number.parseInt(ctx.match[2]),
@@ -28,8 +28,10 @@ const configure = (bot) => {
     return sendMessageAndMarkItForMarkupRemove(
       ctx,
       'reply',
-      'Отправьте сообщение, и я перешлю его',
-      Markup.inlineKeyboard([ Markup.button.callback('Не отправлять ответ', 'cancel_answer') ]),
+      'Отправьте ответ, и я передам его',
+      Markup.inlineKeyboard([
+        Markup.button.callback('Не отправлять ответ', 'cancel_support_answer'),
+      ]),
     );
   });
 };
@@ -38,18 +40,18 @@ const configure = (bot) => {
 const messageHandler = (bot) => {
   /**
    * При получении сообщения от пользователя, если ожидается сообщение для отправки
-   * ответа на анонимное сообщение, полученное сообщение пересылается в исходный чат
+   * ответа на сообщение в поддержку, копия полученного сообщения отправляется в исходный чат
    */
   bot.on('message', async (ctx, next) => {
-    if (ctx.session.messagePurpose?.type === MessagePurposeType.AnonymousMessageAnswer) {
+    if (ctx.session.messagePurpose?.type === MessagePurposeType.SupportMessageAnswer) {
       const { answerChatId, answerToMessageId } = ctx.session.messagePurpose.payload;
       await ctx.telegram.sendMessage(
         answerChatId,
-        'Ответ:',
+        'Ответ от поддержки:',
         { reply_to_message_id: answerToMessageId },
       );
 
-      await ctx.forwardMessage(answerChatId, ctx.chat.id, ctx.message.message_id);
+      await ctx.telegram.sendCopy(answerChatId, ctx.message);
 
       delete ctx.session.messagePurpose;
       return ctx.reply('Ответ отправлен!');

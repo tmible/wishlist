@@ -23,6 +23,7 @@ import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-mess
 import EditingModule from '@tmible/wishlist-bot/modules/editing';
 import HelpModule from '@tmible/wishlist-bot/modules/help';
 import LinkModule from '@tmible/wishlist-bot/modules/link';
+import SupportModule from '@tmible/wishlist-bot/modules/support';
 import WishlistModule from '@tmible/wishlist-bot/modules/wishlist';
 import { dropPersistentSession, persistentSession } from '@tmible/wishlist-bot/persistent-session';
 import connectToIPCHub from '@tmible/wishlist-bot/services/ipc-hub-connection';
@@ -99,6 +100,7 @@ configureModules(bot, [
   AnonymousMessagesModule,
   EditingModule,
   LinkModule,
+  SupportModule,
 ])(bot);
 
 /* eslint-disable-next-line
