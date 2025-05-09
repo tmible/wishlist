@@ -5,9 +5,3 @@
  * @constant {{}}
  */
 export const Database = {};
-
-/**
- * SQL выражение для посчёта изменений
- * @constant {{}}
- */
-export const ChangesStatement = {};

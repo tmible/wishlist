@@ -32,7 +32,13 @@
     <AlertDialog.Overlay class="modal-backdrop" />
     <AlertDialog.Content class="modal-box flex flex-col justify-center">
       <div class="contents prose">
-        <AlertDialog.Title>Подвердите удаление</AlertDialog.Title>
+        <AlertDialog.Title>
+          {#snippet child({ props })}
+            <h2 class="mb-0 mr-auto" {...props}>
+              Подвердите удаление
+            </h2>
+          {/snippet}
+        </AlertDialog.Title>
         <AlertDialog.Description>
           {#snippet child({ props })}
             <p {...props}>

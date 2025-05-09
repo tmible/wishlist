@@ -2,6 +2,7 @@
 <script>
   import Bot from 'lucide-svelte/icons/bot';
   import Eraser from 'lucide-svelte/icons/eraser';
+  import Headset from 'lucide-svelte/icons/headset';
   import LayoutGrid from 'lucide-svelte/icons/layout-grid';
   import Link from 'lucide-svelte/icons/link';
   import LogOut from 'lucide-svelte/icons/log-out';
@@ -50,6 +51,7 @@
    *   Функция обратного вызова для изменения порядка элементов в списке
    * @property {() => void} clear Функция обратного вызова для перехода к очистке списка
    * @property {() => void} manageCategories Функция обратного вызова для управления категориями
+   * @property {() => void} messageSupport Функция обратного вызова для обращения в поддержку
    */
 
   /** @type {Props} */
@@ -59,6 +61,7 @@
     reorder,
     clear,
     manageCategories,
+    messageSupport,
   } = $props();
 
   /**
@@ -107,6 +110,11 @@
     label: 'Перейти к боту',
     testId: 'to-bot',
     onClick: () => open('https://t.me/tmible_wishlist_bot', '_blank'),
+  }, {
+    icon: Headset,
+    label: 'Поддержка',
+    testId: 'support',
+    onClick: messageSupport,
   }, {
     icon: LogOut,
     label: 'Выйти',

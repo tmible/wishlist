@@ -87,9 +87,21 @@ describe('logger / create logging middleware', () => {
     });
 
     it('should log response alternatively', async () => {
-      event.cookies.get.mockReturnValueOnce(null);
-      event.request.body = null;
-      event.locals.userid = 'userid';
+      // event.cookies.get.mockReturnValueOnce(null);
+      // event.request.body = null;
+      // event.locals.userid = 'userid';
+      response.body = { clone: () => ({ text: () => 'text' }) };
+      let info;
+      logger.info.mockImplementationOnce(() => {}).mockImplementationOnce((...args) => info = args);
+      await middleware(event, next);
+      expect(info).toMatchSnapshot();
+    });
+
+    it('should log event stream response', async () => {
+      // event.cookies.get.mockReturnValueOnce(null);
+      // event.request.body = null;
+      // event.locals.userid = 'userid';
+      response.body = new ReadableStream();
       let info;
       logger.info.mockImplementationOnce(() => {}).mockImplementationOnce((...args) => info = args);
       await middleware(event, next);

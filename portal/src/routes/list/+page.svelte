@@ -14,6 +14,7 @@
   import { wishlist } from '$lib/wishlist/store.js';
   import { reorderList } from '$lib/wishlist/use-cases/reorder-list.js';
   import Menu from './menu.svelte';
+  import SupportDialog from './support-dialog.svelte';
 
   /** @typedef {import('$lib/wishlist/domain.js').OwnWishlistItem} OwnWishlistItem */
 
@@ -66,6 +67,12 @@
    * @type {boolean}
    */
   let isExternalItemsDeletionBeingConfirmed = $state(false);
+
+  /**
+   * Признак открытости диалога отправки сообщения в поддержку
+   * @type {boolean}
+   */
+  let isSupportDialogOpen = $state(false);
 
   /**
    * Открытие диалога с подтверждением удаления элемента списка
@@ -160,6 +167,15 @@
   const deleteAllExternalItems = () => {
     isExternalItemsDeletionBeingConfirmed = true;
   };
+
+  /**
+   * Открытие диалога отправки сообщения в поддержку
+   * @function openSupportDialog
+   * @returns {void}
+   */
+  const openSupportDialog = () => {
+    isSupportDialogOpen = true;
+  };
 </script>
 
 <ScrollArea viewportClasses="w-full h-full max-h-dvh flex flex-col">
@@ -191,11 +207,11 @@
         {#if hasExternalItems}
           <div class="card bg-base-100 md:shadow-xl">
             <div class="card-body prose">
-              <h3 class="card-title">В вашем списке есть сюрпризы</h3>
+              <h3 class="card-title">В&nbsp;вашем списке есть сюрпризы</h3>
               <p>
-                Кто-то добавил один или несколько подарков в ваш список желаний.
+                Кто-то добавил один или несколько подарков в&nbsp;ваш список желаний.
                 Скорее всего, это значит, что вам хотят сделать сюрприз.
-                Вы можете удалить все такие подарки
+                Вы&nbsp;можете удалить все такие подарки
               </p>
               <button class="btn btn-outline btn-error" onclick={deleteAllExternalItems}>
                 Удалить все сюрпризы
@@ -212,6 +228,7 @@
     {reorder}
     clear={gotoClear}
     manageCategories={openCategoriesDialog}
+    messageSupport={openSupportDialog}
   />
   <div
     class="fixed bottom-0 left-1/2 translate-x-[-50%] transition-transform w-max"
@@ -237,3 +254,5 @@
 <WishlistItemDeleteAlert {listItemToDelete} bind:open={isDeletionBeingConfirmed} />
 
 <WishlistExternalItemsDeleteAlert bind:open={isExternalItemsDeletionBeingConfirmed} />
+
+<SupportDialog bind:open={isSupportDialogOpen} />

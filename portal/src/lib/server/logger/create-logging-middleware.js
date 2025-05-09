@@ -47,17 +47,21 @@ export const createLoggingMiddleware = () => {
 
     const response = await next(event);
 
+    let responseBody = null;
+    if (response.body !== null) {
+      responseBody =
+        response.body instanceof ReadableStream ?
+          'event-stream' :
+          (await response.clone().text());
+    }
+
     logger.info(
       {
         requestUuid,
         unknownUserUuid: event.cookies.get(UNKNOWN_USER_UUID_COOKIE_NAME) ?? null,
         userid: event.locals.userid ?? null,
       },
-      `response ${
-        response.status
-      }; body: ${
-        response.body === null ? null : await response.clone().text()
-      }`,
+      `response ${response.status}; body: ${responseBody}`,
     );
 
     return response;

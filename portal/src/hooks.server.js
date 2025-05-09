@@ -1,16 +1,16 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
-import {
-  UNKNOWN_USER_UUID_COOKIE_NAME,
-} from '$lib/constants/unknown-user-uuid-cookie-name.const.js';
+import { UNKNOWN_USER_UUID_COOKIE_NAME } from '$lib/constants/unknown-user-uuid-cookie-name.const.js';
 import { initActionsFeature } from '$lib/server/actions/initialization.js';
 import { initCategoriesFeature } from '$lib/server/categories/initialization.js';
 import { chainMiddlewares } from '$lib/server/chain-middlewares.js';
 import { initDB } from '$lib/server/db/initialization.js';
+import initIPCHub from '$lib/server/ipc-hub/initialization.js';
 import { connect } from '$lib/server/ipc-hub/use-cases/connect.js';
 import { initLogger } from '$lib/server/logger/initialization.js';
 import { Logger } from '$lib/server/logger/injection-tokens.js';
 import { getLoggingMiddleware } from '$lib/server/logger/use-cases/get-logging-middleware.js';
 import { initDB as initLogsDB } from '$lib/server/logs-db/initialization.js';
+import initSupportFeature from '$lib/server/support/initialization.js';
 import { authenticationMiddleware } from '$lib/server/user/authentication-middleware.js';
 import { initUserFeature } from '$lib/server/user/initialization.js';
 import { initWishlistFeature } from '$lib/server/wishlist/initialization.js';
@@ -25,6 +25,7 @@ initLogsDB();
 initLogger();
 
 // Подключение к IPC хабу при старте приложения
+initIPCHub();
 connect();
 
 // Инициализация бизнес-модулей приложения
@@ -32,6 +33,7 @@ initActionsFeature();
 initUserFeature();
 initCategoriesFeature();
 initWishlistFeature();
+initSupportFeature();
 
 // Цепочка обработчиков запросов к серверу
 const handleApiRequest = chainMiddlewares(getLoggingMiddleware(), authenticationMiddleware);

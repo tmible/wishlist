@@ -39,7 +39,13 @@
     >
       <ScrollArea class="max-h-[inherit]" viewportClasses="max-h-[inherit] p-6">
         <div class="flex items-start prose">
-          <Dialog.Title class="mt-0 mr-auto">Добавить желание</Dialog.Title>
+          <Dialog.Title>
+            {#snippet child({ props })}
+              <h2 class="mb-0 mr-auto" {...props}>
+                Добавить желание
+              </h2>
+            {/snippet}
+          </Dialog.Title>
           <Dialog.Close class="cursor-pointer">
             <X />
           </Dialog.Close>

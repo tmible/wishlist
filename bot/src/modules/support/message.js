@@ -50,11 +50,7 @@ const messageHandler = (bot) => {
             'Сообщение в поддержку от',
             new Format.FmtString(
               `${ctx.from.id}`,
-              [{
-                type: 'code',
-                offset: 0,
-                length: `${ctx.from.id}`.length,
-              }],
+              [{ type: 'code', offset: 0, length: `${ctx.from.id}`.length }],
             ),
           ],
           ' ',
@@ -79,6 +75,30 @@ const messageHandler = (bot) => {
 
     return next();
   });
+};
+
+export const messageSupportFromIPCHub = async (ctx, userid, message, messageUUID) => {
+  await ctx.telegram.sendMessage(
+    process.env.SUPPORT_ACCOUNT_USERID,
+    Format.join(
+      [
+        'Сообщение в поддержку от',
+        new Format.FmtString(
+          `${userid}`,
+          [{ type: 'code', offset: 0, length: `${userid}`.length }],
+        ),
+      ],
+      ' ',
+    ),
+    Markup.inlineKeyboard([
+      Markup.button.callback(
+        'Ответить',
+        `support_answer ${userid} ${messageUUID}`,
+      ),
+    ]),
+  );
+
+  await ctx.telegram.sendMessage(process.env.SUPPORT_ACCOUNT_USERID, message);
 };
 
 export default { configure, messageHandler };

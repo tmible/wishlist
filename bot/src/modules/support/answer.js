@@ -1,4 +1,6 @@
-import { Markup } from 'telegraf';
+import { inject } from '@tmible/wishlist-common/dependency-injector';
+import { Format, Markup } from 'telegraf';
+import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import MessagePurposeType from '@tmible/wishlist-bot/constants/message-purpose-type';
 import { sendMessageAndMarkItForMarkupRemove } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 
@@ -34,6 +36,24 @@ const configure = (bot) => {
       ]),
     );
   });
+
+  bot.action(/^support_answer ([\d-]+) ([\w-]{36})$/, (ctx) => {
+    ctx.session.messagePurpose = {
+      type: MessagePurposeType.SupportMessageAnswer,
+      payload: {
+        answerChatId: Number.parseInt(ctx.match[1]),
+        answerToQuoteId: ctx.match[2],
+      },
+    };
+    return sendMessageAndMarkItForMarkupRemove(
+      ctx,
+      'reply',
+      'Отправьте ответ, и я передам его',
+      Markup.inlineKeyboard([
+        Markup.button.callback('Не отправлять ответ', 'cancel_support_answer'),
+      ]),
+    );
+  });
 };
 
 /** @type {ModuleMessageHandler} */
@@ -44,17 +64,46 @@ const messageHandler = (bot) => {
    */
   bot.on('message', async (ctx, next) => {
     if (ctx.session.messagePurpose?.type === MessagePurposeType.SupportMessageAnswer) {
-      const { answerChatId, answerToMessageId } = ctx.session.messagePurpose.payload;
-      await ctx.telegram.sendMessage(
+      const {
         answerChatId,
-        'Ответ от поддержки:',
-        { reply_to_message_id: answerToMessageId },
-      );
+        answerToMessageId,
+        answerToQuoteId,
+      } = ctx.session.messagePurpose.payload;
+      if (answerToMessageId || answerToQuoteId) {
+        if (answerToMessageId) {
+          await ctx.telegram.sendMessage(
+            answerChatId,
+            'Ответ от поддержки:',
+            { reply_to_message_id: answerToMessageId },
+          );
+        } else if (answerToQuoteId) {
 
-      await ctx.telegram.sendCopy(answerChatId, ctx.message);
+          const quote = inject(InjectionToken.LocalDatabase)('hub-message-data').get(answerToQuoteId);
 
-      delete ctx.session.messagePurpose;
-      return ctx.reply('Ответ отправлен!');
+          if (!quote) {
+            return;
+          }
+
+          await ctx.telegram.sendMessage(
+            answerChatId,
+            Format.join(
+              [
+                new Format.FmtString(
+                  quote,
+                  [{ type: 'blockquote', offset: 0, length: quote.length }],
+                ),
+                'Ответ от поддержки:',
+              ],
+              '\n',
+            ),
+          );
+        }
+
+        await ctx.telegram.sendCopy(answerChatId, ctx.message);
+
+        delete ctx.session.messagePurpose;
+        return ctx.reply('Ответ отправлен!');
+      }
     }
 
     return next();

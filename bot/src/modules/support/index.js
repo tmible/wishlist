@@ -26,4 +26,6 @@ const configure = (bot) => {
   ]);
 };
 
+export { messageSupportFromIPCHub } from './message.js';
+
 export default { configure };

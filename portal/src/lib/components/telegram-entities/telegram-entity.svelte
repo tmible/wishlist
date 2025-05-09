@@ -97,7 +97,7 @@
       case 'cashtag': {
         tag = 'span';
         attributes = {
-          class: 'link cursor-auto',
+          class: 'underline',
           'data-entity': node.type,
         };
         break;

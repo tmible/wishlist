@@ -31,6 +31,7 @@ vi.mock(
   async () => await import('./mock.svelte'),
 );
 vi.mock('$lib/wishlist/store.js', () => ({ wishlist: writable([]) }));
+vi.mock('./support-dialog.svelte', async () => await import('./mock.svelte'));
 vi.mock('../menu.svelte', async () => await import('./mock.svelte'));
 
 describe('list page', () => {

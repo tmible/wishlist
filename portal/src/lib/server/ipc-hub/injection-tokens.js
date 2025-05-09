@@ -5,3 +5,9 @@
  * @constant {{}}
  */
 export const IPCHub = {};
+
+/**
+ * Токен внедрения службы сокетов
+ * @constant {{}}
+ */
+export const SocketService = {};
