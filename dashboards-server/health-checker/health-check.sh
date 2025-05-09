@@ -58,27 +58,27 @@ echo -n "\"bot\":{" >> $file
 echo -n "\"service\":" >> $file
 check_systemd_service_status wishlist-bot
 echo -n ",\"localhost\":" >> $file
-check_localhost_status $(cat ../../bot/.env | grep PORT | cut -d "=" -f 2)
+check_localhost_status $(cat ../../bot/.env | grep ^PORT | cut -d "=" -f 2)
 echo -n ",\"https\":" >> $file
-check_https_status $(cat ../../bot/.env | grep HOST | cut -d "=" -f 2 | sed -e "s/^https:\/\///")
-request_health_data $(cat ../../bot/.env | grep PORT | cut -d "=" -f 2) health
+check_https_status $(cat ../../bot/.env | grep ^HOST | cut -d "=" -f 2 | sed -e "s/^https:\/\///")
+request_health_data $(cat ../../bot/.env | grep ^PORT | cut -d "=" -f 2) health
 echo -n "}," >> $file
 
 echo -n "\"portal\":{" >> $file
 echo -n "\"service\":" >> $file
 check_systemd_service_status wishlist-portal
 echo -n ",\"localhost\":" >> $file
-check_localhost_status $(cat ../../portal/.env | grep PORT | cut -d "=" -f 2)
+check_localhost_status $(cat ../../portal/.env | grep ^PORT | cut -d "=" -f 2)
 echo -n ",\"https\":" >> $file
-check_https_status $(cat ../../portal/.env | grep ORIGIN | cut -d "=" -f 2 | sed -e "s/^https:\/\///")
-request_health_data $(cat ../../portal/.env | grep PORT | cut -d "=" -f 2) api/health
+check_https_status $(cat ../../portal/.env | grep ^ORIGIN | cut -d "=" -f 2 | sed -e "s/^https:\/\///")
+request_health_data $(cat ../../portal/.env | grep ^PORT | cut -d "=" -f 2) api/health
 echo -n "}," >> $file
 
 echo -n "\"hub\":{" >> $file
 echo -n "\"service\":" >> $file
 check_systemd_service_status wishlist-hub
 echo -n ",\"socket\":" >> $file
-socket_path=$(cat ../../hub/.env | grep SOCKET_PATH | cut -d "=" -f 2)
+socket_path=$(cat ../../hub/.env | grep ^SOCKET_PATH | cut -d "=" -f 2)
 check_unix_socket_status $(cd -- ../$(dirname $socket_path); pwd -P )/$(basename $socket_path)
 echo -n "}," >> $file
 

@@ -11,7 +11,7 @@ User=$user
 Group=$user
 $(
   cat $directory/../.env |
-  grep WISHLIST_DB_FILE_PATH |
+  grep ^WISHLIST_DB_FILE_PATH |
   sed -e "s|=|=$directory/../|" |
   sed -e "s/^/Environment=/"
 )
