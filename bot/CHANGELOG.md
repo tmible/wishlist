@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.7.1 Плавное солнечное утро (2025-07-27)
+<img width="128" height="128" src="release-images/3.7.1.png"/>
+
+https://github.com/tmible/wishlist/compare/8c008b5..master
+
+
 ## 3.7.0 Необычный архивист (2025-07-27)
 <img width="128" height="128" src="release-images/3.7.0.png"/>
 
-https://github.com/tmible/wishlist/compare/d053daf..master
+https://github.com/tmible/wishlist/compare/d053daf..8c008b5
 
 
 ## 3.6.0 Загадочная Статуя (2025-05-08)
