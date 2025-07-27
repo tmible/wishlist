@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.7.0 Необычный архивист (2025-07-27)
+<img width="128" height="128" src="release-images/3.7.0.png"/>
+
+https://github.com/tmible/wishlist/compare/d053daf..master
+
+
 ## 3.6.0 Загадочная Статуя (2025-05-08)
 <img width="128" height="128" src="release-images/3.6.0.png"/>
 
-https://github.com/tmible/wishlist/compare/5092840..master
+https://github.com/tmible/wishlist/compare/5092840..d053daf
 
 
 ## 3.5.1 Векторное пространство (2025-05-08)

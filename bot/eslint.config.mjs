@@ -33,6 +33,7 @@ export default [
             "replyWithMarkdownV2",
             "Markup<InlineKeyboardMarkup>",
             "sendMessageAndMarkItForMarkupRemove",
+            "process.env.SUPPORT_ACCOUNT_USERID",
           ],
         },
       ],

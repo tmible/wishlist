@@ -51,9 +51,10 @@ const prepare = () => statement = inject(InjectionToken.Database).prepare(`
     length,
     additional,
     added_by.id AS addedById,
-    added_by.name AS addedBy
+    added_by.name AS addedBy,
+    group_link AS groupLink
   FROM (
-    SELECT id, name, description, state, "order", category_id, added_by
+    SELECT id, name, description, state, "order", category_id, added_by, group_link
     FROM list
     WHERE userid = ?
   ) AS list

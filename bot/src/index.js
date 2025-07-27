@@ -21,6 +21,7 @@ import logging from '@tmible/wishlist-bot/helpers/middlewares/logging';
 import { removeLastMarkupMiddleware } from '@tmible/wishlist-bot/helpers/middlewares/remove-markup';
 import AnonymousMessagesModule from '@tmible/wishlist-bot/modules/anonymous-messages';
 import EditingModule from '@tmible/wishlist-bot/modules/editing';
+import initGroupsFeature from '@tmible/wishlist-bot/modules/groups';
 import HelpModule from '@tmible/wishlist-bot/modules/help';
 import LinkModule from '@tmible/wishlist-bot/modules/link';
 import SupportModule from '@tmible/wishlist-bot/modules/support';
@@ -142,17 +143,25 @@ if (process.env.HOST && process.env.PORT) {
 
 logger.debug('bot started');
 
+const destroyGroupsFeature = await initGroupsFeature(bot);
+
 process.once('SIGINT', async () => {
   closeIPCHubConnection();
   destroyStore();
-  await closeLocalDB();
+  await Promise.all([
+    closeLocalDB(),
+    destroyGroupsFeature(),
+  ]);
   bot.stop('SIGINT');
   server?.close();
 });
 process.once('SIGTERM', async () => {
   closeIPCHubConnection();
   destroyStore();
-  await closeLocalDB();
+  await Promise.all([
+    closeLocalDB(),
+    destroyGroupsFeature(),
+  ]);
   bot.stop('SIGTERM');
   server?.close();
 });

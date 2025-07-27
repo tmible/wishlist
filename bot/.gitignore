@@ -136,3 +136,7 @@ dist
 *.db
 *.db-shm
 *.db-wal
+
+# TDLib
+_td_database/
+_td_files/

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.3 Морской туман (2025-07-27)
+<img width="128" height="128" src="release-images/1.5.3.png"/>
+
+https://github.com/tmible/wishlist/compare/d053daf..master
+
+
 ## 1.5.2 Огромная лесная поляна (2025-05-08)
 <img width="128" height="128" src="release-images/1.5.2.png"/>
 
-https://github.com/tmible/wishlist/compare/35fde19..master
+https://github.com/tmible/wishlist/compare/35fde19..d053daf
 
 
 ## 1.5.1 Небесное совершенство (2025-05-08)

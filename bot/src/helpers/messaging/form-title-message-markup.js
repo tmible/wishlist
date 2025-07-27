@@ -14,12 +14,12 @@ import Events from '@tmible/wishlist-bot/architecture/events';
  * @async
  */
 const formTitleMessageMarkup = async (ctx, userid) => {
-  let lastButton;
+  let addExternalButton;
 
   if (userid !== ctx.chat.id) {
     const continueURI = `/add?wishlist=${await emit(Events.Usernames.GetUserHash, userid)}`;
     const addQuery = `?continue=${encodeURI(continueURI)}`;
-    lastButton = Markup.button.login(
+    addExternalButton = Markup.button.login(
       'Добавить сюрприз',
       `https://wishlist.tmible.ru/api/authSuccess${userid === ctx.chat.id ? '' : addQuery}`,
     );
@@ -38,7 +38,7 @@ const formTitleMessageMarkup = async (ctx, userid) => {
         userid === ctx.chat.id ? 'force_own_list' : `force_list ${userid}`,
       ),
     ],
-    ...(lastButton ? [[ lastButton ]] : []),
+    ...(addExternalButton ? [[ addExternalButton ]] : []),
   ]);
 };
 

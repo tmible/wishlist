@@ -10,6 +10,8 @@ const Events = Object.freeze({
     CooperateOnItem: 'wishlist | cooperate on item',
     RetireFromItem: 'wishlist | retire from item',
     HandleOwnList: 'wishlist | handle own list',
+    GetWishlistItemName: {},
+    SetWishlistItemGroupLink: {},
   },
   Editing: {
     GetList: 'editing | get list',

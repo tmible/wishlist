@@ -38,9 +38,15 @@ importers:
       pino-pretty:
         specifier: 13.0.0
         version: 13.0.0
+      prebuilt-tdlib:
+        specifier: 0.1008049.0
+        version: 0.1008049.0
       seal-wasm:
         specifier: 0.0.3
         version: 0.0.3
+      tdl:
+        specifier: 8.0.2
+        version: 8.0.2
       telegraf:
         specifier: 4.16.3
         version: 4.16.3(encoding@0.1.13)
@@ -854,6 +860,31 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@prebuilt-tdlib/darwin-arm64@0.1008049.0':
+    resolution: {integrity: sha512-BUirUUILmgAgVdOVSH3d6jp1EaXu3ULwPRC45VJiT+hKHwO8Uea7rmegDr4nBcriieLQ53co1LEP39y/Y7kfeQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@prebuilt-tdlib/darwin-x64@0.1008049.0':
+    resolution: {integrity: sha512-Lye4uGpH5lWngyiXv9IGcGzWGZ2/868iWZQsy+49/WfC9y9Sgp20ZEK1ftG/gCdN8rOe0xbGX6WGZCauIEMw5A==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@prebuilt-tdlib/linux-arm64-glibc@0.1008049.0':
+    resolution: {integrity: sha512-xsz5wVjS9+SHaPl3An9DPxvR5bh4ke9N3SQDlIu38lvA6+Po5+yPXnCPlY8V5UsY3Nb7Ce9NPAE/QTUyfqwdNA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@prebuilt-tdlib/linux-x64-glibc@0.1008049.0':
+    resolution: {integrity: sha512-9FGYn2g3HH8ygucX/ObCeDPpGDHLponLFaVy5euR7TC8XMnXyn5G135YC8CRGpxHdeYUtIuGzBncEtIm42SKcQ==}
+    cpu: [x64]
+    os: [linux]
+
+  '@prebuilt-tdlib/win32-x64@0.1008049.0':
+    resolution: {integrity: sha512-e+KuYooFirfjwQAxY/+eVuFN/D7Ngon+5DVaSJdmgPfrkPgklgJsoHM5Qf2EsBiManht164u/II3G2+C9VO1pQ==}
+    cpu: [x64]
+    os: [win32]
 
   '@remirror/core-constants@3.0.0':
     resolution: {integrity: sha512-42aWfPrimMfDKDi4YegyS7x+/0tlzaqwPQCULLanv3DMIlu96KTJR0fM5isWX2UViOqlGnX6YFgqWepcX+XMNg==}
@@ -2720,6 +2751,9 @@ packages:
     resolution: {integrity: sha512-c5XK0MjkGBrQPGYG24GBADZud0NCbznxNx0ZkS+ebUTrmV1qTDxPxSL8zEAPURXSbLRWVexxmP4986BziahL5w==}
     engines: {node: '>=10'}
 
+  node-addon-api@7.1.1:
+    resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
+
   node-fetch@2.7.0:
     resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
     engines: {node: 4.x || >=6.0.0}
@@ -2930,6 +2964,9 @@ packages:
     resolution: {integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==}
     engines: {node: '>=10'}
     hasBin: true
+
+  prebuilt-tdlib@0.1008049.0:
+    resolution: {integrity: sha512-qq/964UxYTw16e9gICBV41q9OR2TFhRQj1IjpQ2TP8b7GiWeuzYO03d1nPV66xP8RcRiTeWU58o0OK0Vi3cILg==}
 
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
@@ -3407,6 +3444,10 @@ packages:
   tar-stream@2.2.0:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
     engines: {node: '>=6'}
+
+  tdl@8.0.2:
+    resolution: {integrity: sha512-KYxlJ4eao7FUu91U1dCDkaHmK70JAyZ1KqitkKqpPC7rxAiXWhaYxddWvt84UxIYoWbgdd0B70FYJ4p/YqpFCA==}
+    engines: {node: '>=16.14.0'}
 
   telegraf@4.16.3:
     resolution: {integrity: sha512-yjEu2NwkHlXu0OARWoNhJlIjX09dRktiMQFsM678BAH/PEPVwctzL67+tvXqLCRQQvm3SDtki2saGO9hLlz68w==}
@@ -4023,6 +4064,21 @@ snapshots:
   '@polka/url@1.0.0-next.25': {}
 
   '@popperjs/core@2.11.8': {}
+
+  '@prebuilt-tdlib/darwin-arm64@0.1008049.0':
+    optional: true
+
+  '@prebuilt-tdlib/darwin-x64@0.1008049.0':
+    optional: true
+
+  '@prebuilt-tdlib/linux-arm64-glibc@0.1008049.0':
+    optional: true
+
+  '@prebuilt-tdlib/linux-x64-glibc@0.1008049.0':
+    optional: true
+
+  '@prebuilt-tdlib/win32-x64@0.1008049.0':
+    optional: true
 
   '@remirror/core-constants@3.0.0': {}
 
@@ -6003,6 +6059,8 @@ snapshots:
     dependencies:
       semver: 7.7.1
 
+  node-addon-api@7.1.1: {}
+
   node-fetch@2.7.0(encoding@0.1.13):
     dependencies:
       whatwg-url: 5.0.0
@@ -6231,6 +6289,14 @@ snapshots:
       simple-get: 4.0.1
       tar-fs: 2.1.2
       tunnel-agent: 0.6.0
+
+  prebuilt-tdlib@0.1008049.0:
+    optionalDependencies:
+      '@prebuilt-tdlib/darwin-arm64': 0.1008049.0
+      '@prebuilt-tdlib/darwin-x64': 0.1008049.0
+      '@prebuilt-tdlib/linux-arm64-glibc': 0.1008049.0
+      '@prebuilt-tdlib/linux-x64-glibc': 0.1008049.0
+      '@prebuilt-tdlib/win32-x64': 0.1008049.0
 
   prelude-ls@1.2.1: {}
 
@@ -6828,6 +6894,14 @@ snapshots:
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
+
+  tdl@8.0.2:
+    dependencies:
+      debug: 4.4.0
+      node-addon-api: 7.1.1
+      node-gyp-build: 4.8.4
+    transitivePeerDependencies:
+      - supports-color
 
   telegraf@4.16.3(encoding@0.1.13):
     dependencies:
