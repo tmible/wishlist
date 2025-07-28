@@ -13,8 +13,8 @@
   "scripts": {
     "start": "node ./src/index.js",
     "start:background": "SERVICE_NAME=\"wishni-hub\" SERVICE_DESCRIPTION=\"Wishni IPC hub\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
-    "restart:background": "systemctl restart wishni-hub",
-    "stop:background": "systemctl stop wishni-hub",
+    "restart:background": "sudo systemctl restart wishni-hub",
+    "stop:background": "sudo systemctl stop wishni-hub",
     "lint": "eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "test": "c8 node --test \"./src/**/*.test.js\"",

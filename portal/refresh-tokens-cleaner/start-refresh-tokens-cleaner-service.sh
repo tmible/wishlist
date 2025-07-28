@@ -29,9 +29,9 @@ Persistent=true
 WantedBy=multi-user.target
 " > $directory/wishni-refresh-tokens-cleaner.timer
 
-mv $directory/wishni-refresh-tokens-cleaner.service /etc/systemd/system
-mv $directory/wishni-refresh-tokens-cleaner.timer /etc/systemd/system
-systemctl daemon-reload
-systemctl start wishni-refresh-tokens-cleaner.timer
-systemctl enable wishni-refresh-tokens-cleaner.timer
-systemctl restart wishni-refresh-tokens-cleaner.timer
+sudo mv $directory/wishni-refresh-tokens-cleaner.service /etc/systemd/system
+sudo mv $directory/wishni-refresh-tokens-cleaner.timer /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl start wishni-refresh-tokens-cleaner.timer
+sudo systemctl enable wishni-refresh-tokens-cleaner.timer
+sudo systemctl restart wishni-refresh-tokens-cleaner.timer

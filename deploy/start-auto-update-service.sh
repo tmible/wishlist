@@ -23,9 +23,9 @@ Persistent=true
 WantedBy=multi-user.target
 " > $directory/auto-update.timer
 
-mv $directory/auto-update.service /etc/systemd/system
-mv $directory/auto-update.timer /etc/systemd/system
-systemctl daemon-reload
-systemctl start auto-update.timer
-systemctl enable auto-update.timer
-systemctl restart auto-update.timer
+sudo mv $directory/auto-update.service /etc/systemd/system
+sudo mv $directory/auto-update.timer /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl start auto-update.timer
+sudo systemctl enable auto-update.timer
+sudo systemctl restart auto-update.timer

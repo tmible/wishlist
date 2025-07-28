@@ -27,9 +27,9 @@ OnUnitActiveSec=1min
 WantedBy=multi-user.target
 " > $directory/wishni-health-checker.timer
 
-mv $directory/wishni-health-checker.service /etc/systemd/system
-mv $directory/wishni-health-checker.timer /etc/systemd/system
-systemctl daemon-reload
-systemctl start wishni-health-checker.timer
-systemctl enable wishni-health-checker.timer
-systemctl restart wishni-health-checker.timer
+sudo mv $directory/wishni-health-checker.service /etc/systemd/system
+sudo mv $directory/wishni-health-checker.timer /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl start wishni-health-checker.timer
+sudo systemctl enable wishni-health-checker.timer
+sudo systemctl restart wishni-health-checker.timer

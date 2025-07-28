@@ -25,8 +25,8 @@
   "scripts": {
     "start": "node ./src/index.js",
     "start:background": "SERVICE_NAME=\"wishni-bot\" SERVICE_DESCRIPTION=\"Wishni bot\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
-    "restart:background": "systemctl restart wishni-bot",
-    "stop:background": "systemctl stop wishni-bot",
+    "restart:background": "sudo systemctl restart wishni-bot",
+    "stop:background": "sudo systemctl stop wishni-bot",
     "lint": "eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "test": "c8 node --test \"./src/**/*.test.js\"",
