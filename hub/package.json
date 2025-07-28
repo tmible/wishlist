@@ -12,9 +12,9 @@
   "bin": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "start:background": "SERVICE_NAME=\"wishlist-hub\" SERVICE_DESCRIPTION=\"Tmible's wishlist IPC hub\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
-    "restart:background": "systemctl restart wishlist-hub",
-    "stop:background": "systemctl stop wishlist-hub",
+    "start:background": "SERVICE_NAME=\"wishni-hub\" SERVICE_DESCRIPTION=\"Wishni IPC hub\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
+    "restart:background": "systemctl restart wishni-hub",
+    "stop:background": "systemctl stop wishni-hub",
     "lint": "eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "test": "c8 node --test \"./src/**/*.test.js\"",

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.1 Атомное сияние (2025-07-28)
+<img width="128" height="128" src="release-images/1.6.1.png"/>
+
+https://github.com/tmible/wishlist/compare/14dbd86..master
+
+
 ## 1.6.0 Синий океан (2025-05-06)
 <img width="128" height="128" src="release-images/1.6.0.png"/>
 
-https://github.com/tmible/wishlist/compare/b9f5510..master
+https://github.com/tmible/wishlist/compare/b9f5510..14dbd86
 
 
 ## 1.5.2 Жуткое блаженство (2025-05-05)

@@ -3,7 +3,7 @@ directory=$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)
 user=$(whoami)
 
 echo "[Unit]
-Description=Tmible's wishlist portal refresh tokens cleaner
+Description=Wishni portal refresh tokens cleaner
 
 [Service]
 ExecStart=$directory/refresh-tokens-cleaner.sh
@@ -16,10 +16,10 @@ $(
   sed -e "s/^/Environment=/"
 )
 WorkingDirectory=$directory
-" > $directory/wishlist-refresh-tokens-cleaner.service
+" > $directory/wishni-refresh-tokens-cleaner.service
 
 echo "[Unit]
-Description=Tmible's wishlist portal refresh tokens cleaner timer
+Description=Wishni portal refresh tokens cleaner timer
 
 [Timer]
 OnCalendar=*-*-* 02:50:00
@@ -27,11 +27,11 @@ Persistent=true
 
 [Install]
 WantedBy=multi-user.target
-" > $directory/wishlist-refresh-tokens-cleaner.timer
+" > $directory/wishni-refresh-tokens-cleaner.timer
 
-mv $directory/wishlist-refresh-tokens-cleaner.service /etc/systemd/system
-mv $directory/wishlist-refresh-tokens-cleaner.timer /etc/systemd/system
+mv $directory/wishni-refresh-tokens-cleaner.service /etc/systemd/system
+mv $directory/wishni-refresh-tokens-cleaner.timer /etc/systemd/system
 systemctl daemon-reload
-systemctl start wishlist-refresh-tokens-cleaner.timer
-systemctl enable wishlist-refresh-tokens-cleaner.timer
-systemctl restart wishlist-refresh-tokens-cleaner.timer
+systemctl start wishni-refresh-tokens-cleaner.timer
+systemctl enable wishni-refresh-tokens-cleaner.timer
+systemctl restart wishni-refresh-tokens-cleaner.timer

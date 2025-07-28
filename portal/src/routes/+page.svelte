@@ -22,7 +22,7 @@
     <script
       defer
       src="https://telegram.org/js/telegram-widget.js?22"
-      data-telegram-login="tmible_wishlist_bot"
+      data-telegram-login="wishnibot"
       data-size="large"
       data-auth-url="/api/authSuccess"
       data-request-access="write"
@@ -34,7 +34,7 @@
   <div class="w-full h-full flex flex-col">
     <Header />
     <main class="hero grow">
-      <div class="hero-content flex-col md:p-0 h-full md:h-auto justify-end">
+      <div class="hero-content flex-col md:p-0 w-full h-full md:h-auto justify-end">
         <div class="grow md:grow-0 flex items-center prose">
           <h1
             class="
@@ -50,7 +50,7 @@
               ease-out
             "
           >
-            Tmible's wishlist
+            Wishni
           </h1>
         </div>
         <CardsSwiper>

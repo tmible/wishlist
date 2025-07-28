@@ -21,7 +21,7 @@ const formTitleMessageMarkup = async (ctx, userid) => {
     const addQuery = `?continue=${encodeURI(continueURI)}`;
     addExternalButton = Markup.button.login(
       'Добавить сюрприз',
-      `https://wishlist.tmible.ru/api/authSuccess${userid === ctx.chat.id ? '' : addQuery}`,
+      `https://wishni.tmible.ru/api/authSuccess${userid === ctx.chat.id ? '' : addQuery}`,
     );
   }
 

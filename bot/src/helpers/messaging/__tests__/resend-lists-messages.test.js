@@ -159,7 +159,7 @@ describe('resendListsMessages', () => {
             [
               Markup.button.login(
                 'Добавить сюрприз',
-                'https://wishlist.tmible.ru/api/authSuccess?continue=/add?wishlist=undefined',
+                'https://wishni.tmible.ru/api/authSuccess?continue=/add?wishlist=undefined',
               ),
             ],
           ]),

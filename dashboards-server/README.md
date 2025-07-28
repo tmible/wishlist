@@ -1,5 +1,5 @@
-# wishlist-dashboards-server
-Сервер с дашбордами для [телеграм бота со списками желаний](bot/README.md)
+# Wishni dashboards server
+Сервер с дашбордами для [телеграм бота](bot/README.md) и [портала](portal/README.md) со списками желаний и их [IPC хаба](hub/README.md)
 
 # Требования к удалённой машине
 ## Внешние зависимости

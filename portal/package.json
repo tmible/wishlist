@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-portal",
-	"version": "1.5.3",
+	"version": "1.5.4",
 	"private": true,
 	"description": "Портал со списками желаний",
 	"repository": {
@@ -16,9 +16,9 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
-		"start:background": "SERVICE_NAME=\"wishlist-portal\" SERVICE_DESCRIPTION=\"Tmible's wishlist portal\" PATH_TO_EXECUTABLE=\"./build\" ../deploy/start-systemd-service.sh",
-		"restart:background": "systemctl restart wishlist-portal",
-		"stop:background": "systemctl stop wishlist-portal",
+		"start:background": "SERVICE_NAME=\"wishni-portal\" SERVICE_DESCRIPTION=\"Wishni portal\" PATH_TO_EXECUTABLE=\"./build\" ../deploy/start-systemd-service.sh",
+		"restart:background": "systemctl restart wishni-portal",
+		"stop:background": "systemctl stop wishni-portal",
 		"lint": "eslint ./src",
 		"lint:fix": "eslint --fix ./src",
 		"test": "vitest run --coverage",

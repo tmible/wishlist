@@ -32,7 +32,7 @@
    */
   const goToBot = () => {
     // eslint-disable-next-line sonarjs/link-with-target-blank -- Статичная ссылка на Телеграм
-    window.open('https://t.me/tmible_wishlist_bot', '_self');
+    window.open('https://t.me/wishnibot', '_self');
   };
 
   onDestroy(() => {
@@ -41,7 +41,7 @@
 </script>
 
 {#snippet botButton()}
-  <a class="w-full md:flex-1 md:basis-1/3" href="https://t.me/tmible_wishlist_bot">
+  <a class="w-full md:flex-1 md:basis-1/3" href="https://t.me/wishnibot">
     <button class="btn btn-primary w-full">
       Вернуться к боту
     </button>

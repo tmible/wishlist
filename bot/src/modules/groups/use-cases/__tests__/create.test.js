@@ -65,7 +65,7 @@ describe('groups / use cases / create', () => {
         _: 'setChatMemberStatus',
         chat_id: 'chat id',
         member_id: { '@type': 'messageSenderUser', user_id: 'SUPPORT_ACCOUNT_USERID' },
-        status: { property: 'value', custom_title: 'Tmible wishlist', is_anonymous: true },
+        status: { property: 'value', custom_title: 'Wishni', is_anonymous: true },
       }),
     );
   });

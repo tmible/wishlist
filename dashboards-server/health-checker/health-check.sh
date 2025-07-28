@@ -56,7 +56,7 @@ echo -n "{\"date\":$(date +%s000)," > $file
 
 echo -n "\"bot\":{" >> $file
 echo -n "\"service\":" >> $file
-check_systemd_service_status wishlist-bot
+check_systemd_service_status wishni-bot
 echo -n ",\"localhost\":" >> $file
 check_localhost_status $(cat ../../bot/.env | grep ^PORT | cut -d "=" -f 2)
 echo -n ",\"https\":" >> $file
@@ -66,7 +66,7 @@ echo -n "}," >> $file
 
 echo -n "\"portal\":{" >> $file
 echo -n "\"service\":" >> $file
-check_systemd_service_status wishlist-portal
+check_systemd_service_status wishni-portal
 echo -n ",\"localhost\":" >> $file
 check_localhost_status $(cat ../../portal/.env | grep ^PORT | cut -d "=" -f 2)
 echo -n ",\"https\":" >> $file
@@ -76,7 +76,7 @@ echo -n "}," >> $file
 
 echo -n "\"hub\":{" >> $file
 echo -n "\"service\":" >> $file
-check_systemd_service_status wishlist-hub
+check_systemd_service_status wishni-hub
 echo -n ",\"socket\":" >> $file
 socket_path=$(cat ../../hub/.env | grep ^SOCKET_PATH | cut -d "=" -f 2)
 check_unix_socket_status $(cd -- ../$(dirname $socket_path); pwd -P )/$(basename $socket_path)
@@ -84,9 +84,9 @@ echo -n "}," >> $file
 
 echo -n "\"refreshTokensCleaner\":{" >> $file
 echo -n "\"timer\":" >> $file
-check_systemd_service_status wishlist-refresh-tokens-cleaner.timer
+check_systemd_service_status wishni-refresh-tokens-cleaner.timer
 echo -n ",\"service\":" >> $file
-check_periodic_systemd_service_status wishlist-refresh-tokens-cleaner
+check_periodic_systemd_service_status wishni-refresh-tokens-cleaner
 echo -n "}" >> $file
 
 echo "}" >> $file

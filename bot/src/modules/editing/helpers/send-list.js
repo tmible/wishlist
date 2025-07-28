@@ -92,14 +92,14 @@ const sendList = async (eventBus, ctx, passedOptions = {}) => {
           'Ваш список пуст',
           new Format.FmtString(
             'Вы можете добавить в него свои желания на портале',
-            [{ offset: 42, length: 7, type: 'text_link', url: 'https://wishlist.tmible.ru/list' }],
+            [{ offset: 42, length: 7, type: 'text_link', url: 'https://wishni.tmible.ru/list' }],
           ),
         ] :
         [
           'Ваш актуальный список',
           new Format.FmtString(
             'Полноценное редактирование своего списка доступно на портале',
-            [{ offset: 53, length: 7, type: 'text_link', url: 'https://wishlist.tmible.ru/list' }],
+            [{ offset: 53, length: 7, type: 'text_link', url: 'https://wishni.tmible.ru/list' }],
           ),
         ],
       '\n\n',

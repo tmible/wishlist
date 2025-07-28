@@ -25,7 +25,7 @@
       return;
     }
     const telegramLoginWidget = await waitForElement(
-      '[id="telegram-login-tmible_wishlist_bot"]',
+      '[id="telegram-login-wishnibot"]',
       [
         document.head,
         ...Array.from(document.querySelectorAll('.telegram-login-widget-container')),
@@ -44,7 +44,7 @@
     class="card-body items-center prose telegram-login-widget-container"
   >
     <p>
-      Tmible's wishlist&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
+      Wishni&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
       основная задача&nbsp;— сократить путь от&nbsp;списка до&nbsp;общения между
       дарителями с&nbsp;максимальным удобством для всех участников процесса. Работайте
       со&nbsp;своим списком здесь, на&nbsp;портале, со&nbsp;списками друзей&nbsp;—
@@ -52,7 +52,7 @@
         в
         <a
           class="whitespace-normal"
-          href="https://t.me/tmible_wishlist_bot"
+          href="https://t.me/wishnibot"
           target="_blank"
         >
           телеграм боте
@@ -79,16 +79,29 @@
 <div class="card bg-base-100 md:shadow-xl w-full md:w-1/4 md:order-3 main-card-right">
   <div class="card-body h-full">
     <div class="flex items-start justify-center w-full h-0 my-0 mx-auto grow">
-      <img
-        class="max-w-full max-h-full mask mask-circle aspect-square"
-        loading="lazy"
-        decoding="async"
-        src="avatar_square.jpg"
-        alt="bot avatar"
+      <div
+        class="
+          w-full
+          h-full
+          mask
+          mask-circle
+          flex
+          items-center
+          justify-center
+          bg-linear-[0deg,#8f6be8_0%,#d66ba3_100%]
+        "
       >
+        <img
+          class="max-w-2/3 max-h-2/3 aspect-square"
+          loading="lazy"
+          decoding="async"
+          src="b295874c13920d8210a955f26a9ecdc7.webp"
+          alt="bot avatar"
+        >
+      </div>
     </div>
-    <p class="font-bold text-center prose max-md:my-0 grow-0">Tmible's wishlist</p>
-    <a class="grow-0" href="https://t.me/tmible_wishlist_bot" target="_blank">
+    <p class="font-bold text-center prose max-md:my-0 grow-0">Wishni</p>
+    <a class="grow-0" href="https://t.me/wishnibot" target="_blank">
       <button class="btn w-full">
         Перейти к боту
       </button>

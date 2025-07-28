@@ -35,7 +35,7 @@ const createGroup = async (wishlistItemId) => {
     _: 'setChatMemberStatus',
     chat_id,
     member_id,
-    status: { ...status, custom_title: 'Tmible wishlist', is_anonymous: true },
+    status: { ...status, custom_title: 'Wishni', is_anonymous: true },
   });
   await client.invoke({
     _: 'sendMessage',

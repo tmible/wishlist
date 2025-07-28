@@ -60,8 +60,6 @@ jobs:
     - name: build ui
       run: pnpm package
       working-directory: ui
-    - name: link assets
-      run: ln -s -f $(realpath ..)/assets/* ./static
     - name: build
       env:
         WISHLIST_DB_FILE_PATH: ${{ vars.PORTAL_WISHLIST_DB_FILE_PATH }}

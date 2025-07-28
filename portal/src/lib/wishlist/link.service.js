@@ -10,7 +10,7 @@
  * @async
  */
 export const shareLink = async (currentTarget, isLinkForGroups, hash) => {
-  const link = `https://t.me/tmible_wishlist_bot?start${isLinkForGroups ? 'group' : ''}=${hash}`;
+  const link = `https://t.me/wishnibot?start${isLinkForGroups ? 'group' : ''}=${hash}`;
 
   try {
     await navigator.share({ url: link });

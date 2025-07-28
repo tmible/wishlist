@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.4 Необычный рассвет (2025-07-28)
+<img width="128" height="128" src="release-images/1.5.4.png"/>
+
+https://github.com/tmible/wishlist/compare/14dbd86..master
+
+
 ## 1.5.3 Морской туман (2025-07-27)
 <img width="128" height="128" src="release-images/1.5.3.png"/>
 
-https://github.com/tmible/wishlist/compare/d053daf..master
+https://github.com/tmible/wishlist/compare/d053daf..14dbd86
 
 
 ## 1.5.2 Огромная лесная поляна (2025-05-08)

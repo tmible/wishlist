@@ -1,1 +1,1 @@
-[{"chat":{"id":"userid"}},"userid",[],{"text":"Ваш список пуст\n\nВы можете добавить в него свои желания на портале","entities":[{"offset":59,"length":7,"type":"text_link","url":"https://wishlist.tmible.ru/list"}]},"Ваш неактуальный список"]
+[{"chat":{"id":"userid"}},"userid",[],{"text":"Ваш список пуст\n\nВы можете добавить в него свои желания на портале","entities":[{"offset":59,"length":7,"type":"text_link","url":"https://wishni.tmible.ru/list"}]},"Ваш неактуальный список"]

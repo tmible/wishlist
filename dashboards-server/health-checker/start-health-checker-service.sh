@@ -3,7 +3,7 @@ directory=$(cd -- $(dirname "${BASH_SOURCE[0]}") ; pwd -P)
 user=$(whoami)
 
 echo "[Unit]
-Description=Tmible's wishlist health checker
+Description=Wishni health checker
 
 [Service]
 ExecStart=$directory/health-check.sh
@@ -14,10 +14,10 @@ $(
   sed -e "s/^/Environment=/"
 )
 WorkingDirectory=$directory
-" > $directory/wishlist-health-checker.service
+" > $directory/wishni-health-checker.service
 
 echo "[Unit]
-Description=Tmible's wishlist health checker timer
+Description=Wishni health checker timer
 
 [Timer]
 OnBootSec=1min
@@ -25,11 +25,11 @@ OnUnitActiveSec=1min
 
 [Install]
 WantedBy=multi-user.target
-" > $directory/wishlist-health-checker.timer
+" > $directory/wishni-health-checker.timer
 
-mv $directory/wishlist-health-checker.service /etc/systemd/system
-mv $directory/wishlist-health-checker.timer /etc/systemd/system
+mv $directory/wishni-health-checker.service /etc/systemd/system
+mv $directory/wishni-health-checker.timer /etc/systemd/system
 systemctl daemon-reload
-systemctl start wishlist-health-checker.timer
-systemctl enable wishlist-health-checker.timer
-systemctl restart wishlist-health-checker.timer
+systemctl start wishni-health-checker.timer
+systemctl enable wishni-health-checker.timer
+systemctl restart wishni-health-checker.timer

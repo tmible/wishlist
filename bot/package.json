@@ -1,6 +1,6 @@
 {
   "name": "@tmible/wishlist-bot",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "private": true,
   "description": "Телеграм бот со списками желаний",
   "repository": {
@@ -24,9 +24,9 @@
   "bin": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "start:background": "SERVICE_NAME=\"wishlist-bot\" SERVICE_DESCRIPTION=\"Tmible's wishlist bot\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
-    "restart:background": "systemctl restart wishlist-bot",
-    "stop:background": "systemctl stop wishlist-bot",
+    "start:background": "SERVICE_NAME=\"wishni-bot\" SERVICE_DESCRIPTION=\"Wishni bot\" PATH_TO_EXECUTABLE=\"./src/index.js\" ../deploy/start-systemd-service.sh",
+    "restart:background": "systemctl restart wishni-bot",
+    "stop:background": "systemctl stop wishni-bot",
     "lint": "eslint ./src",
     "lint:fix": "eslint --fix ./src",
     "test": "c8 node --test \"./src/**/*.test.js\"",

@@ -31,7 +31,7 @@ describe('cards', () => {
       expect(
         vi.mocked(waitForElement),
       ).toHaveBeenCalledWith(
-        '[id="telegram-login-tmible_wishlist_bot"]',
+        '[id="telegram-login-wishnibot"]',
         [ document.head, expect.any(HTMLElement) ],
       );
     });

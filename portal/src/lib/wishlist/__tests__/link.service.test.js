@@ -17,14 +17,14 @@ describe('wishlist / link service', () => {
       const share = vi.fn();
       vi.stubGlobal('navigator', { share });
       await shareLink({ classList: { add: vi.fn(), remove: vi.fn() } }, false, 'hash');
-      expect(share).toHaveBeenCalledWith({ url: 'https://t.me/tmible_wishlist_bot?start=hash' });
+      expect(share).toHaveBeenCalledWith({ url: 'https://t.me/wishnibot?start=hash' });
     });
 
     it('should copy link', async () => {
       const writeText = vi.fn();
       vi.stubGlobal('navigator', { share: vi.fn().mockRejectedValue(), clipboard: { writeText } });
       await shareLink({ classList: { add: vi.fn(), remove: vi.fn() } }, false, 'hash');
-      expect(writeText).toHaveBeenCalledWith('https://t.me/tmible_wishlist_bot?start=hash');
+      expect(writeText).toHaveBeenCalledWith('https://t.me/wishnibot?start=hash');
     });
   });
 
@@ -36,7 +36,7 @@ describe('wishlist / link service', () => {
       expect(
         share,
       ).toHaveBeenCalledWith(
-        { url: 'https://t.me/tmible_wishlist_bot?startgroup=hash' },
+        { url: 'https://t.me/wishnibot?startgroup=hash' },
       );
     });
 
@@ -44,7 +44,7 @@ describe('wishlist / link service', () => {
       const writeText = vi.fn();
       vi.stubGlobal('navigator', { share: vi.fn().mockRejectedValue(), clipboard: { writeText } });
       await shareLink({ classList: { add: vi.fn(), remove: vi.fn() } }, true, 'hash');
-      expect(writeText).toHaveBeenCalledWith('https://t.me/tmible_wishlist_bot?startgroup=hash');
+      expect(writeText).toHaveBeenCalledWith('https://t.me/wishnibot?startgroup=hash');
     });
   });
 

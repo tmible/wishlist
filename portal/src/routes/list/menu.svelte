@@ -106,7 +106,7 @@
     icon: Bot,
     label: 'Перейти к боту',
     testId: 'to-bot',
-    onClick: () => open('https://t.me/tmible_wishlist_bot', '_blank'),
+    onClick: () => open('https://t.me/wishnibot', '_blank'),
   }, {
     icon: LogOut,
     label: 'Выйти',
