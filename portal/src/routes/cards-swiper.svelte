@@ -20,13 +20,13 @@
    * Карточки
    * @type {HTMLElement[]}
    */
-  let cards;
+  let cards = $state([]);
 
   /**
    * Количество видимых карточек
    * @type {number}
    */
-  let shownCardsNumber;
+  let shownCardsNumber = $state(1);
 
   /**
    * Начальная координата свайпа
@@ -161,7 +161,7 @@
       cardsSwiper.classList.remove('welcome-animation');
       isSwipeIgnored = false;
     }, 2000);
-    cards = document.querySelectorAll('.cards-swiper > *');
+    cards = document.querySelectorAll('.cards-swiper > .card');
     cards[0].classList.add('shown');
     shownCardsNumber = 1;
   });
@@ -177,11 +177,14 @@
 </script>
 
 <div
-  class="md:hidden relative w-full h-[310px] cards-swiper perspective-[200px]"
+  class="md:hidden relative w-full h-[310px] cards-swiper"
   ontouchstart={onTouchStart}
   ontouchend={onTouchEnd}
 >
   {@render children?.()}
+  <span class="absolute top-full left-1/2 -translate-x-1/2 text-sm counter">
+    {shownCardsNumber}/{cards.length}
+  </span>
 </div>
 
 <style>
@@ -194,80 +197,88 @@
 
   @keyframes cardAnimation {
     0% {
-      transform: translateY(var(--initial-translate, 0)) scale(1) rotateX(0deg);
+      transform: translateY(var(--initial-translate, 0)) scale(var(--initial-scale, 1));
     }
     50% {
-      transform:
-        translateY(var(--intermediate-translate, 0))
-        scale(var(--intermediate-scale, 1))
-        rotateX(var(--intermediate-rotation, 0deg));
+      transform: translateY(var(--intermediate-translate, 0)) scale(var(--intermediate-scale, 1));
     }
     100% {
-      transform: translateY(var(--initial-translate, 0)) scale(1) rotateX(0deg);
+      transform: translateY(var(--initial-translate, 0)) scale(var(--initial-scale, 1));
     }
   }
 
-  .cards-swiper:global(.welcome-animation > *) {
-    --intermediate-scale: 0.9;
-    --intermediate-rotation: -7deg;
+  .cards-swiper:global(.welcome-animation > .counter) {
+    @apply hidden;
+  }
+
+  .cards-swiper:global(.welcome-animation > .card) {
     animation: 2s cardAnimation;
   }
 
-  .cards-swiper:global(.welcome-animation > *:nth-child(n+2))  {
-    /* .shadow-sm, но вверх, а не вниз */
-    box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 0.05);
-    --initial-translate: 10%;
+  .cards-swiper:global(.welcome-animation > .card:nth-child(1)) {
+    --initial-translate: -100%;
+    --intermediate-translate: -100%;
+    --intermediate-scale: 0.9;
+  }
+
+  .cards-swiper:global(.welcome-animation > .card:nth-child(n+2))  {
     --intermediate-translate: calc(-30% + var(--index) * 20px);
+    --initial-scale: 1.1;
   }
 
-  :global(html[data-theme="dark"] .cards-swiper.welcome-animation > *:nth-child(n+2))  {
-    box-shadow: 0 -1px 2px 0 rgb(200 200 200 / 0.05);
-  }
-
-  .cards-swiper:global(.welcome-animation > *:nth-child(2))  {
+  .cards-swiper:global(.welcome-animation > .card:nth-child(2))  {
     --index: 0;
   }
 
-  .cards-swiper:global(.welcome-animation > *:nth-child(3))  {
+  .cards-swiper:global(.welcome-animation > .card:nth-child(3))  {
     --index: 1;
   }
 
-  .cards-swiper > :global(*) {
+  .cards-swiper > :global(.card) {
     @apply absolute;
     @apply top-full;
     @apply h-full;
     @apply transition-all;
-    transform: translateY(0) scaleX(0) rotateX(-52.2245deg);
+    transform: translateY(0) scale(1.1);
     transition-property: transform, top;
     transition-duration: 375ms;
     /* timig function из tailwind .transition-all */
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .cards-swiper > :global(.shown) {
+  .cards-swiper > :global(.card.shown) {
+    transform: translateY(-100%) scale(0.9);
+  }
+
+  .cards-swiper > :global(.card:nth-last-child(1 of .shown)) {
+    transform: translateY(-100%) scale(1);
+  }
+
+  .cards-swiper > :global(.card:not(.shown)) {
+    top: calc(100% + 32px);
+  }
+
+  .cards-swiper > :global(.card:nth-child(1 of .card:not(.shown))) {
+    @apply top-full;
+    @apply shadow-md-upside;
+  }
+
+  .cards-swiper > :global(.card:nth-child(2 of .card:not(.shown))),
+  .cards-swiper > :global(
+    .card:nth-child(1 of .card:not(.shown)):nth-last-child(1 of .card:not(.shown))
+  ) {
+    @apply shadow-md-upside;
+    top: calc(100% + 10px);
+  }
+
+  .cards-swiper:global(.overswiped-up > .card.shown) {
     --initial-translate: -100%;
-    --intermediate-translate: -100%;
-    transform: translateY(-100%) scale(1) rotateX(0deg);
-  }
-
-  .cards-swiper:global(.swiped-up > *:nth-last-child(n + 2 of .shown)) {
-    --intermediate-scale: 0.9;
-    --intermediate-rotation: -7deg;
-    animation: 375ms cardAnimation;
-  }
-
-  .cards-swiper:global(.swiped-down > .shown) {
-    --intermediate-scale: 0.9;
-    --intermediate-rotation: -7deg;
-    animation: 375ms cardAnimation;
-  }
-
-  .cards-swiper:global(.overswiped-up > .shown) {
     --intermediate-translate: calc(-100% - 20px);
     animation: 375ms cardAnimation;
   }
 
-  .cards-swiper:global(.overswiped-down > .shown) {
+  .cards-swiper:global(.overswiped-down > .card.shown) {
+    --initial-translate: -100%;
     --intermediate-translate: calc(-100% + 20px);
     animation: 375ms cardAnimation;
   }

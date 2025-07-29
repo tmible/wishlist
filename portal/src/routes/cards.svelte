@@ -43,7 +43,7 @@
     bind:this={telegramLoginWidgetContainer}
     class="card-body items-center prose telegram-login-widget-container"
   >
-    <p>
+    <p class="text-justify">
       Wishni&nbsp;— это инструмент для работы со&nbsp;списками желаний. Его
       основная задача&nbsp;— сократить путь от&nbsp;списка до&nbsp;общения между
       дарителями с&nbsp;максимальным удобством для всех участников процесса. Работайте

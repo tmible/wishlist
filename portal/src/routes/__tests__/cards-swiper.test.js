@@ -240,7 +240,7 @@ describe('cards', () => {
 
     it('should select cards', () => {
       render(CardsSwiper);
-      expect(vi.mocked(document.querySelectorAll)).toHaveBeenCalledWith('.cards-swiper > *');
+      expect(vi.mocked(document.querySelectorAll)).toHaveBeenCalledWith('.cards-swiper > .card');
     });
 
     it('should mark first card', () => {

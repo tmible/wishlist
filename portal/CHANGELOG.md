@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.5.5 Цифровой отражатель данных (2025-07-29)
+<img width="128" height="128" src="release-images/1.5.5.png"/>
+
+https://github.com/tmible/wishlist/compare/00fd21b..master
+
+
 ## 1.5.4 Необычный рассвет (2025-07-28)
 <img width="128" height="128" src="release-images/1.5.4.png"/>
 
-https://github.com/tmible/wishlist/compare/14dbd86..master
+https://github.com/tmible/wishlist/compare/14dbd86..00fd21b
 
 
 ## 1.5.3 Морской туман (2025-07-27)

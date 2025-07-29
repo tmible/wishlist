@@ -44,6 +44,14 @@
 
 @theme {
   --color-placeholder: color-mix(in oklch, var(--color-base-content) 40%, #0000);
+  /* .shadow-md, но вверх, а не вниз */
+  --shadow-md-upside:
+    0 -4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
+    0 -2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+}
+
+@variant dark {
+  --tw-shadow-color: rgb(200 200 200 / 0.1);
 }
 
 @layer base {
