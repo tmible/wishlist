@@ -49,8 +49,8 @@
 
 {#if $user.isAuthenticated}
   <ScrollArea viewportClasses="flex flex-col max-h-dvh w-full h-hull m-0 py-9 px-1 md:px-9">
-    <div class="mb-9 flex items-center justify-between mx-4 md:mx-0">
-      <div class="plate flex items-center gap-4 py-2 px-4">
+    <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-4 mb-9">
+      <div class="plate w-full md:w-auto flex items-center gap-4 py-2 px-4">
         {#each navigationMenu as { path, label, healthKey } (healthKey)}
           <a
             class={(
@@ -65,7 +65,7 @@
           </a>
         {/each}
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 self-end mx-4 md:mx-0">
         <GradientSwitch />
         <ThemeSwitch />
         <button class="btn btn-secondary btn-sm shadow-sm" onclick={() => logout(true)}>

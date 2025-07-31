@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.2 Цифровой балансер (2025-07-31)
+<img width="128" height="128" src="release-images/1.6.2.png"/>
+
+https://github.com/tmible/wishlist/compare/91f73a0..master
+
+
 ## 1.6.1 Атомное сияние (2025-07-28)
 <img width="128" height="128" src="release-images/1.6.1.png"/>
 
-https://github.com/tmible/wishlist/compare/14dbd86..master
+https://github.com/tmible/wishlist/compare/14dbd86..91f73a0
 
 
 ## 1.6.0 Синий океан (2025-05-06)
