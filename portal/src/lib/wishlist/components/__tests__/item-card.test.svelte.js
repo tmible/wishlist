@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen } from '@testing-library/svelte';
+import { act, cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import ItemCard from '../item-card.svelte';
@@ -44,6 +44,15 @@ describe('wishlist / components / item card', () => {
     );
     const user = userEvent.setup();
     await user.click(screen.getByText(/Редактировать/, { selector: 'button' }));
+    expect(container.innerHTML).toMatchSnapshot();
+  });
+
+  it('should be displayed for reordering even in editing mode', async () => {
+    const props = $state({ item: { name: 'name', category: { id: 0, name: 'category' } } });
+    const { container } = render(ItemCard, props);
+    const user = userEvent.setup();
+    await user.click(screen.getByText(/Редактировать/, { selector: 'button' }));
+    await act(() => props.isReorderModeOn = true);
     expect(container.innerHTML).toMatchSnapshot();
   });
 

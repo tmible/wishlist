@@ -8,6 +8,7 @@
 - rsync (для деплоя)
 - certbot
 - nginx
+- socat (для [health-checker](health-checker))
 
 ## Переменные окружения
 - `ADMIN_PASSWORD` SHA-256 хэш пароля админа

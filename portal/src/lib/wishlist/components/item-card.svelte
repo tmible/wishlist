@@ -92,7 +92,7 @@
     data-id={item.id}
   >
     <div class="card-body prose">
-      {#if isEditingModeOn}
+      {#if isEditingModeOn && !isReorderModeOn}
         <ItemForm {values} {item} onfinish={finishEditItem} />
       {:else}
         <h3 class="card-title" class:mb-0={isReorderModeOn}>
