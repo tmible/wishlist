@@ -71,18 +71,21 @@ describe('gradient / switch', () => {
 
       beforeEach(() => {
         themeService.subscribeToTheme.mockImplementation(
-          (subscriber) => themeSubscriber = subscriber,
+          (subscriber) => {
+            themeSubscriber = subscriber;
+            return () => {};
+          },
         );
         render(GradientSwitch);
       });
 
       it('should adjust gradient to light theme', () => {
-        themeSubscriber(false);
+        themeSubscriber({ isDark: false });
         expect(vi.mocked(adjustGradient)).toHaveBeenCalledWith(GradientVariant.LIGHT);
       });
 
       it('should adjust gradient to dark theme', () => {
-        themeSubscriber(true);
+        themeSubscriber({ isDark: true });
         expect(vi.mocked(adjustGradient)).toHaveBeenCalledWith(GradientVariant.DARK);
       });
     });

@@ -25,6 +25,7 @@ describe('theme / service', () => {
   });
 
   afterEach(() => {
+    delete document.documentElement.dataset.theme;
     unsubscriber?.();
     destroyTheme?.();
     vi.clearAllMocks();
@@ -45,11 +46,11 @@ describe('theme / service', () => {
       const handler = vi.fn();
       localStorageStub.getItem.mockReturnValueOnce(JSON.stringify({
         windowPrefersDark: true,
-        themeName: 'light',
+        themeName: 'accent-light',
       }));
       unsubscriber = subscribeToTheme(handler);
       trigger();
-      expect(handler).toHaveBeenCalledWith(false);
+      expect(handler).toHaveBeenCalledWith({ isDark: false, accent: 'accent' });
     });
 
     describe('if there is no value in local storage', () => {
@@ -57,30 +58,12 @@ describe('theme / service', () => {
         localStorageStub.getItem.mockReturnValueOnce(JSON.stringify(null));
       });
 
-      it('should update value in localStorage', () => {
-        trigger();
-        expect(
-          localStorageStub.setItem,
-        ).toHaveBeenCalledWith(
-          'theme',
-          JSON.stringify({
-            windowPrefersDark: true,
-            themeName: 'dark',
-          }),
-        );
-      });
-
-      it('should update value in document dataset', () => {
-        trigger();
-        expect(document.documentElement.dataset.theme).toBe('dark');
-      });
-
       it('should update value for subscribers', () => {
         const handler = vi.fn();
         unsubscriber = subscribeToTheme(handler);
         vi.mocked(window.matchMedia).mockReturnValueOnce({ matches: false });
         trigger();
-        expect(handler).toHaveBeenCalledWith(false);
+        expect(handler).toHaveBeenCalledWith({ isDark: false, accent: undefined });
       });
     });
 
@@ -88,7 +71,7 @@ describe('theme / service', () => {
       beforeEach(() => {
         localStorageStub.getItem.mockReturnValueOnce(JSON.stringify({
           windowPrefersDark: true,
-          themeName: 'theme',
+          themeName: 'accent-dark',
         }));
         vi.mocked(window.matchMedia).mockReturnValueOnce({ matches: false });
       });
@@ -101,21 +84,21 @@ describe('theme / service', () => {
           'theme',
           JSON.stringify({
             windowPrefersDark: true,
-            themeName: 'light',
+            themeName: 'accent-light',
           }),
         );
       });
 
       it('should update value in document dataset', () => {
         trigger();
-        expect(document.documentElement.dataset.theme).toBe('light');
+        expect(document.documentElement.dataset.theme).toBe('accent-light');
       });
 
       it('should update value for subscribers', () => {
         const handler = vi.fn();
         unsubscriber = subscribeToTheme(handler);
         trigger();
-        expect(handler).toHaveBeenCalledWith(false);
+        expect(handler).toHaveBeenCalledWith({ isDark: false, accent: 'accent' });
       });
     });
 
@@ -125,29 +108,11 @@ describe('theme / service', () => {
         vi.mocked(window.matchMedia).mockReturnValueOnce({ matches: false });
       });
 
-      it('should update value in localStorage', () => {
-        trigger();
-        expect(
-          localStorageStub.setItem,
-        ).toHaveBeenCalledWith(
-          'theme',
-          JSON.stringify({
-            windowPrefersDark: true,
-            themeName: 'light',
-          }),
-        );
-      });
-
-      it('should update value in document dataset', () => {
-        trigger();
-        expect(document.documentElement.dataset.theme).toBe('light');
-      });
-
       it('should update value for subscribers', () => {
         const handler = vi.fn();
         unsubscriber = subscribeToTheme(handler);
         trigger();
-        expect(handler).toHaveBeenCalledWith(false);
+        expect(handler).toHaveBeenCalledWith({ isDark: false, accent: undefined });
       });
     });
   };
@@ -252,36 +217,36 @@ describe('theme / service', () => {
 
   describe('updateTheme', () => {
     it('should update value in localStorage', () => {
-      updateTheme(true);
+      updateTheme({ isDark: true, accent: 'accent' });
       expect(
         localStorageStub.setItem,
       ).toHaveBeenCalledWith(
         'theme',
         JSON.stringify({
           windowPrefersDark: true,
-          themeName: 'dark',
+          themeName: 'accent-dark',
         }),
       );
     });
 
     it('should update value in document dataset', () => {
-      updateTheme(false);
-      expect(document.documentElement.dataset.theme).toBe('light');
+      updateTheme({ isDark: false, accent: 'accent' });
+      expect(document.documentElement.dataset.theme).toBe('accent-light');
     });
 
     it('should update value for subscribers', () => {
       const handler = vi.fn();
       unsubscriber = subscribeToTheme(handler);
-      updateTheme(true);
-      expect(handler).toHaveBeenCalledWith(true);
+      updateTheme({ isDark: true, accent: 'accent' });
+      expect(handler).toHaveBeenCalledWith({ isDark: true, accent: 'accent' });
     });
 
     it('should not update value for subscribers if it is the same', () => {
       const handler = vi.fn();
       unsubscriber = subscribeToTheme(handler);
       handler.mockClear();
-      updateTheme(true);
-      updateTheme(true);
+      updateTheme({ isDark: true, accent: 'accent' });
+      updateTheme({ isDark: true, accent: 'accent' });
       expect(handler).toHaveBeenCalledTimes(1);
     });
   });
@@ -290,13 +255,13 @@ describe('theme / service', () => {
     const handler = vi.fn();
     unsubscriber = subscribeToTheme(handler);
     handler.mockClear();
-    updateTheme(false);
-    expect(handler).toHaveBeenCalledWith(false);
+    updateTheme({ isDark: false, accent: 'accent' });
+    expect(handler).toHaveBeenCalledWith({ isDark: false, accent: 'accent' });
   });
 
   it('should immidiately call subscriber', () => {
     const handler = vi.fn();
     unsubscriber = subscribeToTheme(handler);
-    expect(handler).toHaveBeenCalledWith(false);
+    expect(handler).toHaveBeenCalledWith({ isDark: false });
   });
 });

@@ -1,6 +1,6 @@
 {
 	"name": "@tmible/wishlist-ui",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"private": true,
 	"description": "Общие элементы пользовательского интерфейса для портала со списками желаний и сервера с дашбордами",
 	"repository": {

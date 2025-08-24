@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.3 Морской исполин (2025-08-24)
+<img width="128" height="128" src="release-images/1.6.3.png"/>
+
+https://github.com/tmible/wishlist/compare/5fa7b92..master
+
+
 ## 1.6.2 Цифровой балансер (2025-07-31)
 <img width="128" height="128" src="release-images/1.6.2.png"/>
 
-https://github.com/tmible/wishlist/compare/91f73a0..master
+https://github.com/tmible/wishlist/compare/91f73a0..5fa7b92
 
 
 ## 1.6.1 Атомное сияние (2025-07-28)

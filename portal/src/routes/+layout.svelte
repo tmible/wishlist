@@ -8,6 +8,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { initActionsFeature } from '$lib/actions/initialization.js';
+  import Background from '$lib/components/background.svelte';
   import { initUnknownUserUuid } from '$lib/unknown-user-uuid';
   import { initUserFeature } from '$lib/user/initialization.js';
   import { user } from '$lib/user/store.js';
@@ -79,13 +80,18 @@
     (() => {
       const fromLocalStorage = JSON.parse(localStorage.getItem('theme'));
       const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      let theme;
 
-      if (fromLocalStorage?.windowPrefersDark === fromWindow && fromLocalStorage?.themeName) {
-        theme = fromLocalStorage.themeName;
-      } else {
-        theme = fromWindow ? 'dark' : 'light';
+      const themeBits = fromLocalStorage?.themeName?.split('-') ?? [];
+      if (themeBits.length === 0) {
+        themeBits.push(fromWindow ? 'dark' : 'light');
       }
+      if (themeBits.length === 1) {
+        themeBits.unshift('blossom');
+      }
+      if (fromLocalStorage?.windowPrefersDark !== fromWindow) {
+        themeBits[1] = fromWindow ? 'dark' : 'light';
+      }
+      const theme = themeBits.join('-');
 
       localStorage.setItem(
         'theme',
@@ -100,6 +106,8 @@
   <!-- eslint-enable svelte/indent -->
 </svelte:head>
 
-{#if $user.isAuthenticated !== null}
-  {@render children?.()}
-{/if}
+<Background>
+  {#if $user.isAuthenticated !== null}
+    {@render children?.()}
+  {/if}
+</Background>

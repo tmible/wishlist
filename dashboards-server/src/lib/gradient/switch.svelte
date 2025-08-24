@@ -33,7 +33,7 @@
 
   // Затемнение или осветление градиента при смене темы
   onMount(() => themeService.subscribeToTheme(
-    (isDark) => adjustGradient(isDark ? GradientVariant.DARK : GradientVariant.LIGHT),
+    ({ isDark }) => adjustGradient(isDark ? GradientVariant.DARK : GradientVariant.LIGHT),
   ));
 
   onDestroy(() => {

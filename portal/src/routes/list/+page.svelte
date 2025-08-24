@@ -222,7 +222,10 @@
     <button class="btn btn-neutral btn-lg mr-6 shadow-xl" onclick={cancelReorder}>
       Отменить
     </button>
-    <button class="btn btn-primary btn-lg shadow-xl" onclick={commitOrder}>
+    <button
+      class="btn btn-primary btn-lg shadow-xl elegant:border-primary-content"
+      onclick={commitOrder}
+    >
       Сохранить
     </button>
   </div>

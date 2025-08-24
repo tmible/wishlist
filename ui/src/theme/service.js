@@ -5,7 +5,29 @@
  * @typedef {(value: T) => void} Subscriber
  */
 /** @typedef {() => void} Unsubscriber */
-/** @typedef {'light' | 'dark' | null} Theme */
+/** @typedef {{ accent?: string; mode: 'light' | 'dark' } | null} Theme */
+/** @typedef {{ isDark: boolean; accent: string | undefined }} ThemeSubscription */
+
+/**
+ * Преобразование темы к строке
+ * @function themeToString
+ * @param {Theme} theme Тема
+ * @returns {string} Тема в виде строки
+ */
+const themeToString = (theme) => [ ...(theme.accent ? [theme.accent] : []), theme.mode ].join('-');
+
+/**
+ * Получение темы из строки
+ * @function parseTheme
+ * @param {string} themeName Тема в виде строки
+ * @returns {Theme} Тема
+ */
+const parseTheme = (themeName) => {
+  const themeBits = themeName.split('-');
+  const accent = themeBits.length > 1 ? themeBits[0] : undefined;
+  const mode = themeBits.length > 1 ? themeBits[1] : themeBits[0];
+  return { accent, mode };
+};
 
 /**
  * Значение хранилица
@@ -15,7 +37,7 @@ let theme = null;
 
 /**
  * Подписчики хранилища
- * @type {Map<Subscriber<Theme>, Subscriber<Theme>>}
+ * @type {Map<Subscriber<ThemeSubscription>, Subscriber<ThemeSubscription>>}
  */
 const subscriptions = new Map();
 
@@ -24,16 +46,16 @@ const subscriptions = new Map();
  * @function isDarkTheme
  * @returns {boolean} Признак тёмности темы
  */
-export const isDarkTheme = () => theme === 'dark';
+export const isDarkTheme = () => theme?.mode === 'dark';
 
 /**
  * Подписка на обновление темы
  * @function subscribeToTheme
- * @param {(isDark: boolean) => void} subscriber Обработчик обновления темы
+ * @param {Subscriber<ThemeSubscription>} subscriber Обработчик обновления темы
  * @returns {Unsubscriber} Функция отписки
  */
 export const subscribeToTheme = (subscriber) => {
-  subscriber(theme === 'dark');
+  subscriber({ isDark: isDarkTheme(), accent: theme?.accent });
   subscriptions.set(subscriber, subscriber);
   return () => subscriptions.delete(subscriber);
 };
@@ -48,23 +70,36 @@ export const subscribeToTheme = (subscriber) => {
  */
 /* eslint-enable no-secrets/no-secrets */
 const updateValueAndNotifySubscribers = (newValue) => {
-  if (theme === newValue) {
+  if (theme !== null && theme.accent === newValue.accent && theme.mode === newValue.mode) {
     return;
   }
   theme = newValue;
   for (const subscriber of subscriptions.values()) {
-    subscriber(theme === 'dark');
+    subscriber({ isDark: isDarkTheme(), accent: theme?.accent });
   }
 };
 
 /**
  * Обновление темы
  * @function updateTheme
- * @param {boolean} isDark Признак тёмности новой темы
+ * @param {{accent?: string; isDark?: boolean}} params Настройки новой темы
+ * @param {string} params.accent Цветовой акцент новой темы
+ * @param {boolean} params.isDark Признак тёмности новой темы
  * @returns {void}
  */
-export const updateTheme = (isDark) => {
-  const themeName = isDark ? 'dark' : 'light';
+export const updateTheme = ({ accent, isDark }) => {
+  const newTheme = Object.assign({}, theme);
+  if (isDark !== undefined) {
+    newTheme.mode = isDark ? 'dark' : 'light';
+  }
+  newTheme.accent = accent ?? theme?.accent;
+
+  if (!newTheme.mode) {
+    return;
+  }
+
+  const themeName = themeToString(newTheme);
+
   localStorage.setItem(
     'theme',
     JSON.stringify({
@@ -73,13 +108,14 @@ export const updateTheme = (isDark) => {
     }),
   );
   document.documentElement.dataset.theme = themeName;
-  updateValueAndNotifySubscribers(themeName);
+
+  updateValueAndNotifySubscribers(newTheme);
 };
 
 /**
  * Обновление темы в соответствии с контекстом.
- * Если тема в localStorage была установлена при том же значении темы устройства, она сохраняется.
- * Иначе устанавливается тема, соответствующая теме устройства
+ * Если режим темы в localStorage совпадает с режимом темы устройства, она сохраняется.
+ * Иначе устанавливается тема, с таким же акцентом, но соответствующим теме устройства режимом
  * @function adjustTheme
  * @returns {void}
  */
@@ -88,9 +124,12 @@ const adjustTheme = () => {
   const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   if (fromLocalStorage?.windowPrefersDark === fromWindow && fromLocalStorage?.themeName) {
-    updateValueAndNotifySubscribers(fromLocalStorage.themeName);
+    updateValueAndNotifySubscribers(parseTheme(fromLocalStorage.themeName));
   } else {
-    updateTheme(fromWindow);
+    const accent = fromLocalStorage?.themeName ?
+      parseTheme(fromLocalStorage.themeName).accent :
+      undefined;
+    updateTheme({ isDark: fromWindow, accent });
   }
 };
 

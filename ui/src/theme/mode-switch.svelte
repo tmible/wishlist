@@ -1,4 +1,4 @@
-<!-- @component Переключатель цветовой темы -->
+<!-- @component Переключатель режима темы -->
 <script>
   import { Moon, SunDim } from 'lucide-svelte';
   import { onMount } from 'svelte';
@@ -11,10 +11,10 @@
   let isDark = $state();
 
   // Обновление состояния при изменении темы в сервисе
-  onMount(() => subscribeToTheme((isThemeDark) => isDark = isThemeDark));
+  onMount(() => subscribeToTheme(({ isDark: isThemeDark }) => isDark = isThemeDark));
 
-  // Смена темы
-  $effect(() => updateTheme(isDark));
+  // Обновление темы
+  $effect(() => updateTheme({ isDark }));
 </script>
 
 <label class="toggle bg-base-100 text-base-content">

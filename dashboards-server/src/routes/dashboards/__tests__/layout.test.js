@@ -6,7 +6,7 @@ import { initDashboardFeature } from '$lib/dashboard/initialization.js';
 import Layout from '../+layout.svelte';
 
 vi.mock(
-  '@tmible/wishlist-ui/theme/switch',
+  '@tmible/wishlist-ui/theme/mode-switch',
   async () => await import('./mock.svelte'),
 );
 vi.mock('$lib/dashboard/initialization.js');

@@ -1,6 +1,6 @@
 <!-- @component Страница с формой аутентификации -->
 <script>
-  import ThemeSwitch from '@tmible/wishlist-ui/theme/switch';
+  import ThemeSwitch from '@tmible/wishlist-ui/theme/mode-switch';
   import { enhance } from '$app/forms';
   import GradientSwitch from '$lib/gradient/switch.svelte';
   import { user } from '$lib/user/store.js';

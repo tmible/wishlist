@@ -1,0 +1,194 @@
+@plugin "daisyui" {
+  themes: light, dark, blossom-light --default, blossom-dark --prefersdark, frozen-light, frozen-dark, elegant-light, elegant-dark;
+}
+
+@custom-variant dark (
+  &:where(
+    [data-theme="blossom-dark"],
+    [data-theme="blossom-dark"] *,
+    [data-theme="frozen-dark"],
+    [data-theme="frozen-dark"] *,
+    [data-theme="elegant-dark"],
+    [data-theme="elegant-dark"] *
+  )
+);
+
+@plugin "daisyui/theme" {
+  name: "blossom-light";
+  color-scheme: "light";
+  --color-base-100: var(--oc-gray-0);
+  --color-base-200: var(--oc-gray-1);
+  --color-base-300: var(--oc-gray-2);
+  --color-base-content: var(--oc-gray-8);
+  --color-primary: var(--oc-pink-9);
+  --color-primary-content: var(--oc-gray-2);
+  --color-neutral: var(--oc-gray-9);
+  --color-neutral-content: var(--oc-gray-2);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="blossom-light"] {
+  --color-body: var(--oc-pink-1);
+}
+
+@plugin "daisyui/theme" {
+  name: "blossom-dark";
+  color-scheme: "dark";
+  --color-base-100: var(--oc-gray-9);
+  --color-base-200: var(--oc-gray-8);
+  --color-base-300: var(--oc-gray-7);
+  --color-base-content: var(--oc-gray-4);
+  --color-primary: var(--oc-pink-9);
+  --color-primary-content: var(--oc-gray-2);
+  --color-secondary: var(--oc-pink-1);
+  --color-neutral: var(--oc-gray-4);
+  --color-neutral-content: var(--oc-gray-9);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="blossom-dark"] {
+  --color-body: var(--oc-gray-8);
+}
+
+@plugin "daisyui/theme" {
+  name: "frozen-light";
+  color-scheme: "light";
+  --color-base-100: var(--oc-gray-0);
+  --color-base-200: var(--oc-gray-1);
+  --color-base-300: var(--oc-gray-2);
+  --color-base-content: var(--oc-gray-8);
+  --color-primary: var(--oc-blue-2);
+  --color-primary-content: var(--oc-gray-0);
+  --color-neutral: var(--oc-gray-9);
+  --color-neutral-content: var(--oc-gray-3);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="frozen-light"] {
+  .bg-body {
+    background-image: linear-gradient(var(--oc-blue-1), var(--oc-pink-4), var(--oc-blue-1));
+  }
+}
+
+@plugin "daisyui/theme" {
+  name: "frozen-dark";
+  color-scheme: "dark";
+  --color-base-100: var(--oc-gray-9);
+  --color-base-200: var(--oc-gray-8);
+  --color-base-300: var(--oc-gray-7);
+  --color-base-content: var(--oc-gray-4);
+  --color-primary: var(--oc-blue-9);
+  --color-primary-content: var(--oc-gray-3);
+  --color-neutral: var(--oc-gray-4);
+  --color-neutral-content: var(--oc-gray-9);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="frozen-dark"] {
+  .bg-body {
+    background-image: linear-gradient(var(--oc-blue-9), var(--oc-pink-9), var(--oc-blue-9));
+  }
+}
+
+@plugin "daisyui/theme" {
+  name: "elegant-light";
+  color-scheme: "light";
+  --color-base-100: var(--oc-gray-0);
+  --color-base-200: var(--oc-gray-1);
+  --color-base-300: var(--oc-gray-2);
+  --color-base-content: var(--oc-gray-8);
+  --color-primary: var(--oc-pink-9);
+  --color-primary-content: var(--oc-gray-2);
+  --color-neutral: var(--oc-gray-9);
+  --color-neutral-content: var(--oc-gray-2);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="elegant-light"] {
+  --color-body: var(--oc-pink-9);
+  --color-body-content: var(--oc-gray-2);
+}
+
+@plugin "daisyui/theme" {
+  name: "elegant-dark";
+  color-scheme: "dark";
+  --color-base-100: var(--oc-gray-9);
+  --color-base-200: var(--oc-gray-8);
+  --color-base-300: var(--oc-gray-7);
+  --color-base-content: var(--oc-gray-4);
+  --color-primary: var(--oc-pink-9);
+  --color-primary-content: var(--oc-gray-2);
+  --color-neutral: var(--oc-gray-4);
+  --color-neutral-content: var(--oc-gray-9);
+  --color-success: var(--oc-green-6);
+  --color-success-content: var(--oc-gray-9);
+  --color-error: var(--oc-red-6);
+  --color-error-content: var(--oc-gray-9);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+[data-theme="elegant-dark"] {
+  --color-body: var(--oc-pink-9);
+}

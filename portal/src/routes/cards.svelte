@@ -38,7 +38,7 @@
   });
 </script>
 
-<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:w-1/3 md:order-2 main-card-center">
+<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:order-2 main-card-center">
   <div
     bind:this={telegramLoginWidgetContainer}
     class="card-body items-center prose telegram-login-widget-container"
@@ -61,7 +61,7 @@
     </p>
   </div>
 </div>
-<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:w-1/4 md:order-1 main-card-left">
+<div class="card md:card-lg bg-base-100 md:shadow-xl w-full md:order-1 main-card-left">
   <div class="card-body justify-center prose">
     <ul>
       <li class="not-prose">Создавайте и&nbsp;редактируйте свой список</li>
@@ -76,7 +76,7 @@
     </ul>
   </div>
 </div>
-<div class="card bg-base-100 md:shadow-xl w-full md:w-1/4 md:order-3 main-card-right">
+<div class="card bg-base-100 md:shadow-xl w-full md:order-3 main-card-right">
   <div class="card-body h-full">
     <div class="flex items-start justify-center w-full h-0 my-0 mx-auto grow">
       <div

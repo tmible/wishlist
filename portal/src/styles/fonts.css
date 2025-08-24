@@ -1,0 +1,36 @@
+@layer base {
+  @font-face {
+    font-family: "Soyuz Grotesk";
+    src:
+      local("Soyuz Grotesk"),
+      url("/fonts/soyuz-grotesk/Soyuz Grotesk Bold.otf") format("opentype"),
+      url("/fonts/soyuz-grotesk/Soyuz Grotesk Bold.woff") format("woff");
+    font-weight: bold;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Involve";
+    src:
+      local("Involve"),
+      url("/fonts/involve/Involve-VF.ttf") format("truetype"),
+      url("/fonts/involve/Involve-Oblique-VF.ttf") format("truetype"),
+      url("/fonts/involve/OTF/Involve-Bold.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-BoldOblique.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-Medium.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-MediumOblique.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-Oblique.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-Regular.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-SemiBold.otf") format("opentype"),
+      url("/fonts/involve/OTF/Involve-SemiBoldOblique.otf") format("opentype"),
+      url("/fonts/involve/TTF/Involve-Bold.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-BoldOblique.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-Medium.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-MediumOblique.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-Oblique.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-Regular.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-SemiBold.ttf") format("truetype"),
+      url("/fonts/involve/TTF/Involve-SemiBoldOblique.ttf") format("truetype");
+    font-display: swap;
+  }
+}

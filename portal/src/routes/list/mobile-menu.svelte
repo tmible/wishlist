@@ -34,7 +34,7 @@
   class:invisible={isMenuHidden}
 >
   <DropdownMenu.Root preventScroll={false}>
-    <DropdownMenu.Trigger class="btn btn-primary btn-circle">
+    <DropdownMenu.Trigger class="btn btn-primary btn-circle elegant:border-primary-content">
       <Ellipsis />
     </DropdownMenu.Trigger>
     <DropdownMenu.Content

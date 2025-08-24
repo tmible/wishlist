@@ -171,23 +171,23 @@ describe('dashboard / dashboard', () => {
       });
 
       it('should build new chart', () => {
-        themeSubscriber();
+        themeSubscriber({});
         expect(vi.mocked(ChartBuilders[config.key])).toHaveBeenCalled();
       });
 
       it('should not set new data to dashboard', () => {
-        themeSubscriber();
+        themeSubscriber({});
         expect(dashboard.data).toBe('previos data');
       });
 
       it('should set new options to dashboard', () => {
-        themeSubscriber();
+        themeSubscriber({});
         expect(dashboard.options).toBe('current options');
       });
 
       describe('animation criteria', () => {
         it('should call animation criteria', () => {
-          themeSubscriber();
+          themeSubscriber({});
           expect(
             vi.mocked(ChartUpdateAnimation[config.key]),
           ).toHaveBeenCalledWith(
@@ -198,19 +198,19 @@ describe('dashboard / dashboard', () => {
 
         it('should use animation criteria if it returns true', () => {
           vi.mocked(ChartUpdateAnimation[config.key]).mockReturnValueOnce(true);
-          themeSubscriber();
+          themeSubscriber({});
           expect(dashboard.update).toHaveBeenCalledWith();
         });
 
         it('should use animation criteria if it returns false', () => {
           vi.mocked(ChartUpdateAnimation[config.key]).mockReturnValueOnce(false);
-          themeSubscriber();
+          themeSubscriber({});
           expect(dashboard.update).toHaveBeenCalledWith('none');
         });
       });
 
       it('should update dashboard', () => {
-        themeSubscriber();
+        themeSubscriber({});
         expect(dashboard.update).toHaveBeenCalled();
       });
     });

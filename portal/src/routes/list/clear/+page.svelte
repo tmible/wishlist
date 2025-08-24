@@ -6,6 +6,7 @@
   import { CardSwiper } from '$lib/card-swiper';
   import { wishlist } from '$lib/wishlist/store.js';
   import { deleteItems } from '$lib/wishlist/use-cases/delete-items.js';
+  import { cardsImage } from './cards-image.js';
 
   /** @typedef {import('$lib/wishlist/domain.js').OwnWishlistItem} OwnWishlistItem */
 
@@ -53,7 +54,7 @@
     }
     return {
       title: wishlistSorted[i].name,
-      image: '/bg.svg',
+      image: $cardsImage,
       id: wishlistSorted[i].id,
       description: wishlistSorted[i].isExternal ? 'сюрприз' : '',
     };

@@ -69,8 +69,12 @@
       const fromWindow = window.matchMedia('(prefers-color-scheme: dark)').matches;
       let theme;
 
-      if (fromLocalStorage?.windowPrefersDark === fromWindow && fromLocalStorage?.themeName) {
-        theme = fromLocalStorage.themeName;
+      if (
+        fromLocalStorage?.themeName &&
+        fromLocalStorage?.windowPrefersDark === fromWindow &&
+        /(dark|light)/.test(fromLocalStorage.themeName)
+      ) {
+        theme = /(dark|light)/.exec(fromLocalStorage.themeName)[1];
       } else {
         theme = fromWindow ? 'dark' : 'light';
       }

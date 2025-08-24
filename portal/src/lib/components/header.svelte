@@ -1,5 +1,16 @@
 <script>
-  import ThemeSwitch from '@tmible/wishlist-ui/theme/switch';
+  import AccentPicker from '@tmible/wishlist-ui/theme/accent-picker';
+  import ModeSwitch from '@tmible/wishlist-ui/theme/mode-switch';
+
+  /**
+   * Акценты темы для выбора
+   * @constant {{ id: string; label: string; color: string }[]}
+   */
+  const accents = [
+    { id: 'blossom', label: 'цвет', color: 'pink-2' },
+    { id: 'frozen', label: 'морозная', color: 'blue-1' },
+    { id: 'elegant', label: 'элегантная', color: 'pink-9' },
+  ];
 </script>
 
 <header class="navbar">
@@ -11,6 +22,7 @@
     </a>
   </div>
   <div class="mr-4">
-    <ThemeSwitch />
+    <AccentPicker {accents} />
+    <ModeSwitch />
   </div>
 </header>

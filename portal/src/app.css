@@ -1,46 +1,13 @@
 @import "tailwindcss";
 @import "open-color/open-color.css";
 @import "@tmible/wishlist-ui/open-color.css";
+@import "./styles/fonts.css";
+@import "./styles/themes.css";
 
 @source "../node_modules/@tmible/wishlist-ui";
 
 @plugin "@tailwindcss/typography";
 @plugin "tailwindcss-animate";
-@plugin "daisyui";
-
-@plugin "daisyui/theme" {
-  name: "light";
-  --color-base-100: var(--oc-gray-0);
-  --color-base-200: var(--oc-gray-1);
-  --color-base-300: var(--oc-gray-2);
-  --color-base-content: var(--oc-gray-8);
-  --color-primary: #ff7514;
-  --color-primary-content: var(--oc-gray-9);
-  --color-neutral: var(--oc-gray-9);
-  --color-neutral-content: var(--oc-gray-3);
-  --color-error: var(--oc-red-6);
-  --color-error-content: var(--oc-gray-9);
-  --radius-box: 1rem;
-  --radius-field: 0.5rem;
-}
-
-@plugin "daisyui/theme" {
-  name: "dark";
-  --color-base-100: var(--oc-gray-9);
-  --color-base-200: var(--oc-gray-8);
-  --color-base-300: var(--oc-gray-7);
-  --color-base-content: var(--oc-gray-4);
-  --color-primary: #ff7514;
-  --color-primary-content: var(--oc-gray-9);
-  --color-neutral: var(--oc-gray-4);
-  --color-neutral-content: var(--oc-gray-9);
-  --color-error: var(--oc-red-6);
-  --color-error-content: var(--oc-gray-9);
-  --radius-box: 1rem;
-  --radius-field: 0.5rem;
-}
-
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
   --color-placeholder: color-mix(in oklch, var(--color-base-content) 40%, #0000);
@@ -48,46 +15,18 @@
   --shadow-md-upside:
     0 -4px 6px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1)),
     0 -2px 4px -2px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+  --color-body: transparent;
+  --color-body-content: var(--color-base-content);
 }
 
 @variant dark {
   --tw-shadow-color: rgb(200 200 200 / 0.1);
 }
 
-@layer base {
-  @font-face {
-    font-family: "Soyuz Grotesk";
-    src:
-      local("Soyuz Grotesk"),
-      url("/fonts/soyuz-grotesk/Soyuz Grotesk Bold.otf") format("opentype"),
-      url("/fonts/soyuz-grotesk/Soyuz Grotesk Bold.woff") format("woff");
-    font-weight: bold;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "Involve";
-    src:
-      local("Involve"),
-      url("/fonts/involve/Involve-VF.ttf") format("truetype"),
-      url("/fonts/involve/Involve-Oblique-VF.ttf") format("truetype"),
-      url("/fonts/involve/OTF/Involve-Bold.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-BoldOblique.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-Medium.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-MediumOblique.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-Oblique.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-Regular.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-SemiBold.otf") format("opentype"),
-      url("/fonts/involve/OTF/Involve-SemiBoldOblique.otf") format("opentype"),
-      url("/fonts/involve/TTF/Involve-Bold.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-BoldOblique.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-Medium.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-MediumOblique.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-Oblique.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-Regular.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-SemiBold.ttf") format("truetype"),
-      url("/fonts/involve/TTF/Involve-SemiBoldOblique.ttf") format("truetype");
-    font-display: swap;
+@custom-variant elegant {
+  &:where([data-theme="elegant-light"] *),
+  &:where([data-theme="elegant-dark"] *) {
+    @slot;
   }
 }
 

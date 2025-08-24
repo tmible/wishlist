@@ -43,6 +43,7 @@
               md:text-[11vw]
               2xl:text-[160px]
               text-center
+              text-body-content
               main-header
               animate-in
               fade-in-0
@@ -62,7 +63,7 @@
             md:flex
             md:flex-row
             w-full
-            justify-around
+            gap-12
             h-auto
             overflow-y-visible
             main-cards

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.0 Эхо древнего времени (2025-08-24)
+<img width="128" height="128" src="release-images/1.6.0.png"/>
+
+https://github.com/tmible/wishlist/compare/5fa7b92..master
+
+
 ## 1.5.5 Цифровой отражатель данных (2025-07-29)
 <img width="128" height="128" src="release-images/1.5.5.png"/>
 
-https://github.com/tmible/wishlist/compare/00fd21b..master
+https://github.com/tmible/wishlist/compare/00fd21b..5fa7b92
 
 
 ## 1.5.4 Необычный рассвет (2025-07-28)

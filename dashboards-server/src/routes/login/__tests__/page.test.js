@@ -5,7 +5,7 @@ import { login } from '$lib/user/use-cases/login.js';
 import Login from '../+page.svelte';
 
 vi.mock(
-  '@tmible/wishlist-ui/theme/switch',
+  '@tmible/wishlist-ui/theme/mode-switch',
   async () => await import('./mock.svelte'),
 );
 vi.mock(

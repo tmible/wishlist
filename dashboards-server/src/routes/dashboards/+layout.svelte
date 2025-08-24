@@ -1,7 +1,7 @@
 <!-- @component Общая для страниц с дашбордами разметка -->
 <script>
   import ScrollArea from '@tmible/wishlist-ui/scroll-area';
-  import ThemeSwitch from '@tmible/wishlist-ui/theme/switch';
+  import ThemeSwitch from '@tmible/wishlist-ui/theme/mode-switch';
   import { onDestroy } from 'svelte';
   import { page } from '$app/state';
   import { initDashboardFeature } from '$lib/dashboard/initialization.js';

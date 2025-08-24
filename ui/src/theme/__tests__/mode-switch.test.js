@@ -2,12 +2,12 @@
 import { cleanup, render, screen } from '@testing-library/svelte';
 import { userEvent } from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import ModeSwitch from '../mode-switch.svelte';
 import { subscribeToTheme, updateTheme } from '../service.js';
-import ThemeSwitch from '../switch.svelte';
 
 vi.mock('../service.js');
 
-describe('theme / switch', () => {
+describe('theme / mode switch', () => {
   afterEach(() => {
     cleanup();
     vi.clearAllMocks();
@@ -15,7 +15,7 @@ describe('theme / switch', () => {
 
   describe('on mount', () => {
     it('should subscribe to theme', () => {
-      render(ThemeSwitch);
+      render(ModeSwitch);
       expect(vi.mocked(subscribeToTheme)).toHaveBeenCalledWith(expect.any(Function));
     });
   });
@@ -24,19 +24,26 @@ describe('theme / switch', () => {
     it('should unsubscribe from theme', () => {
       const unsubscribeFromTheme = vi.fn();
       vi.mocked(subscribeToTheme).mockReturnValueOnce(unsubscribeFromTheme);
-      render(ThemeSwitch).unmount();
+      render(ModeSwitch).unmount();
       expect(unsubscribeFromTheme).toHaveBeenCalled();
     });
   });
 
-  it('should toggle theme', async () => {
+  it('should toggle theme mode', async () => {
     let handler;
-    vi.mocked(subscribeToTheme).mockImplementationOnce((themeHandler) => handler = themeHandler);
+    vi.mocked(
+      subscribeToTheme,
+    ).mockImplementationOnce(
+      (themeHandler) => {
+        handler = themeHandler;
+        return () => {};
+      },
+    );
     const user = userEvent.setup();
-    render(ThemeSwitch);
-    handler(false);
+    render(ModeSwitch);
+    handler({ isDark: false });
     const toggler = screen.getByRole('checkbox');
     await user.click(toggler);
-    expect(vi.mocked(updateTheme)).toHaveBeenCalledWith(true);
+    expect(vi.mocked(updateTheme)).toHaveBeenCalledWith({ isDark: true });
   });
 });
