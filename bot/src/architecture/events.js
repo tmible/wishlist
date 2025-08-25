@@ -12,6 +12,10 @@ const Events = Object.freeze({
     HandleOwnList: 'wishlist | handle own list',
     GetWishlistItemName: {},
     SetWishlistItemGroupLink: {},
+    GetWishlistItemGroupLink: {},
+    DeleteWishlistItemGroupLink: {},
+    GetWishlistItemState: {},
+    GetWishlistItemParticipants: {},
   },
   Editing: {
     GetList: 'editing | get list',

@@ -141,6 +141,20 @@ const formCreateGroupButton = (ctx, item, userid) => (
 );
 
 /**
+ * Формирование кнопки привязки группы для кооперации к подарку
+ * @function formBindGroupButton
+ * @param {Context} ctx Контекст
+ * @param {ListItem} item Элемент списка желаний
+ * @param {number} userid Идентификатор пользователя — владельца списка
+ * @returns {Hideable<InlineKeyboardButton.CallbackButton>[]} Кнопка привязки группы
+ */
+const formBindGroupButton = (ctx, item, userid) => (
+  item.state === ListItemState.COOPERATIVE && !item.groupLink && isChatGroup(ctx) ?
+    [ Markup.button.callback('Привязать эту группу', `bind_group ${item.id} ${userid}`) ] :
+    []
+);
+
+/**
  * Формирование встроенной клавиатуры для сообщения с элементом списка желаний
  * В групповом чате отображаются всегда все опции, иначе опции выбираются исходя из состояния
  * подарка и участия пользователя, запрашивающего список, в подарке
@@ -155,16 +169,19 @@ const formReplyMarkup = (ctx, item, userid) => {
   const cooperateButton = formCooperateButton(ctx, item, userid);
   const retireButton = formRetireButton(ctx, item, userid);
   const createGroupButton = formCreateGroupButton(ctx, item, userid);
+  const bindGroupButton = formBindGroupButton(ctx, item, userid);
 
   return [
     bookButton,
     cooperateButton,
     retireButton,
     createGroupButton,
+    bindGroupButton,
   ].some(({ length }) => length > 0) ?
     [
       Markup.inlineKeyboard([
         ...(createGroupButton.length > 0 ? [ createGroupButton ] : []),
+        ...(bindGroupButton.length > 0 ? [ bindGroupButton ] : []),
         ...(
           bookButton.length > 0 || cooperateButton.length > 0 ?
             [[ ...bookButton, ...cooperateButton ]] :

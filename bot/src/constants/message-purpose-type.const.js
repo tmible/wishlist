@@ -11,6 +11,7 @@ const MessagePurposeType = numericEnum([
   'AnonymousMessageAnswer',
   'SupportMessage',
   'SupportMessageAnswer',
+  'InviteLink',
 ]);
 
 export default MessagePurposeType;

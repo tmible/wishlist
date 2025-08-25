@@ -3,7 +3,11 @@ import Events from '@tmible/wishlist-bot/architecture/events';
 import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import BookItem from './book-item.js';
 import CooperateOnItem from './cooperate-on-item.js';
+import DeleteItemGroupLink from './delete-item-group-link.js';
+import GetItemGroupLink from './get-item-group-link.js';
 import GetItemName from './get-item-name.js';
+import GetItemParticipants from './get-item-participants.js';
+import GetItemState from './get-item-state.js';
 import GetList from './get-list.js';
 import RetireFromItem from './retire-from-item.js';
 import SetItemGroupLink from './set-item-group-link.js';
@@ -25,6 +29,10 @@ const configure = () => {
     [ Events.Wishlist.RetireFromItem, RetireFromItem ],
     [ Events.Wishlist.GetWishlistItemName, GetItemName ],
     [ Events.Wishlist.SetWishlistItemGroupLink, SetItemGroupLink ],
+    [ Events.Wishlist.GetWishlistItemGroupLink, GetItemGroupLink ],
+    [ Events.Wishlist.DeleteWishlistItemGroupLink, DeleteItemGroupLink ],
+    [ Events.Wishlist.GetWishlistItemState, GetItemState ],
+    [ Events.Wishlist.GetWishlistItemParticipants, GetItemParticipants ],
   ].forEach(([ event, { eventHandler } ]) => eventBus.subscribe(event, eventHandler));
 
   [
@@ -34,6 +42,10 @@ const configure = () => {
     RetireFromItem,
     GetItemName,
     SetItemGroupLink,
+    GetItemGroupLink,
+    DeleteItemGroupLink,
+    GetItemState,
+    GetItemParticipants,
   ].forEach(({ prepare }) => prepare());
 };
 

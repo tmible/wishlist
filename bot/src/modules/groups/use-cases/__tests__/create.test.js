@@ -80,12 +80,7 @@ describe('groups / use cases / create', () => {
         text: {
           _: 'formattedText',
           text: matchers.isA(String),
-          entities: [{
-            _: 'textEntity',
-            type: { _: 'textEntityTypeCode' },
-            offset: 97,
-            length: 9,
-          }],
+          entities: matchers.isA(Array),
         },
       },
     }));

@@ -4,7 +4,7 @@ import InjectionToken from '@tmible/wishlist-bot/architecture/injection-token';
 import replaceModule from '@tmible/wishlist-bot/helpers/tests/replace-module';
 import { Client } from '../injection-tokens.js';
 
-const bot = { action: func() };
+const bot = { action: func(), on: func() };
 const logger = { debug: func(), error: func() };
 const client = { on: func(), login: func(), close: func() };
 
@@ -12,13 +12,19 @@ const [
   { inject, provide },
   { getTdjson },
   { configure, createClient },
-  botActionHandler,
+  cancelActionHandler,
+  bindGroupActionHandler,
+  bindGroupMessageHandler,
+  createGroupActionHandler,
   tdlibUpdateHandler,
 ] = await Promise.all([
   replaceModule('@tmible/wishlist-common/dependency-injector'),
   replaceEsm('prebuilt-tdlib'),
   replaceEsm('tdl'),
-  replaceEsm('../bot-action-handler.js').then((module) => module.default),
+  replaceEsm('@tmible/wishlist-bot/helpers/cancel-action-handler').then((module) => module.default),
+  replaceEsm('../bind-group-action-handler.js').then((module) => module.default),
+  replaceEsm('../bind-group-message-handler.js').then((module) => module.default),
+  replaceEsm('../create-group-action-handler.js').then((module) => module.default),
   replaceEsm('../tdlib-update-handler.js').then((module) => module.default),
 ]);
 const initGroupsFeature = await import('../index.js').then((module) => module.default);
@@ -34,14 +40,35 @@ describe('groups / initialization', () => {
 
   afterEach(reset);
 
-  it('should log initialization start', async () => {
+  it('should register bot create_group action handler', async () => {
     await initGroupsFeature(bot);
-    verify(logger.debug('configuring groups module (starting TDLib client)'));
+    verify(bot.action(/^create_group (\d+) (\d+)$/, createGroupActionHandler));
   });
 
-  it('should register bot action handler', async () => {
+  it('should register bot bind_group action handler', async () => {
     await initGroupsFeature(bot);
-    verify(bot.action(/^create_group (\d+) (\d+)$/, botActionHandler));
+    verify(bot.action(/^bind_group (\d+) (\d+)$/, bindGroupActionHandler));
+  });
+
+  it('should register bot bind_group message handler', async () => {
+    await initGroupsFeature(bot);
+    verify(bot.on('message', bindGroupMessageHandler));
+  });
+
+  it('should register bot cancel_bind_group action handler', async () => {
+    await initGroupsFeature(bot);
+    verify(bot.action('cancel_bind_group', matchers.isA(Function)));
+  });
+
+  describe('cancel_bind_group action handler', () => {
+    it('should call cancelActionHandler', async () => {
+      const ctx = {};
+      const captor = matchers.captor();
+      await initGroupsFeature(bot);
+      verify(bot.action('cancel_bind_group', captor.capture()));
+      captor.value(ctx);
+      verify(cancelActionHandler(ctx));
+    });
   });
 
   it('should configure TDLib', async () => {
@@ -58,11 +85,6 @@ describe('groups / initialization', () => {
         use_message_database: false,
       },
     }));
-  });
-
-  it('should register Telegram client error handler', async () => {
-    await initGroupsFeature(bot);
-    verify(client.on('error', matchers.isA(Function)));
   });
 
   it('should log Telegram client errors', async () => {
@@ -86,11 +108,6 @@ describe('groups / initialization', () => {
   it('should provide Telegram client', async () => {
     await initGroupsFeature(bot);
     verify(provide(Client, client));
-  });
-
-  it('should log initialization end', async () => {
-    await initGroupsFeature(bot);
-    verify(logger.debug('TDLib client started'));
   });
 
   it('should return closing Telegram client function', async () => {

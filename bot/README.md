@@ -20,6 +20,7 @@
 - `PORT` порт для внутреннего сервера
 - `HUB_SOCKET_PATH` путь к UNIX сокету IPC хаба для синхронизации списков желаний
 - `SUPPORT_ACCOUNT_USERID` идентификтор вспомогательного аккаунта Телеграм
+- `SUPPORT_ACCOUNT_2FA_PASSWORD` пароль двухвакторной аутентификации вспомогательного аккаунта Телеграм
 - `TELEGRAM_API_ID` [API ID клиента Телегарм](https://core.telegram.org/api/obtaining_api_id)
 - `TELEGRAM_API_HASH` [API hash клиента Телегарм](https://core.telegram.org/api/obtaining_api_id)
 

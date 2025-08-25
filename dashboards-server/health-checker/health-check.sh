@@ -108,8 +108,11 @@ fails=$(jq -r --argjson dictionary "$(cat $(cd -- $(dirname "${BASH_SOURCE[0]}")
   getpath([$paths])
 ' $file)
 
+# WireGuard is configured to route traffic for IP addresses of hc-ping.com through another node
+# IPv4 of which is geolocated (by hc-ping.com / healthchecks.io) as russian, but IPv6 is not,
+# therefore -6 option is present
 if [[ $fails == "" ]]; then
-  curl "https://hc-ping.com/$HEALTHCHECKS_IO_UUID" --proxy $HTTP_PROXY 2>/dev/null
+  curl -6 "https://hc-ping.com/$HEALTHCHECKS_IO_UUID" 2>/dev/null
 else
-  curl -X POST "https://hc-ping.com/$HEALTHCHECKS_IO_UUID/fail" --data-raw "$fails" --proxy $HTTP_PROXY 2>/dev/null
+  curl -6 -X POST "https://hc-ping.com/$HEALTHCHECKS_IO_UUID/fail" --data-raw "$fails" 2>/dev/null
 fi

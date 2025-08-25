@@ -30,6 +30,7 @@ const list = [{
   state: ListItemState.COOPERATIVE,
   participants: [ 'anotherUser' ],
   participantsIds: [ 'anotherUserId' ],
+  groupLink: 'link',
 }, {
   id: 4,
   name: 'name 4',

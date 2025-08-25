@@ -1,9 +1,15 @@
 # Changelog
 
+## 3.8.0 Зеркальный отсвет (2025-08-25)
+<img width="128" height="128" src="release-images/3.8.0.png"/>
+
+https://github.com/tmible/wishlist/compare/0b2eec6..master
+
+
 ## 3.7.2 Цифровой рассвет (2025-07-28)
 <img width="128" height="128" src="release-images/3.7.2.png"/>
 
-https://github.com/tmible/wishlist/compare/14dbd86..master
+https://github.com/tmible/wishlist/compare/14dbd86..0b2eec6
 
 
 ## 3.7.1 Плавное солнечное утро (2025-07-27)

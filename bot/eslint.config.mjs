@@ -39,4 +39,10 @@ export default [
       ],
     },
   },
+  {
+    files: [ "**/**.test.js", "**/__tests__/**" ],
+    rules: {
+      "sonarjs/no-hardcoded-passwords": "off",
+    },
+  },
 ];
