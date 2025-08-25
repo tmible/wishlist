@@ -95,12 +95,12 @@
       icon: User,
       label: 'Ссылка на чат с ботом',
       testId: 'share-bot',
-      onClick: (event, currentTarget) => shareLink(currentTarget, false),
+      onClick: () => shareLink(false),
     }, {
       icon: Users,
       label: 'Ссылка для групп',
       testId: 'share-group',
-      onClick: (event, currentTarget) => shareLink(currentTarget, true),
+      onClick: () => shareLink(true),
     }],
   }, {
     icon: Bot,

@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.2 Экипажный контрольный механизм (2025-08-25)
+<img width="128" height="128" src="release-images/1.6.2.png"/>
+
+https://github.com/tmible/wishlist/compare/18e7cf3..master
+
+
 ## 1.6.1 Зеркальный рассвет (2025-08-25)
 <img width="128" height="128" src="release-images/1.6.1.png"/>
 
-https://github.com/tmible/wishlist/compare/4f66657..master
+https://github.com/tmible/wishlist/compare/4f66657..18e7cf3
 
 
 ## 1.6.0 Эхо древнего времени (2025-08-24)

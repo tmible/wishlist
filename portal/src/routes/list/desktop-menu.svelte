@@ -55,10 +55,7 @@
               side="left"
             >
               {#each children as { icon, label, testId, onClick } (label)}
-                <DropdownMenu.Item
-                  data-testid={testId}
-                  onclick={(event) => onClick(event, event.currentTarget)}
-                >
+                <DropdownMenu.Item data-testid={testId} onclick={onClick}>
                   {@const Icon = icon}
                   <li>
                     <span>
@@ -85,35 +82,3 @@
     {/each}
   </ul>
 </div>
-
-<style>
-  @reference "../../app.css";
-
-  @keyframes success {
-    0% {
-      opacity: 0;
-      transform: translate(-50%, -50%);
-    }
-    50% {
-      opacity: 0.75;
-      transform: translate(-50%, -75%);
-      }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -100%);
-    }
-  }
-
-  :global(div[role="menuitem"].clicked)::before {
-    content: 'скопировано';
-    animation: 1s ease-out both success;
-    @apply absolute;
-    @apply top-0;
-    left: 50%;
-    @apply bg-success;
-    @apply text-success-content;
-    @apply py-0.5;
-    @apply px-1;
-    @apply rounded-full;
-  }
-</style>

@@ -3,10 +3,12 @@
   import ScrollArea from '@tmible/wishlist-ui/scroll-area';
   import * as Sortable from 'sortablejs';
   import { getContext } from 'svelte';
+  import { Toasts } from 'svoast';
   import { goto } from '$app/navigation';
   import CategoriesDialog from '$lib/categories/dialog.svelte';
   import Header from '$lib/components/header.svelte';
   import ModalPortal from '$lib/components/modal-portal.svelte';
+  import Toast from '$lib/components/toast.svelte';
   import WishlistExternalItemsDeleteAlert from '$lib/wishlist/components/external-items-delete-alert.svelte';
   import WishlistItemAddDialog from '$lib/wishlist/components/item-add-dialog.svelte';
   import WishlistItemCard from '$lib/wishlist/components/item-card.svelte';
@@ -240,3 +242,5 @@
 <WishlistItemDeleteAlert {listItemToDelete} bind:open={isDeletionBeingConfirmed} />
 
 <WishlistExternalItemsDeleteAlert bind:open={isExternalItemsDeletionBeingConfirmed} />
+
+<Toasts component={Toast} />

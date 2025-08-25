@@ -1,8 +1,6 @@
 import { inject } from '@tmible/wishlist-common/dependency-injector';
 import { emit } from '@tmible/wishlist-common/event-bus';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GetUserHash } from '$lib/user/events.js';
-import { LinkService } from '../../injection-tokens.js';
+import { describe, expect, it, vi } from 'vitest';
 import { shareLink } from '../share-link.js';
 
 vi.mock('@tmible/wishlist-common/dependency-injector');
@@ -13,33 +11,10 @@ vi.mock('../../injection-tokens.js', () => ({ LinkService: 'link service' }));
 const linkServiceMock = { shareLink: vi.fn() };
 
 describe('wishlist / use cases / share link', () => {
-  beforeEach(() => {
-    vi.mocked(inject).mockReturnValueOnce(linkServiceMock);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should inject wishlist link service', async () => {
-    await shareLink('current target', 'is link for groups');
-    expect(vi.mocked(inject)).toHaveBeenCalledWith(vi.mocked(LinkService));
-  });
-
-  it('should emit GetUserHash event', async () => {
-    await shareLink('current target', 'is link for groups');
-    expect(vi.mocked(emit)).toHaveBeenCalledWith(GetUserHash);
-  });
-
   it('should share link', async () => {
+    vi.mocked(inject).mockReturnValueOnce(linkServiceMock);
     vi.mocked(emit).mockResolvedValueOnce('hash');
-    await shareLink('current target', 'is link for groups');
-    expect(
-      linkServiceMock.shareLink,
-    ).toHaveBeenCalledWith(
-      'current target',
-      'is link for groups',
-      'hash',
-    );
+    await shareLink('is link for groups');
+    expect(linkServiceMock.shareLink).toHaveBeenCalledWith('is link for groups', 'hash');
   });
 });

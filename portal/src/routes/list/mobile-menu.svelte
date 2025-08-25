@@ -66,10 +66,7 @@
                 side="top"
               >
                 {#each children as { icon, label, testId, onClick } (label)}
-                  <DropdownMenu.Item
-                    data-testid={testId}
-                    onclick={(event) => onClick(event, event.currentTarget)}
-                  >
+                  <DropdownMenu.Item data-testid={testId} onclick={onClick}>
                     {@const Icon = icon}
                     <li>
                       <span>
@@ -82,10 +79,7 @@
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
           {:else}
-            <DropdownMenu.Item
-              data-testid={testId}
-              onclick={(event) => onClick(event, event.currentTarget)}
-            >
+            <DropdownMenu.Item data-testid={testId} onclick={onClick}>
               {@const Icon = icon}
               <li>
                 <span>

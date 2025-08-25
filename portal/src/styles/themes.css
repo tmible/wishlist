@@ -24,7 +24,7 @@
   --color-primary-content: var(--oc-gray-2);
   --color-neutral: var(--oc-gray-9);
   --color-neutral-content: var(--oc-gray-2);
-  --color-success: var(--oc-green-6);
+  --color-success: var(--oc-green-1);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
@@ -54,7 +54,7 @@
   --color-secondary: var(--oc-pink-1);
   --color-neutral: var(--oc-gray-4);
   --color-neutral-content: var(--oc-gray-9);
-  --color-success: var(--oc-green-6);
+  --color-success: var(--oc-green-9);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
@@ -83,7 +83,7 @@
   --color-primary-content: var(--oc-gray-0);
   --color-neutral: var(--oc-gray-9);
   --color-neutral-content: var(--oc-gray-3);
-  --color-success: var(--oc-green-6);
+  --color-success: var(--oc-teal-2);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
@@ -114,7 +114,7 @@
   --color-primary-content: var(--oc-gray-3);
   --color-neutral: var(--oc-gray-4);
   --color-neutral-content: var(--oc-gray-9);
-  --color-success: var(--oc-green-6);
+  --color-success: var(--oc-teal-6);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
@@ -175,7 +175,7 @@
   --color-primary-content: var(--oc-gray-2);
   --color-neutral: var(--oc-gray-4);
   --color-neutral-content: var(--oc-gray-9);
-  --color-success: var(--oc-green-6);
+  --color-success: var(--oc-green-8);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);

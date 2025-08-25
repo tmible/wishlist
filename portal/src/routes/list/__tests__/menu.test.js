@@ -30,7 +30,7 @@ describe('menu', () => {
     const option = screen.getByTestId('share-bot');
     await user.click(option);
     baseElement.innerHTML = '';
-    expect(vi.mocked(shareLink)).toHaveBeenCalledWith(option, false);
+    expect(vi.mocked(shareLink)).toHaveBeenCalledWith(false);
   });
 
   it('should share link on link for groups option click', async () => {
@@ -38,7 +38,7 @@ describe('menu', () => {
     const option = screen.getByTestId('share-group');
     await user.click(option);
     baseElement.innerHTML = '';
-    expect(vi.mocked(shareLink)).toHaveBeenCalledWith(option, true);
+    expect(vi.mocked(shareLink)).toHaveBeenCalledWith(true);
   });
 
   it('should open link to bot on "to bot" option click', async () => {

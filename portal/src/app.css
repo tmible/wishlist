@@ -41,6 +41,7 @@
 :root {
   /* disable in favour of using bits-ui ScrollArea */
   scrollbar-gutter: auto;
+  --svoast-offset: calc(var(--spacing) * 6);
 }
 
 body {
