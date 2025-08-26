@@ -1,7 +1,7 @@
 <!-- @component Страница быстрой очистки списка. Реализует механику свайпа карточек -->
 <script>
   import clearWishlistItemsComparator from '@tmible/wishlist-common/clear-wishlist-items-comparator';
-  import { onDestroy, onMount } from 'svelte';
+  import { getContext, onDestroy, onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { CardSwiper } from '$lib/card-swiper';
   import { wishlist } from '$lib/wishlist/store.js';
@@ -21,6 +21,13 @@
    * @type {OwnWishlistItem[]}
    */
   const wishlistSorted = $derived($wishlist.toSorted(clearWishlistItemsComparator));
+
+  /**
+   * Признак пересечения карточкой границы, после которой отпускание
+   * карточки приведёт к выполнению соответствующего стороне действия
+   * @type {-1 | 0 | 1}
+   */
+  let thresholdPassed = $state(0);
 
   /**
    * Отметка элемента списка к удалению при соответствующем направлении свайпа
@@ -61,17 +68,21 @@
   };
 
   /**
-   * Признак пересечения карточкой границы, после которой отпускание
-   * карточки приведёт к выполнению соответствующего стороне действия
-   * @type {-1 | 0 | 1}
+   * Возврат на главную страницу авторизованной зоны, если список пуст
+   * @function gotoList
+   * @returns {void}
    */
-  let thresholdPassed = $state(0);
-
-  // Возврат на главную страницу авторизованной зоны, если список пуст
-  onMount(() => {
+  const gotoList = () => {
     if (($wishlist ?? []).length === 0) {
       goto('/list');
     }
+  };
+
+  // onMount не может быть асинхронной функцией, поэтому такой механизм
+  onMount(() => {
+    let wishlistAwaiter = gotoList;
+    getContext('get wishlist promise').then(wishlistAwaiter);
+    return () => wishlistAwaiter = undefined;
   });
 
   // Запрос на удаление элементов, карточки которых были свайпнуты влево

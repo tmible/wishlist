@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.4 Эпоха космический рассвет (2025-08-27)
+<img width="128" height="128" src="release-images/1.6.4.png"/>
+
+https://github.com/tmible/wishlist/compare/a54831e..master
+
+
 ## 1.6.3 Юный рассвет (2025-08-26)
 <img width="128" height="128" src="release-images/1.6.3.png"/>
 
-https://github.com/tmible/wishlist/compare/f8e25c8..master
+https://github.com/tmible/wishlist/compare/f8e25c8..a54831e
 
 
 ## 1.6.2 Экипажный контрольный механизм (2025-08-25)
