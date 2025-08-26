@@ -33,7 +33,7 @@
    * @returns {void}
    */
   const markListItem = ({ direction, data }) => {
-    if (direction === 'right') {
+    if (direction === 'left') {
       toDelete.push(data.id);
     }
   };
@@ -74,7 +74,7 @@
     }
   });
 
-  // Запрос на удаление элементов, карточки которых были свайпнуты вправо
+  // Запрос на удаление элементов, карточки которых были свайпнуты влево
   onDestroy(async () => await deleteItems(toDelete));
 </script>
 
@@ -88,7 +88,7 @@
           class:bg-success={thresholdPassed > 0}
           class:bg-error={thresholdPassed < 0}
         >
-          {thresholdPassed > 0 ? 'удалить' : 'оставить в списке'}
+          {thresholdPassed > 0 ? 'оставить в списке' : 'удалить'}
         </span>
         <div
           class="absolute w-full h-full opacity-10"

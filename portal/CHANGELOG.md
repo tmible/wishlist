@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.3 Юный рассвет (2025-08-26)
+<img width="128" height="128" src="release-images/1.6.3.png"/>
+
+https://github.com/tmible/wishlist/compare/f8e25c8..master
+
+
 ## 1.6.2 Экипажный контрольный механизм (2025-08-25)
 <img width="128" height="128" src="release-images/1.6.2.png"/>
 
-https://github.com/tmible/wishlist/compare/18e7cf3..master
+https://github.com/tmible/wishlist/compare/18e7cf3..f8e25c8
 
 
 ## 1.6.1 Зеркальный рассвет (2025-08-25)
