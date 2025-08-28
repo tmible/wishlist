@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.6.5 Пассажирский коридорный контролёр (2025-08-28)
+<img width="128" height="128" src="release-images/1.6.5.png"/>
+
+https://github.com/tmible/wishlist/compare/e2679d3..master
+
+
 ## 1.6.4 Эпоха космический рассвет (2025-08-27)
 <img width="128" height="128" src="release-images/1.6.4.png"/>
 
-https://github.com/tmible/wishlist/compare/a54831e..master
+https://github.com/tmible/wishlist/compare/a54831e..e2679d3
 
 
 ## 1.6.3 Юный рассвет (2025-08-26)

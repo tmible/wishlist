@@ -28,6 +28,31 @@
   });
 </script>
 
+{#snippet MenuItem({ icon, label })}
+  {@const Icon = icon}
+  <li>
+    <span>
+      <Icon class="w-5 h-5" />
+      {label}
+    </span>
+  </li>
+{/snippet}
+
+{#snippet MenuItemWrapper({ icon, label, testId, onClick, href, target })}
+  {#snippet Child({ testId })}
+    <DropdownMenu.Item data-testid={testId} onclick={onClick}>
+      {@render MenuItem({ icon, label })}
+    </DropdownMenu.Item>
+  {/snippet}
+  {#if href}
+    <a {href} {target} data-testid={testId}>
+      {@render Child()}
+    </a>
+  {:else}
+    {@render Child({ testId })}
+  {/if}
+{/snippet}
+
 <div
   class="fixed bottom-6 right-6 transition-transform md:hidden"
   class:translate-y-[100%]={isMenuHidden}
@@ -45,18 +70,14 @@
       align="end"
       transition={flyAndScale}
     >
-      {#each options as { icon, label, testId, children, onClick, condition = true } (label)}
+      {#each
+        options as { icon, label, testId, children, onClick, href, target, condition = true }
+        (label)}
         {#if condition}
           {#if children}
             <DropdownMenu.Sub>
               <DropdownMenu.SubTrigger data-testid={testId}>
-                {@const Icon = icon}
-                <li>
-                  <span>
-                    <Icon class="w-5 h-5" />
-                    {label}
-                  </span>
-                </li>
+                {@render MenuItem({ icon, label })}
               </DropdownMenu.SubTrigger>
               <DropdownMenu.SubContent
                 class="shadow-xl menu bg-base-300 rounded-box"
@@ -65,29 +86,13 @@
                 transition={flyAndScale}
                 side="top"
               >
-                {#each children as { icon, label, testId, onClick } (label)}
-                  <DropdownMenu.Item data-testid={testId} onclick={onClick}>
-                    {@const Icon = icon}
-                    <li>
-                      <span>
-                        <Icon class="w-5 h-5" />
-                        {label}
-                      </span>
-                    </li>
-                  </DropdownMenu.Item>
+                {#each children as { icon, label, testId, onClick, href, target } (label)}
+                  {@render MenuItemWrapper({ icon, label, testId, onClick, href, target })}
                 {/each}
               </DropdownMenu.SubContent>
             </DropdownMenu.Sub>
           {:else}
-            <DropdownMenu.Item data-testid={testId} onclick={onClick}>
-              {@const Icon = icon}
-              <li>
-                <span>
-                  <Icon class="w-5 h-5" />
-                  {label}
-                </span>
-              </li>
-            </DropdownMenu.Item>
+            {@render MenuItemWrapper({ icon, label, testId, onClick, href, target })}
           {/if}
         {/if}
       {/each}

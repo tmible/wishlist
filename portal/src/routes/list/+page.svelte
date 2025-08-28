@@ -4,7 +4,6 @@
   import * as Sortable from 'sortablejs';
   import { getContext } from 'svelte';
   import { Toasts } from 'svoast';
-  import { goto } from '$app/navigation';
   import CategoriesDialog from '$lib/categories/dialog.svelte';
   import Header from '$lib/components/header.svelte';
   import ModalPortal from '$lib/components/modal-portal.svelte';
@@ -139,13 +138,6 @@
   };
 
   /**
-   * Навигация на страницу быстрой очистки списка
-   * @function gotoClear
-   * @returns {Promise<void>}
-   */
-  const gotoClear = () => goto('/list/clear');
-
-  /**
    * Открытие диалога управления категориями
    * @function openCategoriesDialog
    * @returns {void}
@@ -212,7 +204,6 @@
     isMenuHidden={isReorderModeOn}
     add={openAddDialog}
     {reorder}
-    clear={gotoClear}
     manageCategories={openCategoriesDialog}
   />
   <div

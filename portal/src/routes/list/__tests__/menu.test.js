@@ -41,12 +41,6 @@ describe('menu', () => {
     expect(vi.mocked(shareLink)).toHaveBeenCalledWith(true);
   });
 
-  it('should open link to bot on "to bot" option click', async () => {
-    const spy = vi.spyOn(globalThis, 'open').mockImplementation(() => {});
-    await user.click(screen.getByTestId('to-bot'));
-    expect(spy).toHaveBeenCalledWith('https://t.me/wishnibot', '_blank');
-  });
-
   it('should logout on logout option click', async () => {
     await user.click(screen.getByTestId('logout'));
     expect(vi.mocked(logout)).toHaveBeenCalled();

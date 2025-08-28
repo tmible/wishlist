@@ -27,9 +27,17 @@
    */
 
   /**
-   * Пункт меню без дочерних пунктов
+   * Пункт меню с обработчиком нажатия
    * @typedef {object} MenuItemInteractive
-   * @property {(event: Event) => void | Promise<void>} onClick Обработчик клика по пункту меню
+   * @property {(event: Event) => void | Promise<void>} onClick Обработчик нажатия на пункт меню
+   * @augments MenuItemBase
+   */
+
+  /**
+   * Пункт меню со ссылкой
+   * @typedef {object} MenuItemLink
+   * @property {string} href Адрес для перехода по нажатию на пункт меню
+   * @property {'_self' | '_blank'} [target] Контекст отображения документа по ссылке
    * @augments MenuItemBase
    */
 
@@ -40,7 +48,7 @@
    * @augments MenuItemBase
    */
 
-  /** @typedef {MenuItemInteractive | MenuItemWithChildren} MenuItem */
+  /** @typedef {MenuItemInteractive | MenuItemLink | MenuItemWithChildren} MenuItem */
 
   /**
    * @typedef {object} Props
@@ -48,7 +56,6 @@
    * @property {() => void} add Функция обратного вызова для добавления элемента в список
    * @property {() => void} reorder
    *   Функция обратного вызова для изменения порядка элементов в списке
-   * @property {() => void} clear Функция обратного вызова для перехода к очистке списка
    * @property {() => void} manageCategories Функция обратного вызова для управления категориями
    */
 
@@ -57,7 +64,6 @@
     isMenuHidden = false,
     add,
     reorder,
-    clear,
     manageCategories,
   } = $props();
 
@@ -80,7 +86,7 @@
     icon: Eraser,
     label: 'Быстрая очистка',
     testId: 'clear',
-    onClick: clear,
+    href: '/list/clear',
     condition: ($wishlist ?? []).length > 0,
   }, {
     icon: LayoutGrid,
@@ -106,7 +112,8 @@
     icon: Bot,
     label: 'Перейти к боту',
     testId: 'to-bot',
-    onClick: () => open('https://t.me/wishnibot', '_blank'),
+    href: 'https://t.me/wishnibot',
+    target: '_blank',
   }, {
     icon: LogOut,
     label: 'Выйти',
