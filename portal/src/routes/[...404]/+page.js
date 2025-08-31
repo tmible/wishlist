@@ -1,7 +1,7 @@
-import { redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 /**
  * Перенаправление на главную страницу при запросе несуществующей страницы
  * @type {import('./$types').PageLoad}
  */
-export const load = () => redirect(308, '/');
+export const load = () => error(404);

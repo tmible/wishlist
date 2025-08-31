@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.8.0 Необычный вычислитель данных (2025-09-01)
+<img width="128" height="128" src="release-images/1.8.0.png"/>
+
+https://github.com/tmible/wishlist/compare/40bb0e5..master
+
+
 ## 1.7.0 Зелёный дипломат (2025-08-31)
 <img width="128" height="128" src="release-images/1.7.0.png"/>
 
-https://github.com/tmible/wishlist/compare/c4004db..master
+https://github.com/tmible/wishlist/compare/c4004db..40bb0e5
 
 
 ## 1.6.5 Пассажирский коридорный контролёр (2025-08-28)

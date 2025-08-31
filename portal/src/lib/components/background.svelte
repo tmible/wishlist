@@ -24,14 +24,14 @@
 {#if accent === 'blossom'}
   <img
     class="fixed w-4/5 md:w-1/3 translate-x-1/14 -scale-x-100 rotate-[-21deg]"
-    src="188f61ec-d510-4aed-b132-3dfb7718b7e4.webp"
+    src="/188f61ec-d510-4aed-b132-3dfb7718b7e4.webp"
     loading="lazy"
     decoding="async"
     alt="cherry branch"
   >
   <img
     class="hidden md:block absolute w-1/3 right-0 -translate-x-1/14 rotate-[21deg]"
-    src="188f61ec-d510-4aed-b132-3dfb7718b7e4.webp"
+    src="/188f61ec-d510-4aed-b132-3dfb7718b7e4.webp"
     loading="lazy"
     decoding="async"
     alt="cherry branch"
@@ -49,7 +49,7 @@
         md:-translate-y-1/4
         dark:brightness-133
       "
-      src="signature.svg"
+      src="/signature.svg"
       loading="lazy"
       decoding="async"
       alt="signature"
@@ -57,7 +57,7 @@
   {:else}
     <img
       class="absolute w-1/2 md:w-1/3 bottom-0 translate-x-1/16 -translate-y-1/4 dark:brightness-133"
-      src="signature.svg"
+      src="/signature.svg"
       loading="lazy"
       decoding="async"
       alt="signature"

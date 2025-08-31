@@ -12,13 +12,10 @@
 
   // Обновление состояния при изменении темы в сервисе
   onMount(() => subscribeToTheme(({ isDark: isThemeDark }) => isDark = isThemeDark));
-
-  // Обновление темы
-  $effect(() => updateTheme({ isDark }));
 </script>
 
 <label class="toggle bg-base-100 text-base-content">
-  <input type="checkbox" bind:checked={isDark}>
+  <input type="checkbox" onchange={() => updateTheme({ isDark })} bind:checked={isDark}>
   <SunDim class="p-0 w-full h-full" aria-label="enabled" />
   <Moon class="p-0 w-full h-full" aria-label="disabled" />
 </label>
