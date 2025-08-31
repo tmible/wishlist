@@ -1,9 +1,15 @@
 # Changelog
 
+## 1.7.0 Зелёный дипломат (2025-08-31)
+<img width="128" height="128" src="release-images/1.7.0.png"/>
+
+https://github.com/tmible/wishlist/compare/c4004db..master
+
+
 ## 1.6.5 Пассажирский коридорный контролёр (2025-08-28)
 <img width="128" height="128" src="release-images/1.6.5.png"/>
 
-https://github.com/tmible/wishlist/compare/e2679d3..master
+https://github.com/tmible/wishlist/compare/e2679d3..c4004db
 
 
 ## 1.6.4 Эпоха космический рассвет (2025-08-27)

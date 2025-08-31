@@ -1,4 +1,5 @@
 <!-- https://github.com/flo-bit/svelte-swiper-cards -->
+<!-- 62d93b2ed39794899b6d293693ecc45850c4f921 -->
 <!--
 Copyright 2024 flo-bit
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -8,8 +9,30 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { DragGesture, type FullGestureState } from '@use-gesture/vanilla';
-	import type { CardData, Direction } from '.';
+	import type { CardData, Direction, SwipeEventData } from '.';
 	import Card from './card.svelte';
+
+	interface Props {
+	  swipe: (direction: Direction) => void;
+		onSwipe: ((cardInfo: SwipeEventData) => void) | undefined;
+		cardData: (index: number) => CardData;
+		minSwipeDistance?: number;
+		minSwipeVelocity?: number;
+		arrowKeys?: boolean;
+		thresholdPassed?: number;
+		anchor?: number | null;
+	}
+
+	let {
+	  swipe = $bindable(),
+		onSwipe,
+		cardData,
+		minSwipeDistance = 0.5,
+		minSwipeVelocity = 0.5,
+		arrowKeys = true,
+		thresholdPassed = $bindable(0),
+		anchor = null,
+	}: Props = $props();
 
 	let container: HTMLElement = $state();
 
@@ -43,7 +66,9 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 		let direction: Direction = movement[0] > 0 ? 'right' : 'left';
 		let data = el === card1 ? card1Data : card2Data;
-		swiped({ direction, element: el, data, index: cardIndex - 2 });
+
+		if (onSwipe) onSwipe({ direction, element: el, data, index: cardIndex - 2 });
+
 		thresholdPassed = movement[0] > 0 ? 1 : -1;
 
 		let moveOutWidth = document.body.clientWidth;
@@ -87,14 +112,14 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 	) => {
 		let elWidth = el.offsetWidth;
 
-		if (state.pressed) {
+		if (state.active) {
 			let rotate = state.movement[0] * 0.03 * (state.movement[1] / 80);
 
 			// fix movement on a curved path if anchor is set
 			if (anchor) {
 				let vec = [state.movement[0], state.movement[1] - anchor];
 				let len = Math.sqrt(vec[0] ** 2 + vec[1] ** 2);
-				vec = [vec[0] / len * anchor, vec[1] / len * anchor];
+				vec = [(vec[0] / len) * anchor, (vec[1] / len) * anchor];
 
 				state.movement[0] = vec[0];
 				state.movement[1] = vec[1] + anchor;
@@ -102,7 +127,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 			el.style.transform = `translate(${state.movement[0]}px, ${state.movement[1]}px) rotate(${rotate}deg)`;
 
-			if(Math.abs(state.movement[0]) / elWidth > minSwipeDistance) {
+			if (Math.abs(state.movement[0]) / elWidth > minSwipeDistance) {
 				thresholdPassed = state.movement[0] > 0 ? 1 : -1;
 			} else {
 				thresholdPassed = 0;
@@ -126,42 +151,24 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 		}
 	};
 
-	export const swipe = (direction: Direction = 'right') => {
-		if(thresholdPassed !== 0) return;
+	swipe = (direction: Direction = 'right') => {
+		if (thresholdPassed !== 0) return;
 
 		let dir = direction === 'left' ? -1 : 1;
 		cardSwiped(topCard, [dir, 0.1], [dir, 1]);
 	};
-
-	interface Props {
-		cardData: (index: number) => CardData;
-		minSwipeDistance?: number;
-		minSwipeVelocity?: number;
-		arrowKeys?: boolean;
-		thresholdPassed?: number;
-		anchor?: number | null;
-		swiped: () => void;
-	}
-
-	let {
-		cardData,
-		minSwipeDistance = 0.5,
-		minSwipeVelocity = 0.5,
-		arrowKeys = true,
-		thresholdPassed = $bindable(0),
-		anchor = null,
-		swiped,
-	}: Props = $props();
 </script>
 
-<svelte:body onkeydown={(e) => {
-	if(!arrowKeys) return;
-	if (e.key === 'ArrowLeft') {
-		swipe('left');
-	} else if (e.key === 'ArrowRight') {
-		swipe('right');
-	}
-}} />
+<svelte:body
+	onkeydown={(e) => {
+		if(!arrowKeys) return;
+		if (e.key === 'ArrowLeft') {
+			swipe('left');
+		} else if (e.key === 'ArrowRight') {
+			swipe('right');
+		}
+	}}
+/>
 
 <div class="w-full h-full">
 	<div class="w-full h-full relative hidden z-0" bind:this={container}>

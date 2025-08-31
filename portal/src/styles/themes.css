@@ -24,10 +24,12 @@
   --color-primary-content: var(--oc-gray-2);
   --color-neutral: var(--oc-gray-9);
   --color-neutral-content: var(--oc-gray-2);
-  --color-success: var(--oc-green-1);
+  --color-success: var(--oc-green-6);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
@@ -40,6 +42,9 @@
 
 [data-theme="blossom-light"] {
   --color-body: var(--oc-pink-1);
+  .alert-success {
+    --color-success: var(--oc-green-1);
+  }
 }
 
 @plugin "daisyui/theme" {
@@ -58,6 +63,8 @@
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
@@ -83,10 +90,12 @@
   --color-primary-content: var(--oc-gray-0);
   --color-neutral: var(--oc-gray-9);
   --color-neutral-content: var(--oc-gray-3);
-  --color-success: var(--oc-teal-2);
+  --color-success: var(--oc-teal-6);
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
@@ -100,6 +109,9 @@
 [data-theme="frozen-light"] {
   .bg-body {
     background-image: linear-gradient(var(--oc-blue-1), var(--oc-pink-4), var(--oc-blue-1));
+  }
+  .alert-success {
+    --color-success: var(--oc-teal-2);
   }
 }
 
@@ -118,6 +130,8 @@
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
@@ -149,6 +163,8 @@
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
@@ -179,6 +195,8 @@
   --color-success-content: var(--oc-gray-9);
   --color-error: var(--oc-red-6);
   --color-error-content: var(--oc-gray-9);
+  --color-info: var(--oc-cyan-6);
+  --color-info-content: var(--oc-gray-9);
   --radius-selector: 0.5rem;
   --radius-field: 0.5rem;
   --radius-box: 1rem;
